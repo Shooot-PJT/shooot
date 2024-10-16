@@ -7,5 +7,8 @@ globalFontFace('Pretendard', {
 
 /* 글로벌 스타일 설정 */
 globalStyle('*', {
+  margin: 0,
+  outline: 'none',
   fontFamily: 'Pretendard',
+  WebkitTapHighlightColor: 'transparent',
 });
