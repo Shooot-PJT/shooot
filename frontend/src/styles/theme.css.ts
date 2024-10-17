@@ -79,4 +79,5 @@ const themeContract = {
   },
 };
 
+export type Palette = keyof typeof themeContract.palette;
 export default createThemeContract(themeContract);
