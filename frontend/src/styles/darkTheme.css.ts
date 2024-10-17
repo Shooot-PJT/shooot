@@ -78,5 +78,10 @@ export default createTheme(themeContract, {
       originalBlue: '#0000ff',
       disabled: colorPalette.grey['500'],
     },
+    background: {
+      100: '#1B1A1F',
+      200: '#26262E',
+      300: '#3A3A4A',
+    },
   },
 });
