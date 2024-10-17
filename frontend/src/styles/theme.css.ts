@@ -76,6 +76,11 @@ const themeContract = {
       originalGreen: null,
       disabled: null,
     },
+    background: {
+      100: null,
+      200: null,
+      300: null,
+    },
   },
 };
 
