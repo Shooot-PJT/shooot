@@ -1,9 +1,5 @@
 import { ReactNode } from 'react';
-import {
-  TypographyColor,
-  TypographyElement,
-  TypographyWeight,
-} from './Typography.types';
+import { TypographyColor, TypographyWeight } from './Typography.types';
 import * as s from './Typography.css';
 
 interface TypographyProps {
@@ -11,7 +7,6 @@ interface TypographyProps {
   color?: TypographyColor;
   size?: number;
   weight?: TypographyWeight;
-  element?: TypographyElement;
 }
 
 const Typography = ({
@@ -19,16 +14,14 @@ const Typography = ({
   color,
   size = 1,
   weight,
-  element: Element = 'p',
 }: TypographyProps) => {
-  console.log(color);
   return (
-    <Element
+    <div
       className={s.typography({ color, weight })}
       style={{ fontSize: `${size}rem` }}
     >
       {children}
-    </Element>
+    </div>
   );
 };
 

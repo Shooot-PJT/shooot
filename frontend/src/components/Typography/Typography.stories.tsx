@@ -2,6 +2,7 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Typography from './Typography';
 import { TypographyColor, TypographyWeight } from './Typography.types';
+import darkTheme from '../../styles/darkTheme.css';
 
 const meta = {
   title: 'UI/Components/Typography',
@@ -11,7 +12,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div style={{ padding: '1rem' }}>
+      <div className={darkTheme} style={{ padding: '1rem' }}>
         <Story />
       </div>
     ),
@@ -40,16 +41,26 @@ type Story = StoryObj<typeof Typography>;
 export const Primary: Story = {
   args: {
     children: 'Typography',
-    color: 'primary',
-    size: 1,
-    weight: '500',
+    color: 'dark',
   },
 };
 
-const colors: TypographyColor[] = Array.from(
-  { length: 14 },
-  (color) => color as TypographyColor,
-);
+const colors: TypographyColor[] = [
+  'primary',
+  'secondary',
+  'tertiary',
+  'get',
+  'post',
+  'put',
+  'patch',
+  'delete',
+  'originalRed',
+  'originalGreen',
+  'originalBlue',
+  'dark',
+  'light',
+  'disabled',
+];
 const sizes: number[] = [0.5, 0.625, 0.75, 0.875, 1, 1.125, 1.25];
 const weights: TypographyWeight[] = Array.from(
   { length: 9 },
