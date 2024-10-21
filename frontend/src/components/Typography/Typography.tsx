@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { TypographyColor, TypographyWeight } from './Typography.types';
 import * as s from './Typography.css';
 
-interface TypographyProps {
+interface TypographyProps extends React.ComponentProps<'div'> {
   children: ReactNode;
   color?: TypographyColor;
   size?: number;
