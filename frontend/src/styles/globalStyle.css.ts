@@ -1,4 +1,4 @@
-import { globalStyle, globalFontFace } from '@vanilla-extract/css';
+import { globalStyle, globalFontFace, style } from '@vanilla-extract/css';
 
 /* 글로벌 폰트 설정 */
 globalFontFace('Pretendard', {
@@ -11,4 +11,30 @@ globalStyle('*', {
   outline: 'none',
   fontFamily: 'Pretendard',
   WebkitTapHighlightColor: 'transparent',
+});
+
+/* 반응형 - 데스크톱 */
+export const desktop = style({
+  '@media': {
+    'screen and (min-width: 768px)': {
+      display: 'block',
+    },
+
+    'screen and (max-width: 767px)': {
+      display: 'none',
+    },
+  },
+});
+
+/* 반응형 - 모바일 */
+export const mobile = style({
+  '@media': {
+    'screen and (min-width: 768px)': {
+      display: 'none',
+    },
+
+    'screen and (max-width: 767px)': {
+      display: 'block',
+    },
+  },
 });
