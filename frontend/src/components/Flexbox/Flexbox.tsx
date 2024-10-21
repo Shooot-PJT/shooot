@@ -1,5 +1,4 @@
 import { CSSProperties, ReactNode } from 'react';
-import * as s from './Flexbox.css';
 import theme from '../../styles/theme.css';
 
 interface FlexboxProps extends React.ComponentProps<'div'> {
