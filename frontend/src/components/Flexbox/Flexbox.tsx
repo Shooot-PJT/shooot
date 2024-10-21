@@ -18,7 +18,7 @@ interface FlexboxProps {
   marginLeft?: string;
   marginRight?: string;
   marginBottom?: string;
-  bg: 100 | 200 | 300;
+  bg: 100 | 200 | 300 | string;
 }
 
 const Flexbox = ({ children, bg = 100, ...props }: FlexboxProps) => {

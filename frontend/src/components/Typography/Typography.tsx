@@ -14,11 +14,13 @@ const Typography = ({
   color,
   size = 1,
   weight,
+  ...props
 }: TypographyProps) => {
   return (
     <div
       className={s.typography({ color, weight })}
       style={{ fontSize: `${size}rem` }}
+      {...props}
     >
       {children}
     </div>
