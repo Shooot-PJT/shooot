@@ -23,7 +23,7 @@ const Icon = ({
     <div
       className={icon}
       style={{
-        padding: `${size}rem`,
+        padding: background === 'none' ? '0' : `${size}rem`,
         color: theme.color.icon[color],
         backgroundColor: background
           ? background === 'none'
