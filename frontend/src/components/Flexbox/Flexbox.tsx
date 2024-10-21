@@ -1,29 +1,56 @@
 import { CSSProperties, ReactNode } from 'react';
 import * as s from './Flexbox.css';
+import theme from '../../styles/theme.css';
 
-interface FlexboxProps {
+interface FlexboxProps extends React.ComponentProps<'div'> {
   children?: ReactNode;
   flexDirection?: CSSProperties['flexDirection'];
   justifyContent?: CSSProperties['justifyContent'];
   alignItems?: CSSProperties['alignItems'];
   flexWrap?: CSSProperties['flexWrap'];
-  rowGap?: string;
-  columnGap?: string;
-  borderRadius?: string;
-  paddingTop?: string;
-  paddingLeft?: string;
-  paddingRight?: string;
-  paddingBottom?: string;
-  marginTop?: string;
-  marginLeft?: string;
-  marginRight?: string;
-  marginBottom?: string;
+  rowGap?: number;
+  columnGap?: number;
+  rounded?: number;
+  padding?: string;
+  margin?: string;
   bg: 100 | 200 | 300 | string;
 }
 
-const Flexbox = ({ children, bg = 100, ...props }: FlexboxProps) => {
+const Flexbox = ({
+  children,
+  flexDirection = 'row',
+  justifyContent = 'center',
+  alignItems = 'center',
+  flexWrap = 'nowrap',
+  rowGap = 0,
+  columnGap = 0,
+  rounded = 0,
+  padding = '0',
+  margin = '0',
+  bg = 100,
+  ...props
+}: FlexboxProps) => {
   return (
-    <div className={s.flexbox({ bg })} style={{ ...props }}>
+    <div
+      style={{
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: flexDirection,
+        justifyContent: justifyContent,
+        alignItems: alignItems,
+        flexWrap: flexWrap,
+        rowGap: `${rowGap}rem`,
+        columnGap: `${columnGap}rem`,
+        borderRadius: `${rounded}rem`,
+        padding: padding,
+        margin: margin,
+        backgroundColor:
+          bg === 100 || bg === 200 || bg === 300
+            ? theme.color.background[bg]
+            : bg,
+      }}
+      {...props}
+    >
       {children}
     </div>
   );
