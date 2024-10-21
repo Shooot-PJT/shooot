@@ -5,6 +5,8 @@ import { useNavBarStore } from './stores/navbarStore';
 import { Desktop } from './components/Layout/Desktop';
 import { Mobile } from './components/Layout/Mobile';
 import { useEffect } from 'react';
+import { Banner } from './components/Banner';
+import Flexbox from './components/Flexbox';
 
 function App() {
   const navbarStore = useNavBarStore();
@@ -19,22 +21,25 @@ function App() {
 
   return (
     <div className={darkTheme} style={{ width: '100%', height: '100%' }}>
-      <NavBar>
-        <Desktop>
-          <NavBar.Title title="제목" />
-          <NavBar.Project project={[0, 1, 2]} />
-          <NavBar.Menu />
-        </Desktop>
-        <Mobile>
-          <NavBar.Title title="제목" />
-          {navbarStore.isOpen && (
-            <>
-              <NavBar.Project project={[0, 1, 2]} />
-              <NavBar.Menu />
-            </>
-          )}
-        </Mobile>
-      </NavBar>
+      <Flexbox bg="none" columnGap={2}>
+        <NavBar>
+          <Desktop>
+            <NavBar.Title title="제목" />
+            <NavBar.Project project={[0, 1, 2]} />
+            <NavBar.Menu />
+          </Desktop>
+          <Mobile>
+            <NavBar.Title title="제목" />
+            {navbarStore.isOpen && (
+              <>
+                <NavBar.Project project={[0, 1, 2]} />
+                <NavBar.Menu />
+              </>
+            )}
+          </Mobile>
+        </NavBar>
+        <Banner />
+      </Flexbox>
     </div>
   );
 }
