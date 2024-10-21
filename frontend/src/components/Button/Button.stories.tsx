@@ -72,7 +72,7 @@ export const Primary: Story = {
     children: '기본 버튼',
     color: 'primary',
     rounded: 0.75,
-    paddingX: 1,
+    paddingX: 1.25,
     paddingY: 0.5,
     fullWidth: false,
   },
