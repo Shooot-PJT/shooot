@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table
+@Table(name = "project")
 @Entity
 public class Project extends SoftDeleteEntity {
     @Id
