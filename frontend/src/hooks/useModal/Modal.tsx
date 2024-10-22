@@ -1,9 +1,13 @@
 import { useRef } from 'react';
 import useModalStore, { ModalData } from '../../stores/useModalStore';
 import * as s from './modal.css';
-type ModalProps = ModalData;
+
+interface ModalProps extends ModalData {
+  color?: '100' | '200' | '300';
+}
 
 const Modal = ({
+  color = '100',
   children,
   animation = 'center',
   onClose,
@@ -17,9 +21,14 @@ const Modal = ({
       popModal();
     }
   };
+
   return (
-    <div className={s.modal} ref={modalRef} onAnimationEnd={handleAnimationEnd}>
-      {children}
+    <div
+      className={`${s.container} ${isClosing ? s.modalOut : s.modalIn}`}
+      ref={modalRef}
+      onAnimationEnd={handleAnimationEnd}
+    >
+      <div className={s.modal({ background: color })}>{children}</div>
     </div>
   );
 };

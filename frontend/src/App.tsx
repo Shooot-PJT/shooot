@@ -49,15 +49,15 @@ function App() {
             </>
           )}
         </Mobile>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleModal();
+          }}
+        >
+          모달추가
+        </button>
       </NavBar>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          handleModal();
-        }}
-      >
-        백드랍
-      </button>
     </div>
   );
 }
