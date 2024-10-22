@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS domain;
 DROP TABLE IF EXISTS api_subscribe;
 DROP TABLE IF EXISTS project_participant;
 DROP TABLE IF EXISTS project;
+DROP TABLE IF EXISTS notification;
 DROP TABLE IF EXISTS user;
 
 CREATE TABLE user (
@@ -64,6 +65,14 @@ CREATE TABLE api_subscribe (
     project_participant_id INTEGER NOT NULL ,
     FOREIGN KEY (api_id) REFERENCES api(api_id),
     FOREIGN KEY (project_participant_id) REFERENCES project_participant(project_participant_id)
+);
+
+CREATE TABLE notification (
+    notification_id BINARY(16) PRIMARY KEY NOT NULL ,
+    user_id INTEGER NOT NULL ,
+    content JSON NOT NULL,
+    created_at DATETIME NOT NULL ,
+    foreign key (user_id) REFERENCES user(user_id)
 );
 
 #INSERT INTO user(nickname, password, email) VALUES ('흑염룡1', 0x24326124313024795451594A7A38462F676B5232734550516B6D72542E36434B5A585249315A76465561314274527551613763417257796E37375432, 'khj745700@naver.com');
