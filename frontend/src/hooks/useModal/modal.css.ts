@@ -5,5 +5,5 @@ export const modal = style({
   position: 'fixed',
   minWidth: '120px',
   minHeight: '120px',
-  backgroundColor: `${theme.palette}`,
+  backgroundColor: `${theme.color.background['100']}`,
 });
