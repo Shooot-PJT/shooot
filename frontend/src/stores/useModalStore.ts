@@ -1,36 +1,45 @@
 import { ReactNode } from 'react';
 import { create } from 'zustand';
 
-interface Modal {
-  content: ReactNode;
-  animation: 'center' | 'bottom';
-  onOpen: () => void;
-  onClose: () => void;
+export interface ModalData {
+  children: ReactNode;
+  animation?: 'center' | 'bottom';
+  onClose?: () => void;
+  isClosing: boolean;
 }
 
 interface ModalState {
-  modals: Modal[];
+  modals: ModalData[];
 }
 
 interface Action {
-  pushModal: (modal: Modal) => void;
+  pushModal: (modal: ModalData) => void;
   popModal: () => void;
-  updateModal: (modals: Modal[]) => void;
+  updateModal: () => void;
 }
 
 const useModalStore = create<ModalState & Action>((set) => ({
   modals: [],
-  pushModal: (modal: Modal) =>
+  pushModal: (modal: ModalData) =>
     set((state) => {
-      state.modals.push(modal);
       return { modals: [...state.modals, { ...modal }] };
     }),
   popModal: () =>
     set((state) => {
-      state.modals.pop();
-      return { modals: [...state.modals] };
+      const updatedModals = state.modals.slice(0, -1);
+      return { modals: updatedModals };
     }),
-  updateModal: (modals: Modal[]) => set(() => ({ modals })),
+
+  updateModal: () =>
+    set((state) => {
+      const updatedModals = state.modals.map((modal, index) => {
+        if (index === state.modals.length - 1) {
+          return { ...modal, isClosing: true };
+        }
+        return modal;
+      });
+      return { modals: updatedModals };
+    }),
 }));
 
 export default useModalStore;

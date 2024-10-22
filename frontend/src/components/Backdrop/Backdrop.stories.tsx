@@ -37,7 +37,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Example: Story = {
   args: {
-    isOpen: true,
+    isClosing: false,
     opacity: 40,
     blur: 40,
     children: (
@@ -55,7 +55,11 @@ export const Example: Story = {
   render: (args) => {
     return (
       <>
-        <Backdrop isOpen={args.isOpen} opacity={args.opacity} blur={args.blur}>
+        <Backdrop
+          isClosing={args.isClosing}
+          opacity={args.opacity}
+          blur={args.blur}
+        >
           {args.children}
         </Backdrop>
         <img src="https://cdn.pixabay.com/photo/2024/02/17/09/39/cat-8579018_1280.jpg" />

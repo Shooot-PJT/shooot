@@ -1,36 +1,30 @@
-import { useState } from 'react';
 import './App.css';
-import Backdrop from './components/Backdrop';
-import Typography from './components/Typography';
-import darkTheme from './styles/darkTheme.css';
+import useModal from './hooks/useModal';
+import ModalPortal from './hooks/useModal/ModalPortal';
 
 function App() {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const modal = useModal();
+  const handleModal = () => {
+    modal.push({
+      children: (
+        <>
+          <button onClick={modal.pop}>하이용</button>
+          <button onClick={handleModal}>모달추가</button>
+        </>
+      ),
+    });
+  };
   return (
     <>
       <button
         onClick={(e) => {
           e.stopPropagation();
-          setIsOpen(true);
+          handleModal();
         }}
       >
         백드랍
       </button>
-      <Backdrop isOpen={isOpen}>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsOpen(false);
-          }}
-        >
-          닫기
-        </button>
-        <div className={darkTheme}>
-          <Typography color="secondary" weight="700" size={1.5}>
-            hello
-          </Typography>
-        </div>
-      </Backdrop>
+      <ModalPortal />
     </>
   );
 }

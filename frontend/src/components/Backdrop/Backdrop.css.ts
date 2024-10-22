@@ -17,7 +17,7 @@ const fadeOutBlur = keyframes({
   '0%': {
     backgroundColor: 'rgba(0, 0, 0, var(--opacity, 0.5))',
     opacity: 1,
-    backdropFilter: 'blur(var(--blur, 0px))',
+    backdropFilter: 'blur(var(--blur, 4px))',
   },
   '100%': {
     backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -32,16 +32,19 @@ export const backdrop = style({
   height: '100vh',
   left: 0,
   top: 0,
+  transform: 'translateZ(0)',
   backgroundColor: 'rgba(0, 0, 0, var(--opacity, 0.5))',
   backdropFilter: 'blur(var(--blur, 4px))',
-  willChange: 'backgroundColor, backdropFilter',
+  willChange: 'backgroundColor, opacity, backdropFilter',
   zIndex: 30,
 });
 
 export const fadeIn = style({
-  animation: `${fadeInBlur} 0.25s cubic-bezier(0.4, 0.0, 0.2, 1)`,
+  animation: `${fadeInBlur} 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)`,
+  animationFillMode: 'forwards',
 });
 
 export const fadeOut = style({
-  animation: `${fadeOutBlur} 0.25s cubic-bezier(0.4, 0.0, 0.2, 1)`,
+  animation: `${fadeOutBlur} 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)`,
+  animationFillMode: 'forwards',
 });
