@@ -6,7 +6,7 @@ export type ModalPushProps = Pick<
 >;
 
 const useModal = () => {
-  const { modals, pushModal, popModal, updateModal } = useModalStore();
+  const { pushModal, updateModal } = useModalStore();
 
   const push = ({
     children,
