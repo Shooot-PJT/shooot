@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import useModalStore, { ModalData } from '../../stores/useModalStore';
+import * as s from './modal.css';
 type ModalProps = ModalData;
 
 const Modal = ({
@@ -17,7 +18,7 @@ const Modal = ({
     }
   };
   return (
-    <div ref={modalRef} onAnimationEnd={handleAnimationEnd}>
+    <div className={s.modal} ref={modalRef} onAnimationEnd={handleAnimationEnd}>
       {children}
     </div>
   );
