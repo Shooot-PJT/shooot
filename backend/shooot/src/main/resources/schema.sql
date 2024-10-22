@@ -35,7 +35,7 @@ CREATE TABLE project_participant (
 );
 
 CREATE TABLE domain(
-    api_domain_id INTEGER NOT NULL AUTO_INCREMENT,
+    api_domain_id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY ,
     project_id INTEGER NOT NULL ,
     domain_name VARCHAR(30) NOT NULL ,
     domain_description TEXT NOT NULL ,
