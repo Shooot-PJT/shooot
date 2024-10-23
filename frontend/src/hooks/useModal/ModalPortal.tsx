@@ -2,6 +2,10 @@ import ReactDOM from 'react-dom';
 import Backdrop from '../../components/Backdrop';
 import useModalStore from '../../stores/useModalStore';
 import Modal from './Modal';
+import darkTheme from '../../styles/darkTheme.css';
+import { Mobile } from '../../components/Layout/Mobile';
+import { Desktop } from '../../components/Layout/Desktop';
+import React from 'react';
 
 const ModalPortal = () => {
   const { modals } = useModalStore();
@@ -11,19 +15,30 @@ const ModalPortal = () => {
     return null;
   }
   return ReactDOM.createPortal(
-    <>
+    <div className={darkTheme}>
       {modals.map((modal, index) => (
-        <Backdrop isClosing={modal.isClosing} key={index}>
-          <Modal
-            animation={modal.animation}
-            onClose={modal.onClose}
-            isClosing={modal.isClosing}
-          >
-            {modal.children}
-          </Modal>
-        </Backdrop>
+        <React.Fragment key={index}>
+          <Desktop>
+            <Backdrop isClosing={modal.isClosing}>
+              <Modal onClose={modal.onClose} isClosing={modal.isClosing}>
+                {modal.children}
+              </Modal>
+            </Backdrop>
+          </Desktop>
+          <Mobile>
+            <Backdrop isClosing={modal.isClosing}>
+              <Modal
+                onClose={modal.onClose}
+                isClosing={modal.isClosing}
+                isMobile={true}
+              >
+                {modal.children}
+              </Modal>
+            </Backdrop>
+          </Mobile>
+        </React.Fragment>
       ))}
-    </>,
+    </div>,
     modalRoot,
   );
 };

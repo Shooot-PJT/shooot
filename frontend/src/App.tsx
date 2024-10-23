@@ -7,17 +7,37 @@ import { useNavBarStore } from './stores/navbarStore';
 import { Desktop } from './components/Layout/Desktop';
 import { Mobile } from './components/Layout/Mobile';
 import { useEffect } from 'react';
+import usePopup from './hooks/usePopup';
+import PopupPortal from './hooks/usePopup/PopupPortal';
+import Typography from './components/Typography';
+import Button from './components/Button';
 
 function App() {
   const modal = useModal();
+  const popup = usePopup();
+  const handlePopup = () => {
+    popup.push({
+      title: '팝업입니다',
+      children: (
+        <>
+          <Typography>내용입니다</Typography>
+        </>
+      ),
+      type: 'success',
+    });
+  };
   const handleModal = () => {
     modal.push({
       children: (
         <>
-          <button onClick={modal.pop}>하이용</button>
+          <Typography>내용입니다</Typography>
+          <button onClick={modal.pop}>닫기</button>
           <button onClick={handleModal}>모달추가</button>
         </>
       ),
+      onClose: () => {
+        console.log('바보');
+      },
     });
   };
   const navbarStore = useNavBarStore();
@@ -33,7 +53,23 @@ function App() {
   return (
     <div className={darkTheme} style={{ width: '100%', height: '100%' }}>
       <ModalPortal />
-
+      <PopupPortal />
+      <div style={{ position: 'fixed', left: '50%', bottom: '50%' }}>
+        <Button
+          onClick={handleModal}
+          children="모달추가"
+          rounded={0.5}
+          paddingX={0.5}
+          paddingY={0.25}
+        />
+        <Button
+          onClick={handlePopup}
+          children="팝업추가"
+          rounded={0.5}
+          paddingX={0.5}
+          paddingY={0.25}
+        />
+      </div>
       <NavBar>
         <Desktop>
           <NavBar.Title title="제목" />
@@ -49,14 +85,6 @@ function App() {
             </>
           )}
         </Mobile>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleModal();
-          }}
-        >
-          모달추가
-        </button>
       </NavBar>
     </div>
   );
