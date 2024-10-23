@@ -10,6 +10,7 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
   },
+  tags: ['autodocs'],
   argTypes: {
     title: {
       description: '팝업의 제목',
@@ -43,7 +44,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Primary: Story = {
   render: (args) => {
     return (
       <div className={darkThemeCss}>

@@ -1,16 +1,17 @@
 import useModalStore from '../../stores/useModalStore';
 import { ModalData } from './Modal.types';
 
-export type ModalPushProps = Pick<ModalData, 'color' | 'children' | 'onClose'>;
+export type ModalPushProps = Pick<
+  ModalData,
+  'opacity' | 'blur' | 'color' | 'children' | 'onClose'
+>;
 
 const useModal = () => {
   const { pushModal, updateModal } = useModalStore();
 
-  const push = ({ color, children, onClose }: ModalPushProps) => {
+  const push = (modalProps: ModalPushProps) => {
     pushModal({
-      color,
-      children,
-      onClose: onClose,
+      ...modalProps,
       isClosing: false,
     });
   };

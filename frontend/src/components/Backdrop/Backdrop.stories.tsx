@@ -36,7 +36,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Example: Story = {
+export const Primary: Story = {
   args: {
     isClosing: false,
     opacity: 40,
@@ -64,7 +64,10 @@ export const Example: Story = {
         >
           {args.children}
         </Backdrop>
-        <img src="https://cdn.pixabay.com/photo/2024/02/17/09/39/cat-8579018_1280.jpg" />
+        <img
+          style={{ width: 'auto', height: 'auto' }}
+          src="https://cdn.pixabay.com/photo/2024/02/17/09/39/cat-8579018_1280.jpg"
+        />
       </>
     );
   },

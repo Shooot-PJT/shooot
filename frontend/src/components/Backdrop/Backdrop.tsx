@@ -1,4 +1,4 @@
-import { ReactNode, useRef } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import * as s from './Backdrop.css';
 
 export interface BackDropProps {
@@ -16,8 +16,10 @@ export const Backdrop = ({
 }: BackDropProps) => {
   const backdropRef = useRef<HTMLDivElement>(null);
 
+  const isStorybook = window.location.port === '6006';
+
   const handleAnimationStart = (e: React.AnimationEvent) => {
-    if (e.target === backdropRef.current && !isClosing) {
+    if (e.target === backdropRef.current && !isClosing && !isStorybook) {
       document.body.style.overflow = 'hidden';
       document.body.style.touchAction = 'none';
     }
