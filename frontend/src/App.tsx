@@ -1,25 +1,19 @@
 import './App.css';
-<<<<<<< HEAD
-import useModal from './hooks/useModal';
-import ModalPortal from './hooks/useModal/ModalPortal';
-=======
 
 // import { API } from './pages/APIDocs/components/API/API';
->>>>>>> fe
+import useModal from './hooks/useModal';
+import ModalPortal from './hooks/useModal/ModalPortal';
 import darkTheme from './styles/darkTheme.css';
 import NavBar from './components/NavBar';
 import { useNavBarStore } from './stores/navbarStore';
 import { Desktop } from './components/Layout/Desktop';
 import { Mobile } from './components/Layout/Mobile';
 import { useEffect } from 'react';
-<<<<<<< HEAD
 import usePopup from './hooks/usePopup';
 import PopupPortal from './hooks/usePopup/PopupPortal';
 import Typography from './components/Typography';
 import Button from './components/Button';
-=======
 import { APIDocs } from './pages/APIDocs';
->>>>>>> fe
 
 function App() {
   const modal = useModal();
@@ -32,9 +26,9 @@ function App() {
           <Typography>내용입니다</Typography>
         </>
       ),
-      type: 'success',
     });
   };
+
   const handleModal = () => {
     modal.push({
       children: (
@@ -49,6 +43,7 @@ function App() {
       },
     });
   };
+
   const navbarStore = useNavBarStore();
 
   useEffect(() => {
@@ -61,7 +56,6 @@ function App() {
 
   return (
     <div className={darkTheme} style={{ width: '100%', height: '100%' }}>
-<<<<<<< HEAD
       <ModalPortal />
       <PopupPortal />
       <div style={{ position: 'fixed', left: '50%', bottom: '50%' }}>
@@ -96,34 +90,7 @@ function App() {
           )}
         </Mobile>
       </NavBar>
-=======
-      <div
-        className="TEMPORAL-LAYOUT"
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          gap: '0.25rem',
-        }}
-      >
-        <NavBar>
-          <Desktop>
-            <NavBar.Title title="제목" />
-            <NavBar.Project project={[0, 1, 2]} />
-            <NavBar.Menu />
-          </Desktop>
-          <Mobile>
-            <NavBar.Title title="제목" />
-            {navbarStore.isOpen && (
-              <>
-                <NavBar.Project project={[0, 1, 2]} />
-                <NavBar.Menu />
-              </>
-            )}
-          </Mobile>
-        </NavBar>
-        <APIDocs />
-      </div>
->>>>>>> fe
+      <APIDocs />
     </div>
   );
 }
