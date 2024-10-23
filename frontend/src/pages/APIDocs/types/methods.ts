@@ -1,9 +1,9 @@
-export type Methods = 'POST' | 'GET' | 'PUT' | 'PATCH' | 'DELETE';
+export type Method = 'post' | 'get' | 'put' | 'patch' | 'delete';
 
-export const METHODS: Record<Methods, Methods> = {
-  POST: 'POST',
-  GET: 'GET',
-  PUT: 'PUT',
-  PATCH: 'PATCH',
-  DELETE: 'DELETE',
+export const METHODS: Record<Method, Method> = {
+  post: 'post',
+  get: 'get',
+  put: 'put',
+  patch: 'patch',
+  delete: 'delete',
 };

@@ -1,4 +1,7 @@
+import { Method } from '../../types/methods';
+
 export interface APIBasicInfo {
+  method: Method;
   title: string;
   description: string;
   managerName: string | null | undefined;
@@ -8,10 +11,26 @@ export interface APIBasicInfo {
 export type EndPoint = string | null | undefined;
 
 // YET일지 null일지 undefined일지는 백엔드에 의존적이므로 추후 점검
-export type TestResult = 'FAIL' | 'SUCCESS' | 'YET'; // | null | undefined;
+export type TestResult = 'fail' | 'success' | 'yet'; // | null | undefined;
 
 export const TEST_RESULTS: Record<TestResult, TestResult> = {
-  FAIL: 'FAIL',
-  SUCCESS: 'SUCCESS',
-  YET: 'YET',
+  fail: 'fail',
+  success: 'success',
+  yet: 'yet',
 };
+
+export interface User {
+  id: number;
+  email: string;
+  nickname: string;
+  isDeleted: boolean;
+  createdAt: string;
+}
+
+export interface Participant extends User {
+  isOwner: boolean;
+  projectId: number;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface Manager extends Pick<User, 'id' | 'nickname'> {}
