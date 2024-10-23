@@ -2,7 +2,6 @@ import './App.css';
 
 // import { API } from './pages/APIDocs/components/API/API';
 import useModal from './hooks/useModal';
-import ModalPortal from './hooks/useModal/ModalPortal';
 import darkTheme from './styles/darkTheme.css';
 import NavBar from './components/NavBar';
 import { useNavBarStore } from './stores/navbarStore';
@@ -10,7 +9,6 @@ import { Desktop } from './components/Layout/Desktop';
 import { Mobile } from './components/Layout/Mobile';
 import { useEffect } from 'react';
 import usePopup from './hooks/usePopup';
-import PopupPortal from './hooks/usePopup/PopupPortal';
 import Typography from './components/Typography';
 import { APIDocs } from './pages/APIDocs';
 import Button from './components/Button';
