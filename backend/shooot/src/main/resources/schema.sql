@@ -93,8 +93,9 @@ CREATE TABLE notification
 
 CREATE TABLE project_build
 (
-    project_build_file_id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    project_build_id INTEGER AUTO_INCREMENT PRIMARY KEY NOT NULL,
     md5_check_sum         CHAR(32) NOT NULL,
+    file_name           VARCHAR(100) NOT NULL,
     version_major         TINYINT  NOT NULL,
     version_minor         TINYINT  NOT NULL,
     version_patch         TINYINT  NOT NULL,
@@ -109,17 +110,17 @@ CREATE TABLE project_build
 CREATE TABLE project_build_log
 (
     project_build_log_id  BINARY(16) NOT NULL PRIMARY KEY,
-    project_build_file_id INTEGER     NOT NULL,
+    project_build_id INTEGER     NOT NULL,
     created_at            DATETIME    NOT NULL,
     status                VARCHAR(30) NOT NULL,
-    FOREIGN KEY (project_build_file_id) REFERENCES project_build (project_build_file_id)
+    FOREIGN KEY (project_build_id) REFERENCES project_build (project_build_id)
 );
 
 CREATE TABLE build_file_api_docs
 (
     build_api_docs_id     INTEGER     NOT NULL AUTO_INCREMENT PRIMARY KEY,
     api_id                INTEGER,
-    project_build_file_id INTEGER     NOT NULL,
+    project_build_id INTEGER     NOT NULL,
     content_type          VARCHAR(30) NOT NULL,
     request_body          TEXT,
     url                   TEXT        NOT NULL,
@@ -166,10 +167,10 @@ CREATE TABLE api_stress_test_start_log
 (
     api_stress_test_start_log_id INTEGER  NOT NULL PRIMARY KEY AUTO_INCREMENT,
     project_participant_id       INTEGER  NOT NULL,
-    project_build_file_id        INTEGER  NOT NULL,
+    project_build_id        INTEGER  NOT NULL,
     created_at                   DATETIME NOT NULL,
     FOREIGN KEY (project_participant_id) REFERENCES project_participant (project_participant_id),
-    FOREIGN KEY (project_build_file_id) REFERENCES project_build (project_build_file_id)
+    FOREIGN KEY (project_build_id) REFERENCES project_build (project_build_id)
 );
 
 CREATE TABLE api_stress_test_log
@@ -183,6 +184,14 @@ CREATE TABLE api_stress_test_log
     type                   VARCHAR(10),
     FOREIGN KEY (build_file_api_docs_id) REFERENCES build_file_api_docs (build_api_docs_id),
     FOREIGN KEY (api_stress_test_start_log_id) REFERENCES api_stress_test_start_log (api_stress_test_start_log_id)
+);
+
+CREATE TABLE project_file (
+    project_build_id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    project_file BLOB NOT NULL ,
+    docker_compose_file BLOB NOT NULL ,
+    file_name VARCHAR(100) NOT NULL,
+    FOREIGN KEY (project_build_id) REFERENCES project_build(project_build_id)
 );
 
 INSERT INTO user(nickname, password, email, is_deleted, created_at) VALUES ('흑염룡1', 0x24326124313024795451594A7A38462F676B5232734550516B6D72542E36434B5A585249315A76465561314274527551613763417257796E37375432, 'khj745700@naver.com', false, NOW());

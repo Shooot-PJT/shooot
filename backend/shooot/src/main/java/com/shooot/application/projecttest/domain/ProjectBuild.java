@@ -30,5 +30,7 @@ public class ProjectBuild extends SoftDeleteEntity {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @Column(name = "file_name")
+    private String fileName;
 
 }

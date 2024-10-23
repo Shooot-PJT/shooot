@@ -13,20 +13,23 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ApiInfoExtractor {
+public final class ApiInfoExtractor {
 
-    public static void extractApiInfo(Map<String, List<Class<?>>> stringListMap) throws Exception {
+    public static List<Class<?>> extractApiInfo(Map<String, List<Class<?>>> stringListMap) throws Exception {
         List<Class<?>> classes = stringListMap.get(CustomClassLoader.WRTIE_CLASSES);
-
+        List<Class<?>> controllerClass = new ArrayList<>();
         for (Class<?> clazz : classes) {
-            boolean isRestController = clazz.isAnnotationPresent(RestController.class);
             boolean isController = clazz.isAnnotationPresent(Controller.class);
+            boolean isRestController = clazz.isAnnotationPresent(RestController.class) || (isController && clazz.isAnnotationPresent(ResponseBody.class));
+
 
             if (isRestController || isController) {
+                controllerClass.add(clazz);
                 for (Method method : clazz.getDeclaredMethods()) {
                     if (isRestController || method.isAnnotationPresent(ResponseBody.class)) {
                         extractEndpointInfo(method);
@@ -42,6 +45,7 @@ public class ApiInfoExtractor {
                 }
             }
         }
+        return controllerClass;
     }
 
     private static void extractEndpointInfo(Method method) {
