@@ -19,20 +19,17 @@ const meta = {
   ],
   tags: ['autodocs'],
   argTypes: {
+    children: {
+      description: '표시할 typography',
+    },
     color: {
       description: '글자 색상',
     },
     size: {
       description: '글자 크기, rem 단위',
-      type: 'number',
     },
-    blur: {
+    weight: {
       description: '글자 굵기',
-      type: 'number',
-    },
-    children: {
-      description: '표시할 내부 컨텐츠',
-      type: 'symbol',
     },
   },
 } satisfies Meta<typeof Typography>;
