@@ -7,6 +7,7 @@ import { useNavBarStore } from './stores/navbarStore';
 import { Desktop } from './components/Layout/Desktop';
 import { Mobile } from './components/Layout/Mobile';
 import { useEffect } from 'react';
+import { APIDocs } from './pages/APIDocs';
 
 function App() {
   const navbarStore = useNavBarStore();
@@ -21,36 +22,34 @@ function App() {
 
   return (
     <div className={darkTheme} style={{ width: '100%', height: '100%' }}>
-      <NavBar>
-        <Desktop>
-          <NavBar.Title title="제목" />
-          <NavBar.Project project={[0, 1, 2]} />
-          <NavBar.Menu />
-        </Desktop>
-        <Mobile>
-          <NavBar.Title title="제목" />
-          {navbarStore.isOpen && (
-            <>
-              <NavBar.Project project={[0, 1, 2]} />
-              <NavBar.Menu />
-            </>
-          )}
-        </Mobile>
-      </NavBar>
+      <div
+        className="TEMPORAL-LAYOUT"
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '0.25rem',
+        }}
+      >
+        <NavBar>
+          <Desktop>
+            <NavBar.Title title="제목" />
+            <NavBar.Project project={[0, 1, 2]} />
+            <NavBar.Menu />
+          </Desktop>
+          <Mobile>
+            <NavBar.Title title="제목" />
+            {navbarStore.isOpen && (
+              <>
+                <NavBar.Project project={[0, 1, 2]} />
+                <NavBar.Menu />
+              </>
+            )}
+          </Mobile>
+        </NavBar>
+        <APIDocs />
+      </div>
     </div>
   );
-}
-
-{
-  /* <API>
-        <API.Header
-          title={'특별한 계란 목록 가져오기'}
-          managerName={''}
-          method={'GET'}
-          needAuthorize={false}
-          endPoint={''}
-        />
-      </API> */
 }
 
 export default App;
