@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef } from 'react';
+import { ReactNode, useRef } from 'react';
 import * as s from './Backdrop.css';
 
 export interface BackDropProps {
