@@ -19,7 +19,11 @@ const ModalPortal = () => {
       {modals.map((modal, index) => (
         <React.Fragment key={index}>
           <Desktop>
-            <Backdrop isClosing={modal.isClosing}>
+            <Backdrop
+              isClosing={modal.isClosing}
+              opacity={modal.opacity}
+              blur={modal.blur}
+            >
               <Modal onClose={modal.onClose} isClosing={modal.isClosing}>
                 {modal.children}
               </Modal>
