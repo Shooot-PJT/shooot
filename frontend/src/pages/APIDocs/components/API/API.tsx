@@ -1,90 +1,110 @@
 import { ReactNode } from 'react';
-import { Methods } from '../../types/methods';
-import { APIBasicInfo, EndPoint } from './API.types';
+import { APIBasicInfo, EndPoint, Manager, TestResult } from './API.types';
 import Flexbox from '../../../../components/Flexbox';
-import colorPalette from '../../../../styles/colorPalette';
+import MethodHeader from './subComponents/APIHeader/MethodHeader/MethodHeader';
+import * as style from './API.css';
+import Typography from '../../../../components/Typography';
+import TestResultTail from './subComponents/APIHeader/TestResultTail/TestResultTail';
+import LockButton from './subComponents/APIHeader/LockButton/LockButton';
+import Button from '../../../../components/Button';
+import Avatar from './subComponents/APICommon/ManagerAvatar/ManagerAvatar';
+import { CollapseIcon } from './subComponents/APICommon/CollapseIcon/CollapseIcon';
 
 interface APIProps {
   children: ReactNode;
 }
 
 interface APIHeaderProps {
-  // API_BASIC_INFO
+  // API 기본 입력 정보
   title: APIBasicInfo['title'];
-  managerName?: APIBasicInfo['managerName'];
-  // API_ADDITIONAL_INFO
-  method?: Methods;
+  manager: Manager;
+  method: APIBasicInfo['method'];
+  // API 추가 입력 정보
   needAuthorize?: boolean;
   endPoint?: EndPoint;
+  lastTestResult?: TestResult;
 }
 
 export const API = ({ children }: APIProps) => {
-  return (
-    <div
-      className="api-root"
-      style={{
-        width: '100%',
-        height: '4rem',
-        alignItems: 'center',
-        textAlign: 'center',
-        backgroundColor: colorPalette.deepOrange[900],
-      }}
-    >
-      {children}
-    </div>
-  );
+  return <div className={style.apiRootContainer}>{children}</div>;
 };
 
 API.Header = function Header({
   title,
-  managerName,
+  manager,
   method,
   needAuthorize,
   endPoint,
+  lastTestResult,
 }: APIHeaderProps) {
-  // const header = useAPIStore((state) => state.header);
+  // 추후: const header = useAPIStore((state) => state.header);
 
   return (
-    <>
+    <Flexbox
+      alignItems="center"
+      flexDirection="row"
+      justifyContent="space-between"
+      columnGap={1.5}
+      rounded={0.75}
+      className={style.apiHeaderBoxStyle({ isOpen: false })}
+      overflow="hidden"
+    >
+      <MethodHeader method={method} />
       <Flexbox
-        bg={300} // zustand에  body Open여부에 따라 색상 300 -> 100으로 전환되도록 추후 확장
-        borderRadius="0.5rem"
         alignItems="center"
         flexDirection="row"
-        justifyContent="between"
-        columnGap="1.5rem"
+        justifyContent="space-between"
+        className={style.fullBoxStyle}
       >
-        {/* [ 1 ] 메서드 헤더 */}
-        <div>{method}</div>
-        {/* [ 2 ] 중앙 컨텐츠 : ( needAuthorize, endPoint, title, managerName )*/}
-        <div>
-          {/* ( 2-left ) */}
-          <div>
-            {/* needAuthorize */}
-            {/* endPoint */}
-            {/* realServer토글버튼 - 상태 추가 필요 */}
-          </div>
-          {/* ( 2-center ) */}
-          <div>{title}</div>
-          {/* ( 2-right ) */}
-          <div>
-            {/* 테스트 버튼 (활성/비활성) */}
-            {/* 테스트 버튼 ( collapse 상태 아이콘 ) */}
-          </div>
-        </div>
-        {/* [ 3 ] 마지막 테스트 결과 테일 */}
-        <div></div>
+        <Flexbox
+          alignItems="center"
+          flexDirection="row"
+          justifyContent="start"
+          columnGap={1.25}
+          className={style.apiHeaderLeftContentStyle}
+        >
+          <LockButton needAuthorize={needAuthorize!} />
+          <Typography size={1} color="disabled">
+            {endPoint}
+          </Typography>
+          {/* 추후: realServer토글버튼 - 상태 추가 필요 */}
+        </Flexbox>
+
+        <Flexbox
+          bg={'transparent'}
+          alignItems="center"
+          flexDirection="row"
+          justifyContent="space-between"
+          className={style.apiHeaderRightContentStyle}
+        >
+          <Typography size={0.85} weight="300" color="disabled">
+            {title}
+          </Typography>
+          <Flexbox
+            bg={'transparent'}
+            alignItems="center"
+            flexDirection="row"
+            justifyContent="center"
+            columnGap={1}
+          >
+            <Avatar id={manager.id} nickname={manager.nickname} />
+            <Button paddingX={1} rounded={0.5}>
+              <Typography size={0.75}>테스트</Typography>
+            </Button>
+            <CollapseIcon isOpen={false} />
+          </Flexbox>
+        </Flexbox>
       </Flexbox>
-    </>
+      <TestResultTail lastTestResult={lastTestResult!} />
+    </Flexbox>
   );
 };
 
 API.Body = function Body() {
-  // const header = useAPIStore((state) => state.header);
-
+  // 추후: const header = useAPIStore((state) => state.header);
   return (
     <div
-    // onClick={ } // body open 제어 ( collapse처럼 )
+    // 추후: onClick={ } // body open 제어 ( collapse처럼 )
     ></div>
   );
 };
