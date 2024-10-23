@@ -1,21 +1,15 @@
-import useModalStore, { ModalData } from '../../stores/useModalStore';
+import useModalStore from '../../stores/useModalStore';
+import { ModalData } from './Modal.types';
 
-export type ModalPushProps = Pick<
-  ModalData,
-  'children' | 'animation' | 'onClose'
->;
+export type ModalPushProps = Pick<ModalData, 'color' | 'children' | 'onClose'>;
 
 const useModal = () => {
   const { pushModal, updateModal } = useModalStore();
 
-  const push = ({
-    children,
-    animation = 'center',
-    onClose,
-  }: ModalPushProps) => {
+  const push = ({ color, children, onClose }: ModalPushProps) => {
     pushModal({
+      color,
       children,
-      animation,
       onClose: onClose,
       isClosing: false,
     });

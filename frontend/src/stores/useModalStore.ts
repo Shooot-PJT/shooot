@@ -1,12 +1,5 @@
-import { ReactNode } from 'react';
 import { create } from 'zustand';
-
-export interface ModalData {
-  children: ReactNode;
-  animation?: 'center' | 'bottom';
-  onClose?: () => void;
-  isClosing: boolean;
-}
+import { ModalData } from '../hooks/useModal/Modal.types';
 
 interface ModalState {
   modals: ModalData[];

@@ -16,6 +16,7 @@ const meta = {
       </div>
     ),
   ],
+  tags: ['autodocs'],
   argTypes: {
     children: {
       description: '표시할 내부 컨텐츠',
@@ -53,6 +54,7 @@ export const Example: Story = {
     ),
   },
   render: (args) => {
+    document.body.style.overflow = '';
     return (
       <>
         <Backdrop
