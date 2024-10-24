@@ -60,6 +60,13 @@ export default createTheme(themeContract, {
       disabled: colorPalette.deepOrange['50'],
       contrastText: '#ffffff',
     },
+    grey: {
+      main: colorPalette.grey['500'],
+      hover: colorPalette.grey['200'],
+      active: colorPalette.grey['50'],
+      disabled: colorPalette.grey['700'],
+      contarstText: '#ffffff',
+    },
   },
   color: {
     typography: {
@@ -103,6 +110,9 @@ export default createTheme(themeContract, {
       dark: colorPalette.grey['50'],
       light: colorPalette.grey['50'],
       disabled: colorPalette.grey['50'],
+    },
+    modal: {
+      bar: '#61616E',
     },
     background: {
       100: '#1B1A1F',
