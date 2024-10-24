@@ -5,10 +5,10 @@ import * as s from './Button.css';
 interface ButtonProps {
   children: ReactNode;
   color?: ButtonColor;
-  rounded: number;
+  rounded?: number;
   fullWidth?: boolean;
-  paddingX: number;
-  paddingY: number;
+  paddingX?: number;
+  paddingY?: number;
   disabled?: boolean;
   onClick?: () => void;
 }
@@ -18,7 +18,7 @@ const Button = ({
   rounded = 0.75,
   color = 'primary',
   fullWidth,
-  paddingX = 1,
+  paddingX = 1.25,
   paddingY = 0.5,
   disabled = false,
   onClick,
