@@ -39,7 +39,10 @@ function App() {
         </>
       ),
       onClose: () => {
-        console.log('바보');
+        console.log(
+          '%c슛🚀',
+          'color:#825cff; font-size: 2rem; font-weight: 800',
+        );
       },
     });
   };
