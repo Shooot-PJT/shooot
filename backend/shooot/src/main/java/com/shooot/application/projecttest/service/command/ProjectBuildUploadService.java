@@ -1,5 +1,6 @@
 package com.shooot.application.projecttest.service.command;
 
+import com.shooot.application.common.events.Events;
 import com.shooot.application.project.domain.Project;
 import com.shooot.application.project.domain.repository.ProjectRepository;
 import com.shooot.application.projecttest.domain.ProjectBuild;
@@ -7,6 +8,7 @@ import com.shooot.application.projecttest.domain.ProjectFile;
 import com.shooot.application.projecttest.domain.ProjectVersion;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
 import com.shooot.application.projecttest.domain.repository.ProjectFileRepository;
+import com.shooot.application.projecttest.event.dto.ProjectBuildUploadedEvent;
 import com.shooot.application.projecttest.exception.FileIsExistException;
 import com.shooot.application.projecttest.exception.FileIsNotJarFileException;
 import com.shooot.application.projecttest.handler.ProjectFileHandler;
@@ -29,10 +31,7 @@ public class ProjectBuildUploadService {
     private final ProjectFileRepository projectFileRepository;
     private final ProjectBuildRepository projectBuildRepository;
 
-    public Integer buildFileApiExtractor(
-            Integer projectId,
-            MultipartFile uploadedProjectFile,
-            MultipartFile uploadedDockerComposeFile) {
+    public Integer buildFileApiExtractor(Integer projectId, MultipartFile uploadedProjectFile, MultipartFile uploadedDockerComposeFile) {
 
         Project project = findProjectById(projectId);
         File jarFile = convertToFile(uploadedProjectFile, project.getName());
@@ -53,7 +52,9 @@ public class ProjectBuildUploadService {
 
         projectBuild.setProjectFile(projectFile);
 
-        return projectBuildRepository.save(projectBuild).getId();
+        Integer id = projectBuildRepository.save(projectBuild).getId();
+        Events.raise(new ProjectBuildUploadedEvent(id, jarFile));
+        return id;
     }
 
     private Project findProjectById(Integer projectId) {
