@@ -20,19 +20,19 @@ import java.util.Map;
 
 public final class ApiInfoExtractor {
 
-    public static List<Class<?>> extractApiInfo(Map<String, List<Class<?>>> stringListMap) throws Exception {
+    public static List<Method> extractApiInfo(Map<String, List<Class<?>>> stringListMap) throws Exception {
         List<Class<?>> classes = stringListMap.get(CustomClassLoader.WRTIE_CLASSES);
-        List<Class<?>> controllerClass = new ArrayList<>();
+        List<Method> endPoints = new ArrayList<>();
         for (Class<?> clazz : classes) {
             boolean isController = clazz.isAnnotationPresent(Controller.class);
             boolean isRestController = clazz.isAnnotationPresent(RestController.class) || (isController && clazz.isAnnotationPresent(ResponseBody.class));
 
 
             if (isRestController || isController) {
-                controllerClass.add(clazz);
+
                 for (Method method : clazz.getDeclaredMethods()) {
                     if (isRestController || method.isAnnotationPresent(ResponseBody.class)) {
-                        extractEndpointInfo(method);
+                        extractEndpointInfo(method,endPoints);
                         extractReturnTypeInfo(method);
 
                         for (Parameter parameter : method.getParameters()) {
@@ -45,10 +45,10 @@ public final class ApiInfoExtractor {
                 }
             }
         }
-        return controllerClass;
+        return endPoints;
     }
 
-    private static void extractEndpointInfo(Method method) {
+    private static void extractEndpointInfo(Method method, List<Method> methods) {
         Class<? extends Annotation>[] httpAnnotations = new Class[]{
                 RequestMapping.class, GetMapping.class, PostMapping.class, PutMapping.class, DeleteMapping.class, PatchMapping.class
         };
@@ -56,6 +56,7 @@ public final class ApiInfoExtractor {
         for (Class<? extends Annotation> annotationClass : httpAnnotations) {
             Annotation annotation = method.getAnnotation(annotationClass);
             if (annotation != null) {
+                methods.add(method);
                 String[] paths = getPathsFromAnnotation(annotation);
                 System.out.println("API Endpoint: " + String.join(", ", paths) + " - Method: " + method.getName());
             }

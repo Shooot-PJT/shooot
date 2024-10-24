@@ -122,9 +122,7 @@ CREATE TABLE build_file_api_docs
     api_id                INTEGER,
     project_build_id INTEGER     NOT NULL,
     content_type          VARCHAR(30) NOT NULL,
-    request_body          TEXT,
     url                   TEXT        NOT NULL,
-    response_body         TEXT,
     FOREIGN KEY (api_id) REFERENCES api (api_id)
 );
 

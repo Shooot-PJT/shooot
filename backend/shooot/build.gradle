@@ -40,6 +40,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-loader'
     implementation 'com.github.f4b6a3:uuid-creator:6.0.0'
+    implementation 'org.yaml:snakeyaml:2.0'
+
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'

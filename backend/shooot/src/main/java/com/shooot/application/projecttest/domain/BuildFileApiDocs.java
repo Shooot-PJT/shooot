@@ -33,16 +33,8 @@ public class BuildFileApiDocs {
     @Column(name = "content_type")
     private String contentType;
 
-    @Convert(converter = MapToJsonConverter.class)
-    @Column(name = "request_body")
-    private Map<String, Object> requestBody;
-
     @Column(name = "url")
     private String url;
-
-    @Convert(converter = MapToJsonConverter.class)
-    @Column(name = "response_body")
-    private Map<String, Object> responseBody;
 
 
 }
