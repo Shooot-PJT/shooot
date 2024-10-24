@@ -58,6 +58,13 @@ const themeContract = {
       disabled: null,
       contrastText: null,
     },
+    grey: {
+      main: null,
+      hover: null,
+      active: null,
+      disabled: null,
+      contarstText: null,
+    },
   },
   color: {
     typography: {
@@ -101,6 +108,9 @@ const themeContract = {
       dark: null,
       light: null,
       disabled: null,
+    },
+    modal: {
+      bar: null,
     },
     background: {
       100: null,
