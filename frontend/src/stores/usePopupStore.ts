@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { PopupData } from '../hooks/usePopup/Popup.types';
+import { PopupData } from '../components/Popup/Popup.types';
 
 interface PopupState {
   popups: PopupData[];

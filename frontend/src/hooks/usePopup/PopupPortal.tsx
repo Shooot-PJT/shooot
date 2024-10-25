@@ -3,7 +3,7 @@ import usePopupStore from '../../stores/usePopupStore';
 import Backdrop from '../../components/Backdrop';
 import darkTheme from '../../styles/darkTheme.css';
 import React from 'react';
-import Popup from './Popup';
+import Popup from '../../components/Popup/Popup';
 
 const PopupPortal = () => {
   const { popups } = usePopupStore();

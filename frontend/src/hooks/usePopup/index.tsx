@@ -1,5 +1,5 @@
 import usePopupStore from '../../stores/usePopupStore';
-import { PopupData } from './Popup.types';
+import { PopupData } from '../../components/Popup/Popup.types';
 
 export type PopupPushProps = Pick<
   PopupData,
