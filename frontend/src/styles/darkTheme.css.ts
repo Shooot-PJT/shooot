@@ -111,6 +111,43 @@ export default createTheme(themeContract, {
       light: colorPalette.grey['50'],
       disabled: colorPalette.grey['50'],
     },
+    textfield: {
+      background: '#3A3A4A',
+      placeholder: colorPalette.grey['500'],
+      border: '#8C8CB6',
+      primary: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.purple['300'],
+      },
+      secondary: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.brown['300'],
+      },
+      tertiary: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.pink['300'],
+      },
+      grey: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.grey['300'],
+      },
+      get: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.green['300'],
+      },
+      post: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.amber['300'],
+      },
+      put: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.blue['300'],
+      },
+      delete: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.deepOrange['500'],
+      },
+    },
     modal: {
       bar: '#61616E',
     },
