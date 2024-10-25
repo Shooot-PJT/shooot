@@ -2,7 +2,8 @@ import React from 'react';
 import * as s from './Textfield.css';
 import { TextfieldColor } from './Textfield.types';
 
-interface TextfieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface TextfieldProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   color?: TextfieldColor;
   coloredLabel?: boolean;
