@@ -1,0 +1,33 @@
+package com.shooot.application.project.ui;
+
+import com.shooot.application.project.service.command.ProjectRegisterService;
+import com.shooot.application.project.service.dto.ProjectRegisterRequest;
+import com.shooot.application.security.service.UserLoginContext;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+@RequiredArgsConstructor
+@RequestMapping("/project")
+@RestController
+public class ProjectController {
+
+    private final ProjectRegisterService projectRegisterService;
+
+    // TODO: 현재 접속 중인 유저 정보 가져와 함께 전달하도록 수정
+    @PostMapping
+    public ResponseEntity<Void> projectRegister(
+        @RequestPart ProjectRegisterRequest request,
+        @RequestPart MultipartFile file,
+        @AuthenticationPrincipal UserLoginContext userLoginContext
+    ) {
+        Integer userId = userLoginContext.getUserId();
+        projectRegisterService.projectRegister(request, file, userId);
+        return ResponseEntity.ok().build();
+    }
+}
