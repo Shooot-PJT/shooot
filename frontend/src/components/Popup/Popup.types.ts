@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { ModalColor } from '../useModal/Modal.types';
+import { ModalColor } from '../Modal/Modal.types';
 
 export type PopupColor = ModalColor;
 

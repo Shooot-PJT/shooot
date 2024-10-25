@@ -109,6 +109,31 @@ const themeContract = {
       light: null,
       disabled: null,
     },
+    textfield: {
+      background: null,
+      border: null,
+      placeholder: null,
+      primary: {
+        fontColor: null,
+        borderActive: null,
+      },
+      secondary: {
+        fontColor: null,
+        borderActive: null,
+      },
+      tertiary: {
+        fontColor: null,
+        borderActive: null,
+      },
+      grey: {
+        fontColor: null,
+        borderActive: null,
+      },
+      get: { fontColor: null, borderActive: null },
+      post: { fontColor: null, borderActive: null },
+      put: { fontColor: null, borderActive: null },
+      delete: { fontColor: null, borderActive: null },
+    },
     modal: {
       bar: null,
     },

@@ -34,14 +34,17 @@ function App() {
   const handleModal = () => {
     modal.push({
       children: (
-        <>
+        <Flexbox flexDirections="col">
           <Typography>내용입니다</Typography>
-          <button onClick={modal.pop}>닫기</button>
-          <button onClick={handleModal}>모달추가</button>
-        </>
+          <Button onClick={modal.pop}>닫기</Button>
+          <Button onClick={handleModal}>모달추가</Button>
+        </Flexbox>
       ),
       onClose: () => {
-        console.log('바보');
+        console.log(
+          '%c슛🚀',
+          'color:#825cff; font-size: 2rem; font-weight: 800',
+        );
       },
     });
   };
