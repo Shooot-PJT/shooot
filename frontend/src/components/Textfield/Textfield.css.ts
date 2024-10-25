@@ -16,7 +16,7 @@ export const label = recipe({
     fontWeight: '700',
   },
   variants: {
-    color: {
+    labelColor: {
       primary: {
         color: theme.color.textfield.primary.borderActive,
       },
@@ -29,6 +29,21 @@ export const label = recipe({
       grey: {
         color: theme.color.textfield.grey.borderActive,
       },
+      get: {
+        color: theme.color.textfield.get.borderActive,
+      },
+      post: {
+        color: theme.color.textfield.post.borderActive,
+      },
+      put: {
+        color: theme.color.textfield.put.borderActive,
+      },
+      delete: {
+        color: theme.color.textfield.delete.borderActive,
+      },
+      default: {
+        color: theme.color.textfield.border,
+      },
     },
   },
 });
@@ -38,9 +53,10 @@ export const input = recipe({
     height: 'var(--height, 2rem)',
     width: 'var(--width, 10rem)',
     borderRadius: '0.5rem',
-    transition: 'all 0.5s',
+    transition: 'all 0.33s',
     background: theme.color.textfield.background,
     fontSize: 'var(--fontSize, 16px)',
+    border: `4px solid ${theme.color.textfield.border}`,
     selectors: {
       '&::placeholder': {
         color: theme.color.textfield.placeholder,
@@ -55,30 +71,50 @@ export const input = recipe({
     color: {
       primary: {
         color: theme.color.textfield.primary.fontColor,
-        border: `4px solid ${theme.color.textfield.primary.border}`,
         '&:focus': {
           border: `4px solid ${theme.color.textfield.primary.borderActive}`,
         },
       },
       secondary: {
         color: theme.color.textfield.secondary.fontColor,
-        border: `4px solid ${theme.color.textfield.secondary.border}`,
         '&:focus': {
           border: `4px solid ${theme.color.textfield.secondary.borderActive}`,
         },
       },
       tertiary: {
         color: theme.color.textfield.tertiary.fontColor,
-        border: `4px solid ${theme.color.textfield.tertiary.border}`,
         '&:focus': {
           border: `4px solid ${theme.color.textfield.tertiary.borderActive}`,
         },
       },
       grey: {
         color: theme.color.textfield.grey.fontColor,
-        border: `4px solid ${theme.color.textfield.grey.border}`,
         '&:focus': {
           border: `4px solid ${theme.color.textfield.grey.borderActive}`,
+        },
+      },
+      get: {
+        color: theme.color.textfield.get.fontColor,
+        '&:focus': {
+          border: `4px solid ${theme.color.textfield.get.borderActive}`,
+        },
+      },
+      post: {
+        color: theme.color.textfield.post.fontColor,
+        '&:focus': {
+          border: `4px solid ${theme.color.textfield.post.borderActive}`,
+        },
+      },
+      put: {
+        color: theme.color.textfield.put.fontColor,
+        '&:focus': {
+          border: `4px solid ${theme.color.textfield.put.borderActive}`,
+        },
+      },
+      delete: {
+        color: theme.color.textfield.delete.fontColor,
+        '&:focus': {
+          border: `4px solid ${theme.color.textfield.delete.borderActive}`,
         },
       },
     },

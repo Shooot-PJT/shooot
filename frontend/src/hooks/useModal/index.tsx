@@ -1,5 +1,5 @@
 import useModalStore from '../../stores/useModalStore';
-import { ModalData } from './Modal.types';
+import { ModalData } from '../../components/Modal/Modal.types';
 
 export type ModalPushProps = Pick<
   ModalData,

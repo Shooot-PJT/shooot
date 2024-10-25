@@ -1,10 +1,10 @@
 import React from 'react';
 import * as s from './Textfield.css';
-import { textfieldColor } from './Textfield.types';
+import { TextfieldColor } from './Textfield.types';
 
 interface TextfieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  color: textfieldColor;
+  color?: TextfieldColor;
   coloredLabel?: boolean;
   labelSize?: number;
   fullWidth?: boolean;
@@ -26,10 +26,11 @@ export const Textfield = React.forwardRef<HTMLInputElement, TextfieldProps>(
     },
     ref,
   ) => {
+    const labelColor = coloredLabel ? color : 'default';
     return (
       <div className={s.container}>
         <div
-          className={s.label({ color })}
+          className={s.label({ labelColor })}
           style={
             {
               '--labelSize': `${labelSize}rem`,

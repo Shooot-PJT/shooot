@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom';
 import Backdrop from '../../components/Backdrop';
 import useModalStore from '../../stores/useModalStore';
-import Modal from './Modal';
+import Modal from '../../components/Modal/Modal';
 import darkTheme from '../../styles/darkTheme.css';
 import { Mobile } from '../../components/Layout/Mobile';
 import { Desktop } from '../../components/Layout/Desktop';
