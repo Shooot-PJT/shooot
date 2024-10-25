@@ -4,8 +4,8 @@ import { useNavBarStore } from '../../../stores/navbarStore';
 import theme from '../../../styles/theme.css';
 import Icon from '../../Icon';
 import Typography from '../../Typography';
-import { Desktop } from '../../Layout/Desktop';
-import { Mobile } from '../../Layout/Mobile';
+import * as style from '../NavBar.css';
+import Button from '../../Button';
 
 interface MenuItemProps extends React.ComponentProps<'div'> {
   menu: string;
@@ -17,39 +17,41 @@ const MenuItems = ({ menu, icon, idx }: MenuItemProps) => {
   const navbarStore = useNavBarStore();
 
   return (
-    <Flexbox
-      justifyContents="start"
-      style={{
-        columnGap: '1rem',
-        borderRadius: '0.5rem',
-        minWidth: '90%',
-        padding: '0.75rem 2rem',
-        backgroundColor:
-          navbarStore.menu === idx
-            ? theme.palette.primary.main
-            : theme.color.background['100'],
-      }}
-      onClick={() => navbarStore.setMenu(idx)}
+    <Button
+      color={navbarStore.menu === idx ? 'primary' : 'none'}
+      paddingX={0}
+      paddingY={0}
+      fullWidth
     >
-      <Desktop>
-        <Icon
-          color={navbarStore.menu === idx ? 'light' : 'disabled'}
-          size={2}
-          background="none"
-        >
-          {icon}
-        </Icon>
-      </Desktop>
-      <Mobile>
-        <Icon
-          color={navbarStore.menu === idx ? 'light' : 'disabled'}
-          size={1}
-          background="none"
-        >
-          {icon}
-        </Icon>
-      </Mobile>
-      <Desktop>
+      <Flexbox
+        justifyContents="start"
+        style={{
+          columnGap: '1rem',
+          borderRadius: '0.5rem',
+          minWidth: '90%',
+          padding: '0.75rem 2rem',
+          cursor: 'pointer',
+        }}
+        onClick={() => navbarStore.setMenu(idx)}
+      >
+        <div className={style.desktopL}>
+          <Icon
+            color={navbarStore.menu === idx ? 'light' : 'disabled'}
+            size={2}
+            background="none"
+          >
+            {icon}
+          </Icon>
+        </div>
+        <div className={style.desktopS}>
+          <Icon
+            color={navbarStore.menu === idx ? 'light' : 'disabled'}
+            size={1.5}
+            background="none"
+          >
+            {icon}
+          </Icon>
+        </div>
         <Typography
           color={navbarStore.menu === idx ? 'light' : 'disabled'}
           size={1}
@@ -57,17 +59,8 @@ const MenuItems = ({ menu, icon, idx }: MenuItemProps) => {
         >
           {menu}
         </Typography>
-      </Desktop>
-      <Mobile>
-        <Typography
-          color={navbarStore.menu === idx ? 'light' : 'disabled'}
-          size={0.875}
-          weight="700"
-        >
-          {menu}
-        </Typography>
-      </Mobile>
-    </Flexbox>
+      </Flexbox>
+    </Button>
   );
 };
 

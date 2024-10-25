@@ -1,22 +1,17 @@
 import React from 'react';
 import Flexbox from '../../Flexbox';
 import Icon from '../../Icon';
-import { HiRocketLaunch, HiChevronLeft, HiBars3 } from 'react-icons/hi2';
+import { HiRocketLaunch, HiBars3 } from 'react-icons/hi2';
 import Typography from '../../Typography';
-import { Desktop } from '../../Layout/Desktop';
-import { Mobile } from '../../Layout/Mobile';
 import { useNavBarStore } from '../../../stores/navbarStore';
+import * as style from '../NavBar.css';
 
-interface TitleProps {
-  title?: string;
-}
-
-export const Title = ({ title = '타이틀을 입력해주세요' }: TitleProps) => {
+export const Title = () => {
   const navbarStore = useNavBarStore();
 
   return (
     <>
-      <Desktop>
+      <div className={style.desktopL}>
         <Flexbox style={{ columnGap: '1rem', padding: '4rem 0' }}>
           <Icon background="none" size={3}>
             <HiRocketLaunch />
@@ -25,18 +20,19 @@ export const Title = ({ title = '타이틀을 입력해주세요' }: TitleProps)
             SHOOOT!
           </Typography>
         </Flexbox>
-      </Desktop>
-      <Mobile>
+      </div>
+      <div className={style.desktopS}>
         <Flexbox justifyContents="between">
           <Flexbox style={{ columnGap: '1rem' }}>
-            <Icon background="none" color="light">
-              <HiChevronLeft />
+            <Icon background="none" size={2}>
+              <HiRocketLaunch />
             </Icon>
-            <Typography size={0.875} weight="500">
-              {title}
+            <Typography size={1.5} weight="700">
+              SHOOOT!
             </Typography>
           </Flexbox>
           <Icon
+            size={2}
             background="none"
             color="light"
             onClick={() => navbarStore.setIsOpen(!navbarStore.isOpen)}
@@ -44,7 +40,7 @@ export const Title = ({ title = '타이틀을 입력해주세요' }: TitleProps)
             <HiBars3 />
           </Icon>
         </Flexbox>
-      </Mobile>
+      </div>
     </>
   );
 };
