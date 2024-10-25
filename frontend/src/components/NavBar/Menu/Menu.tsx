@@ -4,6 +4,8 @@ import Flexbox from '../../Flexbox';
 import { Mobile } from '../../Layout/Mobile';
 import { Desktop } from '../../Layout/Desktop';
 import MenuItems from './MenuItems';
+import * as style from '../NavBar.css';
+import Button from '../../Button';
 
 const menus: string[] = ['API 문서', '서버 테스트 실행기', '마이페이지'];
 const icons: ReactNode[] = [
@@ -15,7 +17,7 @@ const icons: ReactNode[] = [
 const Menu = () => {
   return (
     <>
-      <Desktop>
+      <div className={style.desktopL} style={{ width: '100%' }}>
         <Flexbox
           flexDirections="col"
           alignItems="start"
@@ -28,8 +30,8 @@ const Menu = () => {
             <MenuItems key={idx} menu={menu} icon={icons[idx]} idx={idx} />
           ))}
         </Flexbox>
-      </Desktop>
-      <Mobile>
+      </div>
+      <div className={style.desktopS} style={{ width: '100%' }}>
         <Flexbox
           flexDirections="col"
           alignItems="start"
@@ -39,7 +41,7 @@ const Menu = () => {
             <MenuItems key={idx} menu={menu} icon={icons[idx]} idx={idx} />
           ))}
         </Flexbox>
-      </Mobile>
+      </div>
     </>
   );
 };

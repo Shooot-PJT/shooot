@@ -14,6 +14,8 @@ import { APIDocs } from './pages/APIDocs';
 import Button from './components/Button';
 import { Banner } from './components/Banner';
 import Flexbox from './components/Flexbox';
+import * as s from './Tmp.css';
+import theme from './styles/theme.css';
 
 function App() {
   const modal = useModal();
@@ -56,7 +58,7 @@ function App() {
 
   return (
     <div className={darkTheme} style={{ width: '100%', height: '100%' }}>
-      <div
+      {/* <div
         className="TEMPORAL-LAYOUT"
         style={{
           display: 'flex',
@@ -106,7 +108,15 @@ function App() {
             paddingY={0.25}
           />
         </div>
-      </div>
+      </div> */}
+      <NavBar>
+        <NavBar.Title />
+        <div className={s.nav}>
+          <NavBar.Project project={[0, 1, 2]} />
+          <div className={s.divi} />
+          <NavBar.Menu />
+        </div>
+      </NavBar>
     </div>
   );
 }

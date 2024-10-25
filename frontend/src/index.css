@@ -19,7 +19,7 @@ a {
 
 body {
   margin: 0;
-  min-width: 320px;
+  min-width: 1024px;
   min-height: 100vh;
   height: 100vh;
 }
@@ -46,4 +46,20 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media screen and (min-width: 1440px) {
+  .slider-container {
+    width: calc(100% - 2rem);
+    box-sizing: border-box;
+    padding: 0 1rem;
+  }
+}
+
+@media screen and (max-width: 1439px) {
+  .slider-container {
+    width: 50%;
+    box-sizing: border-box;
+    padding: 0 3rem;
+  }
 }
