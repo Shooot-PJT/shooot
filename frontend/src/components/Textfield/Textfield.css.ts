@@ -11,6 +11,7 @@ export const container = style({
 
 export const label = recipe({
   base: {
+    fontFamily: 'Pretendard',
     margin: '0.25rem',
     fontSize: 'var(--labelSize, 1rem)',
     fontWeight: '700',
@@ -50,17 +51,18 @@ export const label = recipe({
 
 export const input = recipe({
   base: {
+    fontFamily: 'Pretendard',
     height: 'var(--height, 2rem)',
     width: 'var(--width, 10rem)',
     borderRadius: '0.5rem',
     transition: 'all 0.33s',
+    paddingLeft: '1rem',
     background: theme.color.textfield.background,
     fontSize: 'var(--fontSize, 16px)',
-    border: `4px solid ${theme.color.textfield.border}`,
+    border: `2px solid ${theme.color.textfield.border}`,
     selectors: {
       '&::placeholder': {
         color: theme.color.textfield.placeholder,
-        paddingLeft: '0.25rem',
       },
       '&:focus': {
         outline: 'none',
@@ -72,49 +74,49 @@ export const input = recipe({
       primary: {
         color: theme.color.textfield.primary.fontColor,
         '&:focus': {
-          border: `4px solid ${theme.color.textfield.primary.borderActive}`,
+          border: `2px solid ${theme.color.textfield.primary.borderActive}`,
         },
       },
       secondary: {
         color: theme.color.textfield.secondary.fontColor,
         '&:focus': {
-          border: `4px solid ${theme.color.textfield.secondary.borderActive}`,
+          border: `2px solid ${theme.color.textfield.secondary.borderActive}`,
         },
       },
       tertiary: {
         color: theme.color.textfield.tertiary.fontColor,
         '&:focus': {
-          border: `4px solid ${theme.color.textfield.tertiary.borderActive}`,
+          border: `2px solid ${theme.color.textfield.tertiary.borderActive}`,
         },
       },
       grey: {
         color: theme.color.textfield.grey.fontColor,
         '&:focus': {
-          border: `4px solid ${theme.color.textfield.grey.borderActive}`,
+          border: `2px solid ${theme.color.textfield.grey.borderActive}`,
         },
       },
       get: {
         color: theme.color.textfield.get.fontColor,
         '&:focus': {
-          border: `4px solid ${theme.color.textfield.get.borderActive}`,
+          border: `2px solid ${theme.color.textfield.get.borderActive}`,
         },
       },
       post: {
         color: theme.color.textfield.post.fontColor,
         '&:focus': {
-          border: `4px solid ${theme.color.textfield.post.borderActive}`,
+          border: `2px solid ${theme.color.textfield.post.borderActive}`,
         },
       },
       put: {
         color: theme.color.textfield.put.fontColor,
         '&:focus': {
-          border: `4px solid ${theme.color.textfield.put.borderActive}`,
+          border: `2px solid ${theme.color.textfield.put.borderActive}`,
         },
       },
       delete: {
         color: theme.color.textfield.delete.fontColor,
         '&:focus': {
-          border: `4px solid ${theme.color.textfield.delete.borderActive}`,
+          border: `2px solid ${theme.color.textfield.delete.borderActive}`,
         },
       },
     },
