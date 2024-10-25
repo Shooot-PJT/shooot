@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 import usePopupStore from '../../stores/usePopupStore';
 import * as s from './Popup.css';
-import Typography from '../../components/Typography';
-import Button from '../../components/Button';
-import Flexbox from '../../components/Flexbox';
+import Typography from '../Typography';
+import Button from '../Button';
+import Flexbox from '../Flexbox';
 import { PopupData } from './Popup.types';
 
 type PopupProps = PopupData;
@@ -48,7 +48,7 @@ const Popup = ({
         <div className={s.contentContainer}>
           <div className={s.content}>{children}</div>
         </div>
-        <Flexbox bg={color} justifyContent="end">
+        <Flexbox justifyContents="end">
           <Button
             color={type === 'success' ? 'primary' : 'delete'}
             onClick={updatePopup}

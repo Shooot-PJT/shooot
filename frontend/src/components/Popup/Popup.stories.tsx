@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import Popup from './Popup';
-import Typography from '../../components/Typography';
-import Backdrop from '../../components/Backdrop';
+import Typography from '../Typography';
+import Backdrop from '../Backdrop';
 import darkThemeCss from '../../styles/darkTheme.css';
 
 const meta = {

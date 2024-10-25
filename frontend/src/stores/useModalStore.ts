@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ModalData } from '../hooks/useModal/Modal.types';
+import { ModalData } from '../components/Modal/Modal.types';
 
 interface ModalState {
   modals: ModalData[];
