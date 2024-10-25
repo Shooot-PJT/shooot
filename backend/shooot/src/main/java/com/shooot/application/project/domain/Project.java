@@ -37,4 +37,15 @@ public class Project extends SoftDeleteEntity {
     @Column(name = "memo")
     private String memo;
 
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void changeLogoImageUrl(String logoImageUrl) {
+        this.logoImageUrl = logoImageUrl;
+    }
+
+    public void changeMemo(String memo) {
+        this.memo = memo;
+    }
 }
