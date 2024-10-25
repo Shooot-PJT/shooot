@@ -13,7 +13,7 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "api")
+@Table(name = "domain")
 @Entity
 public class Domain {
     @Id
