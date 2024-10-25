@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import Typography from '../../components/Typography';
-import Backdrop from '../../components/Backdrop';
+import Typography from '../Typography';
+import Backdrop from '../Backdrop';
 import darkThemeCss from '../../styles/darkTheme.css';
 import Modal from './Modal';
-import { Desktop } from '../../components/Layout/Desktop';
-import { Mobile } from '../../components/Layout/Mobile';
+import { Desktop } from '../Layout/Desktop';
+import { Mobile } from '../Layout/Mobile';
 
 const meta = {
   title: 'UI/Components/Modal',
