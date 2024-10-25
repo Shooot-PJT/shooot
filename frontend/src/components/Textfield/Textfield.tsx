@@ -47,7 +47,7 @@ export const Textfield = React.forwardRef<HTMLInputElement, TextfieldProps>(
             {
               '--height': `${size}rem`,
               '--width': `${fullWidth ? '100%' : size * ratio}rem`,
-              '--fontSize': `${16 + (size - 2) * 2}px`,
+              '--fontSize': `${14 + (size - 2) * 2}px`,
             } as React.CSSProperties
           }
         />
