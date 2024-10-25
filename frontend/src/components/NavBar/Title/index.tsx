@@ -17,7 +17,7 @@ export const Title = ({ title = '타이틀을 입력해주세요' }: TitleProps)
   return (
     <>
       <Desktop>
-        <Flexbox bg="none" columnGap={1} padding="4rem 0">
+        <Flexbox style={{ columnGap: '1rem', padding: '4rem 0' }}>
           <Icon background="none" size={3}>
             <HiRocketLaunch />
           </Icon>
@@ -27,8 +27,8 @@ export const Title = ({ title = '타이틀을 입력해주세요' }: TitleProps)
         </Flexbox>
       </Desktop>
       <Mobile>
-        <Flexbox bg="none" justifyContent="space-between">
-          <Flexbox bg="none" columnGap={1}>
+        <Flexbox justifyContents="between">
+          <Flexbox style={{ columnGap: '1rem' }}>
             <Icon background="none" color="light">
               <HiChevronLeft />
             </Icon>

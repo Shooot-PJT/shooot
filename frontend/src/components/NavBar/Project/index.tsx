@@ -8,6 +8,7 @@ import Typography from '../../Typography';
 import Icon from '../../Icon';
 import { HiUser } from 'react-icons/hi2';
 import { useNavBarStore } from '../../../stores/navbarStore';
+import theme from '../../../styles/theme.css';
 
 interface ProjectProps {
   project: number[];
@@ -27,21 +28,24 @@ export const Project = ({ project }: ProjectProps) => {
       {project.map((v, i) => (
         <div key={i} className={style.container}>
           <Flexbox
-            bg={200}
-            flexDirection="row"
-            justifyContent="start"
-            columnGap={1}
-            padding="1rem"
-            rounded={0.5}
+            justifyContents="start"
+            style={{
+              columnGap: '1rem',
+              padding: '1rem',
+              borderRadius: '0.5rem',
+              backgroundColor: theme.color.background['200'],
+            }}
           >
             <img src="/assets/sample.png" className={style.logo} />
             <div>
               <Typography weight="700">프로젝트 {v + 1}</Typography>
               <Flexbox
-                bg="none"
-                justifyContent="start"
-                columnGap={0.125}
-                margin="0.25rem 0 0 0 0"
+                justifyContents="start"
+                style={{
+                  columnGap: '0.125rem',
+                  margin: '0.25rem 0 0 0',
+                  backgroundColor: theme.color.background['200'],
+                }}
               >
                 <Icon color="disabled" background="none" size={1}>
                   <HiUser />

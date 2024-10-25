@@ -2,7 +2,6 @@ import React, { ReactNode } from 'react';
 import Flexbox from '../../Flexbox';
 import { useNavBarStore } from '../../../stores/navbarStore';
 import theme from '../../../styles/theme.css';
-import * as style from './Menu.css';
 import Icon from '../../Icon';
 import Typography from '../../Typography';
 import { Desktop } from '../../Layout/Desktop';
@@ -19,12 +18,18 @@ const MenuItems = ({ menu, icon, idx }: MenuItemProps) => {
 
   return (
     <Flexbox
-      bg={navbarStore.menu === idx ? theme.palette.primary.main : 100}
-      columnGap={1}
-      justifyContent="start"
-      rounded={0.5}
+      justifyContents="start"
+      style={{
+        columnGap: '1rem',
+        borderRadius: '0.5rem',
+        minWidth: '90%',
+        padding: '0.75rem 2rem',
+        backgroundColor:
+          navbarStore.menu === idx
+            ? theme.palette.primary.main
+            : theme.color.background['100'],
+      }}
       onClick={() => navbarStore.setMenu(idx)}
-      className={style.btn}
     >
       <Desktop>
         <Icon

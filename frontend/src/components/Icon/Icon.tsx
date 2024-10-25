@@ -3,7 +3,7 @@ import { IconColor } from './Icon.types';
 import theme from '../../styles/theme.css';
 import { icon } from './Icon.css';
 
-interface IconProps {
+interface IconProps extends React.ComponentProps<'div'> {
   children: ReactNode;
   size?: number;
   color?: IconColor;

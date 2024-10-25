@@ -17,11 +17,12 @@ const Menu = () => {
     <>
       <Desktop>
         <Flexbox
-          flexDirection="column"
+          flexDirections="col"
           alignItems="start"
-          rowGap={1}
-          bg="none"
-          padding="1rem 1rem"
+          style={{
+            rowGap: '1rem',
+            padding: '1rem',
+          }}
         >
           {menus.map((menu: string, idx: number) => (
             <MenuItems key={idx} menu={menu} icon={icons[idx]} idx={idx} />
@@ -30,10 +31,9 @@ const Menu = () => {
       </Desktop>
       <Mobile>
         <Flexbox
-          flexDirection="column"
+          flexDirections="col"
           alignItems="start"
-          rowGap={0.5}
-          bg="none"
+          style={{ rowGap: '0.5rem' }}
         >
           {menus.map((menu: string, idx: number) => (
             <MenuItems key={idx} menu={menu} icon={icons[idx]} idx={idx} />
