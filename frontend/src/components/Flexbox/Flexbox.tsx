@@ -1,58 +1,32 @@
-import { CSSProperties, ReactNode } from 'react';
-import theme from '../../styles/theme.css';
+import { ReactNode } from 'react';
+import * as style from './Flexbox.css';
 
 interface FlexboxProps extends React.ComponentProps<'div'> {
   children?: ReactNode;
-  flexDirection?: CSSProperties['flexDirection'];
-  justifyContent?: CSSProperties['justifyContent'];
-  alignItems?: CSSProperties['alignItems'];
-  flexWrap?: CSSProperties['flexWrap'];
-  rowGap?: number;
-  columnGap?: number;
-  rounded?: number;
-  padding?: string;
-  margin?: string;
-  bg?: 100 | 200 | 300 | string;
-  overflow?: CSSProperties['overflow'];
+  flexDirections?: 'row' | 'row-rev' | 'col' | 'col-rev';
+  justifyContents?:
+    | 'center'
+    | 'between'
+    | 'evenly'
+    | 'around'
+    | 'stretch'
+    | 'start'
+    | 'end';
+  alignItems?: 'center' | 'start' | 'end' | 'stretch';
 }
 
 const Flexbox = ({
   children,
-  flexDirection = 'row',
-  justifyContent = 'center',
+  flexDirections = 'row',
+  justifyContents = 'center',
   alignItems = 'center',
-  flexWrap = 'nowrap',
-  rowGap = 0,
-  columnGap = 0,
-  rounded = 0,
-  padding = '0',
-  margin = '0',
-  bg,
-  overflow = 'visible',
   ...props
 }: FlexboxProps) => {
-  const style: CSSProperties = {
-    boxSizing: 'border-box',
-    display: 'flex',
-    flexDirection: flexDirection,
-    justifyContent: justifyContent,
-    alignItems: alignItems,
-    flexWrap: flexWrap,
-    rowGap: `${rowGap}rem`,
-    columnGap: `${columnGap}rem`,
-    borderRadius: `${rounded}rem`,
-    padding: padding,
-    margin: margin,
-    overflow: overflow,
-  };
-
-  if (bg !== undefined) {
-    style.backgroundColor =
-      bg === 100 || bg === 200 || bg === 300 ? theme.color.background[bg] : bg;
-  }
-
   return (
-    <div style={style} {...props}>
+    <div
+      className={style.flexbox({ flexDirections, justifyContents, alignItems })}
+      {...props}
+    >
       {children}
     </div>
   );
