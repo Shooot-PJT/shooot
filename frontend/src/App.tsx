@@ -12,6 +12,8 @@ import usePopup from './hooks/usePopup';
 import Typography from './components/Typography';
 import { APIDocs } from './pages/APIDocs';
 import Button from './components/Button';
+import { Banner } from './components/Banner';
+import Flexbox from './components/Flexbox';
 
 function App() {
   const modal = useModal();
