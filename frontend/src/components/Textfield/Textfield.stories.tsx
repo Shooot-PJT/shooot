@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import theme from '../../styles/theme.css';
-import Textfield from './Textfield';
+import Textfield, { TextfieldProps } from './Textfield';
 import { useRef } from 'react';
 import darkThemeCss from '../../styles/darkTheme.css';
 import Flexbox from '../Flexbox';
@@ -74,7 +74,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const ParentComponent = (args) => {
+const ParentComponent = (args: TextfieldProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -123,7 +123,7 @@ export const Color: Story = {
   },
   render: (args) => {
     return (
-      <Flexbox flexDirection="column" columnGap={1}>
+      <Flexbox flexDirections="col">
         {Object.keys(theme.color.textfield).map((color, index) => {
           if (
             [

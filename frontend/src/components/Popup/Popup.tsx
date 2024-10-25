@@ -48,7 +48,7 @@ const Popup = ({
         <div className={s.contentContainer}>
           <div className={s.content}>{children}</div>
         </div>
-        <Flexbox bg={color} justifyContent="end">
+        <Flexbox justifyContents="end">
           <Button
             color={type === 'success' ? 'primary' : 'delete'}
             onClick={updatePopup}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import useModalStore from '../../stores/useModalStore';
-import * as s from './modal.css';
+import * as s from './Modal.css';
 import { ModalColor, ModalData } from './Modal.types';
 
 interface ModalProps extends ModalData {
