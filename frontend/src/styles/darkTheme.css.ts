@@ -115,9 +115,9 @@ export default createTheme(themeContract, {
       bar: '#61616E',
     },
     background: {
-      100: '#1B1A1F',
-      200: '#26262E',
-      300: '#3A3A4A',
+      100: colorPalette.util['100'],
+      200: colorPalette.util['200'],
+      300: colorPalette.util['300'],
     },
   },
 });

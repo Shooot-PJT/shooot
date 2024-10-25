@@ -6,7 +6,7 @@ export const container = style({
   '@media': {
     'screen and (min-width: 768px)': {
       height: '100%',
-      width: '22.5rem',
+      width: '20rem',
       borderRadius: '1rem',
     },
 
