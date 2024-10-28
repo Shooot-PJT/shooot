@@ -1,9 +1,8 @@
 import React, { ReactNode } from 'react';
 import { HiDocumentCheck, HiServerStack, HiUserCircle } from 'react-icons/hi2';
 import Flexbox from '../../Flexbox';
-import { Mobile } from '../../Layout/Mobile';
-import { Desktop } from '../../Layout/Desktop';
 import MenuItems from './MenuItems';
+import * as global from '../../../styles/globalStyle.css';
 
 const menus: string[] = ['API 문서', '서버 테스트 실행기', '마이페이지'];
 const icons: ReactNode[] = [
@@ -15,31 +14,31 @@ const icons: ReactNode[] = [
 const Menu = () => {
   return (
     <>
-      <Desktop>
+      <div className={global.desktopL} style={{ width: '100%' }}>
         <Flexbox
-          flexDirection="column"
+          flexDirections="col"
           alignItems="start"
-          rowGap={1}
-          bg="none"
-          padding="1rem 1rem"
+          style={{
+            rowGap: '1rem',
+            padding: '1rem',
+          }}
         >
           {menus.map((menu: string, idx: number) => (
             <MenuItems key={idx} menu={menu} icon={icons[idx]} idx={idx} />
           ))}
         </Flexbox>
-      </Desktop>
-      <Mobile>
+      </div>
+      <div className={global.desktopS} style={{ width: '100%' }}>
         <Flexbox
-          flexDirection="column"
+          flexDirections="col"
           alignItems="start"
-          rowGap={0.5}
-          bg="none"
+          style={{ rowGap: '0.5rem' }}
         >
           {menus.map((menu: string, idx: number) => (
             <MenuItems key={idx} menu={menu} icon={icons[idx]} idx={idx} />
           ))}
         </Flexbox>
-      </Mobile>
+      </div>
     </>
   );
 };

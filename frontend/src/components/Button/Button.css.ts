@@ -111,13 +111,13 @@ export const button = recipe({
         },
       },
       none: {
-        backgroundColor: theme.palette.grey['main'],
-        color: theme.palette.grey['contrastText'],
+        backgroundColor: 'none',
+        color: theme.palette.grey['main'],
         ':hover': {
-          backgroundColor: theme.palette.grey['hover'],
+          backgroundColor: theme.color.background['200'],
         },
         ':active': {
-          backgroundColor: theme.palette.grey['active'],
+          backgroundColor: theme.color.background['200'],
         },
       },
     },
