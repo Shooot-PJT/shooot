@@ -4,7 +4,7 @@ import * as s from './Button.css';
 
 interface ButtonProps {
   children: ReactNode;
-  color?: ButtonColor;
+  color?: ButtonColor | 'none';
   rounded?: number;
   fullWidth?: boolean;
   paddingX?: number;

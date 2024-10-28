@@ -100,6 +100,16 @@ export const button = recipe({
           backgroundColor: theme.palette.delete['active'],
         },
       },
+      none: {
+        backgroundColor: 'none',
+        color: theme.palette.grey['main'],
+        ':hover': {
+          backgroundColor: theme.color.background['200'],
+        },
+        ':active': {
+          backgroundColor: theme.color.background['200'],
+        },
+      },
     },
   },
 
