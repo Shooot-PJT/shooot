@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { HiDocumentCheck, HiServerStack, HiUserCircle } from 'react-icons/hi2';
 import Flexbox from '../../Flexbox';
 import MenuItems from './MenuItems';

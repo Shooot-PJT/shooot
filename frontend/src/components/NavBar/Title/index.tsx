@@ -1,4 +1,3 @@
-import React from 'react';
 import Flexbox from '../../Flexbox';
 import Icon from '../../Icon';
 import { HiRocketLaunch, HiBars3 } from 'react-icons/hi2';
