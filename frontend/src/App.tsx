@@ -55,7 +55,7 @@ function App() {
   }, [navbarStore.menu]);
 
   return (
-    <div className={darkTheme} style={{ width: '100%', height: '100%' }}>
+    <div className={darkTheme}>
       <Layout>
         <APIDocs />
         <Button
