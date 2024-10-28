@@ -1,7 +1,9 @@
 package com.shooot.application.project.ui;
 
+import com.shooot.application.project.service.command.ProjectInviteService;
 import com.shooot.application.project.service.command.ProjectModifyService;
 import com.shooot.application.project.service.command.ProjectRegisterService;
+import com.shooot.application.project.service.dto.ProjectInviteRequest;
 import com.shooot.application.project.service.dto.ProjectModifyRequest;
 import com.shooot.application.project.service.dto.ProjectRegisterRequest;
 import com.shooot.application.project.service.query.ProjectFindService;
@@ -15,19 +17,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
-@RequestMapping("/project")
+@RequestMapping("/projects")
 @RestController
 public class ProjectController {
 
     private final ProjectRegisterService projectRegisterService;
     private final ProjectModifyService projectModifyService;
     private final ProjectFindService projectFindService;
+    private final ProjectInviteService projectInviteService;
 
     // TODO: 현재 접속 중인 유저 정보 가져와 함께 전달하도록 수정
     @PostMapping
@@ -58,8 +62,18 @@ public class ProjectController {
     }
 
     @GetMapping("/{projectId}")
-    public ResponseEntity<ProjectView> findById(@PathVariable Integer projectId) {
+    public ResponseEntity<ProjectView> findById(
+        @PathVariable(name = "projectId") Integer projectId) {
         ProjectView byProjectId = projectFindService.findByProjectId(projectId);
         return ResponseEntity.ok().body(byProjectId);
+    }
+
+    @PostMapping("/{projectId}/invite")
+    public ResponseEntity<Void> invite(
+        @PathVariable(name = "projectId") Integer projectId,
+        @RequestBody ProjectInviteRequest request
+    ) {
+        projectInviteService.invite(projectId, request.getUserId());
+        return ResponseEntity.ok().build();
     }
 }
