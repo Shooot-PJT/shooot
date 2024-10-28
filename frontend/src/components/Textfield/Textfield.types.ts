@@ -10,4 +10,5 @@ export type TextfieldColor = Extract<
   | 'post'
   | 'put'
   | 'delete'
+  | 'none'
 >;

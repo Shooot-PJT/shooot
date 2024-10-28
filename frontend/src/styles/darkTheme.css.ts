@@ -65,7 +65,7 @@ export default createTheme(themeContract, {
       hover: colorPalette.grey['200'],
       active: colorPalette.grey['50'],
       disabled: colorPalette.grey['700'],
-      contarstText: '#ffffff',
+      contrastText: '#ffffff',
     },
   },
   color: {
@@ -146,6 +146,12 @@ export default createTheme(themeContract, {
       delete: {
         fontColor: colorPalette.grey['200'],
         borderActive: colorPalette.deepOrange['500'],
+      },
+      none: {
+        fontColor: colorPalette.light,
+        border: 'none',
+        borderRadius: '0.2rem',
+        backgroundActive: colorPalette.util[400],
       },
     },
     modal: {

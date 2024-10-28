@@ -42,6 +42,9 @@ export const label = recipe({
       delete: {
         color: theme.color.textfield.delete.borderActive,
       },
+      none: {
+        color: 'none',
+      },
       default: {
         color: theme.color.textfield.border,
       },
@@ -117,6 +120,14 @@ export const input = recipe({
         color: theme.color.textfield.delete.fontColor,
         '&:focus': {
           border: `2px solid ${theme.color.textfield.delete.borderActive}`,
+        },
+      },
+      none: {
+        color: theme.color.textfield.none.fontColor,
+        border: 'none',
+        borderRadius: theme.color.textfield.none.borderRadius,
+        '&:focus': {
+          backgroundColor: theme.color.textfield.none.backgroundActive,
         },
       },
     },

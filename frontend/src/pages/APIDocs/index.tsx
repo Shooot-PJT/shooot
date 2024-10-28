@@ -1,17 +1,18 @@
 import Flexbox from '../../components/Flexbox';
 import { API } from './components/API/API';
-import { fullBoxStyle } from './components/API/API.css';
 import { DUMMY_API_HEADER_INFO_LIST } from './dummies/api_header_info_list';
 
 export const APIDocs = () => {
   return (
     <Flexbox
-      bg="transparent"
       alignItems="center"
-      flexDirection="column"
-      justifyContent="start"
-      rowGap={0.9}
-      className={fullBoxStyle}
+      flexDirections="col"
+      justifyContents="start"
+      style={{
+        gap: '0.9rem',
+        width: '100%',
+        height: '100%',
+      }}
     >
       {DUMMY_API_HEADER_INFO_LIST.map((header_info) => {
         return (
@@ -24,6 +25,7 @@ export const APIDocs = () => {
               endPoint={header_info.endPoint}
               lastTestResult={header_info.lastTestResult}
             />
+            <API.Body />
           </API>
         );
       })}

@@ -14,6 +14,7 @@ export const flexbox = recipe({
       'col-rev': { flexDirection: 'column-reverse' },
     },
     justifyContents: {
+      normal: { justifyContent: 'normal' },
       center: { justifyContent: 'center' },
       between: { justifyContent: 'space-between' },
       around: { justifyContent: 'space-around' },
@@ -23,6 +24,7 @@ export const flexbox = recipe({
       stretch: { justifyContent: 'stretch' },
     },
     alignItems: {
+      normal: { alignItems: 'normal' },
       center: { alignItems: 'center' },
       start: { alignItems: 'start' },
       end: { alignItems: 'end' },
