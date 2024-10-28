@@ -64,6 +64,7 @@ CREATE TABLE api (
     modified_at DATETIME NOT NULL ,
     is_real_server BOOL NOT NULL ,
     is_secure BOOL NOT NULL ,
+    test_status VARCHAR(10),
     FOREIGN KEY (api_domain_id) REFERENCES domain(api_domain_id),
     FOREIGN KEY (api_manager_id) REFERENCES project_participant(project_participant_id)
 );
