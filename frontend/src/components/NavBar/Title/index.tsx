@@ -1,23 +1,18 @@
 import React from 'react';
 import Flexbox from '../../Flexbox';
 import Icon from '../../Icon';
-import { HiRocketLaunch, HiChevronLeft, HiBars3 } from 'react-icons/hi2';
+import { HiRocketLaunch, HiBars3 } from 'react-icons/hi2';
 import Typography from '../../Typography';
-import { Desktop } from '../../Layout/Desktop';
-import { Mobile } from '../../Layout/Mobile';
 import { useNavBarStore } from '../../../stores/navbarStore';
+import * as global from '../../../styles/globalStyle.css';
 
-interface TitleProps {
-  title?: string;
-}
-
-export const Title = ({ title = '타이틀을 입력해주세요' }: TitleProps) => {
+export const Title = () => {
   const navbarStore = useNavBarStore();
 
   return (
     <>
-      <Desktop>
-        <Flexbox bg="none" columnGap={1} padding="4rem 0">
+      <div className={global.desktopL}>
+        <Flexbox style={{ columnGap: '1rem', padding: '4rem 0' }}>
           <Icon background="none" size={3}>
             <HiRocketLaunch />
           </Icon>
@@ -25,18 +20,19 @@ export const Title = ({ title = '타이틀을 입력해주세요' }: TitleProps)
             SHOOOT!
           </Typography>
         </Flexbox>
-      </Desktop>
-      <Mobile>
-        <Flexbox bg="none" justifyContent="space-between">
-          <Flexbox bg="none" columnGap={1}>
-            <Icon background="none" color="light">
-              <HiChevronLeft />
+      </div>
+      <div className={global.desktopS}>
+        <Flexbox justifyContents="between">
+          <Flexbox style={{ columnGap: '1rem' }}>
+            <Icon background="none" size={1.5}>
+              <HiRocketLaunch />
             </Icon>
-            <Typography size={0.875} weight="500">
-              {title}
+            <Typography size={1.5} weight="700">
+              SHOOOT!
             </Typography>
           </Flexbox>
           <Icon
+            size={1.5}
             background="none"
             color="light"
             onClick={() => navbarStore.setIsOpen(!navbarStore.isOpen)}
@@ -44,7 +40,7 @@ export const Title = ({ title = '타이틀을 입력해주세요' }: TitleProps)
             <HiBars3 />
           </Icon>
         </Flexbox>
-      </Mobile>
+      </div>
     </>
   );
 };
