@@ -1,11 +1,8 @@
 import React, { ReactNode } from 'react';
 import { HiDocumentCheck, HiServerStack, HiUserCircle } from 'react-icons/hi2';
 import Flexbox from '../../Flexbox';
-import { Mobile } from '../../Layout/Mobile';
-import { Desktop } from '../../Layout/Desktop';
 import MenuItems from './MenuItems';
-import * as style from '../NavBar.css';
-import Button from '../../Button';
+import * as global from '../../../styles/globalStyle.css';
 
 const menus: string[] = ['API 문서', '서버 테스트 실행기', '마이페이지'];
 const icons: ReactNode[] = [
@@ -17,7 +14,7 @@ const icons: ReactNode[] = [
 const Menu = () => {
   return (
     <>
-      <div className={style.desktopL} style={{ width: '100%' }}>
+      <div className={global.desktopL} style={{ width: '100%' }}>
         <Flexbox
           flexDirections="col"
           alignItems="start"
@@ -31,7 +28,7 @@ const Menu = () => {
           ))}
         </Flexbox>
       </div>
-      <div className={style.desktopS} style={{ width: '100%' }}>
+      <div className={global.desktopS} style={{ width: '100%' }}>
         <Flexbox
           flexDirections="col"
           alignItems="start"
