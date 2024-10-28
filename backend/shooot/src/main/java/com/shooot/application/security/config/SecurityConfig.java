@@ -139,7 +139,7 @@ public class SecurityConfig {
         });
 
 
-        http.authorizeHttpRequests((auth) -> auth.requestMatchers("/", "/auth/**", "/admin/**", "/health-check").permitAll()
+        http.authorizeHttpRequests((auth) -> auth.requestMatchers("/", "/auth/**", "/admin/**", "/health-check", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated());
         http.addFilterAt(jsonLoginAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
         http.sessionManagement(httpSecuritySessionManagementConfigurer -> {
