@@ -63,7 +63,7 @@ const themeContract = {
       hover: null,
       active: null,
       disabled: null,
-      contarstText: null,
+      contrastText: null,
     },
   },
   color: {
