@@ -65,7 +65,7 @@ export default createTheme(themeContract, {
       hover: colorPalette.grey['200'],
       active: colorPalette.grey['50'],
       disabled: colorPalette.grey['700'],
-      contarstText: '#ffffff',
+      contrastText: '#ffffff',
     },
   },
   color: {

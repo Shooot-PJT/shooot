@@ -7,18 +7,22 @@ export const apiRootContainer = style({
   height: '3rem',
   alignItems: 'center',
   textAlign: 'center',
-});
-export const fullBoxStyle = style({
-  height: '100%',
-  width: '100%',
+  lineHeight: 'normal',
 });
 
-export const apiHeaderBoxStyle = recipe({
+export const apiHeaderBoxRecipe = recipe({
   base: {
-    height: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: '3rem',
     width: '100%',
     transition: 'all 0.3s ease-in-out',
     cursor: 'pointer',
+    gap: '1.5rem',
+    borderRadius: '0.75rem',
+    overflow: 'hidden',
   },
   variants: {
     isOpen: {
@@ -51,11 +55,17 @@ export const apiHeaderBoxStyle = recipe({
   },
 });
 
-export const apiHeaderLeftContentStyle = style({
+export const apiHeaderLeftContentStyle = {
+  gap: '1.25rem',
   width: '32%',
   height: '100%',
-});
-export const apiHeaderRightContentStyle = style({
+};
+export const apiHeaderRightContentStyle = {
   flex: 1,
   height: '100%',
-});
+};
+
+export const fullBoxStyle = {
+  height: '100%',
+  width: '100%',
+};
