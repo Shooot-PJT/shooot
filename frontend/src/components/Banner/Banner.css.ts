@@ -1,13 +1,13 @@
 import { style } from '@vanilla-extract/css';
 
-export const imgdisplay = style({
+export const imgsize = style({
   '@media': {
     'screen and (min-width: 1440px)': {
-      display: 'block',
+      width: '240px',
     },
 
     'screen and (max-width: 1439px)': {
-      display: 'none',
+      width: '200px',
     },
   },
 });

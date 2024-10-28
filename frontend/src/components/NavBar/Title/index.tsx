@@ -4,14 +4,14 @@ import Icon from '../../Icon';
 import { HiRocketLaunch, HiBars3 } from 'react-icons/hi2';
 import Typography from '../../Typography';
 import { useNavBarStore } from '../../../stores/navbarStore';
-import * as style from '../NavBar.css';
+import * as global from '../../../styles/globalStyle.css';
 
 export const Title = () => {
   const navbarStore = useNavBarStore();
 
   return (
     <>
-      <div className={style.desktopL}>
+      <div className={global.desktopL}>
         <Flexbox style={{ columnGap: '1rem', padding: '4rem 0' }}>
           <Icon background="none" size={3}>
             <HiRocketLaunch />
@@ -21,10 +21,10 @@ export const Title = () => {
           </Typography>
         </Flexbox>
       </div>
-      <div className={style.desktopS}>
+      <div className={global.desktopS}>
         <Flexbox justifyContents="between">
           <Flexbox style={{ columnGap: '1rem' }}>
-            <Icon background="none" size={2}>
+            <Icon background="none" size={1.5}>
               <HiRocketLaunch />
             </Icon>
             <Typography size={1.5} weight="700">
@@ -32,7 +32,7 @@ export const Title = () => {
             </Typography>
           </Flexbox>
           <Icon
-            size={2}
+            size={1.5}
             background="none"
             color="light"
             onClick={() => navbarStore.setIsOpen(!navbarStore.isOpen)}

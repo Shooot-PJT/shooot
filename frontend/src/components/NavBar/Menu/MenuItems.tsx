@@ -1,11 +1,10 @@
 import React, { ReactNode } from 'react';
 import Flexbox from '../../Flexbox';
 import { useNavBarStore } from '../../../stores/navbarStore';
-import theme from '../../../styles/theme.css';
 import Icon from '../../Icon';
 import Typography from '../../Typography';
-import * as style from '../NavBar.css';
 import Button from '../../Button';
+import * as global from '../../../styles/globalStyle.css';
 
 interface MenuItemProps extends React.ComponentProps<'div'> {
   menu: string;
@@ -34,7 +33,7 @@ const MenuItems = ({ menu, icon, idx }: MenuItemProps) => {
         }}
         onClick={() => navbarStore.setMenu(idx)}
       >
-        <div className={style.desktopL}>
+        <div className={global.desktopL}>
           <Icon
             color={navbarStore.menu === idx ? 'light' : 'disabled'}
             size={2}
@@ -43,7 +42,7 @@ const MenuItems = ({ menu, icon, idx }: MenuItemProps) => {
             {icon}
           </Icon>
         </div>
-        <div className={style.desktopS}>
+        <div className={global.desktopS}>
           <Icon
             color={navbarStore.menu === idx ? 'light' : 'disabled'}
             size={1.5}
