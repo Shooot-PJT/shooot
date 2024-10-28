@@ -38,3 +38,29 @@ export const mobile = style({
     },
   },
 });
+
+/* 반응형 - 데스크톱L */
+export const desktopL = style({
+  '@media': {
+    'screen and (min-width: 1440px)': {
+      display: 'block',
+    },
+
+    'screen and (max-width: 1439px)': {
+      display: 'none',
+    },
+  },
+});
+
+/* 반응형 - 데스크톱S */
+export const desktopS = style({
+  '@media': {
+    'screen and (min-width: 1440px)': {
+      display: 'none',
+    },
+
+    'screen and (max-width: 1439px)': {
+      display: 'block',
+    },
+  },
+});
