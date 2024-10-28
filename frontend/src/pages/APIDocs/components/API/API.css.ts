@@ -4,7 +4,6 @@ import { recipe } from '@vanilla-extract/recipes';
 
 export const apiRootContainer = style({
   width: '100%',
-  height: '3rem',
   alignItems: 'center',
   textAlign: 'center',
   lineHeight: 'normal',
@@ -16,7 +15,7 @@ export const apiHeaderBoxRecipe = recipe({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: '3rem',
+    height: '3.5rem',
     width: '100%',
     transition: 'all 0.3s ease-in-out',
     cursor: 'pointer',

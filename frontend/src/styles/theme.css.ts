@@ -129,6 +129,12 @@ const themeContract = {
         fontColor: null,
         borderActive: null,
       },
+      none: {
+        fontColor: null,
+        border: null,
+        borderRadius: null,
+        backgroundActive: null,
+      },
       get: { fontColor: null, borderActive: null },
       post: { fontColor: null, borderActive: null },
       put: { fontColor: null, borderActive: null },

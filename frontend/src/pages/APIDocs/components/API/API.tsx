@@ -12,6 +12,7 @@ import { CollapseIcon } from './subComponents/APICommon/CollapseIcon/CollapseIco
 import themeCss from '../../../../styles/theme.css';
 import colorPalette from '../../../../styles/colorPalette';
 import ManagerAvatar from './subComponents/APICommon/ManagerAvatar/ManagerAvatar';
+import { TestCase } from './subComponents/APIBody/TestCase/TestCase';
 // import { TestCase } from '../TestCase/TestCase';
 
 interface APIProps {
@@ -194,7 +195,6 @@ API.Body = function Body() {
         <Flexbox
           style={{
             flexGrow: 1,
-            backgroundColor: 'white',
           }}
         >
           <TestCase>
