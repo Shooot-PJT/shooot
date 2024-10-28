@@ -1,0 +1,44 @@
+package com.shooot.application.api.service.command.api;
+
+import com.shooot.application.api.domain.Api;
+import com.shooot.application.api.domain.Domain;
+import com.shooot.application.api.domain.repository.ApiRepository;
+import com.shooot.application.api.domain.repository.DomainRepository;
+import com.shooot.application.api.exception.domain.DomainNotFoundException;
+import com.shooot.application.api.service.command.api.dto.ApiCreateRequest;
+import com.shooot.application.api.ui.dto.ApiView;
+import com.shooot.application.project.domain.ProjectParticipant;
+import com.shooot.application.project.domain.repository.ProjectParticipantRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class ApiCreateService {
+    private final ApiRepository apiRepository;
+    private final DomainRepository domainRepository;
+    private final ProjectParticipantRepository projectParticipantRepository;
+
+    @Transactional
+    public ApiView createApi(Integer domainId, ApiCreateRequest apiCreateRequest){
+        Domain domain = domainRepository.findById(domainId)
+                .orElseThrow(DomainNotFoundException::new);
+
+        //todo : 해당 프로젝트 참가자의 id가 없을때의 예외
+        // 도메인 타고 들어가서 해당 프로젝트 ID 찾아서 프로젝트 ID에 해당 userId가 있는지 체크해야됨
+        ProjectParticipant projectParticipant = projectParticipantRepository.findByProjectIdAndUserId(domain.getProject().getId(), apiCreateRequest.getManagerId());
+
+        Api api = Api.builder()
+                .domain(domain)
+                .projectParticipant(projectParticipant)
+                .title(apiCreateRequest.getTitle())
+                .description(apiCreateRequest.getDescription())
+                .url(apiCreateRequest.getUrl().orElse(null))
+                .build();
+
+        Api saveApi = apiRepository.save(api);
+
+        return ApiView.from(saveApi);
+    }
+}
