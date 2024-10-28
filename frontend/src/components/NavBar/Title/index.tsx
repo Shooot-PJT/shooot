@@ -12,7 +12,10 @@ export const Title = () => {
   return (
     <>
       <div className={global.desktopL}>
-        <Flexbox style={{ columnGap: '1rem', padding: '4rem 0' }}>
+        <Flexbox
+          justifyContents="center"
+          style={{ columnGap: '1rem', padding: '4rem 0' }}
+        >
           <Icon background="none" size={3}>
             <HiRocketLaunch />
           </Icon>
@@ -23,7 +26,7 @@ export const Title = () => {
       </div>
       <div className={global.desktopS}>
         <Flexbox justifyContents="between">
-          <Flexbox style={{ columnGap: '1rem' }}>
+          <Flexbox justifyContents="center" style={{ columnGap: '1rem' }}>
             <Icon background="none" size={1.5}>
               <HiRocketLaunch />
             </Icon>

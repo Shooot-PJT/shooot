@@ -63,7 +63,7 @@ const themeContract = {
       hover: null,
       active: null,
       disabled: null,
-      contarstText: null,
+      contrastText: null,
     },
   },
   color: {
@@ -128,6 +128,12 @@ const themeContract = {
       grey: {
         fontColor: null,
         borderActive: null,
+      },
+      none: {
+        fontColor: null,
+        border: null,
+        borderRadius: null,
+        backgroundActive: null,
       },
       get: { fontColor: null, borderActive: null },
       post: { fontColor: null, borderActive: null },

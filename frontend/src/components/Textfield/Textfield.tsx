@@ -30,16 +30,18 @@ export const Textfield = React.forwardRef<HTMLInputElement, TextfieldProps>(
     const labelColor = coloredLabel ? color : 'default';
     return (
       <div className={s.container}>
-        <div
-          className={s.label({ labelColor })}
-          style={
-            {
-              '--labelSize': `${labelSize}rem`,
-            } as React.CSSProperties
-          }
-        >
-          {label}
-        </div>
+        {label && (
+          <div
+            className={s.label({ labelColor })}
+            style={
+              {
+                '--labelSize': `${labelSize}rem`,
+              } as React.CSSProperties
+            }
+          >
+            {label}
+          </div>
+        )}
         <input
           className={s.input({ color })}
           ref={ref}

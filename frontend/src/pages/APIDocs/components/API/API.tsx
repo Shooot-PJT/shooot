@@ -9,6 +9,11 @@ import LockButton from './subComponents/APIHeader/LockButton/LockButton';
 import Button from '../../../../components/Button';
 import Avatar from './subComponents/APICommon/ManagerAvatar/ManagerAvatar';
 import { CollapseIcon } from './subComponents/APICommon/CollapseIcon/CollapseIcon';
+import themeCss from '../../../../styles/theme.css';
+import colorPalette from '../../../../styles/colorPalette';
+import ManagerAvatar from './subComponents/APICommon/ManagerAvatar/ManagerAvatar';
+import { TestCase } from './subComponents/APIBody/TestCase/TestCase';
+// import { TestCase } from '../TestCase/TestCase';
 
 interface APIProps {
   children: ReactNode;
@@ -40,28 +45,22 @@ API.Header = function Header({
   // 추후: const header = useAPIStore((state) => state.header);
 
   return (
-    <Flexbox
-      alignItems="center"
-      flexDirection="row"
-      justifyContent="space-between"
-      columnGap={1.5}
-      rounded={0.75}
-      className={style.apiHeaderBoxStyle({ isOpen: false })}
-      overflow="hidden"
+    <div
+      // key={id}
+      className={style.apiHeaderBoxRecipe({ isOpen: false })}
     >
       <MethodHeader method={method} />
       <Flexbox
         alignItems="center"
-        flexDirection="row"
-        justifyContent="space-between"
-        className={style.fullBoxStyle}
+        flexDirections="row"
+        justifyContents="between"
+        style={style.fullBoxStyle}
       >
         <Flexbox
           alignItems="center"
-          flexDirection="row"
-          justifyContent="start"
-          columnGap={1.25}
-          className={style.apiHeaderLeftContentStyle}
+          flexDirections="row"
+          justifyContents="start"
+          style={style.apiHeaderLeftContentStyle}
         >
           <LockButton needAuthorize={needAuthorize!} />
           <Typography size={1} color="disabled">
@@ -71,21 +70,21 @@ API.Header = function Header({
         </Flexbox>
 
         <Flexbox
-          bg={'transparent'}
           alignItems="center"
-          flexDirection="row"
-          justifyContent="space-between"
-          className={style.apiHeaderRightContentStyle}
+          flexDirections="row"
+          justifyContents="between"
+          style={style.apiHeaderRightContentStyle}
         >
           <Typography size={0.85} weight="300" color="disabled">
             {title}
           </Typography>
           <Flexbox
-            bg={'transparent'}
             alignItems="center"
-            flexDirection="row"
-            justifyContent="center"
-            columnGap={1}
+            flexDirections="row"
+            justifyContents="center"
+            style={{
+              gap: '1rem',
+            }}
           >
             <Avatar id={manager.id} nickname={manager.nickname} />
             <Button paddingX={1} rounded={0.5}>
@@ -96,7 +95,7 @@ API.Header = function Header({
         </Flexbox>
       </Flexbox>
       <TestResultTail lastTestResult={lastTestResult!} />
-    </Flexbox>
+    </div>
   );
 };
 
@@ -104,7 +103,115 @@ API.Body = function Body() {
   // 추후: const header = useAPIStore((state) => state.header);
   return (
     <div
-    // 추후: onClick={ } // body open 제어 ( collapse처럼 )
-    ></div>
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '2rem',
+        backgroundColor: themeCss.color.background[100],
+        borderBottomLeftRadius: '1rem',
+        borderBottomRightRadius: '1rem',
+        padding: '2rem 3rem',
+      }}
+    >
+      {/* 1. TOP 컨테이너 */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '1rem',
+          paddingBottom: '1rem',
+          borderBottom: '0.1rem solid',
+          borderColor: colorPalette.util[400],
+        }}
+      >
+        {/* 1.1 LEFT: API 기본정보 섹션( 메서드타입, title, description, manager )*/}
+        <Flexbox justifyContents="between" flexDirections="col">
+          {/* 1.1.1 TOP : API 기본정보 박스*/}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '4rem',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                textAlign: 'left',
+                width: '9.5rem',
+              }}
+            >
+              <Typography color="delete" size={2.5} weight="700">
+                DELETE
+              </Typography>
+              <Typography
+                color="delete"
+                size={0.85}
+                weight="600"
+                style={{ marginBottom: '2rem' }}
+              >
+                특별한 계란 삭제하기
+              </Typography>
+
+              <Typography color="disabled" size={0.85} weight="400">
+                특별한 계란을 삭제하는 API입니다.. 주절주절
+              </Typography>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1rem',
+              }}
+            >
+              <div
+                style={{
+                  width: '75%',
+                  height: '0.35rem',
+                  backgroundColor: colorPalette.deepOrange[500],
+                }}
+              />
+              <ManagerAvatar id={1} nickname="성우" size={2} />
+            </div>
+          </div>
+          {/* 1.1.2 BOTTOM : 편집,삭제 버튼 그룹*/}
+          <Flexbox
+            flexDirections="row"
+            justifyContents="between"
+            style={{
+              gap: '0.5rem',
+            }}
+          >
+            <Button rounded={0.3} paddingY={0.25}>
+              편집
+            </Button>
+            <Button rounded={0.3} paddingY={0.25}>
+              삭제
+            </Button>
+          </Flexbox>
+        </Flexbox>
+        {/* 1.2 RIGHT: 테스트케이스 리스트 섹션*/}
+        <Flexbox
+          style={{
+            flexGrow: 1,
+          }}
+        >
+          <TestCase>
+            <TestCase.Header />
+            <TestCase.Body />
+          </TestCase>
+        </Flexbox>
+      </div>
+
+      {/* 2. BOTTOM 컨테이너 : 테스트로그 SUMMARY 섹션*/}
+      <Flexbox
+        flexDirections="col"
+        style={{
+          backgroundColor: 'red',
+          height: '3rem',
+        }}
+      ></Flexbox>
+    </div>
   );
 };

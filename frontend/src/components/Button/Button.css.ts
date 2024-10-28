@@ -7,6 +7,7 @@ export const button = recipe({
     transition: 'all 0.5s ',
     cursor: 'pointer',
     textAlign: 'center',
+    height: 'max-content',
   },
 
   variants: {
@@ -18,7 +19,6 @@ export const button = recipe({
         width: 'max-content',
       },
     },
-    //   color
     color: {
       primary: {
         backgroundColor: theme.palette.primary['main'],
@@ -98,6 +98,16 @@ export const button = recipe({
         },
         ':active': {
           backgroundColor: theme.palette.delete['active'],
+        },
+      },
+      grey: {
+        backgroundColor: theme.palette.grey['main'],
+        color: theme.palette.grey['contrastText'],
+        ':hover': {
+          backgroundColor: theme.palette.grey['hover'],
+        },
+        ':active': {
+          backgroundColor: theme.palette.grey['active'],
         },
       },
       none: {
