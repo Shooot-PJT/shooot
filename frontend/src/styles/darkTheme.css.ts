@@ -147,6 +147,12 @@ export default createTheme(themeContract, {
         fontColor: colorPalette.grey['200'],
         borderActive: colorPalette.deepOrange['500'],
       },
+      none: {
+        fontColor: colorPalette.light,
+        border: 'none',
+        borderRadius: '0.2rem',
+        backgroundActive: colorPalette.util[400],
+      },
     },
     modal: {
       bar: '#61616E',
