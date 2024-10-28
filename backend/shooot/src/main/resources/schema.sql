@@ -47,6 +47,8 @@ CREATE TABLE domain(
     project_id INTEGER NOT NULL ,
     domain_name VARCHAR(30) NOT NULL ,
     domain_description TEXT NOT NULL ,
+    created_at DATETIME NOT NULL ,
+    modified_at DATETIME NOT NULL ,
     FOREIGN KEY (project_id) REFERENCES project(project_id)
 );
 
