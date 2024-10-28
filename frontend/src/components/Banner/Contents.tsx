@@ -1,4 +1,3 @@
-import React from 'react';
 import Flexbox from '../Flexbox';
 import Typography from '../Typography';
 

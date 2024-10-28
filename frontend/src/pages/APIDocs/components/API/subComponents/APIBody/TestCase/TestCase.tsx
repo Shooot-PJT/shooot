@@ -88,6 +88,7 @@ TestCase.Body = function Body() {
   const [isEditing, setIsEditing] = useState(false);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    console.log(event);
     setTabValue(newValue);
   };
 
