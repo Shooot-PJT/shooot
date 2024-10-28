@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import Typography from '../../../../../../../../components/Typography';
 import * as s from './ExpectedResponse.css';
 import themeCss from '../../../../../../../../styles/theme.css';
+import Flexbox from '../../../../../../../../components/Flexbox';
 
 interface ExpectedResponseProps {
   children: ReactNode;
@@ -24,7 +25,7 @@ export const ExpectedResponse = ({ children }: ExpectedResponseProps) => {
 
 ExpectedResponse.Schema = function Schema() {
   return (
-    <div className={`${s.container}`}>
+    <Flexbox flexDirections="col" style={s.containerStyle}>
       <Typography color="secondary">Expected Response Schema</Typography>
       <div
         className={s.roundedBorder}
@@ -33,12 +34,12 @@ ExpectedResponse.Schema = function Schema() {
           backgroundColor: themeCss.color.background[300],
         }}
       ></div>
-    </div>
+    </Flexbox>
   );
 };
 ExpectedResponse.Example = function Example() {
   return (
-    <div className={`${s.container}`}>
+    <Flexbox flexDirections="col" style={s.containerStyle}>
       <Typography color="secondary">Expected Response Example</Typography>
       <div
         className={s.roundedBorder}
@@ -46,7 +47,7 @@ ExpectedResponse.Example = function Example() {
           height: '8rem',
           backgroundColor: themeCss.color.background[300],
         }}
-      ></div>
-    </div>
+      />
+    </Flexbox>
   );
 };

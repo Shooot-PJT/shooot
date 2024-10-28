@@ -5,6 +5,7 @@ interface FlexboxProps extends React.ComponentProps<'div'> {
   children?: ReactNode;
   flexDirections?: 'row' | 'row-rev' | 'col' | 'col-rev';
   justifyContents?:
+    | 'normal'
     | 'center'
     | 'between'
     | 'evenly'
@@ -12,14 +13,14 @@ interface FlexboxProps extends React.ComponentProps<'div'> {
     | 'stretch'
     | 'start'
     | 'end';
-  alignItems?: 'center' | 'start' | 'end' | 'stretch';
+  alignItems?: 'normal' | 'center' | 'start' | 'end' | 'stretch';
 }
 
 const Flexbox = ({
   children,
   flexDirections = 'row',
-  justifyContents = 'center',
-  alignItems = 'center',
+  justifyContents = 'normal',
+  alignItems = 'normal',
   ...props
 }: FlexboxProps) => {
   return (

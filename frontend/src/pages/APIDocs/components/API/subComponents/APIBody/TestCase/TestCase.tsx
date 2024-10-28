@@ -12,6 +12,7 @@ import {
   CustomTab,
   CustomTabs,
 } from '../../../../../../../components/CustomTabs/CustomTabs';
+import Flexbox from '../../../../../../../components/Flexbox';
 
 interface TestCaseProps {
   children: React.ReactNode;
@@ -19,25 +20,24 @@ interface TestCaseProps {
 
 export const TestCase = ({ children }: TestCaseProps) => {
   return (
-    <div
+    <Flexbox
+      flexDirections="col"
+      alignItems="normal"
       style={{
-        display: 'flex',
-        flexDirection: 'column',
         width: '100%',
       }}
     >
       {children}
-    </div>
+    </Flexbox>
   );
 };
 
 TestCase.Header = function Header() {
   return (
-    <div
+    <Flexbox
+      flexDirections="row"
+      justifyContents="between"
       style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         padding: '0rem 1.5rem 0rem 0rem',
         backgroundColor: themeCss.color.background[300],
         border: '0.05rem solid',
@@ -46,12 +46,11 @@ TestCase.Header = function Header() {
         overflow: 'hidden',
       }}
     >
-      <div
+      <Flexbox
+        flexDirections="row"
+        alignItems="center"
         style={{
-          display: 'flex',
-          flexDirection: 'row',
           gap: '1rem',
-          alignItems: 'center',
           height: '2.5rem',
         }}
       >
@@ -69,19 +68,18 @@ TestCase.Header = function Header() {
         <Typography size={0.8} weight="400" color={'disabled'}>
           비인가 테스트용입니다. 슈웃 해주세요.
         </Typography>
-      </div>
-      <div
+      </Flexbox>
+      <Flexbox
+        flexDirections="row"
+        alignItems="center"
         style={{
-          display: 'flex',
-          flexDirection: 'row',
           gap: '0.5rem',
-          alignItems: 'center',
         }}
       >
         <TestButton.API />
         <CollapseIcon isOpen={false} />
-      </div>
-    </div>
+      </Flexbox>
+    </Flexbox>
   );
 };
 
@@ -98,65 +96,61 @@ TestCase.Body = function Body() {
   };
 
   return (
-    <div
+    <Flexbox
+      flexDirections="col"
+      alignItems="normal"
       style={{
-        display: 'flex',
-        flexDirection: 'column',
         gap: '4rem',
         borderLeft: '0.07rem solid',
         borderRight: '0.07rem solid',
         borderBottom: '0.07rem solid',
         borderRadius: '0rem 0rem 0.5rem 0.5rem',
-
         borderColor: colorPalette.util[400],
         backgroundColor: themeCss.color.background[200],
         padding: '0.75rem',
       }}
     >
       {/* 1. 테이블 섹션 */}
-      <div>
-        <div
+      <Flexbox
+        flexDirections="col"
+        style={{
+          gap: '0.5rem',
+        }}
+      >
+        {/* 1.1 Tabs 메뉴 섹션 */}
+        <Flexbox
+          justifyContents="between"
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
+            width: '100%',
           }}
         >
-          {/* 1.1 Tabs 메뉴 섹션 */}
-          <div
-            style={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
-            <CustomTabs value={tabValue} onChange={handleChange}>
-              <CustomTab label="Params" />
-              <CustomTab label="Path variables" />
-              <CustomTab label="Header" />
-              <CustomTab label="Req Body" />
-            </CustomTabs>
+          <CustomTabs value={tabValue} onChange={handleChange}>
+            <CustomTab label="Params" />
+            <CustomTab label="Path variables" />
+            <CustomTab label="Header" />
+            <CustomTab label="Req Body" />
+          </CustomTabs>
 
-            <Button onClick={toggleEditMode} rounded={0.5}>
-              <Typography size={0.75}>{isEditing ? '완료' : '편집'}</Typography>
-            </Button>
-          </div>
+          <Button onClick={toggleEditMode} rounded={0.5}>
+            <Typography size={0.75}>{isEditing ? '완료' : '편집'}</Typography>
+          </Button>
+        </Flexbox>
 
-          {/* 1.2 Tabs 컨텐츠: TestCaseTable */}
-          <TestCaseTable>
-            <TestCaseTable.Section
-              headers={testcaseDummyList[tabValue].headers}
-              rows={testcaseDummyList[tabValue].rows}
-              isEditing={isEditing}
-            />
-          </TestCaseTable>
-        </div>
-      </div>
+        {/* 1.2 Tabs 컨텐츠: TestCaseTable */}
+        <TestCaseTable>
+          <TestCaseTable.Section
+            headers={testcaseDummyList[tabValue].headers}
+            rows={testcaseDummyList[tabValue].rows}
+            isEditing={isEditing}
+          />
+        </TestCaseTable>
+      </Flexbox>
 
+      {/* Expected Responses */}
       <ExpectedResponse>
         <ExpectedResponse.Schema />
         <ExpectedResponse.Example />
       </ExpectedResponse>
-    </div>
+    </Flexbox>
   );
 };
