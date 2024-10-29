@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { ButtonColor } from './Button.types';
 import * as s from './Button.css';
 
-interface ButtonProps {
+interface ButtonProps extends React.ComponentProps<'div'> {
   children: ReactNode;
   color?: ButtonColor | 'none';
   rounded?: number;
@@ -27,6 +27,7 @@ const Button = ({
     <div
       className={s.button({ color, fullWidth })}
       style={{
+        boxSizing: 'border-box',
         borderRadius: `${rounded}rem`,
         padding: `${paddingY}rem ${paddingX}rem`,
         opacity: disabled ? 0.6 : 1,
