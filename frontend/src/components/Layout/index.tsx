@@ -3,6 +3,7 @@ import * as style from './Layout.css';
 import NavBar from '../NavBar';
 import Flexbox from '../Flexbox';
 import { Banner } from '../Banner';
+import * as global from '../../styles/globalStyle.css';
 
 interface LayoutProps extends React.ComponentProps<'div'> {
   children: ReactNode;
@@ -19,14 +20,26 @@ export const Layout = ({ children, ...props }: LayoutProps) => {
           <NavBar.Menu />
         </div>
       </NavBar>
-      <Flexbox
-        flexDirections="col"
-        justifyContents="start"
-        style={{ width: '100%', rowGap: '1rem' }}
-      >
-        <Banner />
-        {children}
-      </Flexbox>
+      <div className={global.desktopL} style={{ width: '100%' }}>
+        <Flexbox
+          flexDirections="col"
+          justifyContents="start"
+          style={{ width: '100%', rowGap: '1rem', paddingLeft: '21rem' }}
+        >
+          <Banner />
+          {children}
+        </Flexbox>
+      </div>
+      <div className={global.desktopS} style={{ width: '100%' }}>
+        <Flexbox
+          flexDirections="col"
+          justifyContents="start"
+          style={{ width: '100%', rowGap: '1rem', paddingTop: '4rem' }}
+        >
+          <Banner />
+          {children}
+        </Flexbox>
+      </div>
     </div>
   );
 };
