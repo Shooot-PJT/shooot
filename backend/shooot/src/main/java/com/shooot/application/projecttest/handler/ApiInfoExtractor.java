@@ -13,16 +13,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class ApiInfoExtractor {
 
-    public static List<Method> extractApiInfo(Map<String, List<Class<?>>> stringListMap) throws Exception {
+    public static List<ApiInfoDto> extractApiInfo(Map<String, List<Class<?>>> stringListMap) throws Exception {
         List<Class<?>> classes = stringListMap.get(CustomClassLoader.WRTIE_CLASSES);
-        List<Method> endPoints = new ArrayList<>();
+        List<ApiInfoDto> endPoints = new ArrayList<>();
         for (Class<?> clazz : classes) {
             boolean isController = clazz.isAnnotationPresent(Controller.class);
             boolean isRestController = clazz.isAnnotationPresent(RestController.class) || (isController && clazz.isAnnotationPresent(ResponseBody.class));
@@ -48,7 +45,7 @@ public final class ApiInfoExtractor {
         return endPoints;
     }
 
-    private static void extractEndpointInfo(Method method, List<Method> methods) {
+    private static void extractEndpointInfo(Method method, List<ApiInfoDto> urls) {
         Class<? extends Annotation>[] httpAnnotations = new Class[]{
                 RequestMapping.class, GetMapping.class, PostMapping.class, PutMapping.class, DeleteMapping.class, PatchMapping.class
         };
@@ -56,9 +53,15 @@ public final class ApiInfoExtractor {
         for (Class<? extends Annotation> annotationClass : httpAnnotations) {
             Annotation annotation = method.getAnnotation(annotationClass);
             if (annotation != null) {
-                methods.add(method);
+
                 String[] paths = getPathsFromAnnotation(annotation);
-                System.out.println("API Endpoint: " + String.join(", ", paths) + " - Method: " + method.getName());
+                String path = String.join(", ", paths);
+                System.out.println("API Endpoint: " + path + " - Method: " + method.getName());
+                RequestMethod[] methods = getRequestMethodsFromAnnotation(annotation);
+                Arrays.stream(methods).forEach(requestMethod ->{
+                    ApiInfoDto dto = new ApiInfoDto(path, requestMethod.name());
+                    urls.add(dto);
+                });
             }
         }
     }
@@ -131,6 +134,15 @@ public final class ApiInfoExtractor {
             return (String[]) valueMethod.invoke(annotation);
         } catch (Exception e) {
             return new String[]{};
+        }
+    }
+
+    private static RequestMethod[] getRequestMethodsFromAnnotation(Annotation annotation) {
+        try {
+            Method valueMethod = annotation.getClass().getMethod("method");
+            return (RequestMethod[]) valueMethod.invoke(annotation);
+        } catch (Exception e) {
+            return new RequestMethod[]{};
         }
     }
 

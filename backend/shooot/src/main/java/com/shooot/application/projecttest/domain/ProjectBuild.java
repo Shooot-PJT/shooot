@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @SuperBuilder
 @Getter
 @NoArgsConstructor
@@ -40,4 +42,7 @@ public class ProjectBuild extends SoftDeleteEntity {
     @Setter
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "projectBuild", cascade = CascadeType.ALL)
     private ProjectFile projectFile;
+
+    @OneToMany(mappedBy = "projectBuild", cascade = CascadeType.ALL)
+    private List<ProjectBuildLog> projectBuildLog;
 }

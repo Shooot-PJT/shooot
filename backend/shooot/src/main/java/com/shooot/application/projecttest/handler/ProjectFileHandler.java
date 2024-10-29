@@ -32,7 +32,6 @@ public final class ProjectFileHandler {
             if (manifest == null) {
                 System.out.println("MANIFEST.MF 파일을 찾을 수 없습니다.");
                 throw new FileNotFoundException();
-
             }
 
             Map<String, Object> infos = new HashMap<>();

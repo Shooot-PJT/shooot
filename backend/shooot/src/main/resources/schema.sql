@@ -105,6 +105,7 @@ CREATE TABLE project_build
     project_id            INTEGER  NOT NULL,
     is_deleted            BOOL     NOT NULL,
     created_at            DATETIME NOT NULL,
+    status                VARCHAR(30) NOT NULL,
     FOREIGN KEY (project_id) REFERENCES project (project_id)
 );
 
@@ -122,7 +123,6 @@ CREATE TABLE build_file_api_docs
     build_api_docs_id     INTEGER     NOT NULL AUTO_INCREMENT PRIMARY KEY,
     api_id                INTEGER,
     project_build_id INTEGER     NOT NULL,
-    content_type          VARCHAR(30) NOT NULL,
     url                   TEXT        NOT NULL,
     FOREIGN KEY (api_id) REFERENCES api (api_id)
 );
@@ -194,3 +194,4 @@ CREATE TABLE project_file (
 );
 
 INSERT INTO user(nickname, password, email, is_deleted, created_at) VALUES ('흑염룡1', 0x24326124313024795451594A7A38462F676B5232734550516B6D72542E36434B5A585249315A76465561314274527551613763417257796E37375432, 'khj745700@naver.com', false, NOW());
+INSERT INTO user(nickname, password, email, is_deleted, created_at) VALUES ('요하땅><', 0x24326124313024795451594A7A38462F676B5232734550516B6D72542E36434B5A585249315A76465561314274527551613763417257796E37375432, 'yoha6865@naver.com', false, NOW());

@@ -4,6 +4,7 @@ import com.shooot.application.common.events.Events;
 import com.shooot.application.project.domain.Project;
 import com.shooot.application.project.domain.repository.ProjectRepository;
 import com.shooot.application.projecttest.domain.ProjectBuild;
+import com.shooot.application.projecttest.domain.ProjectBuildStatus;
 import com.shooot.application.projecttest.domain.ProjectFile;
 import com.shooot.application.projecttest.domain.ProjectVersion;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;

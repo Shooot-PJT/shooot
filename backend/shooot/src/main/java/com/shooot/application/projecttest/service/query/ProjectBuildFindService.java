@@ -1,5 +1,6 @@
 package com.shooot.application.projecttest.service.query;
 
+import com.shooot.application.projecttest.controller.dto.ProjectBuildView;
 import com.shooot.application.projecttest.domain.ProjectBuild;
 import com.shooot.application.projecttest.domain.ProjectVersion;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
@@ -14,6 +15,10 @@ import java.util.List;
 public class ProjectBuildFindService {
     private final ProjectBuildRepository projectBuildRepository;
 
+    @Transactional(readOnly = true)
+    public List<ProjectBuildView> findAllByProjectId(Integer projectId){
+        return projectBuildRepository.findAllByProject_Id(projectId);
+    }
 
     @Transactional(readOnly = true)
     public Boolean existFile(Integer projectId, String projectFileName, String md5CheckSum) {
