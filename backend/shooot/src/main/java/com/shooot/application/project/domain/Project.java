@@ -1,7 +1,9 @@
 package com.shooot.application.project.domain;
 
+import com.shooot.application.common.infra.storage.domain.File;
 import com.shooot.application.common.jpa.SoftDeleteEntity;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,18 +33,14 @@ public class Project extends SoftDeleteEntity {
     @Column(name = "english_name")
     private String englishName;
 
-    @Column(name = "logo_image")
-    private String logoImageUrl;
-
     @Column(name = "memo")
     private String memo;
 
+    @Embedded
+    private File logoImageFile;
+
     public void changeName(String name) {
         this.name = name;
-    }
-
-    public void changeLogoImageUrl(String logoImageUrl) {
-        this.logoImageUrl = logoImageUrl;
     }
 
     public void changeMemo(String memo) {

@@ -32,3 +32,9 @@ spring:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
+url:
+  project:
+    logo: https://shooot.co.kr/projects/{projectId}/logo
+    accept-invitation: https://shooot.co.kr/projects/invitations/{projectInvitationId}
+storage:
+  upload-directory: /home/ubuntu/shooot/images

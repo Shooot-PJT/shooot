@@ -1,5 +1,7 @@
 package com.shooot.application.project.service.command;
 
+import com.shooot.application.common.infra.storage.domain.File;
+import com.shooot.application.common.infra.storage.service.FileStorageService;
 import com.shooot.application.project.domain.Project;
 import com.shooot.application.project.domain.ProjectParticipant;
 import com.shooot.application.project.domain.repository.ProjectParticipantRepository;
@@ -20,6 +22,7 @@ public class ProjectRegisterService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final ProjectParticipantRepository projectParticipantRepository;
+    private final FileStorageService fileStorageService;
 
     @Transactional
     public void projectRegister(
@@ -32,13 +35,12 @@ public class ProjectRegisterService {
             throw new DuplicateEnglishNameException();
         }
 
-        // TODO: S3 이미지 업로드
-        String logoImageUrl = null;
+        File logoImageFile = fileStorageService.uploadFile(file);
 
         Project project = Project.builder()
             .name(request.getName())
             .englishName(request.getEnglishName())
-            .logoImageUrl(logoImageUrl)
+            .logoImageFile(logoImageFile)
             .memo(request.getMemo())
             .build();
         projectRepository.save(project);
