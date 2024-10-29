@@ -29,7 +29,6 @@ public class ProjectBuildUploadService {
 
     private final ProjectRepository projectRepository;
     private final ProjectBuildFindService projectBuildFindService;
-    private final ProjectFileRepository projectFileRepository;
     private final ProjectBuildRepository projectBuildRepository;
 
     public Integer buildFileApiExtractor(Integer projectId, MultipartFile uploadedProjectFile, MultipartFile uploadedDockerComposeFile) {

@@ -35,13 +35,18 @@ public class BuildFileApiDocs {
     @Column(name = "url")
     private String url;
 
+    @Column(name = "method")
+    private String method;
+
 
     public static BuildFileApiDocs create(Api api, ApiInfoDto dto, ProjectBuild projectBuild) {
         return  BuildFileApiDocs.builder().projectBuild(projectBuild)
                 .api(api)
                 .url(dto.getUrl())
+                .method(dto.getMethod())
                 .build();
     }
+
 
     public void updateApi(Api api) {
         this.api = api;

@@ -2,6 +2,7 @@ package com.shooot.application.projecttest.controller.dto;
 
 import com.shooot.application.api.domain.Api;
 import com.shooot.application.api.domain.Domain;
+import com.shooot.application.projecttest.domain.ApiTestMethod;
 import com.shooot.application.projecttest.domain.BuildFileApiDocs;
 import lombok.*;
 
@@ -34,23 +35,26 @@ public class ProjectApiDocsForTestView {
     @Getter
     @NoArgsConstructor
     public static class Include {
-        private Integer testingApiId;
+        private Integer apiId;
         private String domainName;
         private String method;
         private String endPoint;
         private String description;
         private Integer vuser;
         private Integer duration;
+        private String testMethod;
 
         @Builder
-        public Include(Domain domain, BuildFileApiDocs buildFileApiDocs) {
-            this.testingApiId = buildFileApiDocs.getId();
-            this.domainName = domain.getName();
-            this.method = buildFileApiDocs.getApi().getMethod();
-            this.endPoint = buildFileApiDocs.getUrl();
-            this.description = buildFileApiDocs.getApi().getDescription();
-            this.vuser = 10;
-            this.duration = 1;
+        public Include(ApiTestMethod apiTestMethod) {
+            Api api = apiTestMethod.getApi();
+            this.apiId = api.getId();
+            this.domainName = api.getDomain().getName();
+            this.method = api.getMethod();
+            this.endPoint = api.getUrl();
+            this.description = api.getDescription();
+            this.vuser = apiTestMethod.getVUsers() != null ? apiTestMethod.getVUsers() : 10;
+            this.duration = apiTestMethod.getTestDuration() == null ? 0 : apiTestMethod.getTestDuration();
+            this.testMethod = apiTestMethod.getBuildFileTestMethod().name();
         }
     }
 

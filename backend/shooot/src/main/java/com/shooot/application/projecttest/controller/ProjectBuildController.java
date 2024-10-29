@@ -5,6 +5,7 @@ import com.shooot.application.projecttest.controller.dto.ProjectBuildView;
 import com.shooot.application.projecttest.controller.dto.ProjectJarFileUploadView;
 import com.shooot.application.projecttest.service.command.ProjectApiDocsSettingService;
 import com.shooot.application.projecttest.service.command.ProjectBuildUploadService;
+import com.shooot.application.projecttest.service.dto.ProjectBuildTestRunRequest;
 import com.shooot.application.projecttest.service.dto.ProjectIdDto;
 import com.shooot.application.projecttest.service.query.ProjectBuildFindService;
 import com.shooot.application.security.service.UserLoginContext;
@@ -41,6 +42,11 @@ public class ProjectBuildController {
     public ResponseEntity<ProjectApiDocsForTestView> apiAndJarApiCompare(@PathVariable(name = "projectJarFileId") Integer projectJarFileId) {
         ProjectApiDocsForTestView view = projectApiDocsSettingService.forTestInfo(projectJarFileId);
         return ResponseEntity.ok(view);
+    }
+
+    @PatchMapping("/jarFile/test/run")
+    public ResponseEntity<Void> testRun(@RequestBody ProjectBuildTestRunRequest projectBuildTestRunRequest, @AuthenticationPrincipal UserLoginContext userLoginContext) {
+
     }
 
 }

@@ -4,6 +4,7 @@ import com.shooot.application.api.domain.Api;
 import com.shooot.application.api.domain.repository.ApiRepository;
 import com.shooot.application.projecttest.domain.BuildFileApiDocs;
 import com.shooot.application.projecttest.domain.ProjectBuild;
+import com.shooot.application.projecttest.domain.repository.ApiTestMethodRepository;
 import com.shooot.application.projecttest.domain.repository.BuildFileApiDocsRepository;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
 import com.shooot.application.projecttest.event.dto.ProjectBuildUploadedEvent;
@@ -34,6 +35,7 @@ public class ProjectBuildApiDocsGenerateHandler {
     private final BuildFileApiDocsRepository buildFileApiDocsRepository;
     private final ProjectBuildRepository projectBuildRepository;
     private final ApiRepository apiRepository;
+    private final ApiTestMethodRepository apiTestMethodRepository;
 
 
     @Async
@@ -55,7 +57,11 @@ public class ProjectBuildApiDocsGenerateHandler {
                 }
             ).collect(Collectors.toList());
 
+
+
             buildFileApiDocsRepository.saveAll(list);
+            projectBuildUploadedEvent.getJarFile().delete();
+
 
         } catch (Exception e) {
             throw new RuntimeException(e);

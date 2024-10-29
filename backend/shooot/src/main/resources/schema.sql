@@ -124,6 +124,7 @@ CREATE TABLE build_file_api_docs
     api_id                INTEGER,
     project_build_id INTEGER     NOT NULL,
     url                   TEXT        NOT NULL,
+    method              VARCHAR(7) NOT NULL,
     FOREIGN KEY (api_id) REFERENCES api (api_id)
 );
 
@@ -154,11 +155,11 @@ CREATE TABLE `project_test_metric_log`
 CREATE TABLE api_test_method
 (
     api_test_method_id     INTEGER     NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    build_file_api_docs_id INTEGER     NOT NULL,
+    api_id INTEGER     NOT NULL,
     type                   VARCHAR(20) NOT NULL,
     virtual_users_num      SMALLINT    NOT NULL,
     test_duration          SMALLINT    NOT NULL,
-    FOREIGN KEY (build_file_api_docs_id) REFERENCES build_file_api_docs (build_api_docs_id)
+    FOREIGN KEY (api_id) REFERENCES api (api_id)
 );
 
 
