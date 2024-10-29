@@ -13,6 +13,7 @@ export const Title = () => {
       <div className={global.desktopL}>
         <Flexbox
           justifyContents="center"
+          alignItems="center"
           style={{ columnGap: '1rem', padding: '4rem 0' }}
         >
           <Icon background="none" size={3}>
