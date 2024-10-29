@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import useModalStore from '../../stores/useModalStore';
 import * as s from './Modal.css';
 import { ModalColor, ModalData } from './Modal.types';
+import usePopupStore from '../../stores/usePopupStore';
 
 interface ModalProps extends ModalData {
   color?: ModalColor;
@@ -19,7 +20,8 @@ const Modal = ({
   const [moveY, setMoveY] = useState<number>(0);
   const modalRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const { popModal, updateModal } = useModalStore();
+  const { modals, popModal, updateModal } = useModalStore();
+  const { popups } = usePopupStore();
 
   useEffect(() => {
     if (modalRef.current) {
@@ -68,6 +70,10 @@ const Modal = ({
 
   const handleAnimationEnd = (e: React.AnimationEvent) => {
     if (e.target === modalRef.current && isClosing) {
+      if (popups.length === 0 && modals.length === 1) {
+        document.body.style.overflow = '';
+        document.body.style.touchAction = '';
+      }
       popModal();
     }
   };
