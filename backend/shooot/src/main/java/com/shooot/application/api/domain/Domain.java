@@ -1,5 +1,7 @@
 package com.shooot.application.api.domain;
 
+import com.shooot.application.api.service.command.domain.dto.DomainModifyRequest;
+import com.shooot.application.common.jpa.SoftDeleteEntity;
 import com.shooot.application.project.domain.Project;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,9 +15,9 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "api")
+@Table(name = "domain")
 @Entity
-public class Domain {
+public class Domain extends SoftDeleteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "api_domain_id")
@@ -33,4 +35,14 @@ public class Domain {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "domain", cascade = CascadeType.ALL)
     private List<Api> apis;
+
+    public void update(DomainModifyRequest modifyRequest){
+        if(modifyRequest.getTitle() != null){
+            this.name = modifyRequest.getTitle();
+        }
+
+        if(modifyRequest.getDescription() != null){
+            this.description = modifyRequest.getDescription();
+        }
+    }
 }

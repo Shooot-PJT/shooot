@@ -39,4 +39,10 @@ public class ProjectParticipant extends SoftDeleteEntity {
 
     @Column(name = "is_owner")
     private Boolean isOwner;
+
+    // todo : 추후에 업데이트 있으면 dto로 변경해주기
+    // 지금은 하나밖에 없어서 최대한 안건드릴려고 이렇게 작성함
+    public void update(User user){
+        this.user = user;
+    }
 }

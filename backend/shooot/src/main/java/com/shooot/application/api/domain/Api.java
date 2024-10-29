@@ -1,9 +1,13 @@
 package com.shooot.application.api.domain;
 
+import com.shooot.application.api.service.command.api.dto.ApiModifyRequest;
+import com.shooot.application.api.service.command.api.dto.ApiToggleModifyRequest;
 import com.shooot.application.common.jpa.BaseEntity;
+import com.shooot.application.common.jpa.SoftDeleteEntity;
 import com.shooot.application.project.domain.ProjectParticipant;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -20,7 +24,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "api")
 @Entity
-public class Api extends BaseEntity {
+public class Api extends SoftDeleteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "api_id")
@@ -56,6 +60,56 @@ public class Api extends BaseEntity {
     @Column(name = "is_secure")
     private Boolean isSecure;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name ="test_status")
+    private ApiTestStatusType testStatus;
+
+    @Builder.Default
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "api")
     private List<ApiSubscribe> subscribers = new ArrayList<>();
+
+    @PrePersist
+    protected void setDefault() {
+        if(isRealServer == null){
+            this.isRealServer = false;
+        }
+
+        if(isSecure == null){
+            this.isSecure = false;
+        }
+    }
+
+    public void update(ApiModifyRequest apiModifyRequest){
+        if(apiModifyRequest.getTitle() != null){
+            this.title = apiModifyRequest.getTitle();
+        }
+
+        if(apiModifyRequest.getDescription() != null){
+            this.description = apiModifyRequest.getDescription();
+        }
+
+        if(apiModifyRequest.getUrl() != null){
+            this.url = apiModifyRequest.getUrl();
+        }
+
+        if(apiModifyRequest.getMethod() != null){
+            this.method = apiModifyRequest.getMethod();
+        }
+
+        if(apiModifyRequest.getIsSecure() != null){
+            this.isSecure = apiModifyRequest.getIsSecure();
+        }
+
+    }
+
+    public void update(ApiToggleModifyRequest apiToggleModifyRequest){
+        if(apiToggleModifyRequest.getIsRealServer() != null){
+            this.isRealServer = apiToggleModifyRequest.getIsRealServer();
+        }
+
+        if(apiToggleModifyRequest.getIsSecure() != null){
+            this.isSecure = apiToggleModifyRequest.getIsSecure();
+        }
+    }
+
 }

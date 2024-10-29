@@ -49,6 +49,8 @@ CREATE TABLE domain(
     project_id INTEGER NOT NULL ,
     domain_name VARCHAR(30) NOT NULL ,
     domain_description TEXT NOT NULL ,
+    created_at DATETIME NOT NULL ,
+    modified_at DATETIME NOT NULL ,
     FOREIGN KEY (project_id) REFERENCES project(project_id)
 );
 
@@ -64,6 +66,7 @@ CREATE TABLE api (
     modified_at DATETIME NOT NULL ,
     is_real_server BOOL NOT NULL ,
     is_secure BOOL NOT NULL ,
+    test_status VARCHAR(10),
     FOREIGN KEY (api_domain_id) REFERENCES domain(api_domain_id),
     FOREIGN KEY (api_manager_id) REFERENCES project_participant(project_participant_id)
 );
