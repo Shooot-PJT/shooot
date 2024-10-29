@@ -8,11 +8,10 @@ import com.shooot.application.user.ui.dto.UserView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
 @Service
 public class UserFindService {
+
     private final UserRepository userRepository;
 
     public EmailIsValidView existByUsername(String email) {
@@ -21,9 +20,13 @@ public class UserFindService {
     }
 
     public UserView findByUserId(Integer userId) {
-        User target = userRepository.findByIdAndIsDeletedFalse(userId).orElseThrow(UserNotFoundException::new);
+        User target = userRepository.findByIdAndIsDeletedFalse(userId)
+            .orElseThrow(UserNotFoundException::new);
         return UserView.from(target);
     }
 
-
+    public UserView findByEmail(String email) {
+        User user = userRepository.findByUsername(email).orElseThrow(UserNotFoundException::new);
+        return UserView.from(user);
+    }
 }

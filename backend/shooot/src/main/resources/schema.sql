@@ -25,7 +25,9 @@ CREATE TABLE user (
 CREATE TABLE project (
     project_id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
     name VARCHAR(80) NOT NULL ,
-    logo_image TEXT NOT NULL ,
+    english_name VARCHAR(10) NOT NULL,
+    content_type VARCHAR(30) ,
+    filename VARCHAR(100) ,
     memo TEXT NOT NULL ,
     is_deleted BOOL NOT NULL ,
     created_at DATETIME NOT NULL
