@@ -1,14 +1,14 @@
 import { HiRocketLaunch } from 'react-icons/hi2';
-import Flexbox from '../../components/Flexbox';
-import Icon from '../../components/Icon';
-import Typography from '../../components/Typography';
+import Typography from '../../../components/Typography';
+import Flexbox from '../../../components/Flexbox';
+import Icon from '../../../components/Icon';
 
 export const Logo = () => {
   return (
     <Flexbox
       justifyContents="center"
       alignItems="center"
-      style={{ columnGap: '2rem' }}
+      style={{ columnGap: '1rem' }}
     >
       <Icon size={3} background="none">
         <HiRocketLaunch />
