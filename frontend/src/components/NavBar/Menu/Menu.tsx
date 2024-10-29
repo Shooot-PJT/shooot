@@ -17,7 +17,7 @@ const Menu = () => {
       <div className={global.desktopL} style={{ width: '100%' }}>
         <Flexbox
           flexDirections="col"
-          alignItems="start"
+          justifyContents="center"
           style={{
             rowGap: '1rem',
             padding: '1rem',
@@ -31,7 +31,7 @@ const Menu = () => {
       <div className={global.desktopS} style={{ width: '100%' }}>
         <Flexbox
           flexDirections="col"
-          alignItems="start"
+          justifyContents="center"
           style={{ rowGap: '0.5rem' }}
         >
           {menus.map((menu: string, idx: number) => (
