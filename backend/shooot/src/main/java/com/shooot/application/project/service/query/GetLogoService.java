@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -16,6 +17,7 @@ public class GetLogoService {
     private final ProjectRepository projectRepository;
     private final FileStorageService fileStorageService;
 
+    @Transactional(readOnly = true)
     public ResponseEntity<Resource> getLogo(Integer projectId) {
         Project project = projectRepository
             .findById(projectId)
