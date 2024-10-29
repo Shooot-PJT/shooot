@@ -77,7 +77,7 @@ export const Graph = ({ frameColor, lineColor }: GraphProps) => {
   const [texts, setTexts] = useState<BottomText[]>([]);
   const [points, setPoints] = useState<BottomText[]>([]);
   const [time, setTime] = useState<number>(0);
-  const [hoveredPoint, setHoveredPoint] = useState<BottomText | null>(null); // hover된 점 상태
+  const [hoveredPoint, setHoveredPoint] = useState<BottomText | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const timeRef = useRef(time);
 
@@ -86,7 +86,7 @@ export const Graph = ({ frameColor, lineColor }: GraphProps) => {
     const timeText = {
       text: formatTime(time),
       x: 1350,
-      y: 300,
+      y: 305,
       pointY: randomY,
     };
     setPoints((prevPoints) => [timeText, ...prevPoints]);
@@ -105,7 +105,7 @@ export const Graph = ({ frameColor, lineColor }: GraphProps) => {
     context.fillRect(0, 280, 1000, 50);
 
     texts.forEach(({ text, x, y }) => {
-      context.font = '14px Pretendard';
+      context.font = '16px Pretendard';
       context.fillStyle = 'white';
       context.fillText(text, x, y);
 
@@ -213,6 +213,11 @@ export const Graph = ({ frameColor, lineColor }: GraphProps) => {
       <h3>실시간 그래프</h3>
       <canvas
         ref={canvasRef}
+        style={
+          {
+            '--color': `${graphColorPalette[frameColor].columnFrame}`,
+          } as React.CSSProperties
+        }
         className={s.canvas}
         onMouseMove={handleMouseMove}
       />
