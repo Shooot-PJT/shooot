@@ -51,7 +51,7 @@ public class ProjectController {
         @RequestPart MultipartFile file,
         @AuthenticationPrincipal UserLoginContext userLoginContext
     ) {
-        Integer userId = 1;
+        Integer userId = userLoginContext.getUserId();
         projectRegisterService.projectRegister(request, file, userId);
         return ResponseEntity.ok().build();
     }
