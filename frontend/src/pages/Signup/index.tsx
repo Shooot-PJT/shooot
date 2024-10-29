@@ -61,6 +61,7 @@ export const Signup = () => {
         {stepStore.step >= 2 && (
           <InputWithoutButton
             ref={pwdRef}
+            type="password"
             err={errStore.password}
             placeholder="비밀번호를 입력해주세요"
           />
@@ -70,6 +71,7 @@ export const Signup = () => {
         {stepStore.step >= 2 && (
           <InputWithoutButton
             ref={nickRef}
+            type="nickname"
             err={errStore.nickname}
             placeholder="닉네임을 입력해주세요"
           />
