@@ -1,5 +1,7 @@
 package com.shooot.application.project.service.command;
 
+import com.shooot.application.common.infra.storage.domain.File;
+import com.shooot.application.common.infra.storage.service.FileStorageService;
 import com.shooot.application.project.domain.Project;
 import com.shooot.application.project.domain.ProjectParticipant;
 import com.shooot.application.project.domain.repository.ProjectParticipantRepository;
@@ -23,6 +25,7 @@ public class ProjectModifyService {
     private final ProjectRepository projectRepository;
     private final ProjectParticipantRepository projectParticipantRepository;
     private final UserRepository userRepository;
+    private final FileStorageService fileStorageService;
 
     @Transactional
     public void projectModify(
@@ -48,11 +51,11 @@ public class ProjectModifyService {
             throw new ProjectModifyPermissionDeniedException();
         }
 
-        // TODO: S3 이미지
-        String logoImageUrl = null;
+        File logoImageFile = fileStorageService.uploadFile(file);
 
         project.changeName(request.getName());
         project.changeMemo(request.getMemo());
+        project.changeLogoImageFile(logoImageFile);
     }
 
     public void projectModify(

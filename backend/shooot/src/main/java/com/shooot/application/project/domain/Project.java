@@ -43,6 +43,10 @@ public class Project extends SoftDeleteEntity {
         this.name = name;
     }
 
+    public void changeLogoImageFile(File logoImageFile) {
+        this.logoImageFile = logoImageFile;
+    }
+
     public void changeMemo(String memo) {
         this.memo = memo;
     }
