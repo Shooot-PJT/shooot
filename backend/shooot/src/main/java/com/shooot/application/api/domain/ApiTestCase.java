@@ -1,5 +1,6 @@
 package com.shooot.application.api.domain;
 
+import com.shooot.application.common.jpa.SoftDeleteEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @Table
 @Entity
-public class ApiTestCase {
+public class ApiTestCase extends SoftDeleteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "api_test_case_id")
@@ -29,7 +30,15 @@ public class ApiTestCase {
     @Column(name = "http_status_code")
     private HttpStatus httpStatus;
 
-    @Column(name = "description")
-    private String description;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "test_case_status")
+    private ApiTestStatusType testCaseStatus;
+
+    @PrePersist
+    public void setDefault(){
+        if(testCaseStatus == null){
+            this.testCaseStatus = ApiTestStatusType.YET;
+        }
+    }
 
 }

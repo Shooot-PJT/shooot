@@ -77,6 +77,10 @@ public class Api extends SoftDeleteEntity {
         if(isSecure == null){
             this.isSecure = false;
         }
+
+        if(testStatus == null){
+            this.testStatus = ApiTestStatusType.YET;
+        }
     }
 
     public void update(ApiModifyRequest apiModifyRequest){

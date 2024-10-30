@@ -4,11 +4,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shooot.application.api.service.command.test.ApiTestCaseCreateService;
 import com.shooot.application.api.service.command.test.dto.ApiTestCaseCreateRequest;
+import com.shooot.application.api.ui.dto.ApiTestCaseView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -20,22 +23,22 @@ public class ApiTestCaseController {
 
     @PostMapping("/{apiId}/testcases")
     public ResponseEntity<?> createTestCase(
+            @PathVariable(name = "apiId") Integer apiId,
             ApiTestCaseCreateRequest apiTestCaseCreateRequest,
-            @RequestParam(required = false, name = "data") String data,
-            @RequestHeader (required = false) Map<String, Object> headers
+            @RequestParam(required = false, name = "data") String data
     ) throws Exception{
-        log.info("data = {}", data);
-//        log.info("data = {}", apiTestCreateRequest.getData());
-        log.info("apiTestCase... title = {}, statusCode = {}", apiTestCaseCreateRequest.getTitle(), apiTestCaseCreateRequest.getExpectHttpStatus());
-        log.info("headers = {}", headers);
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> contentMap = objectMapper.readValue(data, new TypeReference<Map<String, Object>>() {});
+        Map<String, Object> content = new HashMap<>();
 
-        log.info("contentMap = {}", contentMap);
-        apiTestCaseCreateService.createTestCase();
+        content.put("data", contentMap);
+        content.put("title", apiTestCaseCreateRequest.getTitle());
+        content.put("expectHttpStatus", apiTestCaseCreateRequest.getExpectHttpStatus());
+        log.info("asdf = {}", content);
 
+        ApiTestCaseView apiTestCaseView = apiTestCaseCreateService.create(apiId, content);
 
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(apiTestCaseView);
     }
 
 

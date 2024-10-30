@@ -39,7 +39,7 @@ public class ApiView {
                 .modifiedAt(api.getModifiedAt())
                 .isRealServer(api.getIsRealServer())
                 .isSecure(api.getIsSecure())
-                .type(api.getTestStatus() == null ? ApiTestStatusType.YET : api.getTestStatus())
+                .type(api.getTestStatus())
                 .build();
     }
 }

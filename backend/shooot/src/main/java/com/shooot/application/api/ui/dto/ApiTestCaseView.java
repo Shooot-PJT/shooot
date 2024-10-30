@@ -1,8 +1,8 @@
 package com.shooot.application.api.ui.dto;
 
-import com.shooot.application.api.domain.ApiTestCase;
-import com.shooot.application.api.domain.ApiTestStatusType;
+import com.shooot.application.api.domain.*;
 import lombok.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 
@@ -13,13 +13,27 @@ import java.util.Map;
 @AllArgsConstructor
 public class ApiTestCaseView {
     private Integer id;
-    private Integer apiId;
+    private Api apiId;
     private String title;
-    private Integer httpStatusCode;
+    private HttpStatus httpStatusCode;
     private ApiTestStatusType type;
     private Integer apiTestCaseRequestId;
-    private String requestType;
+    private ApiTestCaseRequestType requestType;
     private Map<String, Object> content;
+
+    public static ApiTestCaseView from(ApiTestCase apiTestCase, ApiTestCaseRequest apiTestCaseRequest){
+
+        return ApiTestCaseView.builder()
+                .id(apiTestCase.getId())
+                .apiId(apiTestCase.getApi())
+                .title(apiTestCase.getTitle())
+                .httpStatusCode(apiTestCase.getHttpStatus())
+                .type(apiTestCase.getTestCaseStatus())
+                .apiTestCaseRequestId(apiTestCaseRequest.getId())
+                .requestType(apiTestCaseRequest.getType())
+                .content(apiTestCaseRequest.getContent())
+                .build();
+    }
 
 }
 
