@@ -5,6 +5,7 @@ import com.shooot.application.projecttest.controller.dto.ProjectBuildView;
 import com.shooot.application.projecttest.controller.dto.ProjectJarFileUploadView;
 import com.shooot.application.projecttest.service.command.ProjectApiDocsSettingService;
 import com.shooot.application.projecttest.service.command.ProjectBuildUploadService;
+import com.shooot.application.projecttest.service.command.ProjectTestRunService;
 import com.shooot.application.projecttest.service.dto.ProjectBuildTestRunRequest;
 import com.shooot.application.projecttest.service.dto.ProjectIdDto;
 import com.shooot.application.projecttest.service.query.ProjectBuildFindService;
@@ -24,6 +25,7 @@ public class ProjectBuildController {
     private final ProjectBuildFindService projectBuildFindService;
     private final ProjectBuildUploadService projectBuildUploadService;
     private final ProjectApiDocsSettingService projectApiDocsSettingService;
+    private final ProjectTestRunService projectTestRunService;
 
     @PostMapping("/jarFile")
     public ResponseEntity<ProjectJarFileUploadView> jarFileUpload(ProjectIdDto projectIdDto, @RequestParam MultipartFile jarFile, @RequestParam MultipartFile dockerComposeFile, @AuthenticationPrincipal UserLoginContext userLoginContext) {
@@ -46,7 +48,8 @@ public class ProjectBuildController {
 
     @PatchMapping("/jarFile/test/run")
     public ResponseEntity<Void> testRun(@RequestBody ProjectBuildTestRunRequest projectBuildTestRunRequest, @AuthenticationPrincipal UserLoginContext userLoginContext) {
-
+        projectTestRunService.testRunRequest(projectBuildTestRunRequest);
+        return ResponseEntity.ok().build();
     }
 
 }

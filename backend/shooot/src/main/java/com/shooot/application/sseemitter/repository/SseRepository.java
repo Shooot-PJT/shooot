@@ -26,7 +26,11 @@ public class SseRepository {
         return sseEmitters.put(userId, sseEmitter);
     }
 
-    public void sendEvent(Integer userId, ) {
-        return sseEmitters.get(userId);
+    public void sendEvent(Integer userId, Set<ResponseBodyEmitter.DataWithMediaType> event) {
+        try {
+            sseEmitters.get(userId).send(event);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
