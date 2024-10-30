@@ -52,4 +52,8 @@ public class ProjectBuildController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/{projectId}/jarFile/deploy")
+    public ResponseEntity<ProjectBuildView> findDeploymentByProjectId(@PathVariable("projectId") Integer projectId) {
+        return ResponseEntity.ok(projectBuildFindService.findByProjectIdAndDeploymentTrue(projectId));
+    }
 }

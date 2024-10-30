@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProjectBuildRepository extends JpaRepository<ProjectBuild, Integer> {
 
@@ -18,4 +19,6 @@ public interface ProjectBuildRepository extends JpaRepository<ProjectBuild, Inte
 
     @Query("SELECT new com.shooot.application.projecttest.controller.dto.ProjectBuildView(pb, pbl.status) FROM ProjectBuild pb LEFT JOIN ProjectBuildLog pbl ON pbl.projectBuild = pb WHERE pb.project.id = :projectId AND pbl.id IN (SELECT MAX(id) FROM ProjectBuildLog GROUP BY projectBuild)  ORDER BY pb.createdAt DESC ")
     List<ProjectBuildView> findAllByProject_Id(@Param("projectId") Integer projectId);
+
+    Optional<ProjectBuild> findByProject_IdAndIsDeploymentTrue(Integer projectId);
 }

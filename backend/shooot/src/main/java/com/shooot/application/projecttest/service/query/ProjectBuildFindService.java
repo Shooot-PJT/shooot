@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -31,5 +32,12 @@ public class ProjectBuildFindService {
     @Transactional(readOnly = true)
     public Integer getTemporaryVersion(Integer projectId, String projectFileName, ProjectVersion projectVersion) {
         return projectBuildRepository.findAllByProjectNameAndVersionAndCheckSum(projectId, projectVersion.getMajor(), projectVersion.getMinor(), projectVersion.getPatch(), projectFileName).size();
+    }
+
+    @Transactional(readOnly = true)
+    public ProjectBuildView findByProjectIdAndDeploymentTrue(Integer projectId) {
+        Optional<ProjectBuild> byProjectIdAndIsDeploymentTrue = projectBuildRepository.findByProject_IdAndIsDeploymentTrue(projectId);
+        return byProjectIdAndIsDeploymentTrue.map(ProjectBuildView::new).orElse(null);
+
     }
 }

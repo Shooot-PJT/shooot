@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS api_test_method;
 DROP TABLE IF EXISTS api_stress_test_log;
 DROP TABLE IF EXISTS api_stress_test_start_log;
 DROP TABLE IF EXISTS build_file_api_docs;
+DROP TABLE IF EXISTS project_file;
 DROP TABLE IF EXISTS project_build;
 DROP TABLE IF EXISTS api_subscribe;
 DROP TABLE IF EXISTS api;
