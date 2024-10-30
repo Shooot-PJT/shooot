@@ -28,6 +28,10 @@ public class ApStressTestLog {
     @JoinColumn(name = "build_file_api_docs_id")
     private BuildFileApiDocs buildFileApiDocs;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "api_stress_test_start_log_id")
+    private ApiStressTestStartLog apiStressTestStartLog;
+
     @Convert(converter = MapToJsonConverter.class)
     @Column(name = "response_body")
     private Map<String, Object> responseBody;
