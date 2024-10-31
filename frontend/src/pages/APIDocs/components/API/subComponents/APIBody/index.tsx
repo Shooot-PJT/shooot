@@ -37,11 +37,15 @@ export const Body = () => {
                   width: '9.5rem',
                 }}
               >
-                <Typography color={context.method} size={2.5} weight="700">
-                  {context.method.toUpperCase()}
+                <Typography
+                  color={context.header_info.method}
+                  size={2.5}
+                  weight="700"
+                >
+                  {context.header_info.method.toUpperCase()}
                 </Typography>
                 <Typography
-                  color={context.method}
+                  color={context.header_info.method}
                   size={0.85}
                   weight="600"
                   style={{
@@ -50,7 +54,7 @@ export const Body = () => {
                     wordBreak: 'keep-all',
                   }}
                 >
-                  {context.title}
+                  {context.header_info.apiTitle}
                 </Typography>
 
                 <Typography
@@ -62,12 +66,14 @@ export const Body = () => {
                     wordBreak: 'keep-all',
                   }}
                 >
-                  {context.description}
+                  {context.header_info.apiDescription}
                 </Typography>
               </Flexbox>
               <Flexbox flexDirections="col" style={{ gap: '1rem' }}>
                 <div
-                  className={s.leftDividerRecipe({ method: context.method })}
+                  className={s.leftDividerRecipe({
+                    method: context.header_info.method,
+                  })}
                 />
                 <Typography
                   weight="600"
@@ -77,7 +83,11 @@ export const Body = () => {
                 >
                   담당자
                 </Typography>
-                <ManagerAvatar manager={context.manager} size={2} withLabel />
+                <ManagerAvatar
+                  manager={context.header_info.manager}
+                  size={2}
+                  withLabel
+                />
               </Flexbox>
             </Flexbox>
 

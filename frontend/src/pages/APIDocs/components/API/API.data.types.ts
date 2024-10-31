@@ -1,25 +1,48 @@
 import { Method } from '../../types/methods';
 
-export interface APIBasicInfo {
-  id: number;
-  method: Method;
-  title: string;
-  description: string;
-  manager: Manager | null | undefined;
-}
-
-// 엔드포인트 추후 추가 정의 필요.., mock/real endpoint.. 등
-export type EndPoint = string | null | undefined;
-
-// YET일지 null일지 undefined일지는 백엔드에 의존적이므로 추후 점검
-export type TestResult = 'fail' | 'success' | 'yet'; // | null | undefined;
-
+export type NominalUrl = string | null | undefined;
+export type TestResult = 'FAIL' | 'SUCCESS' | 'NOT_TESTED';
 export const TEST_RESULTS: Record<TestResult, TestResult> = {
-  fail: 'fail',
-  success: 'success',
-  yet: 'yet',
+  FAIL: 'FAIL',
+  SUCCESS: 'SUCCESS',
+  NOT_TESTED: 'NOT_TESTED',
 };
 
+export interface APIDetailInfo {
+  apiId: number;
+  apiTitle: string;
+  apiDescription: string;
+  method: Method;
+  nominalUrl: string;
+  isRealServer: boolean;
+  isSecure: boolean;
+  modifiedAt: string;
+  manager: Manager;
+  testStatus: TestResult;
+}
+
+// 등록 시 기본값
+export interface APIBasicInfo {
+  apiId: APIDetailInfo['apiId'];
+  apiTitle: APIDetailInfo['apiTitle'];
+  apiDescription: APIDetailInfo['apiDescription'];
+  method: Method;
+  manager?: Manager | null | undefined;
+  nominalUrl?: NominalUrl;
+}
+
+export interface APIHeaderInfo {
+  apiId: APIDetailInfo['apiId'];
+  apiTitle: APIDetailInfo['apiTitle'];
+  apiDescription: APIDetailInfo['apiDescription'];
+  method: APIDetailInfo['method'];
+  isSecure?: APIDetailInfo['isSecure'];
+  manager: APIDetailInfo['manager'];
+  nominalUrl?: APIDetailInfo['nominalUrl'];
+  testStatus?: APIDetailInfo['testStatus'];
+}
+
+// ===========================
 export interface User {
   id: number;
   email: string;
@@ -33,5 +56,7 @@ export interface Participant extends User {
   projectId: number;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface Manager extends Pick<User, 'id' | 'nickname'> {}
+export interface Manager {
+  id: User['id'];
+  nickname: User['nickname'];
+}

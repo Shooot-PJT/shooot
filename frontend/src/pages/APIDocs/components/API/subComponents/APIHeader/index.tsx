@@ -26,10 +26,10 @@ export const Header = () => {
   return (
     <div
       onClick={onClickHeader}
-      key={context.id}
+      key={context.header_info.apiId}
       className={s.apiHeaderBoxRecipe({ isOpen: isFocused })}
     >
-      <MethodHeader method={context.method} />
+      <MethodHeader method={context.header_info.method} />
       <Flexbox
         alignItems="center"
         flexDirections="row"
@@ -42,9 +42,9 @@ export const Header = () => {
           justifyContents="start"
           style={s.apiHeaderLeftContentStyle}
         >
-          <LockButton needAuthorize={context.needAuthorize!} />
+          <LockButton isSecure={context.header_info.isSecure!} />
           <Typography size={1} color="disabled">
-            {context.endPoint}
+            {context.header_info.nominalUrl}
           </Typography>
           {/* 추후: realServer토글버튼 - 상태 추가 필요 */}
         </Flexbox>
@@ -56,7 +56,7 @@ export const Header = () => {
           style={s.apiHeaderRightContentStyle}
         >
           <Typography size={0.85} weight="300" color="disabled">
-            {context.title}
+            {context.header_info.apiTitle}
           </Typography>
           <Flexbox
             alignItems="center"
@@ -66,7 +66,7 @@ export const Header = () => {
               gap: '1rem',
             }}
           >
-            <ManagerAvatar manager={context.manager} />
+            <ManagerAvatar manager={context.header_info.manager} />
             <Button paddingX={1} rounded={0.5}>
               <Typography size={0.75}>테스트</Typography>
             </Button>
@@ -74,7 +74,7 @@ export const Header = () => {
           </Flexbox>
         </Flexbox>
       </Flexbox>
-      <TestResultTail lastTestResult={context.lastTestResult!} />
+      <TestResultTail testStatus={context.header_info.testStatus!} />
     </div>
   );
 };
