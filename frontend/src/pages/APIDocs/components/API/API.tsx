@@ -17,30 +17,13 @@ export const useAPIContext = () => {
   return context;
 };
 
-export const API = ({
-  children,
-  id,
-  method,
-  title,
-  description,
-  manager,
-  needAuthorize,
-  endPoint,
-  lastTestResult,
-}: APIProps) => {
+export const API = ({ children, header_info }: APIProps) => {
   return (
     <div className={style.apiRootContainer}>
       <APIContext.Provider
         value={{
           children,
-          id,
-          title,
-          description,
-          manager,
-          method,
-          needAuthorize,
-          endPoint,
-          lastTestResult,
+          header_info,
           useIsFocusedHook: { ...useIsFocusedHook() },
         }}
       >
