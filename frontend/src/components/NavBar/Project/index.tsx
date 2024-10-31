@@ -1,4 +1,3 @@
-import React from 'react';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
@@ -29,6 +28,7 @@ export const Project = ({ project }: ProjectProps) => {
           <div key={v}>
             <Flexbox
               justifyContents="start"
+              alignItems="center"
               style={{
                 columnGap: '1rem',
                 padding: '1rem',
@@ -41,6 +41,7 @@ export const Project = ({ project }: ProjectProps) => {
                 <Typography weight="700">프로젝트 {v + 1}</Typography>
                 <Flexbox
                   justifyContents="start"
+                  alignItems="center"
                   style={{
                     columnGap: '0.125rem',
                     margin: '0.25rem 0 0 0',

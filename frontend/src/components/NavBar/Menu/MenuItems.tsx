@@ -23,7 +23,7 @@ const MenuItems = ({ menu, icon, idx }: MenuItemProps) => {
       fullWidth
     >
       <Flexbox
-        justifyContents="start"
+        alignItems="center"
         style={{
           columnGap: '1rem',
           borderRadius: '0.5rem',

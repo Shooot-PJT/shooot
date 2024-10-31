@@ -153,6 +153,7 @@ TestCase.Body = function Body() {
   const { isFocused } = context.useIsFocusedHook;
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    console.log(event);
     setTabValue(newValue);
   };
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { ProgressColor } from './Progress.types';
 import * as s from './Progress.css';
 import theme from '../../styles/theme.css';

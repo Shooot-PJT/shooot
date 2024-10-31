@@ -13,6 +13,10 @@ globalStyle('*', {
   WebkitTapHighlightColor: 'transparent',
 });
 
+globalStyle('::-webkit-scrollbar', {
+  display: 'none',
+});
+
 /* 반응형 - 데스크톱 */
 export const desktop = style({
   '@media': {
