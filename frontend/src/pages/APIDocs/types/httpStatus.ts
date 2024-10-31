@@ -1,4 +1,4 @@
-export const HTTP_STATUS_CODES: Record<HttpStatusCode, string> = {
+export const HTTP_STATUS_CODES: Record<HttpStatusCode | string, string> = {
   // 100번대 : Informational
   100: 'Continue',
   101: 'Switching Protocols',
