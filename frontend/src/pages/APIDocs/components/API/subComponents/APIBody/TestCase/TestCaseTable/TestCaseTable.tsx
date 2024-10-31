@@ -12,25 +12,33 @@ import {
   CustomTableCell,
   CustomTableRow,
 } from '../../../../../../../../components/CustomTable/CustomTable';
-import { ReactNode } from 'react';
 import Textfield from '../../../../../../../../components/Textfield';
+import {
+  TestCaseTableProps,
+  TestCaseTableSectionProps,
+  UrlViewerBarProps,
+} from './TestCaseTable.types';
+import { getUrlFromParamsAndPath } from '../../../../../../utils';
 
-interface TableData {
-  key: string;
-  value: string;
-  description: string;
-}
-
-interface TestCaseTableProps {
-  children: ReactNode;
-}
-
-export const TestCaseTable = ({ children }: TestCaseTableProps) => {
+export const TestCaseTable = ({ children, isEditing }: TestCaseTableProps) => {
   const url = getUrlFromParamsAndPath();
+
   return (
     <div className={s.container}>
       {children}
-      <UrlViewerBar url={url} />
+      <UrlViewerBar url={url} isEditing={isEditing} />
+    </div>
+  );
+};
+
+const UrlViewerBar = ({ url, isEditing }: UrlViewerBarProps) => {
+  return (
+    <div className={s.urlViewerBar}>
+      {isEditing ? (
+        <Textfield color="none" value={url} fullWidth />
+      ) : (
+        <Typography size={0.85}>{url}</Typography>
+      )}
     </div>
   );
 };
@@ -39,11 +47,7 @@ TestCaseTable.Section = function Section({
   headers,
   rows,
   isEditing,
-}: {
-  headers: string[];
-  rows: TableData[];
-  isEditing: boolean;
-}) {
+}: TestCaseTableSectionProps) {
   return (
     <TableContainer component={Paper} className={s.tableSection}>
       <Table aria-label="dynamic table" size="small">
@@ -57,43 +61,27 @@ TestCaseTable.Section = function Section({
         <TableBody>
           {rows.map((row, index) => (
             <CustomTableRow key={index}>
-              <CustomTableCell>{row.key}</CustomTableCell>
-              <CustomTableCell>
-                {isEditing ? <Textfield color="none" /> : row.value}
-              </CustomTableCell>
-              <CustomTableCell>{row.description}</CustomTableCell>
+              {Object.entries(row).map((key) => (
+                <CustomTableCell>
+                  {isEditing ? (
+                    <Textfield color="none" fullWidth value={key[1]} />
+                  ) : (
+                    <Typography
+                      style={{
+                        paddingTop: '0.4rem',
+                        paddingBottom: '0.4rem',
+                      }}
+                      size={1.05}
+                    >
+                      {key[1]}
+                    </Typography>
+                  )}
+                </CustomTableCell>
+              ))}
             </CustomTableRow>
           ))}
         </TableBody>
       </Table>
     </TableContainer>
   );
-};
-
-interface UrlViewerBarProps {
-  url: string;
-}
-
-const UrlViewerBar = ({ url }: UrlViewerBarProps) => {
-  return (
-    <div className={s.urlViewerBar}>
-      <Typography size={0.85}>{url}</Typography>
-    </div>
-  );
-};
-
-const getUrlFromParamsAndPath = () => {
-  const params = [
-    { key: 'query', value: '영화' },
-    { key: 'category', value: '액션' },
-  ];
-  const pathVariables = [
-    { key: 'id', value: '123' },
-    { key: 'lang', value: 'kr' },
-  ];
-
-  const paramsString = params.map((p) => `${p.key}=${p.value}`).join('&');
-  const pathString = pathVariables.map((p) => p.value).join('/');
-
-  return `https://www.example.com/${pathString}?${paramsString}`;
 };
