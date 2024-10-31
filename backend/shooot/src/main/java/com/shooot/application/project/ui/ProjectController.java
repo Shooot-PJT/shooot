@@ -11,9 +11,9 @@ import com.shooot.application.project.service.dto.ProjectRegisterRequest;
 import com.shooot.application.project.service.query.FindParticipantsService;
 import com.shooot.application.project.service.query.GetAllProjectsService;
 import com.shooot.application.project.service.query.GetLogoService;
-import com.shooot.application.project.service.query.ProjectFindService;
+import com.shooot.application.project.service.query.GetProjectService;
 import com.shooot.application.project.ui.dto.FindParticipantsResponse;
-import com.shooot.application.project.ui.dto.ProjectView;
+import com.shooot.application.project.ui.dto.ProjectResponse;
 import com.shooot.application.security.service.UserLoginContext;
 import java.util.List;
 import java.util.Objects;
@@ -39,16 +39,16 @@ public class ProjectController {
 
     private final ProjectRegisterService projectRegisterService;
     private final ProjectModifyService projectModifyService;
-    private final ProjectFindService projectFindService;
     private final ProjectInviteService projectInviteService;
     private final ProjectAcceptInvitationService projectAcceptInvitationService;
     private final FindParticipantsService findParticipantsService;
     private final ProjectDeleteParticipantService projectDeleteParticipantService;
     private final GetLogoService getLogoService;
     private final GetAllProjectsService getAllProjectsService;
+    private final GetProjectService getProjectService;
 
     @GetMapping
-    public ResponseEntity<List<ProjectView>> getAllProjects(
+    public ResponseEntity<List<ProjectResponse>> getAllProjects(
         @AuthenticationPrincipal UserLoginContext context
     ) {
         Integer userId = context.getUserId();
@@ -83,10 +83,12 @@ public class ProjectController {
     }
 
     @GetMapping("/{projectId}")
-    public ResponseEntity<ProjectView> findById(
-        @PathVariable(name = "projectId") Integer projectId) {
-        ProjectView byProjectId = projectFindService.findByProjectId(projectId);
-        return ResponseEntity.ok().body(byProjectId);
+    public ResponseEntity<ProjectResponse> getProject(
+        @PathVariable(name = "projectId") Integer projectId,
+        @AuthenticationPrincipal UserLoginContext userLoginContext
+    ) {
+        Integer userId = userLoginContext.getUserId();
+        return ResponseEntity.ok(getProjectService.getProject(projectId, userId));
     }
 
     @PostMapping("/{projectId}/invite")
@@ -128,6 +130,4 @@ public class ProjectController {
         projectDeleteParticipantService.deleteParticipant(projectId, userId);
         return ResponseEntity.ok().build();
     }
-
-
 }
