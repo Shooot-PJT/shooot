@@ -1,9 +1,11 @@
-import { TEST_RESULTS } from '../components/API/API.types';
+import { TEST_RESULTS } from '../components/API/API.data.types';
 import { METHODS } from '../types/methods';
 
 export const DUMMY_API_HEADER_INFO_LIST = [
   {
+    id: 1,
     title: '특별한 계란 목록 가져오기',
+    description: '특별한 계란 목록 가져옵니다.. 주절주절',
     method: METHODS.get,
     needAuthorize: false,
     manager: { id: 1, nickname: '김현진' },
@@ -11,7 +13,9 @@ export const DUMMY_API_HEADER_INFO_LIST = [
     lastTestResult: TEST_RESULTS.success,
   },
   {
+    id: 2,
     title: '사용자 정보 업데이트',
+    description: '사용자 정보 업데이트합니다.. 주절주절',
     method: METHODS.post,
     needAuthorize: true,
     manager: { id: 2, nickname: '김현진' },
@@ -19,7 +23,9 @@ export const DUMMY_API_HEADER_INFO_LIST = [
     lastTestResult: TEST_RESULTS.fail,
   },
   {
+    id: 3,
     title: '상품 목록 조회',
+    description: '상품 목록을 조회합니다.. 주절주절',
     method: METHODS.get,
     needAuthorize: false,
     manager: { id: 3, nickname: '장철현' },
@@ -27,7 +33,9 @@ export const DUMMY_API_HEADER_INFO_LIST = [
     lastTestResult: TEST_RESULTS.yet,
   },
   {
+    id: 4,
     title: '회원 탈퇴 처리',
+    description: '회원 탈퇴를 처리합니다.. 주절주절',
     method: METHODS.delete,
     needAuthorize: true,
     manager: { id: 3, nickname: '장철현' },
@@ -35,7 +43,9 @@ export const DUMMY_API_HEADER_INFO_LIST = [
     lastTestResult: TEST_RESULTS.success,
   },
   {
+    id: 5,
     title: '주문 상태 변경',
+    description: '주문 상태를 변경합니다.. 주절주절',
     method: METHODS.put,
     needAuthorize: true,
     manager: { id: 4, nickname: '박민희' },
@@ -43,7 +53,9 @@ export const DUMMY_API_HEADER_INFO_LIST = [
     lastTestResult: TEST_RESULTS.yet,
   },
   {
+    id: 6,
     title: '주문 상태 갱신',
+    description: '주문 상태를 갱신합니다.. 주절주절',
     method: METHODS.patch,
     needAuthorize: true,
     manager: { id: 4, nickname: '박민희' },
@@ -51,7 +63,9 @@ export const DUMMY_API_HEADER_INFO_LIST = [
     lastTestResult: TEST_RESULTS.yet,
   },
   {
+    id: 7,
     title: '로그인 세션 검증',
+    description: '로그인 세션을 검증합니다.. 주절주절',
     method: METHODS.get,
     needAuthorize: true,
     manager: { id: 3, nickname: '장철현' },

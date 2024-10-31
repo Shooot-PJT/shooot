@@ -1,36 +1,20 @@
-import { Method } from '../../types/methods';
+import { ReactNode } from 'react';
+import { APIBasicInfo, EndPoint, TestResult } from './API.data.types';
+import { useIsFocusedHookReturnType } from '../../hooks/useIsFocusedHook';
 
-export interface APIBasicInfo {
-  method: Method;
-  title: string;
-  description: string;
-  managerName: string | null | undefined;
+export interface APIProps {
+  children: ReactNode;
+  // API 기본 입력 정보
+  id: APIBasicInfo['id'];
+  method: APIBasicInfo['method'];
+  title: APIBasicInfo['title'];
+  manager: APIBasicInfo['manager'];
+  description?: APIBasicInfo['description'];
+  needAuthorize?: boolean;
+  endPoint?: EndPoint;
+  lastTestResult?: TestResult;
 }
 
-// 엔드포인트 추후 추가 정의 필요.., mock/real endpoint.. 등
-export type EndPoint = string | null | undefined;
-
-// YET일지 null일지 undefined일지는 백엔드에 의존적이므로 추후 점검
-export type TestResult = 'fail' | 'success' | 'yet'; // | null | undefined;
-
-export const TEST_RESULTS: Record<TestResult, TestResult> = {
-  fail: 'fail',
-  success: 'success',
-  yet: 'yet',
-};
-
-export interface User {
-  id: number;
-  email: string;
-  nickname: string;
-  isDeleted: boolean;
-  createdAt: string;
+export interface APIContextProps extends APIProps {
+  useIsFocusedHook: useIsFocusedHookReturnType;
 }
-
-export interface Participant extends User {
-  isOwner: boolean;
-  projectId: number;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface Manager extends Pick<User, 'id' | 'nickname'> {}

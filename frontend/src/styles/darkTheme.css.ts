@@ -149,8 +149,9 @@ export default createTheme(themeContract, {
       },
       none: {
         fontColor: colorPalette.light,
-        border: 'none',
+        border: colorPalette.grey[800],
         borderRadius: '0.2rem',
+        background: colorPalette.grey[800],
         backgroundActive: colorPalette.util[400],
       },
     },

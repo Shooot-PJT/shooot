@@ -16,15 +16,18 @@ export const APIDocs = () => {
     >
       {DUMMY_API_HEADER_INFO_LIST.map((header_info) => {
         return (
-          <API>
-            <API.Header
-              title={header_info.title}
-              manager={header_info.manager}
-              method={header_info.method}
-              needAuthorize={header_info.needAuthorize}
-              endPoint={header_info.endPoint}
-              lastTestResult={header_info.lastTestResult}
-            />
+          <API
+            key={header_info.id}
+            id={header_info.id}
+            title={header_info.title}
+            description={header_info.description}
+            manager={header_info.manager}
+            method={header_info.method}
+            needAuthorize={header_info.needAuthorize}
+            endPoint={header_info.endPoint}
+            lastTestResult={header_info.lastTestResult}
+          >
+            <API.Header />
             <API.Body />
           </API>
         );
