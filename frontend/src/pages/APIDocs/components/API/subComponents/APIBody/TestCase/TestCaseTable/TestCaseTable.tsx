@@ -20,6 +20,17 @@ import {
 } from './TestCaseTable.types';
 import { getUrlFromParamsAndPath } from '../../../../../../utils';
 
+{
+  /*
+  TODO:
+  1. Params, Path variable, Header, Req Body에 따라
+  테이블 종류 달라야한다면 식별, 종류별 개발
+
+  2. Body에는 none/formData/json 택1 드랍다운메뉴 있어야함
+
+  3. 
+  */
+}
 export const TestCaseTable = ({ children, isEditing }: TestCaseTableProps) => {
   const url = getUrlFromParamsAndPath();
 
@@ -61,8 +72,8 @@ TestCaseTable.Section = function Section({
         <TableBody>
           {rows.map((row, index) => (
             <CustomTableRow key={index}>
-              {Object.entries(row).map((key) => (
-                <CustomTableCell>
+              {Object.entries(row).map((key, idx) => (
+                <CustomTableCell key={idx}>
                   {isEditing ? (
                     <Textfield color="none" fullWidth value={key[1]} />
                   ) : (
