@@ -211,3 +211,11 @@ INSERT INTO project(name, english_name, content_type, filename, memo, is_deleted
 VALUES ("프로젝트1", "project1", "image/jpeg", "5CA08755-59D8-41DA-B6C8-FE241DB35889", "메모", 0, NOW());
 INSERT INTO project(name, english_name, content_type, filename, memo, is_deleted, created_at)
 VALUES ("프로젝트2", "project2", "image/jpeg", "5CA08755-59D8-41DA-B6C8-FE241DB35889", "메모", 0, NOW());
+INSERT INTO project_participant(user_id, project_id, is_deleted, created_at, is_owner)
+VALUES (2, 1, 0, NOW(), true);
+INSERT INTO project_participant(user_id, project_id, is_deleted, created_at, is_owner)
+VALUES (2, 2, 0, NOW(), true);
+INSERT INTO project_participant(user_id, project_id, is_deleted, created_at, is_owner)
+VALUES (1, 1, 0, NOW(), false);
+INSERT INTO project_participant(user_id, project_id, is_deleted, created_at, is_owner)
+VALUES (1, 1, 0, NOW(), false);
