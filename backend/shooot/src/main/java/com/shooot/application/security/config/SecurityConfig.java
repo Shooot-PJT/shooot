@@ -150,9 +150,10 @@ public class SecurityConfig {
                 true); // true로 주게 되면 SecurityContextHolder의 값이 변경되어도 자동 저장되지 않게 함.
         });
 
-//        http.authorizeHttpRequests((auth) -> auth.requestMatchers("/", "/auth/**", "/admin/**", "/health-check", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-//                .anyRequest().authenticated());
-        http.authorizeHttpRequests((auth) -> auth.anyRequest().permitAll());
+        http.authorizeHttpRequests(
+            (auth) -> auth.requestMatchers("/", "/auth/**", "/admin/**", "/health-check",
+                    "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .anyRequest().authenticated());
         http.addFilterAt(jsonLoginAuthenticationFilter(authenticationManager),
             UsernamePasswordAuthenticationFilter.class);
         http.sessionManagement(httpSecuritySessionManagementConfigurer -> {
