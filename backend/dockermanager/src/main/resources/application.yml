@@ -1,0 +1,31 @@
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+    session:
+      cookie:
+        name: SESSIONID
+        secure: true
+        http-only: true
+        same-site: none
+        path: /
+
+
+spring:
+  profiles:
+    include: dev, secret
+
+  jpa:
+    show-sql: true
+    open-in-view: false #default : true이기에 수정해야 함.
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        highlight_sql: true
+        format_sql: true
+        default_batch_fetch_size: 1000
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
