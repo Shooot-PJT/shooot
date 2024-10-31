@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export const useResize = () => {
-  const [isLarge, setIsLarge] = useState<boolean>(true);
+  const [checkIsLarge, setCheckIsLarge] = useState<boolean>(true);
   const handleSize = useCallback(() => {
-    if (window.innerWidth < 1440) setIsLarge(() => false);
-    else setIsLarge(() => true);
+    if (window.innerWidth < 1440) setCheckIsLarge(() => false);
+    else setCheckIsLarge(() => true);
   }, []);
 
   useEffect(() => {
@@ -13,6 +13,8 @@ export const useResize = () => {
       window.removeEventListener('resize', handleSize);
     };
   }, []);
+
+  const isLarge = useMemo(() => checkIsLarge, [checkIsLarge]);
 
   return { isLarge };
 };
