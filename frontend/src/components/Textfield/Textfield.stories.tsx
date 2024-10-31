@@ -4,6 +4,7 @@ import Textfield, { TextfieldProps } from './Textfield';
 import { useRef } from 'react';
 import darkThemeCss from '../../styles/darkTheme.css';
 import Flexbox from '../Flexbox';
+import { TextfieldColor } from './Textfield.types';
 
 const meta = {
   title: 'UI/Components/Textfield',
@@ -137,7 +138,13 @@ export const Color: Story = {
               'delete',
             ].includes(color)
           ) {
-            return <ParentComponent key={index} {...args} color={color} />;
+            return (
+              <ParentComponent
+                key={index}
+                {...args}
+                color={color as TextfieldColor}
+              />
+            );
           }
           return null;
         })}

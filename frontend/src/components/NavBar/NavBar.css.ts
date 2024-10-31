@@ -6,12 +6,14 @@ export const container = style({
 
   '@media': {
     'screen and (min-width: 1440px)': {
-      height: '100%',
+      position: 'fixed',
       width: '20rem',
       borderRadius: '1rem',
+      paddingBottom: '4rem',
     },
 
     'screen and (max-width: 1439px)': {
+      position: 'fixed',
       overflow: 'hidden',
       boxSizing: 'border-box',
       width: '100%',
