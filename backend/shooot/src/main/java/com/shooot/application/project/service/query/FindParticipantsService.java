@@ -17,7 +17,7 @@ public class FindParticipantsService {
     private final ProjectRepository projectRepository;
     private final ProjectParticipantRepository projectParticipantRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<FindParticipantsResponse> findParticipants(Integer projectId) {
         Project project = projectRepository.findById(projectId).orElseThrow();
         List<ProjectParticipant> projectParticipants = projectParticipantRepository.findByProject(
