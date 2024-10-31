@@ -1,7 +1,7 @@
 import { style } from '@vanilla-extract/css';
 
 export const managerAvatar = style({
-  display: 'flex',
+  width: '100%',
   alignItems: 'center',
   justifyContent: 'center',
   padding: '0.25rem',

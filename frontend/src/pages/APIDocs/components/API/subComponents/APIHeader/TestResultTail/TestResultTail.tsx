@@ -1,7 +1,7 @@
 import { TestResult } from './TestResultTail.types';
 import * as s from './TestResultTail.css';
 import { CustomTooltip } from '../../../../../../../components/CustomToolTip';
-import { TEST_RESULTS } from '../../../API.types';
+import { TEST_RESULTS } from '../../../API.data.types';
 
 interface TestResultTailProps {
   lastTestResult: TestResult;

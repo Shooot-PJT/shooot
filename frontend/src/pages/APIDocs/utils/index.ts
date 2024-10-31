@@ -12,3 +12,19 @@ export const getRandomColor = () => {
   ];
   return colors[Math.floor(Math.random() * colors.length)];
 };
+
+export const getUrlFromParamsAndPath = () => {
+  const params = [
+    { key: 'query', value: '영화' },
+    { key: 'category', value: '액션' },
+  ];
+  const pathVariables = [
+    { key: 'id', value: '123' },
+    { key: 'lang', value: 'kr' },
+  ];
+
+  const paramsString = params.map((p) => `${p.key}=${p.value}`).join('&');
+  const pathString = pathVariables.map((p) => p.value).join('/');
+
+  return `https://www.example.com/${pathString}?${paramsString}`;
+};
