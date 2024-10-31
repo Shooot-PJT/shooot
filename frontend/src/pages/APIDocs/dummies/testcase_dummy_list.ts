@@ -1,3 +1,40 @@
+export interface TestCaseHeaderInfo {
+  id: number;
+  statusCode: string;
+  description: string;
+}
+
+export const testCaseSummaryList: TestCaseHeaderInfo[] = [
+  {
+    id: 1,
+    statusCode: '200',
+    description: '정상 응답 케이스 1입니다. 슈웃 해주세요.',
+  },
+  {
+    id: 2,
+    statusCode: '200',
+    description: '정상 응답 케이스 2입니다. 슈웃 해주세요.',
+  },
+  {
+    id: 3,
+    statusCode: '401',
+    description: '비인가 처리 확인용 테스트입니다.',
+  },
+  {
+    id: 4,
+    statusCode: '500',
+    description: '서버 에러가 의도된 케이스입니다. 슈웃해주세요.',
+  },
+];
+
+export const testCaseDetailList = [{}, {}];
+
+// export const
+
+export const testcaseExpectedResponseDummy = {
+  schema: '',
+};
+
 export const testcaseDummyList: Record<
   number,
   {

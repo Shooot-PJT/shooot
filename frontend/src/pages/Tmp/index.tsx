@@ -1,5 +1,6 @@
 import Button from '../../components/Button';
 import Flexbox from '../../components/Flexbox';
+import Graph from '../../components/Graph/Graph';
 import Typography from '../../components/Typography';
 import useModal from '../../hooks/useModal';
 import usePopup from '../../hooks/usePopup';
@@ -23,7 +24,6 @@ export const Tmp = () => {
     modal.push({
       children: (
         <Flexbox flexDirections="col">
-          <Typography>내용입니다</Typography>
           <Button onClick={modal.pop}>닫기</Button>
           <Button onClick={handleModal}>모달추가</Button>
         </Flexbox>
@@ -38,6 +38,7 @@ export const Tmp = () => {
   };
   return (
     <>
+      <Graph frameColor="primary" lineColor="put" />
       <Button
         onClick={handleModal}
         children="모달추가"

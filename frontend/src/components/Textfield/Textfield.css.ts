@@ -123,8 +123,11 @@ export const input = recipe({
         },
       },
       none: {
+        paddingTop: '0.05rem',
+        paddingBottom: '0.05rem',
         color: theme.color.textfield.none.fontColor,
-        border: 'none',
+        border: `1px solid ${theme.color.textfield.border}`,
+        backgroundColor: theme.color.textfield.background,
         borderRadius: theme.color.textfield.none.borderRadius,
         '&:focus': {
           backgroundColor: theme.color.textfield.none.backgroundActive,

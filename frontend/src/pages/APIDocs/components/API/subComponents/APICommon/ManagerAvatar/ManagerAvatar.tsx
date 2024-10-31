@@ -4,43 +4,57 @@ import { HiMiniUser } from 'react-icons/hi2';
 import { getRandomColor } from '../../../../../utils';
 import * as style from './ManagerAvatar.css';
 import colorPalette from '../../../../../../../styles/colorPalette';
+import Typography from '../../../../../../../components/Typography';
+import Flexbox from '../../../../../../../components/Flexbox';
 
 interface ManagerAvatarProps {
-  id?: Manager['id'];
-  nickname?: Manager['nickname'];
+  manager?: Manager;
   rounded?: number;
   size?: number;
+  withLabel?: boolean;
 }
 
-// 간이구현
 const ManagerAvatar = ({
-  id,
-  nickname,
+  manager,
   rounded = 99,
   size = 1.2,
+  withLabel = false,
 }: ManagerAvatarProps) => {
-  const bgColor = id ? getRandomColor() : colorPalette.grey[600];
-  const tooltipTitle = id ? nickname : '담당자 미정';
+  const bgColor = manager?.id ? getRandomColor() : colorPalette.grey[600];
+  const tooltipTitle = manager?.id ? manager?.nickname : '담당자 미정';
 
   return (
-    <CustomTooltip title={tooltipTitle}>
-      <div
-        className={style.managerAvatar}
-        style={{
-          backgroundColor: bgColor,
-          borderRadius: `${rounded}rem`,
-          width: `${size}rem`,
-          height: `${size}rem`,
-        }}
-      >
-        <HiMiniUser
+    <Flexbox flexDirections="row" style={{ gap: '1rem', alignItems: 'center' }}>
+      <CustomTooltip title={tooltipTitle}>
+        <div
+          className={style.managerAvatar}
           style={{
-            width: `${size / 1.1}rem`,
-            height: `${size / 1.1}rem`,
+            backgroundColor: bgColor,
+            borderRadius: `${rounded}rem`,
+            width: `${size}rem`,
+            height: `${size}rem`,
           }}
-        />
-      </div>
-    </CustomTooltip>
+        >
+          <HiMiniUser
+            style={{
+              width: `${size / 1.1}rem`,
+              height: `${size / 1.1}rem`,
+            }}
+          />
+        </div>
+      </CustomTooltip>
+      {withLabel && (
+        <Typography
+          color={'disabled'}
+          style={{
+            height: 'max-content',
+            width: 'max-content',
+          }}
+        >
+          {manager?.nickname}
+        </Typography>
+      )}
+    </Flexbox>
   );
 };
 
