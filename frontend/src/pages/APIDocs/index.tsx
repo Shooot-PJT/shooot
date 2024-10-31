@@ -14,24 +14,22 @@ export const APIDocs = () => {
         height: '100%',
       }}
     >
-      {DUMMY_API_HEADER_INFO_LIST.map((header_info) => {
-        return (
-          <API
-            key={header_info.id}
-            id={header_info.id}
-            title={header_info.title}
-            description={header_info.description}
-            manager={header_info.manager}
-            method={header_info.method}
-            needAuthorize={header_info.needAuthorize}
-            endPoint={header_info.endPoint}
-            lastTestResult={header_info.lastTestResult}
-          >
-            <API.Header />
-            <API.Body />
-          </API>
-        );
-      })}
+      {DUMMY_API_HEADER_INFO_LIST.map((header_info) => (
+        <API
+          key={header_info.id}
+          id={header_info.id}
+          title={header_info.title}
+          description={header_info.description}
+          manager={header_info.manager}
+          method={header_info.method}
+          needAuthorize={header_info.needAuthorize}
+          endPoint={header_info.endPoint}
+          lastTestResult={header_info.lastTestResult}
+        >
+          <API.Header />
+          <API.Body />
+        </API>
+      ))}
     </Flexbox>
   );
 };

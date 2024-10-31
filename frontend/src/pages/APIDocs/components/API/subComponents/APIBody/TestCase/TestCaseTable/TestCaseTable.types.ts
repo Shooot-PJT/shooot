@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export interface TableData {
+interface TableData {
   key: string;
   value: string;
   description: string;
