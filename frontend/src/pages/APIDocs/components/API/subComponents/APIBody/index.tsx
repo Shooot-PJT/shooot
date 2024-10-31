@@ -11,7 +11,7 @@ import * as s from './index.css';
 import { TestCase, TestCaseList } from './TestCase/TestCase';
 import { TestLogBox } from './TestLogBox/TestLogBox';
 
-export function Body() {
+export const Body = () => {
   const context = useAPIContext();
   const { isFocused } = context.useIsFocusedHook;
 
@@ -69,8 +69,15 @@ export function Body() {
                 <div
                   className={s.leftDividerRecipe({ method: context.method })}
                 />
-                <Typography>담당자</Typography>
-                <ManagerAvatar id={1} nickname="성우" size={2} />
+                <Typography
+                  weight="600"
+                  style={{
+                    textAlign: 'left',
+                  }}
+                >
+                  담당자
+                </Typography>
+                <ManagerAvatar manager={context.manager} size={2} withLabel />
               </Flexbox>
             </Flexbox>
 
@@ -115,4 +122,4 @@ export function Body() {
       </Flexbox>
     </div>
   );
-}
+};
