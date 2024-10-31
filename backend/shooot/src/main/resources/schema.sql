@@ -218,4 +218,4 @@ VALUES (2, 2, 0, NOW(), true);
 INSERT INTO project_participant(user_id, project_id, is_deleted, created_at, is_owner)
 VALUES (1, 1, 0, NOW(), false);
 INSERT INTO project_participant(user_id, project_id, is_deleted, created_at, is_owner)
-VALUES (1, 1, 0, NOW(), false);
+VALUES (1, 2, 0, NOW(), false);
