@@ -16,9 +16,12 @@ public interface ProjectParticipantRepository extends JpaRepository<ProjectParti
     List<ProjectParticipant> findByProject(Project project);
 
     Optional<ProjectParticipant> findByProjectAndIsOwner(Project project, boolean isOwner);
+
     @Query("SELECT pp FROM ProjectParticipant pp WHERE pp.project.id = :projectId AND pp.user.id = :userId")
     ProjectParticipant findByProjectIdAndUserId(
-            @Param("projectId") Integer projectId,
-            @Param("userId") Integer userId
+        @Param("projectId") Integer projectId,
+        @Param("userId") Integer userId
     );
+
+    List<ProjectParticipant> findByUser(User user);
 }

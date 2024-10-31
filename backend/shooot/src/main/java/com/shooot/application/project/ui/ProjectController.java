@@ -9,6 +9,7 @@ import com.shooot.application.project.service.dto.ProjectInviteRequest;
 import com.shooot.application.project.service.dto.ProjectModifyRequest;
 import com.shooot.application.project.service.dto.ProjectRegisterRequest;
 import com.shooot.application.project.service.query.FindParticipantsService;
+import com.shooot.application.project.service.query.GetAllProjectsService;
 import com.shooot.application.project.service.query.GetLogoService;
 import com.shooot.application.project.service.query.ProjectFindService;
 import com.shooot.application.project.ui.dto.FindParticipantsResponse;
@@ -44,6 +45,15 @@ public class ProjectController {
     private final FindParticipantsService findParticipantsService;
     private final ProjectDeleteParticipantService projectDeleteParticipantService;
     private final GetLogoService getLogoService;
+    private final GetAllProjectsService getAllProjectsService;
+
+    @GetMapping
+    public ResponseEntity<List<ProjectView>> getAllProjects(
+        @AuthenticationPrincipal UserLoginContext context
+    ) {
+        Integer userId = context.getUserId();
+        return ResponseEntity.ok(getAllProjectsService.getAllProjects(userId));
+    }
 
     @PostMapping
     public ResponseEntity<Void> projectRegister(
@@ -118,4 +128,6 @@ public class ProjectController {
         projectDeleteParticipantService.deleteParticipant(projectId, userId);
         return ResponseEntity.ok().build();
     }
+
+
 }
