@@ -1,5 +1,6 @@
 package com.shooot.application.project.ui.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.shooot.application.project.domain.Project;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class ProjectView {
 
     @Value("${url.project.logo}")
+    @JsonIgnore
     private static String logoUrl;
 
     private String name;
