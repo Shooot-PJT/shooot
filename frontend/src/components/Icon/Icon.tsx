@@ -15,7 +15,7 @@ const Icon = ({
   children,
   size = 1,
   color = 'primary',
-  background = 'primary',
+  background,
   rounded = 1,
   ...props
 }: IconProps) => {
@@ -23,7 +23,7 @@ const Icon = ({
     <div
       className={icon}
       style={{
-        padding: background === 'none' ? '0' : `${size}rem`,
+        padding: background === 'none' ? '0' : `${size / 2}rem`,
         color: theme.color.icon[color],
         backgroundColor: background
           ? background === 'none'
