@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { getMyProjectList } from './apis';
 import * as style from './MyProject.css';
-import { InfoBox } from './components/InfoBox';
+import { InfoBox } from './components/InfoBox/InfoBox';
 
 export const MyProjectFetch = () => {
   const projectsListQuery = useSuspenseQuery({
