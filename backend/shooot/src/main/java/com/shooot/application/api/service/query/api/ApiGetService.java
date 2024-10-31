@@ -20,7 +20,7 @@ public class ApiGetService {
     private final DomainRepository domainRepository;
 
     public List<ApiView> getApiList(Integer domainId){
-        List<Api> apiList  = domainRepository.findById(domainId)
+        List<Api> apiList  = domainRepository.findByIdAndNotDeleted(domainId)
                 .orElseThrow(DomainNotFoundException::new)
                 .getApis();
 
@@ -30,7 +30,8 @@ public class ApiGetService {
     }
 
     public ApiView getApi(Integer apiId){
-        Api api = apiRepository.findById(apiId).orElseThrow(ApiNotFoundException::new);
+        Api api = apiRepository.findByIdAndNotDeleted(apiId)
+                .orElseThrow(ApiNotFoundException::new);
 
         return ApiView.from(api);
     }

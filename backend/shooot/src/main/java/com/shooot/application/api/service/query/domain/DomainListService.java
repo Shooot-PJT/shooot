@@ -16,7 +16,7 @@ public class DomainListService {
     private final DomainRepository domainRepository;
 
     public List<DomainView> getDomainList(Integer projectId){
-        List<Domain> domains = domainRepository.findByProjectId(projectId);
+        List<Domain> domains = domainRepository.findByProjectIdAndNotDeleted(projectId);
 
         return domains.stream()
                 .map(domain -> DomainView.builder()

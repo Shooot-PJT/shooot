@@ -116,4 +116,8 @@ public class Api extends SoftDeleteEntity {
         }
     }
 
+    public void testCaseUpdate(){
+        this.modifiedAt = LocalDateTime.now();
+    }
+
 }

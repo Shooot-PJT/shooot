@@ -15,6 +15,7 @@ public class ApiView {
     private Integer id;
     private Integer domainId;
     private Integer managerId;
+    private String managerName;
     private String title;
     private String description;
     private String method;
@@ -31,6 +32,7 @@ public class ApiView {
                 .id(api.getId())
                 .domainId(api.getDomain().getId())
                 .managerId(api.getProjectParticipant().getId())
+                .managerName(api.getProjectParticipant().getUser().getNickname())
                 .title(api.getTitle())
                 .description(api.getDescription())
                 .method(api.getMethod())

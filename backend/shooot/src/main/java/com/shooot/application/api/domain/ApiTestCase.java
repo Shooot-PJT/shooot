@@ -1,12 +1,16 @@
 package com.shooot.application.api.domain;
 
+import com.shooot.application.api.service.command.test.dto.ApiTestCaseModifyRequest;
 import com.shooot.application.common.jpa.SoftDeleteEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.http.HttpStatus;
+
+import java.time.LocalDateTime;
 
 @SuperBuilder
 @Getter
@@ -34,10 +38,24 @@ public class ApiTestCase extends SoftDeleteEntity {
     @Column(name = "test_case_status")
     private ApiTestStatusType testCaseStatus;
 
+    @LastModifiedDate
+    @Column(name = "modified_at")
+    private LocalDateTime modifiedAt;
+
     @PrePersist
     public void setDefault(){
         if(testCaseStatus == null){
             this.testCaseStatus = ApiTestStatusType.YET;
+        }
+    }
+
+    public void update(ApiTestCaseModifyRequest apiTestCaseModifyRequest){
+        if(apiTestCaseModifyRequest.getTitle() != null){
+            this.title = apiTestCaseModifyRequest.getTitle();
+        }
+
+        if(apiTestCaseModifyRequest.getExpectHttpStatus() != null){
+            this.httpStatus = HttpStatus.valueOf(apiTestCaseModifyRequest.getExpectHttpStatus());
         }
     }
 

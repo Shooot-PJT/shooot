@@ -1,0 +1,21 @@
+package com.shooot.application.api.service.command.test;
+
+import com.shooot.application.api.domain.ApiTestCase;
+import com.shooot.application.api.domain.repository.ApiTestCaseRepository;
+import com.shooot.application.api.exception.testcase.TestCaseNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class ApiTestCaseDeleteService {
+    private final ApiTestCaseRepository apiTestCaseRepository;
+
+    public void delete(Integer testcaseId){
+        ApiTestCase apiTestCase = apiTestCaseRepository.findById(testcaseId)
+                .orElseThrow(TestCaseNotFoundException::new);
+
+        apiTestCase.delete();
+    }
+
+}
