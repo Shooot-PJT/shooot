@@ -4,7 +4,10 @@ import { useNavBarStore } from '../../../stores/navbarStore';
 import Icon from '../../Icon';
 import Typography from '../../Typography';
 import Button from '../../Button';
-import * as global from '../../../styles/globalStyle.css';
+import usePopup from '../../../hooks/usePopup';
+import { useQuery } from '@tanstack/react-query';
+import { getMyProjectList } from '../../../pages/MyProject/apis';
+import { useResize } from '../../../hooks/useResize';
 
 interface MenuItemProps extends React.ComponentProps<'div'> {
   menu: string;
