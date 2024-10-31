@@ -3,6 +3,7 @@ import theme from '../../styles/theme.css';
 
 export const button = recipe({
   base: {
+    boxSizing: 'border-box',
     width: 'max-content',
     transition: 'all 0.5s ',
     cursor: 'pointer',

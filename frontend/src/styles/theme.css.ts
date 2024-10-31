@@ -133,6 +133,7 @@ const themeContract = {
         fontColor: null,
         border: null,
         borderRadius: null,
+        background: null,
         backgroundActive: null,
       },
       get: { fontColor: null, borderActive: null },
