@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, Suspense } from 'react';
 import * as style from './Layout.css';
 import NavBar from '../NavBar';
 import Flexbox from '../Flexbox';
@@ -18,7 +18,11 @@ export const Layout = ({ children, ...props }: LayoutProps) => {
       <NavBar>
         <NavBar.Title />
         <div className={style.nav}>
-          <NavBar.Project project={[0, 1, 2]} />
+          <ErrorBoundary fallback={<>에러</>}>
+            <Suspense fallback={<>로딩중</>}>
+              <NavBar.Project />
+            </Suspense>
+          </ErrorBoundary>
           <div className={style.divi} />
           <NavBar.Menu />
         </div>
