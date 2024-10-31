@@ -13,7 +13,6 @@ export const CustomTableCell = styled(TableCell)(({ theme }) => ({
     borderColor: colorPalette.util[400],
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
     backgroundColor: themeCss.color.background[300],
     color: theme.palette.common.white,
     borderColor: colorPalette.util[400],

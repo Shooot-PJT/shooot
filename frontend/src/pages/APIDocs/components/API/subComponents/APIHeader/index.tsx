@@ -11,7 +11,7 @@ import Button from '../../../../../../components/Button';
 import { CollapseIcon } from '../APICommon/CollapseIcon/CollapseIcon';
 import TestResultTail from './TestResultTail/TestResultTail';
 
-export function Header() {
+export const Header = () => {
   const context = useAPIContext();
   const { isFocused, handleToggleIsFocused } = context.useIsFocusedHook;
 
@@ -66,10 +66,7 @@ export function Header() {
               gap: '1rem',
             }}
           >
-            <ManagerAvatar
-              id={context.manager?.id}
-              nickname={context.manager?.nickname}
-            />
+            <ManagerAvatar manager={context.manager} />
             <Button paddingX={1} rounded={0.5}>
               <Typography size={0.75}>테스트</Typography>
             </Button>
@@ -80,4 +77,4 @@ export function Header() {
       <TestResultTail lastTestResult={context.lastTestResult!} />
     </div>
   );
-}
+};
