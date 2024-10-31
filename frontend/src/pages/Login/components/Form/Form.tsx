@@ -1,6 +1,6 @@
-import { LoginHook } from '../types';
-import Textfield from '../../../components/Textfield';
-import Flexbox from '../../../components/Flexbox';
+import { LoginHook } from '../../types';
+import Textfield from '../../../../components/Textfield';
+import Flexbox from '../../../../components/Flexbox';
 
 export const Form = ({ emailRef, pwdRef }: LoginHook) => {
   return (
