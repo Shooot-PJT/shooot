@@ -1,11 +1,11 @@
 import { HiPlus, HiUser } from 'react-icons/hi2';
-import Flexbox from '../../../components/Flexbox';
-import { BoxType, ProjectInfo } from '../types';
-import Icon from '../../../components/Icon';
-import Typography from '../../../components/Typography';
-import theme from '../../../styles/theme.css';
-import * as style from '../MyProject.css';
-import { useNavBarStore } from '../../../stores/navbarStore';
+import Flexbox from '../../../../components/Flexbox';
+import { BoxType, ProjectInfo } from '../../types';
+import Icon from '../../../../components/Icon';
+import Typography from '../../../../components/Typography';
+import theme from '../../../../styles/theme.css';
+import * as style from '../../MyProject.css';
+import { useNavBarStore } from '../../../../stores/navbarStore';
 
 interface InfoBoxProps {
   type?: BoxType;
