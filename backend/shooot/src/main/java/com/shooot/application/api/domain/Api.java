@@ -68,8 +68,8 @@ public class Api extends SoftDeleteEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "api")
     private List<ApiSubscribe> subscribers = new ArrayList<>();
 
-    @PrePersist
-    protected void setDefault() {
+    @Override
+    protected void prePersistAction() {
         if(isRealServer == null){
             this.isRealServer = false;
         }

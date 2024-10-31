@@ -3,12 +3,15 @@ package com.shooot.application.api.ui;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shooot.application.api.domain.ApiTestCaseRequest;
+import com.shooot.application.api.domain.repository.ApiTestLogRepository;
 import com.shooot.application.api.service.command.test.ApiTestCaseCreateService;
 import com.shooot.application.api.service.command.test.ApiTestCaseDeleteService;
 import com.shooot.application.api.service.command.test.ApiTestCaseModifyService;
 import com.shooot.application.api.service.command.test.dto.ApiTestCaseCreateRequest;
 import com.shooot.application.api.service.command.test.dto.ApiTestCaseModifyRequest;
 import com.shooot.application.api.service.query.test.TestCaseGetService;
+import com.shooot.application.api.ui.dto.ApiDetailView;
+import com.shooot.application.api.ui.dto.ApiTestCaseListView;
 import com.shooot.application.api.ui.dto.ApiTestCaseView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,6 +32,7 @@ public class ApiTestCaseController {
     private final ApiTestCaseDeleteService apiTestCaseDeleteService;
     private final ApiTestCaseModifyService apiTestCaseModifyService;
     private final TestCaseGetService testCaseGetService;
+
 
     @PostMapping("/{apiId}/testcases")
     public ResponseEntity<?> createTestCase(
@@ -81,18 +86,25 @@ public class ApiTestCaseController {
     public ResponseEntity<?> getTestCaseList(
             @PathVariable(name = "apiId") Integer apiId
     ){
-        testCaseGetService.getList(apiId);
+        List<ApiTestCaseListView> apiTestCaseListViews = testCaseGetService.getList(apiId);
 
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(apiTestCaseListViews);
     }
 
     @GetMapping("/testcases/{testcaseId}")
     public ResponseEntity<?> getTestCase(
             @PathVariable(name = "testcaseId") Integer testcaseId
     ){
-        ApiTestCaseView testCaseView = testCaseGetService.get(testcaseId);
+        ApiDetailView apiDetailView = testCaseGetService.get(testcaseId);
 
-        return ResponseEntity.ok(testCaseView);
+        return ResponseEntity.ok(apiDetailView);
+    }
+
+    @GetMapping("/{apiId}/testcases/logs")
+    public ResponseEntity<?> getTestLogs(
+            @PathVariable(name = "apiId") Integer apiId
+    ){
+
     }
 
 

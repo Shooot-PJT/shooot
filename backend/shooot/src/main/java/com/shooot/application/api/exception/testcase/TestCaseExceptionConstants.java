@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @Getter
 public enum TestCaseExceptionConstants implements CustomExceptionDefinition {
-    TEST_CASE_NOT_FOUND_EXCEPTION("테스트케이스가 존재하지 않습니다.", "T001",HttpStatus.NOT_FOUND),
+    TEST_CASE_NOT_FOUND_EXCEPTION("테스트케이스가 존재하지 않습니다.", "T001", HttpStatus.NOT_FOUND),
+    TEST_CASE_REQUEST_NOT_FOUND_EXCEPTION("테스트케이스 요청이 존재하지 않습니다.", "T002", HttpStatus.NOT_FOUND)
     ;
 
     private final String message;

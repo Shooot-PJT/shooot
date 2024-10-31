@@ -42,8 +42,8 @@ public class ApiTestCase extends SoftDeleteEntity {
     @Column(name = "modified_at")
     private LocalDateTime modifiedAt;
 
-    @PrePersist
-    public void setDefault(){
+    @Override
+    public void prePersistAction(){
         if(testCaseStatus == null){
             this.testCaseStatus = ApiTestStatusType.YET;
         }
