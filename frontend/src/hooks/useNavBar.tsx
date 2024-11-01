@@ -1,12 +1,14 @@
 import { useMutation, useQueries } from '@tanstack/react-query';
 import { useNavBarStore } from '../stores/navbarStore';
 import usePopup from './usePopup';
-import { changeNickname, getUserInfo } from '../pages/Main/apis';
+import { addProject, changeNickname, getUserInfo } from '../pages/Main/apis';
 import { getProjectInfo, getProjectMembers } from '../pages/MyProject/apis';
 import { useEffect } from 'react';
 import useModal from './useModal';
 import Typography from '../components/Typography';
 import { NicknameChangePopup } from '../popups/Banner/NicknameChangeModal';
+import { ProjectWriteModal } from '../popups/Banner/ProjectWriteModal/ProjectWriteModal';
+import { AddProjectRequest } from '../pages/Main/types';
 
 export const useNavBar = () => {
   const navbarStore = useNavBarStore();
@@ -69,6 +71,40 @@ export const useNavBar = () => {
     });
   };
 
+  // 프로젝트 생성
+  const addProjectMutation = useMutation({
+    mutationKey: ['add-project'],
+    mutationFn: async (info: AddProjectRequest) => await addProject(info),
+    onSuccess: () => {
+      popup.push({
+        title: '프로젝트 생성',
+        children: <Typography>프로젝트를 생성하였습니다.</Typography>,
+        onClose: () => {
+          modal.pop();
+          navbarStore.setProject(addProjectMutation.data!.data.projectId);
+          navbarStore.setMenu(0);
+        },
+      });
+    },
+    onError: () => {
+      popup.push({
+        title: '프로젝트 생성 실패',
+        children: <Typography>다시 시도해주세요.</Typography>,
+        type: 'fail',
+      });
+    },
+  });
+  const addProjectModalHandler = () => {
+    modal.push({
+      children: (
+        <ProjectWriteModal
+          popHandler={modalPopHandler}
+          addHandler={addProjectMutation.mutate}
+        />
+      ),
+    });
+  };
+
   useEffect(() => {
     if (navbarStore.menu === 2) {
       userInfo.refetch();
@@ -91,5 +127,6 @@ export const useNavBar = () => {
     projectInfo: projectInfo.data?.data,
     memberInfo: memberInfo.data?.data,
     nicknameChangeModalHandler,
+    addProjectModalHandler,
   };
 };

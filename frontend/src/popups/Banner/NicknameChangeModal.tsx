@@ -21,7 +21,7 @@ export const NicknameChangePopup = ({
   const [err, setError] = useState<CommonError>({ isError: false, errMsg: '' });
 
   const handler = (nickname: string) => {
-    if (nickname.length) {
+    if (nickname.trim().length) {
       const res = validateNickname(nickname);
       setError(() => res);
 
