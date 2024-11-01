@@ -19,7 +19,7 @@ import java.util.List;
 public class ProjectBuild extends SoftDeleteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "project_build_file_id")
+    @Column(name = "project_build_id")
     private Integer id;
 
     @Embedded
