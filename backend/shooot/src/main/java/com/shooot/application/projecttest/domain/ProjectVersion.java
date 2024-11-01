@@ -24,7 +24,7 @@ public class ProjectVersion {
     private Integer patch;
 
     @Setter
-    @Column(name = "verseion_temporary")
+    @Column(name = "version_temporary")
     private Integer temporary;
 
     public boolean equals(Object o) {
