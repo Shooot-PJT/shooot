@@ -1,5 +1,7 @@
 package com.shooot.application.project.ui;
 
+import com.shooot.application.project.exception.ProjectEnglishNameNotValidException;
+import com.shooot.application.project.exception.ProjectNameNotValidException;
 import com.shooot.application.project.service.command.ProjectAcceptInvitationService;
 import com.shooot.application.project.service.command.ProjectDeleteParticipantService;
 import com.shooot.application.project.service.command.ProjectInviteService;
@@ -16,6 +18,7 @@ import com.shooot.application.project.ui.dto.FindParticipantsResponse;
 import com.shooot.application.project.ui.dto.ProjectResponse;
 import com.shooot.application.project.ui.dto.RegisterProjectResponse;
 import com.shooot.application.security.service.UserLoginContext;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -59,20 +62,36 @@ public class ProjectController {
     @PostMapping
     public ResponseEntity<RegisterProjectResponse> projectRegister(
         @RequestPart ProjectRegisterRequest request,
-        @RequestPart MultipartFile file,
+        @RequestPart(required = false) MultipartFile file,
         @AuthenticationPrincipal UserLoginContext userLoginContext
     ) {
+        if (Objects.isNull(request.getName())) {
+            throw new ProjectNameNotValidException();
+        }
+
+        if (
+            Objects.isNull(request.getEnglishName()) ||
+                request.getEnglishName().isEmpty() ||
+                request.getEnglishName().length() > 20
+        ) {
+            throw new ProjectEnglishNameNotValidException();
+        }
+
         Integer userId = userLoginContext.getUserId();
         return ResponseEntity.ok(projectRegisterService.projectRegister(request, file, userId));
     }
 
     @PutMapping("/{projectId}")
     public ResponseEntity<Void> projectModify(
-        @RequestPart ProjectModifyRequest request,
+        @RequestPart @Valid ProjectModifyRequest request,
         @RequestPart(required = false) MultipartFile file,
         @PathVariable Integer projectId,
         @AuthenticationPrincipal UserLoginContext userLoginContext
     ) {
+        if (Objects.isNull(request.getName())) {
+            throw new ProjectNameNotValidException();
+        }
+
         Integer userId = userLoginContext.getUserId();
         if (Objects.isNull(file)) {
             projectModifyService.projectModify(request, projectId, userId);
