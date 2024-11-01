@@ -35,7 +35,7 @@ public class DummyDataBuilder implements ApplicationListener<ContextRefreshedEve
 
 
     private void createDummyProjectBuild() {
-        createProjectBuildIfNotNull(1, 1, "/home/hyunjinkim/deployment/dummy/dummy/build/libs/dummy-0.0.1-SNAPSHOT.jar", "/home/hyunjinkim/deployment/dummy/dummy/docker-compose.yml");
+        createProjectBuildIfNotNull(1, 1, "C:\\Users\\SSAFY\\Desktop\\dummy-0.0.1-SNAPSHOT.jar", "/home/hyunjinkim/deployment/dummy/dummy/docker-compose.yml");
     }
 
 
@@ -48,7 +48,7 @@ public class DummyDataBuilder implements ApplicationListener<ContextRefreshedEve
         Project project = findProjectById(projectId);
         File jarFile = new File(jarFilePath);
         String jarFileChecksum = FileHandler.getMD5Checksum(jarFile);
-
+        System.out.println("jarFileChecksum = " + jarFileChecksum);
         Map<String, Object> fileInfos = extractJarInfo(jarFile);
         String projectFileName = (String) fileInfos.get(ProjectFileHandler.PROJECT_NAME);
         ProjectVersion projectVersion = (ProjectVersion) fileInfos.get(ProjectFileHandler.VERSION);
