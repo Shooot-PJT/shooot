@@ -14,6 +14,7 @@ import com.shooot.application.project.service.query.GetLogoService;
 import com.shooot.application.project.service.query.GetProjectService;
 import com.shooot.application.project.ui.dto.FindParticipantsResponse;
 import com.shooot.application.project.ui.dto.ProjectResponse;
+import com.shooot.application.project.ui.dto.RegisterProjectResponse;
 import com.shooot.application.security.service.UserLoginContext;
 import java.util.List;
 import java.util.Objects;
@@ -56,14 +57,13 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> projectRegister(
+    public ResponseEntity<RegisterProjectResponse> projectRegister(
         @RequestPart ProjectRegisterRequest request,
         @RequestPart MultipartFile file,
         @AuthenticationPrincipal UserLoginContext userLoginContext
     ) {
         Integer userId = userLoginContext.getUserId();
-        projectRegisterService.projectRegister(request, file, userId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(projectRegisterService.projectRegister(request, file, userId));
     }
 
     @PutMapping("/{projectId}")

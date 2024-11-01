@@ -8,6 +8,7 @@ import com.shooot.application.project.domain.repository.ProjectParticipantReposi
 import com.shooot.application.project.domain.repository.ProjectRepository;
 import com.shooot.application.project.exception.DuplicateEnglishNameException;
 import com.shooot.application.project.service.dto.ProjectRegisterRequest;
+import com.shooot.application.project.ui.dto.RegisterProjectResponse;
 import com.shooot.application.user.domain.User;
 import com.shooot.application.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class ProjectRegisterService {
     private final FileStorageService fileStorageService;
 
     @Transactional
-    public void projectRegister(
+    public RegisterProjectResponse projectRegister(
         ProjectRegisterRequest request,
         MultipartFile file,
         Integer userId
@@ -53,5 +54,9 @@ public class ProjectRegisterService {
             .isOwner(true)
             .build();
         projectParticipantRepository.save(projectParticipant);
+
+        return RegisterProjectResponse.builder()
+            .projectId(project.getId())
+            .build();
     }
 }
