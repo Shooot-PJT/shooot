@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface DomainRepository extends JpaRepository<Domain, Integer> {
     @Query("SELECT d FROM Domain d WHERE d.project.id = :projectId AND d.isDeleted = false")
-    List<Domain> findByProjectIdAndNotDeleted(Integer projectId);
+    List<Domain> findByProjectIdAndNotDeleted(@Param("projectId") Integer projectId);
 
     @Query("SELECT d FROM Domain d WHERE d.id = :domainId AND d.isDeleted = false")
     Optional<Domain> findByIdAndNotDeleted(@Param("domainId") Integer domainId);

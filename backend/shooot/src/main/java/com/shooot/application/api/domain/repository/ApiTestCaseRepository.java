@@ -12,11 +12,11 @@ import java.util.Optional;
 
 public interface ApiTestCaseRepository extends JpaRepository<ApiTestCase, Integer> {
 
-    @Query("SELECT t FROM ApiTestCase t WHERE t.api.id = :apiId AND t.api.is_deleted = false")
-    List<ApiTestCase> findApiTestCasesByApiId(Integer apiId);
+    @Query("SELECT t FROM ApiTestCase t WHERE t.api.id = :apiId AND t.api.isDeleted = false")
+    List<ApiTestCase> findApiTestCasesByApiId(@Param("apiId") Integer apiId);
 
-    @Query("SELECT t FROM ApiTestCase t WHERE t.id = :testcaseId AND t.api.is_deleted = false")
-    Optional<ApiTestCase> findApiTestCaseById(Integer testcaseId);
+    @Query("SELECT t FROM ApiTestCase t WHERE t.id = :testcaseId AND t.api.isDeleted = false")
+    Optional<ApiTestCase> findApiTestCaseById(@Param("testcaseId") Integer testcaseId);
 
     @Query("SELECT new com.shooot.application.api.ui.dto.ApiDetailView(" +
             "t.id, t.api, t.title, t.httpStatus, t.testCaseStatus, t.modifiedAt, t.createdAt, " +

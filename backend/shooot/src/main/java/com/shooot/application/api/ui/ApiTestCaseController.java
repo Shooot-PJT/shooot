@@ -9,15 +9,19 @@ import com.shooot.application.api.service.command.test.ApiTestCaseDeleteService;
 import com.shooot.application.api.service.command.test.ApiTestCaseModifyService;
 import com.shooot.application.api.service.command.test.dto.ApiTestCaseCreateRequest;
 import com.shooot.application.api.service.command.test.dto.ApiTestCaseModifyRequest;
+import com.shooot.application.api.service.command.test.dto.TestLogSearchRequest;
 import com.shooot.application.api.service.query.test.TestCaseGetService;
+import com.shooot.application.api.service.query.test.TestCaseLogsGetService;
 import com.shooot.application.api.ui.dto.ApiDetailView;
 import com.shooot.application.api.ui.dto.ApiTestCaseListView;
 import com.shooot.application.api.ui.dto.ApiTestCaseView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +36,7 @@ public class ApiTestCaseController {
     private final ApiTestCaseDeleteService apiTestCaseDeleteService;
     private final ApiTestCaseModifyService apiTestCaseModifyService;
     private final TestCaseGetService testCaseGetService;
-
+    private final TestCaseLogsGetService testCaseLogsGetService;
 
     @PostMapping("/{apiId}/testcases")
     public ResponseEntity<?> createTestCase(
@@ -102,9 +106,31 @@ public class ApiTestCaseController {
 
     @GetMapping("/{apiId}/testcases/logs")
     public ResponseEntity<?> getTestLogs(
-            @PathVariable(name = "apiId") Integer apiId
+            @PathVariable(name = "apiId") Integer apiId,
+            @RequestParam Integer testcaseId,
+            @RequestParam(required = false) Integer testerId,
+            @RequestParam(required = false) Boolean isSuccess,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            Pageable pageable
     ){
 
+        TestLogSearchRequest testLogSearchRequest = TestLogSearchRequest.builder()
+                .testcaseId(testcaseId)
+                .testerId(testerId)
+                .isSuccess(isSuccess)
+                .startDate(startDate)
+                .endDate(endDate)
+                .pageable(pageable)
+                .build();
+
+        log.info("apiId = {}" , apiId);
+        log.info("testLogSearchRequest = {}", testLogSearchRequest);
+
+        testCaseLogsGetService.getFilterLogs(testLogSearchRequest);
+
+
+        return ResponseEntity.ok(null);
     }
 
 
