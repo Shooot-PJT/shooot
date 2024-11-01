@@ -194,7 +194,7 @@ CREATE TABLE project_file
 (
     project_build_id    INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
     project_file        BLOB                NOT NULL,
-    docker_compose_file BLOB                NOT NULL,
+    docker_compose_file BLOB ,
     file_name           VARCHAR(100)        NOT NULL,
     FOREIGN KEY (project_build_id) REFERENCES project_build (project_build_id)
 );

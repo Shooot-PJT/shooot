@@ -28,7 +28,6 @@ public class ProjectFile {
     @Column(name = "project_file")
     private byte[] projectFile;
 
-
     @Lob
     @Column(name = "docker_compose_file")
     private byte[] dockerComposeFile;

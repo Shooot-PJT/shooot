@@ -86,12 +86,13 @@ public class ProjectBuildUploadService {
         return projectBuildFindService.getTemporaryVersion(projectId, fileName, version);
     }
 
-    private ProjectBuild createProjectBuild(Project project, String fileName, ProjectVersion version) {
+    private ProjectBuild createProjectBuild(Project project, String fileName, ProjectVersion version, String md5CheckSum) {
         return ProjectBuild.builder()
                 .fileName(fileName)
                 .version(version)
                 .isDeployment(false)
                 .project(project)
+                .md5CheckSum(md5CheckSum)
                 .build();
     }
 
