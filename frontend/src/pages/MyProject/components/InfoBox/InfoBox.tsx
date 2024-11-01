@@ -6,6 +6,7 @@ import Typography from '../../../../components/Typography';
 import theme from '../../../../styles/theme.css';
 import * as style from '../../MyProject.css';
 import { useNavBarStore } from '../../../../stores/navbarStore';
+import { useNavBar } from '../../../../hooks/useNavBar';
 
 interface InfoBoxProps {
   type?: BoxType;
@@ -14,6 +15,7 @@ interface InfoBoxProps {
 
 export const InfoBox = ({ type = 'info', info }: InfoBoxProps) => {
   const navbarStore = useNavBarStore();
+  const { addProjectModalHandler } = useNavBar();
 
   const handler = () => {
     navbarStore.setMenu(0);
@@ -39,6 +41,7 @@ export const InfoBox = ({ type = 'info', info }: InfoBoxProps) => {
           justifyContents="center"
           alignItems="center"
           style={{ width: '100%', height: '100%', rowGap: '1rem' }}
+          onClick={addProjectModalHandler}
         >
           <Icon size={3} color="light" background="none">
             <HiPlus />
