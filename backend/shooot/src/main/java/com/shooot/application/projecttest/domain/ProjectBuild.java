@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "project_test")
+@Table(name = "project_build")
 @Entity
 public class ProjectBuild extends SoftDeleteEntity {
     @Id
