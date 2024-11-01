@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Button from '../../../../components/Button';
-import * as s from './uploadFile.css';
+import * as s from './UploadFile.css';
 import Typography from '../../../../components/Typography';
 import jar from '/assets/jar.png';
 import docker from '/assets/docker.png';
@@ -8,10 +8,11 @@ import { GoFile } from 'react-icons/go';
 
 export interface UploadFileProps {
   requiredExtension: 'jar' | 'yml';
+  handlevalidationFile: (s: string, r: string) => void;
 }
 
 export const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>(
-  ({ requiredExtension }: UploadFileProps, ref) => {
+  ({ requiredExtension, handlevalidationFile }: UploadFileProps, ref) => {
     const [fileInfo, setFileInfo] = useState<Record<string, string>>({
       name: '',
       size: '',
@@ -21,15 +22,13 @@ export const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>(
     const handlefileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e?.target.files?.[0];
       if (file) {
+        const extension = file.name.split('.').pop();
         setFileInfo({
           name: file.name,
           size: String((file.size / 1024).toFixed(1)),
-          extension:
-            file.name.split('.').length !== 0
-              ? (file.name.split('.').pop() as string)
-              : '',
+          extension: extension ? extension : '',
         });
-        console.log(file.name.split('.').pop());
+        handlevalidationFile(extension ? extension : '', requiredExtension);
       }
     };
 
