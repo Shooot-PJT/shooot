@@ -1,7 +1,7 @@
 import { useLogin } from './hooks/useLogin';
 import { Result } from './components/Result';
-import { Form } from './components/Form';
-import { Logo } from './components/Logo';
+import { Form } from './components/Form/Form';
+import { Logo } from './components/Logo/Logo';
 import Flexbox from '../../components/Flexbox';
 
 export const Login = () => {
