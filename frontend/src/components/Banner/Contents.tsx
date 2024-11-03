@@ -1,17 +1,24 @@
 import Flexbox from '../Flexbox';
-import { useNavBar } from '../../hooks/useNavBar';
 import { ProjectContents } from './ProjectContents';
 import { UserContents } from './UserContents';
+import { UserInfo } from '../../pages/Main/types';
+import { ProjectInfo, ProjectMember } from '../../pages/MyProject/types';
 
-export const Contents = () => {
-  const {
-    menu,
-    userInfo,
-    projectInfo,
-    memberInfo,
-    nicknameChangeModalHandler,
-  } = useNavBar();
+interface ContentsProps {
+  menu: number;
+  userInfo: UserInfo;
+  projectInfo: ProjectInfo;
+  memberInfo: ProjectMember[];
+  nicknameChangeModalHandler: () => void;
+}
 
+export const Contents = ({
+  menu,
+  userInfo,
+  projectInfo,
+  memberInfo,
+  nicknameChangeModalHandler,
+}: ContentsProps) => {
   return (
     <Flexbox
       flexDirections="col"

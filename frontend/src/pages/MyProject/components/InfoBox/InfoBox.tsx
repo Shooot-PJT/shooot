@@ -6,7 +6,7 @@ import Typography from '../../../../components/Typography';
 import theme from '../../../../styles/theme.css';
 import * as style from '../../MyProject.css';
 import { useNavBarStore } from '../../../../stores/navbarStore';
-import { useNavBar } from '../../../../hooks/useNavBar';
+import { useNavBar } from '../../../Main/hooks/useNavBar';
 
 interface InfoBoxProps {
   type?: BoxType;
