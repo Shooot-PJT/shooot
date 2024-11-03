@@ -19,7 +19,7 @@ export const Icon = recipe({
       Pending: { backgroundColor: themeCss.color.stateicon.pending },
       Disabled: { backgroundColor: themeCss.color.stateicon.disabled },
       Error: { backgroundColor: themeCss.color.stateicon.error },
-      NotBuilded: { backgroundColor: themeCss.color.stateicon.notbuilded },
+      'No-Build': { backgroundColor: themeCss.color.stateicon.notbuilded },
     },
   },
 });
@@ -36,7 +36,7 @@ export const text = recipe({
       Pending: { color: themeCss.color.stateicon.pending },
       Disabled: { color: themeCss.color.stateicon.disabled },
       Error: { color: themeCss.color.stateicon.error },
-      NotBuilded: { color: themeCss.color.stateicon.notbuilded },
+      'No-Build': { color: themeCss.color.stateicon.notbuilded },
     },
   },
 });
