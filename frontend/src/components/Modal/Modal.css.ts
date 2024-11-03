@@ -106,7 +106,7 @@ export const modalHeader = style({
 
 export const bar = style({
   margin: '0.5rem 4rem 0rem 4rem',
-  border: `3px solid ${theme.color.modal['bar']}`,
+  border: `3px solid ${theme.color.background[200]}`,
   borderRadius: '0.25rem',
   marginBottom: '1rem',
 });

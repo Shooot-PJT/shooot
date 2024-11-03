@@ -141,8 +141,12 @@ const themeContract = {
       put: { fontColor: null, borderActive: null },
       delete: { fontColor: null, borderActive: null },
     },
-    modal: {
-      bar: null,
+    stateicon: {
+      approved: null,
+      pending: null,
+      disabled: null,
+      error: null,
+      notbuilded: null,
     },
     background: {
       100: null,

@@ -112,7 +112,7 @@ export default createTheme(themeContract, {
       disabled: colorPalette.grey['50'],
     },
     textfield: {
-      background: '#3A3A4A',
+      background: colorPalette.util['300'],
       placeholder: colorPalette.grey['500'],
       border: '#8C8CB6',
       primary: {
@@ -155,8 +155,12 @@ export default createTheme(themeContract, {
         backgroundActive: colorPalette.util[400],
       },
     },
-    modal: {
-      bar: '#61616E',
+    stateicon: {
+      approved: colorPalette.green[500],
+      pending: colorPalette.blue[500],
+      disabled: colorPalette.deepOrange[500],
+      error: colorPalette.amber[500],
+      notbuilded: colorPalette.grey[500],
     },
     background: {
       100: colorPalette.util['100'],
