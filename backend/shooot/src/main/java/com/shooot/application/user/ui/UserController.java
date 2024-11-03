@@ -4,6 +4,7 @@ import com.shooot.application.security.service.UserLoginContext;
 import com.shooot.application.user.service.command.UserModifyService;
 import com.shooot.application.user.service.dto.UserInfoModifyRequest;
 import com.shooot.application.user.service.query.UserFindService;
+import com.shooot.application.user.ui.dto.FindByEmailView;
 import com.shooot.application.user.ui.dto.UserView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<UserView> findByEmail(@RequestParam String email) {
+    public ResponseEntity<FindByEmailView> findByEmail(@RequestParam String email) {
         return ResponseEntity.ok(userFindService.findByEmail(email));
     }
 }
