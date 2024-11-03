@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
-import Flexbox from '../../components/Flexbox';
-import Textfield from '../../components/Textfield';
-import Typography from '../../components/Typography';
-import { CommonError } from '../../types/ErrorType';
-import Button from '../../components/Button';
-import { validateNickname } from '../../pages/Signup/utils/validator';
+import { CommonError } from '../../../../types/ErrorType';
+import { validateNickname } from '../../../Signup/utils/validator';
+import Flexbox from '../../../../components/Flexbox';
+import Typography from '../../../../components/Typography';
+import Textfield from '../../../../components/Textfield';
+import Button from '../../../../components/Button';
 
 interface NicknameChangePopupProps {
   nickname: string;

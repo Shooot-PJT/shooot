@@ -1,16 +1,16 @@
 import { useRef, useState } from 'react';
-import Flexbox from '../../../components/Flexbox';
-import Textfield from '../../../components/Textfield';
-import Typography from '../../../components/Typography';
 import * as style from './ProjectWriteModal.css';
-import Button from '../../../components/Button';
-import theme from '../../../styles/theme.css';
-import { AddProjectRequest } from '../../../pages/Main/types';
-import usePopup from '../../../hooks/usePopup';
+import theme from '../../../../../styles/theme.css';
+import { AddProjectRequest } from '../../../../Main/types';
+import usePopup from '../../../../../hooks/usePopup';
 import {
   validateEnglishName,
   validateName,
-} from '../../../pages/Main/utils/validator';
+} from '../../../../Main/utils/validator';
+import Typography from '../../../../../components/Typography';
+import Flexbox from '../../../../../components/Flexbox';
+import Button from '../../../../../components/Button';
+import Textfield from '../../../../../components/Textfield';
 
 interface ProjectWriteModalProps {
   type?: 'add' | 'edit';

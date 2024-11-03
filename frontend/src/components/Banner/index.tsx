@@ -4,12 +4,27 @@ import { Contents } from './Contents';
 import { Img } from './Img';
 import theme from '../../styles/theme.css';
 import { useResize } from '../../hooks/useResize';
+import { UserInfo } from '../../pages/Main/types';
+import { ProjectInfo, ProjectMember } from '../../pages/MyProject/types';
 
 interface BannerProps extends React.ComponentProps<'div'> {
   children?: ReactNode;
+  menu: number;
+  userInfo: UserInfo;
+  projectInfo: ProjectInfo;
+  memberInfo: ProjectMember[];
+  nicknameChangeModalHandler: () => void;
 }
 
-export const Banner = ({ children, ...props }: BannerProps) => {
+export const Banner = ({
+  children,
+  menu,
+  userInfo,
+  projectInfo,
+  memberInfo,
+  nicknameChangeModalHandler,
+  ...props
+}: BannerProps) => {
   const { isLarge } = useResize();
   return (
     <div
@@ -27,7 +42,13 @@ export const Banner = ({ children, ...props }: BannerProps) => {
         {...props}
       >
         {isLarge && <Img src="woman" />}
-        <Contents />
+        <Contents
+          menu={menu}
+          userInfo={userInfo}
+          projectInfo={projectInfo}
+          memberInfo={memberInfo}
+          nicknameChangeModalHandler={nicknameChangeModalHandler}
+        />
         <Img src="man" />
         {children}
       </Flexbox>

@@ -1,14 +1,14 @@
 import { useMutation, useQueries } from '@tanstack/react-query';
-import { useNavBarStore } from '../stores/navbarStore';
-import usePopup from './usePopup';
-import { addProject, changeNickname, getUserInfo } from '../pages/Main/apis';
-import { getProjectInfo, getProjectMembers } from '../pages/MyProject/apis';
+import { useNavBarStore } from '../../../stores/navbarStore';
+import usePopup from '../../../hooks/usePopup';
+import { addProject, changeNickname, getUserInfo } from '../apis';
+import { getProjectInfo, getProjectMembers } from '../../MyProject/apis';
 import { useEffect } from 'react';
-import useModal from './useModal';
-import Typography from '../components/Typography';
+import useModal from '../../../hooks/useModal';
+import Typography from '../../../components/Typography';
+import { AddProjectRequest } from '../types';
 import { NicknameChangePopup } from '../popups/Banner/NicknameChangeModal';
 import { ProjectWriteModal } from '../popups/Banner/ProjectWriteModal/ProjectWriteModal';
-import { AddProjectRequest } from '../pages/Main/types';
 
 export const useNavBar = () => {
   const navbarStore = useNavBarStore();
@@ -19,7 +19,7 @@ export const useNavBar = () => {
       {
         queryKey: ['userinfo'],
         queryFn: async () => await getUserInfo(),
-        enabled: false,
+        staleTime: 5 * 60 * 1000,
       },
       {
         queryKey: ['projectinfo', navbarStore.project],
@@ -106,20 +106,11 @@ export const useNavBar = () => {
   };
 
   useEffect(() => {
-    if (navbarStore.menu === 2) {
-      userInfo.refetch();
-    } else {
-      projectInfo.refetch();
-      memberInfo.refetch();
-    }
-  }, [navbarStore.menu]);
-
-  useEffect(() => {
     if (navbarStore.menu !== 2) {
       projectInfo.refetch();
       memberInfo.refetch();
     }
-  }, [navbarStore.project]);
+  }, [navbarStore.menu, navbarStore.project]);
 
   return {
     menu: navbarStore.menu,
