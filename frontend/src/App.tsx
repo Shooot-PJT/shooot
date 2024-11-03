@@ -6,6 +6,7 @@ import { Layout } from './components/Layout';
 import { Login } from './pages/Login';
 import { Tmp } from './pages/Tmp';
 import darkTheme from './styles/darkTheme.css';
+import { ServerTest } from './pages/ServerTest';
 import { Main } from './pages/Main';
 
 function App() {
@@ -23,6 +24,14 @@ function App() {
           element={
             <Layout>
               <APIDocs />
+            </Layout>
+          }
+        />
+        <Route
+          path="/test"
+          element={
+            <Layout>
+              <ServerTest />
             </Layout>
           }
         />
