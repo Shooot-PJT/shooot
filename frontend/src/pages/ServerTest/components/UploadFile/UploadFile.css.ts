@@ -4,7 +4,6 @@ import themeCss from '../../../../styles/theme.css';
 export const container = style({
   width: '600px',
   height: '60px',
-  border: '2px solid black',
   backgroundColor: `${themeCss.color.background[100]}`,
   borderRadius: '0.5rem',
 });
