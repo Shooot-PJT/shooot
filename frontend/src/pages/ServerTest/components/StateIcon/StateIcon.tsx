@@ -7,7 +7,7 @@ import * as s from './StateIcon.css';
 import Flexbox from '../../../../components/Flexbox';
 
 export interface StateIconProps {
-  state: 'Approved' | 'Pending' | 'Disabled' | 'Error' | 'No-Build-Yet';
+  state: 'Approved' | 'Pending' | 'Disabled' | 'Error' | 'No-Build';
 }
 
 const handleIcon = (state: string) => {
