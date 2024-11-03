@@ -36,6 +36,10 @@ export const headerItem = style({
   fontSize: '18px',
   fontWeight: '500',
   color: `${colorPalette.grey[500]}`,
+  WebkitUserSelect: 'none', 
+  MozUserSelect: 'none',  
+  msUserSelect: 'none',
+  userSelect: 'none' 
 });
 
 export const resizeBar = style({
