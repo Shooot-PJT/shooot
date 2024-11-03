@@ -10,6 +10,7 @@ interface ProjectInfoProps {
   projectInfo?: ProjectInfo;
   memberInfo?: ProjectMember[];
   editProjectModalHandler: () => void;
+  inviteMembersModalHandler: () => void;
 }
 
 const colors: IconColor[] = [
@@ -28,6 +29,7 @@ export const ProjectContents = ({
   projectInfo,
   memberInfo,
   editProjectModalHandler,
+  inviteMembersModalHandler,
 }: ProjectInfoProps) => {
   return (
     <>
@@ -66,7 +68,11 @@ export const ProjectContents = ({
         </Flexbox>
       </Flexbox>
       <Flexbox style={{ columnGap: '0.5rem' }}>
-        <Typography color="disabled" size={0.875}>
+        <Typography
+          color="disabled"
+          size={0.875}
+          onClick={inviteMembersModalHandler}
+        >
           <a>팀원 초대</a>
         </Typography>
         <Typography color="disabled" size={0.875}>

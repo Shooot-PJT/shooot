@@ -9,6 +9,7 @@ import Typography from '../../../components/Typography';
 import { AddProjectRequest, EditProjectRequest } from '../types';
 import { NicknameChangePopup } from '../popups/Banner/NicknameChangeModal';
 import { ProjectWriteModal } from '../popups/Banner/ProjectWriteModal/ProjectWriteModal';
+import { InviteMembersModal } from '../popups/Banner/InviteMembersModal/InviteMembersModal';
 
 export const useNavBar = () => {
   const navbarStore = useNavBarStore();
@@ -147,6 +148,18 @@ export const useNavBar = () => {
     });
   };
 
+  // 팀원 초대
+  const inviteMembersModalHandler = () => {
+    modal.push({
+      children: (
+        <InviteMembersModal
+          projectId={projectInfo.data!.data.projectId}
+          popHandler={modalPopHandler}
+        />
+      ),
+    });
+  };
+
   useEffect(() => {
     if (navbarStore.menu !== 2) {
       projectInfo.refetch();
@@ -162,5 +175,6 @@ export const useNavBar = () => {
     nicknameChangeModalHandler,
     addProjectModalHandler,
     editProjectModalHandler,
+    inviteMembersModalHandler,
   };
 };
