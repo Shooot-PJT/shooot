@@ -9,6 +9,7 @@ import { IconColor } from '../Icon/Icon.types';
 interface ProjectInfoProps {
   projectInfo?: ProjectInfo;
   memberInfo?: ProjectMember[];
+  editProjectModalHandler: () => void;
 }
 
 const colors: IconColor[] = [
@@ -26,6 +27,7 @@ const colors: IconColor[] = [
 export const ProjectContents = ({
   projectInfo,
   memberInfo,
+  editProjectModalHandler,
 }: ProjectInfoProps) => {
   return (
     <>
@@ -70,7 +72,11 @@ export const ProjectContents = ({
         <Typography color="disabled" size={0.875}>
           <a>팀원 추방</a>
         </Typography>
-        <Typography color="disabled" size={0.875}>
+        <Typography
+          color="disabled"
+          size={0.875}
+          onClick={editProjectModalHandler}
+        >
           <a>정보 수정</a>
         </Typography>
       </Flexbox>

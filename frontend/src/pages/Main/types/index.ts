@@ -13,3 +13,10 @@ export interface AddProjectRequest {
 export interface AddProjectResponse {
   projectId: number;
 }
+
+export interface EditProjectRequest {
+  projectId: number;
+  name?: string;
+  memo?: string;
+  logo?: File;
+}

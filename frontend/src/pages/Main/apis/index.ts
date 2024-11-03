@@ -24,3 +24,29 @@ export const addProject = (info: AddProjectRequest) => {
 
   return multipart.post<AddProjectResponse>('/projects', formData);
 };
+
+export const editProject = (
+  projectId: number,
+  name?: string,
+  memo?: string,
+  logo?: File,
+) => {
+  const requestData = {
+    name: name ? name : null,
+    memo: memo ? memo : null,
+  };
+  const formData = new FormData();
+  formData.append(
+    'request',
+    new Blob([JSON.stringify(requestData)], { type: 'application/json' }),
+  );
+
+  if (logo) {
+    formData.append('file', logo);
+  }
+
+  return multipart.patch<AddProjectResponse>(
+    `/projects/${projectId}`,
+    formData,
+  );
+};

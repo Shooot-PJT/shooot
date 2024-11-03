@@ -1,12 +1,12 @@
 import { useMutation, useQueries } from '@tanstack/react-query';
 import { useNavBarStore } from '../../../stores/navbarStore';
 import usePopup from '../../../hooks/usePopup';
-import { addProject, changeNickname, getUserInfo } from '../apis';
+import { addProject, changeNickname, editProject, getUserInfo } from '../apis';
 import { getProjectInfo, getProjectMembers } from '../../MyProject/apis';
 import { useEffect } from 'react';
 import useModal from '../../../hooks/useModal';
 import Typography from '../../../components/Typography';
-import { AddProjectRequest } from '../types';
+import { AddProjectRequest, EditProjectRequest } from '../types';
 import { NicknameChangePopup } from '../popups/Banner/NicknameChangeModal';
 import { ProjectWriteModal } from '../popups/Banner/ProjectWriteModal/ProjectWriteModal';
 
@@ -105,6 +105,48 @@ export const useNavBar = () => {
     });
   };
 
+  // 프로젝트 수정
+  const editProjectMutation = useMutation({
+    mutationKey: ['edit-project'],
+    mutationFn: async (params: EditProjectRequest) =>
+      await editProject(
+        params.projectId,
+        params.name,
+        params.memo,
+        params.logo,
+      ),
+    onSuccess: () => {
+      popup.push({
+        title: '프로젝트 수정',
+        children: <Typography>프로젝트가 수정되었습니다.</Typography>,
+        onClose: () => {
+          modal.pop();
+          navbarStore.setProject(editProjectMutation.data!.data.projectId);
+          navbarStore.setMenu(0);
+        },
+      });
+    },
+    onError: () => {
+      popup.push({
+        title: '프로젝트 수정 실패',
+        children: <Typography>다시 시도해주세요.</Typography>,
+        type: 'fail',
+      });
+    },
+  });
+  const editProjectModalHandler = () => {
+    modal.push({
+      children: (
+        <ProjectWriteModal
+          type="edit"
+          projectInfo={projectInfo.data?.data}
+          popHandler={modalPopHandler}
+          editHandler={editProjectMutation.mutate}
+        />
+      ),
+    });
+  };
+
   useEffect(() => {
     if (navbarStore.menu !== 2) {
       projectInfo.refetch();
@@ -119,5 +161,6 @@ export const useNavBar = () => {
     memberInfo: memberInfo.data?.data,
     nicknameChangeModalHandler,
     addProjectModalHandler,
+    editProjectModalHandler,
   };
 };

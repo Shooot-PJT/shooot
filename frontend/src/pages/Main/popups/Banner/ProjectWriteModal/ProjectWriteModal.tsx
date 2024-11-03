@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as style from './ProjectWriteModal.css';
 import theme from '../../../../../styles/theme.css';
-import { AddProjectRequest } from '../../../../Main/types';
+import { AddProjectRequest, EditProjectRequest } from '../../../../Main/types';
 import usePopup from '../../../../../hooks/usePopup';
 import {
   validateEnglishName,
@@ -11,17 +11,22 @@ import Typography from '../../../../../components/Typography';
 import Flexbox from '../../../../../components/Flexbox';
 import Button from '../../../../../components/Button';
 import Textfield from '../../../../../components/Textfield';
+import { ProjectInfo } from '../../../../MyProject/types';
 
 interface ProjectWriteModalProps {
   type?: 'add' | 'edit';
+  projectInfo?: ProjectInfo;
   popHandler: () => void;
-  addHandler: (info: AddProjectRequest) => void;
+  addHandler?: (info: AddProjectRequest) => void;
+  editHandler?: (infos: EditProjectRequest) => void;
 }
 
 export const ProjectWriteModal = ({
   type = 'add',
+  projectInfo,
   popHandler,
   addHandler,
+  editHandler,
 }: ProjectWriteModalProps) => {
   const popup = usePopup();
   const name = useRef<HTMLInputElement>(null);
@@ -39,7 +44,7 @@ export const ProjectWriteModal = ({
     }
   };
 
-  const handler = () => {
+  const addProject = () => {
     const file = logoImg.current!.files![0];
 
     if (
@@ -49,7 +54,7 @@ export const ProjectWriteModal = ({
     ) {
       const logo = new File([file], file.name, { type: file.type });
 
-      addHandler({
+      addHandler!({
         name: name.current!.value.trim(),
         englishName: englishName.current!.value.trim(),
         memo: memo.current!.value.trim(),
@@ -63,6 +68,37 @@ export const ProjectWriteModal = ({
       });
     }
   };
+
+  const editProject = () => {
+    if (validateName(name.current!.value.trim())) {
+      // 이미지는 수정 어케해야하는교
+      const infos: EditProjectRequest = {
+        projectId: projectInfo!.projectId,
+        name: name.current!.value.trim(),
+        memo: memo.current!.value.trim(),
+      };
+      const file = logoImg.current!.files![0];
+
+      if (file) {
+        const logo = new File([file], file.name, { type: file.type });
+        infos.logo = logo;
+      }
+
+      editHandler!({ ...infos });
+    } else {
+      popup.push({
+        title: '수정 실패',
+        children: <Typography>모든 정보를 제대로 입력해주세요</Typography>,
+        type: 'fail',
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (type === 'edit') {
+      setImgSrc(projectInfo!.logoImageUrl);
+    }
+  }, []);
 
   return (
     <Flexbox flexDirections="col" style={{ width: '100%', rowGap: '1rem' }}>
@@ -109,7 +145,8 @@ export const ProjectWriteModal = ({
             style={{ display: 'none' }}
             onChange={imgHandler}
           />
-          {logoImg.current && logoImg.current.files![0] ? (
+          {logoImg.current &&
+          (type === 'add' ? logoImg.current.files![0] : true) ? (
             <img src={imgSrc} className={style.preview} />
           ) : (
             <Flexbox
@@ -144,6 +181,7 @@ export const ProjectWriteModal = ({
             size={2.5}
             fullWidth
             placeholder="한글 이름"
+            defaultValue={type === 'add' ? '' : projectInfo?.name}
           />
         </Flexbox>
         <Flexbox flexDirections="col" style={{ rowGap: '0.25rem' }}>
@@ -156,6 +194,8 @@ export const ProjectWriteModal = ({
             size={2.5}
             fullWidth
             placeholder="소문자, 특수문자(-), 숫자, 최대 20자"
+            defaultValue={type === 'add' ? '' : projectInfo?.englishName}
+            readOnly={type === 'edit'}
           />
         </Flexbox>
       </Flexbox>
@@ -165,7 +205,12 @@ export const ProjectWriteModal = ({
         <Typography color="disabled" size={0.875} weight="600">
           메모
         </Typography>
-        <textarea ref={memo} rows={5} className={style.textarea} />
+        <textarea
+          ref={memo}
+          rows={5}
+          className={style.textarea}
+          defaultValue={type === 'add' ? '' : projectInfo?.memo}
+        />
       </Flexbox>
 
       {/* 결과 */}
@@ -173,7 +218,10 @@ export const ProjectWriteModal = ({
         <Button color="grey" onClick={popHandler}>
           취소
         </Button>
-        <Button color="primary" onClick={() => handler()}>
+        <Button
+          color="primary"
+          onClick={() => (type === 'add' ? addProject() : editProject())}
+        >
           {type === 'add' ? '생성' : '수정'}
         </Button>
       </Flexbox>
