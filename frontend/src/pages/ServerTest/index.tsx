@@ -36,7 +36,7 @@ export const ServerTest = () => {
     [
       '0.0.3',
       '2024-10-15 14:24:17',
-      <StateIcon state="NotBuilded" />,
+      <StateIcon state="No-Build" />,
       <DocsIcon active={true} />,
       <DistributeIcon active={true} />,
     ],

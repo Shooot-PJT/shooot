@@ -7,7 +7,7 @@ import * as s from './StateIcon.css';
 import Flexbox from '../../../../components/Flexbox';
 
 export interface StateIconProps {
-  state: 'Approved' | 'Pending' | 'Disabled' | 'Error' | 'NotBuilded';
+  state: 'Approved' | 'Pending' | 'Disabled' | 'Error' | 'No-Build-Yet';
 }
 
 const handleIcon = (state: string) => {
@@ -20,7 +20,7 @@ const handleIcon = (state: string) => {
       return <HiX />;
     case 'Error':
       return <BsExclamationLg />;
-    case 'NotBuilded':
+    case 'No-Build':
       return <HiMinusSm />;
     default:
       return <HiCheck />;
