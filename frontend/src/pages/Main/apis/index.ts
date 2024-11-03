@@ -1,5 +1,10 @@
 import { api, multipart } from '../../../apis/interceptors';
-import { AddProjectRequest, AddProjectResponse, UserInfo } from '../types';
+import {
+  AddProjectRequest,
+  AddProjectResponse,
+  UserInfo,
+  UserSearchResponse,
+} from '../types';
 
 export const getUserInfo = () => {
   return api.get<UserInfo>('/user/info');
@@ -49,4 +54,14 @@ export const editProject = (
     `/projects/${projectId}`,
     formData,
   );
+};
+
+export const findMember = (email: string) => {
+  return api.get<UserSearchResponse>('/user/search', {
+    params: { email: email },
+  });
+};
+
+export const sendInvitingMail = (projectId: number, userId: number) => {
+  return api.post(`/projects/${projectId}/invite`, { userId: userId });
 };

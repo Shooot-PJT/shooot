@@ -20,3 +20,7 @@ export interface EditProjectRequest {
   memo?: string;
   logo?: File;
 }
+
+export interface UserSearchResponse extends UserInfo {
+  userId: number;
+}
