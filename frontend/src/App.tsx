@@ -7,6 +7,7 @@ import { Login } from './pages/Login';
 import { Tmp } from './pages/Tmp';
 import darkTheme from './styles/darkTheme.css';
 import { ServerTest } from './pages/ServerTest';
+import { Main } from './pages/Main';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
         </Route>
+        <Route path="/main" element={<Main />} />
         <Route
           path="/docs"
           element={
