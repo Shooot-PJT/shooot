@@ -4,6 +4,7 @@ import useModal from '../../../../../hooks/useModal';
 import { ProjectMember } from '../../../../MyProject/types';
 import { kickMember } from '../../../apis';
 import Button from '../../../../../components/Button';
+import { useEffect } from 'react';
 
 interface ConfirmKickModalProps {
   projectId: number;
@@ -15,9 +16,16 @@ export const ConfirmKickModal = ({
   member,
 }: ConfirmKickModalProps) => {
   const modal = useModal();
+
   const kickHandler = async () => {
-    await kickMember(projectId, member.userId).then(() => modal.pop());
+    await kickMember(projectId, member.userId).then(() => {
+      modal.pop();
+    });
   };
+
+  useEffect(() => {
+    return () => modal.pop();
+  }, []);
 
   return (
     <Flexbox flexDirections="col" style={{ rowGap: '2rem' }}>
