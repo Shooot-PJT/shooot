@@ -18,10 +18,14 @@ import com.shooot.application.project.ui.dto.FindParticipantsResponse;
 import com.shooot.application.project.ui.dto.ProjectResponse;
 import com.shooot.application.project.ui.dto.RegisterProjectResponse;
 import com.shooot.application.security.service.UserLoginContext;
+import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -49,6 +53,9 @@ public class ProjectController {
     private final GetLogoService getLogoService;
     private final GetAllProjectsService getAllProjectsService;
     private final GetProjectService getProjectService;
+
+    @Value("${url.project.base}")
+    private String baseUrl;
 
     @GetMapping
     public ResponseEntity<List<ProjectResponse>> getAllProjects(
@@ -130,7 +137,9 @@ public class ProjectController {
         @PathVariable(name = "projectInvitationId") UUID projectInvitationId
     ) {
         projectAcceptInvitationService.acceptInvitation(projectInvitationId);
-        return ResponseEntity.ok().build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create(baseUrl));
+        return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
 
     @GetMapping("/{projectId}/participants")
