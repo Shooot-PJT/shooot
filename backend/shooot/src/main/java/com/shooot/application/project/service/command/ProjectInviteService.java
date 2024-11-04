@@ -8,6 +8,7 @@ import com.shooot.application.project.domain.ProjectParticipant;
 import com.shooot.application.project.domain.repository.ProjectInvitationRepository;
 import com.shooot.application.project.domain.repository.ProjectParticipantRepository;
 import com.shooot.application.project.domain.repository.ProjectRepository;
+import com.shooot.application.project.exception.DuplicateProjectParticipantException;
 import com.shooot.application.project.exception.ProjectNotFoundException;
 import com.shooot.application.project.exception.ProjectParticipantNotFoundException;
 import com.shooot.application.user.domain.User;
@@ -55,6 +56,10 @@ public class ProjectInviteService {
         ProjectParticipant projectOwner = projectParticipantRepository
             .findByProjectAndIsOwner(project, true)
             .orElseThrow(ProjectParticipantNotFoundException::new);
+
+        if (projectParticipantRepository.findByProjectAndUser(project, user).isPresent()) {
+            throw new DuplicateProjectParticipantException();
+        }
 
         String url = UriComponentsBuilder.fromHttpUrl(acceptInvitationUrl)
             .build(projectInvitation.getId())
