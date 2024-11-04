@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table
+@Table(name = "project_test_metric_log")
 @Entity
 public class ProjectTestMetricLog extends BaseEntity {
     @Id

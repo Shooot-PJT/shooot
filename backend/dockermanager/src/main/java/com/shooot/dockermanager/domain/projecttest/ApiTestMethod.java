@@ -23,7 +23,7 @@ public class ApiTestMethod {
     private Integer apiId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "method_type")
+    @Column(name = "type")
     private BuildFileTestMethod buildFileTestMethod;
 
     @Column(name = "virtual_users_num")

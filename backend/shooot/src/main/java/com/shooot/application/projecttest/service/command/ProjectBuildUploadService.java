@@ -47,7 +47,7 @@ public class ProjectBuildUploadService {
         int temporaryVersion = getTemporaryVersion(projectId, projectFileName, projectVersion);
         projectVersion.setTemporary(temporaryVersion);
 
-        ProjectBuild projectBuild = createProjectBuild(project, projectFileName, projectVersion);
+        ProjectBuild projectBuild = createProjectBuild(project, projectFileName, projectVersion, jarFileChecksum);
         ProjectFile projectFile = createProjectFile(jarFile, dockerFile, projectBuild);
 
         projectBuild.setProjectFile(projectFile);
