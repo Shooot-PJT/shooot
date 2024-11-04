@@ -60,3 +60,7 @@ export const findMember = (email: string) => {
 export const sendInvitingMail = (projectId: number, userId: number) => {
   return api.post(`/projects/${projectId}/invite`, { userId: userId });
 };
+
+export const kickMember = (projectId: number, userId: number) => {
+  return api.delete(`/projects/${projectId}/users/${userId}`);
+};
