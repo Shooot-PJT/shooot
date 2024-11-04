@@ -85,7 +85,11 @@ const JsonEditor: React.FC<JsonEditorProps> = ({ jsonData }) => {
           <>
             <Typography>저장 중 오류가 발생했습니다.</Typography>
             <br />
-            <Typography color="delete">{errorMessages.join('\n')}</Typography>
+            <Flexbox flexDirections="col" style={{ gap: '0.25rem' }}>
+              {errorMessages.map((msg) => (
+                <Typography color="delete">{msg}</Typography>
+              ))}
+            </Flexbox>
           </>,
           'fail',
         );
