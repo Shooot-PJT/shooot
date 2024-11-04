@@ -22,7 +22,7 @@ export const DataTable = ({
 
   useEffect(() => {
     setColWidths(initialColWidths);
-  }, [initialColWidths]);
+  }, []);
 
   const handleSelectRow = (rowIndex: number) => {
     if (!selectable) return;
