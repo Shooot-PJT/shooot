@@ -27,7 +27,7 @@ export const DeactiveContainer = style({
 export const ActiveIcon = style({
   color: 'white',
 });
-0;
+
 export const DeactiveIcon = style({
   color: colorPalette.grey[300],
 });

@@ -55,8 +55,8 @@ export const DataTable = ({
       if (newWidth > 5 && nextWidth > 5) {
         setColWidths((prevWidths) => {
           const updatedWidths = [...prevWidths];
-          updatedWidths[currentIndex.current as number] = newWidth;
-          updatedWidths[currentIndex.current + 1] = nextWidth;
+          updatedWidths[currentIndex.current!] = newWidth;
+          updatedWidths[currentIndex.current! + 1] = nextWidth;
           return updatedWidths;
         });
       }
@@ -107,7 +107,7 @@ export const DataTable = ({
             {row.map((item, colIndex) => (
               <div
                 className={s.rowItem}
-                key={colIndex}
+                key={`${rowIndex}-${colIndex}-${item}`}
                 style={
                   {
                     '--width': `${colWidths[colIndex]}%`,
