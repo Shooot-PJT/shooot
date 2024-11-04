@@ -1,6 +1,5 @@
-import { keyframes, style } from '@vanilla-extract/css';
+import { style } from '@vanilla-extract/css';
 import themeCss from '../../../../styles/theme.css';
-import colorPalette from '../../../../styles/colorPalette';
 
 export const Header = style({
   display: 'flex',
