@@ -14,7 +14,8 @@ import java.io.Serializable;
 public class MetaData implements Serializable {
     @Serial
     private static final long serialVersionUID = 8123490234578902358L;
-
+    private Integer projectId;
+    private Integer projectJarFileId;
     private String projectName;
     private ProjectVersion projectVersion;
     private String instanceName;

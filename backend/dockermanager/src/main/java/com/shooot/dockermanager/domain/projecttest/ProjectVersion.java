@@ -2,18 +2,25 @@ package com.shooot.dockermanager.domain.projecttest;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class ProjectVersion {
+public class ProjectVersion implements Serializable {
+    @Transient
+    @Serial
+    private static final long serialVersionUID = 17239872189123782L;
+
     @Column(name = "version_major")
     private Integer major;
 
@@ -28,10 +35,10 @@ public class ProjectVersion {
     private Integer temporary;
 
     public boolean equals(Object o) {
-        if(o == null) {
+        if (o == null) {
             return false;
         }
-        if(o.getClass() != ProjectVersion.class) {
+        if (o.getClass() != ProjectVersion.class) {
             return false;
         }
         ProjectVersion version = (ProjectVersion) o;
@@ -40,7 +47,6 @@ public class ProjectVersion {
                 && Objects.equals(this.patch, version.patch)
                 && Objects.equals(this.temporary, version.temporary);
     }
-
 
 
     private String getVersion() {
