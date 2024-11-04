@@ -22,6 +22,7 @@ export const Layout = ({ children, ...props }: LayoutProps) => {
     addProjectModalHandler,
     editProjectModalHandler,
     inviteMembersModalHandler,
+    kickMemberModalHandler,
   } = useNavBar();
 
   return (
@@ -57,6 +58,7 @@ export const Layout = ({ children, ...props }: LayoutProps) => {
             nicknameChangeModalHandler={nicknameChangeModalHandler}
             editProjectModalHandler={editProjectModalHandler}
             inviteMembersModalHandler={inviteMembersModalHandler}
+            kickMemberModalHandler={kickMemberModalHandler}
           />
           {children}
         </Flexbox>

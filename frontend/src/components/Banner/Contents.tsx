@@ -12,6 +12,7 @@ interface ContentsProps {
   nicknameChangeModalHandler: () => void;
   editProjectModalHandler: () => void;
   inviteMembersModalHandler: () => void;
+  kickMemberModalHandler: () => void;
 }
 
 export const Contents = ({
@@ -22,6 +23,7 @@ export const Contents = ({
   nicknameChangeModalHandler,
   editProjectModalHandler,
   inviteMembersModalHandler,
+  kickMemberModalHandler,
 }: ContentsProps) => {
   return (
     <Flexbox
@@ -38,6 +40,7 @@ export const Contents = ({
           memberInfo={memberInfo}
           editProjectModalHandler={editProjectModalHandler}
           inviteMembersModalHandler={inviteMembersModalHandler}
+          kickMemberModalHandler={kickMemberModalHandler}
         />
       ) : (
         <UserContents

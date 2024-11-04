@@ -10,6 +10,7 @@ import { AddProjectRequest, EditProjectRequest } from '../types';
 import { NicknameChangePopup } from '../popups/Banner/NicknameChangeModal';
 import { ProjectWriteModal } from '../popups/Banner/ProjectWriteModal/ProjectWriteModal';
 import { InviteMembersModal } from '../popups/Banner/InviteMembersModal/InviteMembersModal';
+import { KickMemberModal } from '../popups/Banner/KickMemberModal/KickMemberModal';
 
 export const useNavBar = () => {
   const navbarStore = useNavBarStore();
@@ -160,6 +161,19 @@ export const useNavBar = () => {
     });
   };
 
+  // 팀원 추방
+  const kickMemberModalHandler = () => {
+    modal.push({
+      children: (
+        <KickMemberModal
+          projectId={projectInfo.data!.data.projectId}
+          memberInfo={memberInfo.data!.data}
+          popHandler={modalPopHandler}
+        />
+      ),
+    });
+  };
+
   useEffect(() => {
     if (navbarStore.menu !== 2) {
       projectInfo.refetch();
@@ -176,5 +190,6 @@ export const useNavBar = () => {
     addProjectModalHandler,
     editProjectModalHandler,
     inviteMembersModalHandler,
+    kickMemberModalHandler,
   };
 };
