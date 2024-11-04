@@ -1,4 +1,4 @@
-package com.shooot.application.projecttest.domain;
+package com.shooot.dockermanager.domain.projecttest;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
