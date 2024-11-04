@@ -14,7 +14,7 @@ export const APIDocs = () => {
         padding: '2rem',
       }}
     >
-      <AuthorizeButton isAuthorized={false} />
+      <AuthorizeButton isAuthorized={true} />
       {DOMAIN_INFO_LIST_DUMMY.map((domainInfo) => (
         <Domain key={domainInfo.domainId} domainInfo={domainInfo}>
           <Domain.Header />
