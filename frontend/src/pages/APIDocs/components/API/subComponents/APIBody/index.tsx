@@ -34,7 +34,7 @@ export const Body = () => {
                 flexDirections="col"
                 style={{
                   textAlign: 'left',
-                  width: '9.5rem',
+                  width: '12rem',
                 }}
               >
                 <Typography
@@ -94,9 +94,9 @@ export const Body = () => {
             {/* 1.1.2 BOTTOM : 편집,삭제 버튼 그룹*/}
             <Flexbox
               flexDirections="row"
-              justifyContents="between"
+              justifyContents="start"
               style={{
-                gap: '0.5rem',
+                gap: '1rem',
               }}
             >
               <Button color="grey" rounded={0.3}>
