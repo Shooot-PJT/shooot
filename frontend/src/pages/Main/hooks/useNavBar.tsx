@@ -123,8 +123,8 @@ export const useNavBar = () => {
         children: <Typography>프로젝트가 수정되었습니다.</Typography>,
         onClose: () => {
           modal.pop();
-          navbarStore.setProject(editProjectMutation.data!.data.projectId);
-          navbarStore.setMenu(0);
+          projectInfo.refetch();
+          memberInfo.refetch();
         },
       });
     },
