@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -66,12 +63,23 @@ public class ProjectDirectoryManager {
             case METADATA -> new File(file.getPath() + "metadata");
             case JAR -> new File(file.getPath() + "application.jar");
             case DOCKER_COMPOSE -> new File(file.getPath() + "docker-compose.yml");
-            default -> throw new IllegalArgumentException("파일 구조에 정의되지 않은 타입입니다.");
         };
 
 
         try (FileOutputStream fos = new FileOutputStream(target)) {
             fos.write(fileByte);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setMetaData(Integer projectId, Integer projectJarFileId, MetaData metaData) {
+        File file = file(projectId, projectJarFileId);
+        File target = new File(file.getPath() + "metadata");
+
+        try (FileOutputStream fos = new FileOutputStream(target);
+             ObjectOutputStream outputStream = new ObjectOutputStream(fos)) {
+            outputStream.writeObject(metaData);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
