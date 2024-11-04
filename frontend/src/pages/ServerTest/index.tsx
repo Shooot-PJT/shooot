@@ -1,13 +1,13 @@
+import { useState } from 'react';
 import Button from '../../components/Button';
 import useModal from '../../hooks/useModal';
 import { AddProjectModal } from './components/AddProjectModal/AddProjectModal';
+import { Console } from './components/Console/Console';
 import { DataTable } from './components/DataTable/DataTable';
+import { DistributeIcon } from './components/DistributeIcon/DistributeIcon';
 import { DocsIcon } from './components/DocsIcon/DocsIcon';
 import { StateIcon } from './components/StateIcon/StateIcon';
-import { DistributeIcon } from './components/DistributeIcon/DistributeIcon';
-import { useState } from 'react';
-import { Console } from './components/Console/Console';
-import Flexbox from '../../components/Flexbox';
+
 const data = [
   [
     '0.0.6',

@@ -4,10 +4,9 @@ import Flexbox from '../../../../components/Flexbox';
 import Textfield from '../../../../components/Textfield';
 import Typography from '../../../../components/Typography';
 import useModal from '../../../../hooks/useModal';
-import useModalStore from '../../../../stores/useModalStore';
+import usePopup from '../../../../hooks/usePopup';
 import { UploadFile } from '../UploadFile/UploadFile';
 import * as s from './AddProjectModal.css';
-import usePopup from '../../../../hooks/usePopup';
 export const AddProjectModal = () => {
   const [validationFiles, setValidationFiles] = useState<
     Record<string, boolean>
