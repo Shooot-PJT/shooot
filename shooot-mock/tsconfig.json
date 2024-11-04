@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "es6", // JavaScript 버전
+        "module": "commonjs", // 모듈 시스템
+        "declaration": true, // 타입 선언 파일(.d.ts) 생성
+        "outDir": "./dist", // 컴파일된 파일 출력 폴더
+        "strict": true, // 엄격한 타입 검사
+        "esModuleInterop": true, // CommonJS 호환성 설정
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/*.spec.ts"]
+}
