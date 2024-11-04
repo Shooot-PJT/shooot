@@ -19,8 +19,9 @@ public enum ProjectExceptionConstants implements CustomExceptionDefinition {
         + "1자 이상 20자 이하여야 합니다."
         + "영어 소문자, 숫자, 그리고 하이픈(-)만 포함할 수 있습니다.", "P008",
         HttpStatus.BAD_REQUEST),
-    DUPLICATE_PROJECT_PARTICIPANT("프로젝트 참여자가 이미 존재합니다.", "P009", HttpStatus.CONFLICT);
-
+    DUPLICATE_PROJECT_PARTICIPANT("프로젝트 참여자가 이미 존재합니다.", "P009", HttpStatus.CONFLICT),
+    PROJECT_PERMISSION_DENIED("참가하지 않은 프로젝트입니다.", "P009", HttpStatus.FORBIDDEN)
+    ;
     private final String message;
     private final String code;
     private final HttpStatus statusCode;

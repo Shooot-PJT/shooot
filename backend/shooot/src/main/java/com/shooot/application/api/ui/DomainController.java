@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/projects/domains")
+@RequestMapping("/projects")
 @Slf4j
 public class DomainController {
     private final DomainCreateService domainCreateService;
@@ -26,21 +26,21 @@ public class DomainController {
     private final DomainModifyService domainModifyService;
     private final DomainListService domainListService;
 
-    @PostMapping
-    public ResponseEntity<?> createService(DomainCreateRequest domainCreateRequest){
+    @PostMapping("/domains")
+    public ResponseEntity<?> createService(@RequestBody DomainCreateRequest domainCreateRequest){
         DomainView saveDomain = domainCreateService.createService(domainCreateRequest);
 
         return ResponseEntity.ok(saveDomain);
     }
 
-    @DeleteMapping("/{domainId}")
+    @DeleteMapping("/domains/{domainId}")
     public ResponseEntity<?> deleteService(@PathVariable(name = "domainId") Integer domainId){
         domainDeleteService.deleteDomain(domainId);
 
         return ResponseEntity.ok(null);
     }
 
-    @PatchMapping("/{domainId}")
+    @PatchMapping("/domains/{domainId}")
     public ResponseEntity<?> modifyService(
             @PathVariable(name = "domainId") Integer domainId,
             @RequestBody DomainModifyRequest domainModifyRequest
@@ -53,12 +53,8 @@ public class DomainController {
     @GetMapping("/{projectId}/domains")
     public ResponseEntity<?> getListService(@PathVariable(name = "projectId") Integer projectId){
         List<DomainView> domains = domainListService.getDomainList(projectId);
-        log.info("domains = {}", domains);
 
-        Map<String, List<DomainView>> response = new HashMap<>();
-        response.put("domainList", domains);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(domains);
     }
 
 }

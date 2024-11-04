@@ -24,6 +24,7 @@ public class ApiView {
     private LocalDateTime modifiedAt;
     private Boolean isRealServer;
     private Boolean isSecure;
+    private Boolean isDeleted;
     private ApiTestStatusType type;
 
     public static ApiView from(Api api){
@@ -41,6 +42,7 @@ public class ApiView {
                 .modifiedAt(api.getModifiedAt())
                 .isRealServer(api.getIsRealServer())
                 .isSecure(api.getIsSecure())
+                .isDeleted(api.getIsDeleted())
                 .type(api.getTestStatus())
                 .build();
     }

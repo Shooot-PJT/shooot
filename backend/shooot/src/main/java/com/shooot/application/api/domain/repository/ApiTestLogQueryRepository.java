@@ -6,6 +6,9 @@ import com.shooot.application.api.domain.ApiTestLog;
 import com.shooot.application.api.domain.QApiTestLog;
 import com.shooot.application.api.service.command.test.dto.TestLogSearchRequest;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -21,17 +24,31 @@ public class ApiTestLogQueryRepository {
         this.query = new JPAQueryFactory(em);
     }
 
-    public List<ApiTestLog> getTestLogs(TestLogSearchRequest testLogSearchRequest){
-        return query
+    public Slice<ApiTestLog> getTestLogs(TestLogSearchRequest testLogSearchRequest, Pageable pageable){
+        List<ApiTestLog> results = query
                 .select(apiTestLog)
                 .from(apiTestLog)
                 .where(
-                    apiTestCaseIdEq(testLogSearchRequest.getTestcaseId()),
-                    apiTesterIdEq(testLogSearchRequest.getTesterId()),
-                    betweenTestDate(testLogSearchRequest.getStartDate(), testLogSearchRequest.getEndDate())
+                        apiTestCaseIdEq(testLogSearchRequest.getTestcaseId()),
+                        apiTesterIdEq(testLogSearchRequest.getTesterId()),
+                        apiSuccessEq(testLogSearchRequest.getIsSuccess()),
+                        betweenTestDate(testLogSearchRequest.getStartDate(), testLogSearchRequest.getEndDate())
                 )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize() + 1)
                 .orderBy(apiTestLog.id.desc())
                 .fetch();
+
+        return new SliceImpl<>(results, pageable, hasNextPage(results, pageable.getPageSize()));
+
+    }
+
+    private boolean hasNextPage(List<ApiTestLog> results, int pageSize){
+        if (results.size() > pageSize) {
+            results.remove(pageSize);
+            return true;
+        }
+        return false;
     }
 
     /*
@@ -52,7 +69,7 @@ public class ApiTestLogQueryRepository {
     }
 
     private BooleanExpression apiSuccessEq(Boolean isSuccess){
-        return isSuccess != null ? apiTestLog.projectParticipant.
+        return isSuccess != null ? apiTestLog.isSuccess.eq(isSuccess) : null;
     }
 
     private BooleanExpression betweenTestDate(LocalDate startDate, LocalDate endDate){

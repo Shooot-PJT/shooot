@@ -15,6 +15,7 @@ import com.shooot.application.api.service.query.test.TestCaseLogsGetService;
 import com.shooot.application.api.ui.dto.ApiDetailView;
 import com.shooot.application.api.ui.dto.ApiTestCaseListView;
 import com.shooot.application.api.ui.dto.ApiTestCaseView;
+import com.shooot.application.api.ui.dto.ApiTestLogView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -121,16 +122,12 @@ public class ApiTestCaseController {
                 .isSuccess(isSuccess)
                 .startDate(startDate)
                 .endDate(endDate)
-                .pageable(pageable)
                 .build();
 
         log.info("apiId = {}" , apiId);
         log.info("testLogSearchRequest = {}", testLogSearchRequest);
 
-        testCaseLogsGetService.getFilterLogs(testLogSearchRequest);
-
-
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(testCaseLogsGetService.getFilterLogs(testLogSearchRequest, pageable));
     }
 
 

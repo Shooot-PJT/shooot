@@ -13,4 +13,6 @@ public interface ApiRepository extends JpaRepository<Api, Integer> {
     @Query("SELECT a FROM Api a WHERE a.id = :apiId AND a.isDeleted = false")
     Optional<Api> findByIdAndNotDeleted(@Param("apiId") Integer apiId);
 
+    List<Api> findAllByDomain_Project_Id(Integer projectId);
+
 }

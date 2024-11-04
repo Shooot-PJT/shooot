@@ -31,4 +31,5 @@ public class ApiDetailView {
     private HttpStatus logHttpStatus;
     private String logHttpBody;
     private String logHttpHeader;
+
 }

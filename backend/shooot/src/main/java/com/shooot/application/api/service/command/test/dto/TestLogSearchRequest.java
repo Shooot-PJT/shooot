@@ -18,7 +18,6 @@ public class TestLogSearchRequest {
     private Boolean isSuccess;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Pageable pageable;
 
     @Override
     public String toString() {
@@ -27,7 +26,6 @@ public class TestLogSearchRequest {
                 ", testerId=" + testerId +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
-                ", pageable=" + pageable +
                 '}';
     }
 }
