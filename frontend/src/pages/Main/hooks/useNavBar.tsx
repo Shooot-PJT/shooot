@@ -171,6 +171,10 @@ export const useNavBar = () => {
           popHandler={modalPopHandler}
         />
       ),
+      onClose: () => {
+        projectInfo.refetch();
+        memberInfo.refetch();
+      },
     });
   };
 
