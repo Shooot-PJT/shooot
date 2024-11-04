@@ -1,10 +1,5 @@
 import { api, multipart } from '../../../apis/interceptors';
-import {
-  AddProjectRequest,
-  AddProjectResponse,
-  UserInfo,
-  UserSearchResponse,
-} from '../types';
+import { AddProjectRequest, AddProjectResponse, UserInfo } from '../types';
 
 export const getUserInfo = () => {
   return api.get<UserInfo>('/user/info');
@@ -57,7 +52,7 @@ export const editProject = (
 };
 
 export const findMember = (email: string) => {
-  return api.get<UserSearchResponse>('/user/search', {
+  return api.get<UserInfo>('/user/search', {
     params: { email: email },
   });
 };

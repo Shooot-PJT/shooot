@@ -1,4 +1,5 @@
 export interface UserInfo {
+  userId: number;
   nickname: string;
   email: string;
 }
@@ -19,8 +20,4 @@ export interface EditProjectRequest {
   name?: string;
   memo?: string;
   logo?: File;
-}
-
-export interface UserSearchResponse extends UserInfo {
-  userId: number;
 }

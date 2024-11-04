@@ -5,7 +5,7 @@ import Textfield from '../../../../../components/Textfield';
 import Button from '../../../../../components/Button';
 import Icon from '../../../../../components/Icon';
 import { HiUser } from 'react-icons/hi2';
-import { UserInfo, UserSearchResponse } from '../../../types';
+import { UserInfo } from '../../../types';
 import { Chip } from '../../../components/Chip';
 import { findMember, sendInvitingMail } from '../../../apis';
 import usePopup from '../../../../../hooks/usePopup';
@@ -20,10 +20,8 @@ export const InviteMembersModal = ({
   popHandler,
 }: InviteMembersModalProps) => {
   const popup = usePopup();
-  const [result, setResult] = useState<UserSearchResponse | undefined>(
-    undefined,
-  );
-  const [targets, setTargets] = useState<UserSearchResponse[]>([]);
+  const [result, setResult] = useState<UserInfo | undefined>(undefined);
+  const [targets, setTargets] = useState<UserInfo[]>([]);
 
   const searchMember = async (email: string) => {
     await findMember(email)
@@ -36,7 +34,7 @@ export const InviteMembersModal = ({
       })
       .catch(() => setResult(undefined));
   };
-  const addTarget = (info: UserSearchResponse) => {
+  const addTarget = (info: UserInfo) => {
     setTargets((prev) => {
       const before = [...prev];
       before.push(info);
@@ -51,7 +49,7 @@ export const InviteMembersModal = ({
     });
   };
   const sendMail = async () => {
-    targets.forEach(async (t: UserSearchResponse, idx: number) => {
+    targets.forEach(async (t: UserInfo, idx: number) => {
       await sendInvitingMail(projectId, t.userId)
         .then(() => {
           if (idx + 1 === targets.length) {
@@ -65,11 +63,7 @@ export const InviteMembersModal = ({
         .catch(() => {
           popup.push({
             title: '메일 전송 실패',
-            children: (
-              <Typography color="delete">
-                메일 전송에 실패하였습니다.
-              </Typography>
-            ),
+            children: <Typography>메일 전송에 실패하였습니다.</Typography>,
             type: 'fail',
           });
         });
@@ -109,9 +103,9 @@ export const InviteMembersModal = ({
                   <HiUser />
                 </Icon>
                 <Flexbox flexDirections="col">
-                  <Typography size={0.875}>닉네임입니다</Typography>
+                  <Typography size={0.875}>{result.nickname}</Typography>
                   <Typography color="disabled" size={0.8125}>
-                    ssafy@ssafy.com
+                    {result.email}
                   </Typography>
                 </Flexbox>
               </Flexbox>
