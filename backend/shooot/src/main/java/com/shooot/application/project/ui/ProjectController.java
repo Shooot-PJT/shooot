@@ -15,6 +15,7 @@ import com.shooot.application.project.service.query.GetAllProjectsService;
 import com.shooot.application.project.service.query.GetLogoService;
 import com.shooot.application.project.service.query.GetProjectService;
 import com.shooot.application.project.ui.dto.FindParticipantsResponse;
+import com.shooot.application.project.ui.dto.ModifyProjectResponse;
 import com.shooot.application.project.ui.dto.ProjectResponse;
 import com.shooot.application.project.ui.dto.RegisterProjectResponse;
 import com.shooot.application.security.service.UserLoginContext;
@@ -88,7 +89,7 @@ public class ProjectController {
     }
 
     @PatchMapping("/{projectId}")
-    public ResponseEntity<Void> projectModify(
+    public ResponseEntity<ModifyProjectResponse> projectModify(
         @RequestPart ProjectModifyRequest request,
         @RequestPart(required = false) MultipartFile file,
         @PathVariable Integer projectId,
@@ -104,7 +105,12 @@ public class ProjectController {
         } else {
             projectModifyService.projectModify(request, file, projectId, userId);
         }
-        return ResponseEntity.ok().build();
+
+        return ResponseEntity.ok(
+            ModifyProjectResponse.builder()
+                .projectId(projectId)
+                .build()
+        );
     }
 
     @GetMapping("/{projectId}")
