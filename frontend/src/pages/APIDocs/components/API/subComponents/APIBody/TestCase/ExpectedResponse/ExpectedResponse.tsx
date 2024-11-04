@@ -4,7 +4,7 @@ import * as s from './ExpectedResponse.css';
 import Flexbox from '../../../../../../../../components/Flexbox';
 import { HiPlusCircle } from 'react-icons/hi2';
 import Icon from '../../../../../../../../components/Icon';
-import { JsonEditor } from '../../../APICommon/JsonEditor';
+import JsonEditor from '../../../APICommon/JsonEditor/JsonEditor';
 
 interface ExpectedResponseProps {
   isEditing: boolean;
@@ -56,9 +56,9 @@ ExpectedResponse.Schema = function Schema() {
       <Typography color="secondary">Expected Response Schema</Typography>
 
       {context.isEditing ? (
-        <ExpectedResponseAddButton />
+        <JsonEditor isEditing={context.isEditing} />
       ) : (
-        <ExpectedResponseBox />
+        <ExpectedResponseAddButton />
       )}
     </Flexbox>
   );
@@ -67,15 +67,11 @@ ExpectedResponse.Schema = function Schema() {
 ExpectedResponse.Example = function Example() {
   const context = useExpectedResponseContext();
   return (
-    <>
+    <Flexbox flexDirections="col" style={s.containerStyle}>
       <Typography color="secondary">Expected Response Example</Typography>
-      {context.isEditing ? (
-        <ExpectedResponseAddButton />
-      ) : (
-        <ExpectedResponseBox />
-      )}
-      <JsonEditor />
-    </>
+
+      <JsonEditor jsonData={initial_json_dummy} isEditing={context.isEditing} />
+    </Flexbox>
   );
 };
 
@@ -88,6 +84,16 @@ const ExpectedResponseAddButton = (): ReactNode => (
   </div>
 );
 
-const ExpectedResponseBox = (): ReactNode => (
-  <div className={s.expectedResponseBox}></div>
-);
+const initial_json_dummy = {
+  status: 'success',
+  data: {
+    users: [
+      { id: 1, name: 'Alice' },
+      { id: 2, name: 'Bob' },
+    ],
+  },
+  meta: {
+    total: 2,
+    page: 1,
+  },
+};
