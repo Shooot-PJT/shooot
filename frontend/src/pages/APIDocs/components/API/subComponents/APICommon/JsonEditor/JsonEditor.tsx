@@ -105,11 +105,17 @@ const JsonEditor: React.FC<JsonEditorProps> = ({ jsonData }) => {
             gap: '0.5rem',
           }}
         >
-          <Button onClick={handleSave}>확인</Button>
-          <Button onClick={handleCancel}>취소</Button>
+          <Button color="grey" rounded={0.3} onClick={handleCancel}>
+            취소
+          </Button>
+          <Button rounded={0.3} onClick={handleSave}>
+            확인
+          </Button>
         </Flexbox>
       ) : (
-        <Button onClick={handleEdit}>편집</Button>
+        <Button color="grey" rounded={0.3} onClick={handleEdit}>
+          편집
+        </Button>
       )}
 
       <div className={responseContainer({ hasJsonData })}>

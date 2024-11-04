@@ -17,13 +17,13 @@ export const useAPIContext = () => {
   return context;
 };
 
-export const API = ({ children, header_info }: APIProps) => {
+export const API = ({ children, headerInfo }: APIProps) => {
   return (
     <div className={style.apiRootContainer}>
       <APIContext.Provider
         value={{
           children,
-          header_info,
+          headerInfo,
           useIsFocusedHook: { ...useIsFocusedHook() },
         }}
       >

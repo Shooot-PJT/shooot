@@ -4,7 +4,7 @@ import { useIsFocusedHookReturnType } from '../../hooks/useIsFocusedHook';
 
 export interface APIProps {
   children: ReactNode;
-  header_info: APIHeaderInfo;
+  headerInfo: APIHeaderInfo;
 }
 
 export interface APIContextProps extends APIProps {
