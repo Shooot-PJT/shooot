@@ -55,7 +55,7 @@ export const body = style({
   flexDirection: 'column',
   alignItems: 'center',
   backgroundColor: themeCss.color.background[100],
-  maxHeight: '360px',
+  height: '360px',
   overflow: 'auto',
 });
 
@@ -87,6 +87,7 @@ export const rowItem = style({
   height: '100%',
   flexBasis: 'var(--width)',
   textAlign: 'center',
+  alignContent: 'center',
   justifyItems: 'center',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
