@@ -13,11 +13,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FindParticipantsResponse {
 
+    private Integer userId;
     private String email;
     private String nickname;
 
     public static FindParticipantsResponse from(User user) {
         return FindParticipantsResponse.builder()
+            .userId(user.getId())
             .email(user.getUsername())
             .nickname(user.getNickname())
             .build();
