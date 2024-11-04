@@ -16,7 +16,7 @@ export const Body = () => {
   const { isFocused } = context.useIsFocusedHook;
 
   return (
-    <div className={s.apiBodyContainerRecipe({ isOpen: isFocused })}>
+    <div className={s.CollapseContainerRecipe({ isOpen: isFocused })}>
       <Flexbox flexDirections="col" style={s.apiBodyContainerStyle}>
         {/* 1. TOP 컨테이너 */}
         <Flexbox flexDirections="row" style={s.apiBodyTopContainerStyle}>
@@ -38,14 +38,14 @@ export const Body = () => {
                 }}
               >
                 <Typography
-                  color={context.header_info.method}
+                  color={context.headerInfo.method}
                   size={2.5}
                   weight="700"
                 >
-                  {context.header_info.method.toUpperCase()}
+                  {context.headerInfo.method.toUpperCase()}
                 </Typography>
                 <Typography
-                  color={context.header_info.method}
+                  color={context.headerInfo.method}
                   size={0.85}
                   weight="600"
                   style={{
@@ -54,7 +54,7 @@ export const Body = () => {
                     wordBreak: 'keep-all',
                   }}
                 >
-                  {context.header_info.apiTitle}
+                  {context.headerInfo.apiTitle}
                 </Typography>
 
                 <Typography
@@ -66,13 +66,13 @@ export const Body = () => {
                     wordBreak: 'keep-all',
                   }}
                 >
-                  {context.header_info.apiDescription}
+                  {context.headerInfo.apiDescription}
                 </Typography>
               </Flexbox>
               <Flexbox flexDirections="col" style={{ gap: '1rem' }}>
                 <div
                   className={s.leftDividerRecipe({
-                    method: context.header_info.method,
+                    method: context.headerInfo.method,
                   })}
                 />
                 <Typography
@@ -84,7 +84,7 @@ export const Body = () => {
                   담당자
                 </Typography>
                 <ManagerAvatar
-                  manager={context.header_info.manager}
+                  manager={context.headerInfo.manager}
                   size={2}
                   withLabel
                 />
@@ -99,10 +99,10 @@ export const Body = () => {
                 gap: '0.5rem',
               }}
             >
-              <Button rounded={0.3} paddingY={0.25}>
+              <Button color="grey" rounded={0.3}>
                 편집
               </Button>
-              <Button rounded={0.3} paddingY={0.25}>
+              <Button color="grey" rounded={0.3}>
                 삭제
               </Button>
             </Flexbox>
