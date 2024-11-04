@@ -11,7 +11,7 @@ export const lockButton = recipe({
     height: '1rem',
   },
   variants: {
-    needAuthorize: {
+    isSecure: {
       true: {
         backgroundColor: themeCss.color.background[200],
         selectors: {

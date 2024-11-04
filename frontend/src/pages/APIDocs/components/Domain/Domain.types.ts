@@ -1,12 +1,12 @@
 import { ReactNode } from 'react';
-import { APIHeaderInfo } from './API.data.types';
+import { DomainInfo } from './Domain.data.types';
 import { useIsFocusedHookReturnType } from '../../hooks/useIsFocusedHook';
 
-export interface APIProps {
+export interface DomainProps {
   children: ReactNode;
-  headerInfo: APIHeaderInfo;
+  domainInfo: DomainInfo;
 }
 
-export interface APIContextProps extends APIProps {
+export interface DomainContextProps extends DomainProps {
   useIsFocusedHook: useIsFocusedHookReturnType;
 }

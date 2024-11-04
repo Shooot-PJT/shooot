@@ -3,6 +3,11 @@ import theme from '../../styles/theme.css';
 
 export const button = recipe({
   base: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '0.5rem',
+    alignItems: 'center',
+    justifyContent: 'center',
     boxSizing: 'border-box',
     width: 'max-content',
     transition: 'all 0.5s ',
