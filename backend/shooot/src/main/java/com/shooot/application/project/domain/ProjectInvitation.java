@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 @Getter
 @Builder
-@RedisHash(value = "ProjectInvitation", timeToLive = 10)
+@RedisHash(value = "ProjectInvitation", timeToLive = 86400)
 public class ProjectInvitation implements Serializable {
 
     @Id
