@@ -31,7 +31,6 @@ export const Primary: Story = {
       <NavBar>
         <NavBar.Title />
         <div className={style.nav}>
-          <NavBar.Project project={[0, 1, 2]} />
           <div className={style.divi} />
           <NavBar.Menu />
         </div>

@@ -11,6 +11,7 @@ export interface ProjectInfo {
 }
 
 export interface ProjectMember {
+  userId: number;
   email: string;
   nickname: string;
 }

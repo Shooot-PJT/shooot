@@ -12,7 +12,11 @@ import { getMyProjectList } from '../../../pages/MyProject/apis';
 import { useEffect } from 'react';
 import { useNavBarStore } from '../../../stores/navbarStore';
 
-export const Project = () => {
+interface ProjectProps {
+  addProjectModalHandler: () => void;
+}
+
+export const Project = ({ addProjectModalHandler }: ProjectProps) => {
   const navbarStore = useNavBarStore();
   const projectsListQuery = useSuspenseQuery({
     queryKey: ['project-list'],
@@ -96,6 +100,7 @@ export const Project = () => {
             backgroundColor: theme.color.background['300'],
             cursor: 'pointer',
           }}
+          onClick={addProjectModalHandler}
         >
           <Icon size={2} color="light" background="none">
             <HiPlus />
