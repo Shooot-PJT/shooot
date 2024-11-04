@@ -27,6 +27,7 @@ import useIsFocusedHook, {
 } from '../../../../../hooks/useIsFocusedHook';
 import { throttle } from 'lodash';
 import { HTTP_STATUS_CODES } from '../../../../../types/httpStatus';
+import { TEST_RESULTS } from '../../../API.data.types';
 
 interface TestCaseProps {
   children: React.ReactNode;
@@ -139,7 +140,7 @@ TestCase.Header = function Header() {
       >
         <TestButton.API />
         <CollapseIcon isOpen={false} />
-        <TestResultTail lastTestResult="success" />
+        <TestResultTail testStatus={TEST_RESULTS.SUCCESS} />
       </Flexbox>
     </div>
   );
