@@ -4,8 +4,10 @@ import Flexbox from '../../../../components/Flexbox';
 import Textfield from '../../../../components/Textfield';
 import Typography from '../../../../components/Typography';
 import useModal from '../../../../hooks/useModal';
-import * as s from './AddProjectModal.css';
+import useModalStore from '../../../../stores/useModalStore';
 import { UploadFile } from '../UploadFile/UploadFile';
+import * as s from './AddProjectModal.css';
+import usePopup from '../../../../hooks/usePopup';
 export const AddProjectModal = () => {
   const [validationFiles, setValidationFiles] = useState<
     Record<string, boolean>
@@ -14,6 +16,7 @@ export const AddProjectModal = () => {
   const ymlRef = useRef<HTMLInputElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const modal = useModal();
+  const popup = usePopup();
 
   const handlevalidationText = () => {
     if (inputRef.current && inputRef.current.value.length > 0) {
@@ -44,8 +47,15 @@ export const AddProjectModal = () => {
   };
 
   const handleSubmit = () => {
-    console.log(jarRef.current.files[0]);
-    console.log(ymlRef.current.files[0]);
+    if (jarRef.current?.files && ymlRef.current?.files) {
+      console.log(jarRef.current.files[0]);
+      console.log(ymlRef.current.files[0]);
+      popup.push({
+        title: '프로젝트 추가 결과',
+        type: 'success',
+        children: '업로드 되었습니다.',
+      });
+    }
   };
 
   return (
