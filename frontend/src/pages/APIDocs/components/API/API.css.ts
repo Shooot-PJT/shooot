@@ -81,7 +81,7 @@ export const apiBodyContainerStyle = {
 };
 
 export const apiBodyTopContainerStyle = {
-  gap: '1rem',
+  gap: '3rem',
   paddingBottom: '1rem',
   borderBottom: '0.1rem solid',
   borderColor: colorPalette.util[400],
