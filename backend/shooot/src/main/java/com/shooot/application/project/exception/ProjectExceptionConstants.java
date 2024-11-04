@@ -13,9 +13,13 @@ public enum ProjectExceptionConstants implements CustomExceptionDefinition {
     PROJECT_INVITATION_NOT_FOUND("프로젝트 초대장을 찾을 수 없습니다.", "P004", HttpStatus.NOT_FOUND),
     PROJECT_PARTICIPANT_NOT_FOUND("프로젝트 참여자를 찾을 수 없습니다.", "P005", HttpStatus.NOT_FOUND),
     PROJECT_MODIFY_PERMISSION_DENIED("프로젝트 정보를 수정하기 위한 권한이 부족합니다.", "P006", HttpStatus.FORBIDDEN),
-    PROJECT_NAME_NOT_VALID("사용자 이름은 1자 이상 20자 이하여야 합니다.", "P007", HttpStatus.BAD_REQUEST),
-    PROJECT_ENGLISH_NAME_NOT_VALID("사용자 이름은 영어 소문자, 숫자, 그리고 하이픈(-)만 포함할 수 있습니다.", "P008",
-        HttpStatus.BAD_REQUEST);
+    PROJECT_NAME_NOT_VALID("프로젝트 이름이 올바르지 않습니다.", "P007",
+        HttpStatus.BAD_REQUEST),
+    PROJECT_ENGLISH_NAME_NOT_VALID("프로젝트 영문 이름이 올바르지 않습니다."
+        + "1자 이상 20자 이하여야 합니다."
+        + "영어 소문자, 숫자, 그리고 하이픈(-)만 포함할 수 있습니다.", "P008",
+        HttpStatus.BAD_REQUEST),
+    DUPLICATE_PROJECT_PARTICIPANT("프로젝트 참여자가 이미 존재합니다.", "P009", HttpStatus.CONFLICT);
 
     private final String message;
     private final String code;

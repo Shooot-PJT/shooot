@@ -4,6 +4,7 @@ import com.shooot.application.user.domain.User;
 import com.shooot.application.user.domain.UserRepository;
 import com.shooot.application.user.exception.UserNotFoundException;
 import com.shooot.application.user.ui.dto.EmailIsValidView;
+import com.shooot.application.user.ui.dto.FindByEmailView;
 import com.shooot.application.user.ui.dto.UserView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,8 @@ public class UserFindService {
         return UserView.from(target);
     }
 
-    public UserView findByEmail(String email) {
+    public FindByEmailView findByEmail(String email) {
         User user = userRepository.findByUsername(email).orElseThrow(UserNotFoundException::new);
-        return UserView.from(user);
+        return FindByEmailView.from(user);
     }
 }
