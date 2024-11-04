@@ -1,5 +1,7 @@
 package com.shooot.application.projecttest.domain;
 
+import com.shooot.application.api.domain.Api;
+import com.shooot.application.projecttest.service.dto.ApiTestMethodRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,8 +21,8 @@ public class ApiTestMethod {
     private Integer id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "build_file_api_docs_id")
-    private BuildFileApiDocs buildFileApiDocs;
+    @JoinColumn(name = "api_id")
+    private Api api;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "method_type")
@@ -32,4 +34,10 @@ public class ApiTestMethod {
     @Column(name = "test_duration")
     private Integer testDuration;
 
+
+    public void update(ApiTestMethodRequest apiTestMethodRequest) {
+        this.buildFileTestMethod = BuildFileTestMethod.valueOf(apiTestMethodRequest.getMethod());
+        this.vUsers = apiTestMethodRequest.getVuserNum();
+        this.testDuration = apiTestMethodRequest.getDuration();
+    }
 }

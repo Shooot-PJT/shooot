@@ -2,6 +2,7 @@ package com.shooot.application.projecttest.domain;
 
 import com.shooot.application.api.domain.Api;
 import com.shooot.application.common.jpa.map.MapToJsonConverter;
+import com.shooot.application.projecttest.handler.ApiInfoDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Map;
+import java.util.Objects;
 
 @SuperBuilder
 @Getter
@@ -30,19 +32,24 @@ public class BuildFileApiDocs {
     @JoinColumn(name = "project_build_file_id")
     private ProjectBuild projectBuild;
 
-    @Column(name = "content_type")
-    private String contentType;
-
-    @Convert(converter = MapToJsonConverter.class)
-    @Column(name = "request_body")
-    private Map<String, Object> requestBody;
-
     @Column(name = "url")
     private String url;
 
-    @Convert(converter = MapToJsonConverter.class)
-    @Column(name = "response_body")
-    private Map<String, Object> responseBody;
+    @Column(name = "method")
+    private String method;
 
+
+    public static BuildFileApiDocs create(Api api, ApiInfoDto dto, ProjectBuild projectBuild) {
+        return  BuildFileApiDocs.builder().projectBuild(projectBuild)
+                .api(api)
+                .url(dto.getUrl())
+                .method(dto.getMethod())
+                .build();
+    }
+
+
+    public void updateApi(Api api) {
+        this.api = api;
+    }
 
 }

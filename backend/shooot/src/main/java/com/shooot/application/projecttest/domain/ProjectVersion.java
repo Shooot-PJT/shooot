@@ -2,9 +2,16 @@ package com.shooot.application.projecttest.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Objects;
 
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Embeddable
 public class ProjectVersion {
     @Column(name = "version_major")
@@ -16,6 +23,7 @@ public class ProjectVersion {
     @Column(name = "version_patch")
     private Integer patch;
 
+    @Setter
     @Column(name = "verseion_temporary")
     private Integer temporary;
 
@@ -32,6 +40,8 @@ public class ProjectVersion {
                 && Objects.equals(this.patch, version.patch)
                 && Objects.equals(this.temporary, version.temporary);
     }
+
+
 
     private String getVersion() {
         return major + "." + minor + "." + patch + (temporary == 0 ? "" : "-" + temporary);

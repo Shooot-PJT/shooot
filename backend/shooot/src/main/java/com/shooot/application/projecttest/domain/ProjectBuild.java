@@ -6,7 +6,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
+import java.util.List;
 
 @SuperBuilder
 @Getter
@@ -30,5 +33,16 @@ public class ProjectBuild extends SoftDeleteEntity {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @Column(name = "file_name")
+    private String fileName;
 
+    @Column(name = "md5_check_sum")
+    private String md5CheckSum;
+
+    @Setter
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "projectBuild", cascade = CascadeType.ALL)
+    private ProjectFile projectFile;
+
+    @OneToMany(mappedBy = "projectBuild", cascade = CascadeType.ALL)
+    private List<ProjectBuildLog> projectBuildLog;
 }

@@ -24,11 +24,6 @@ public class UserVerificationEmailDto implements Serializable {
 
 
     public boolean verify(EmailVerificationRequest dto) {
-        if(!Objects.equals(email, dto.getEmail())) {
-            isValid = false;
-            return false;
-        }
-
         if(Objects.equals(verificationNumber, dto.getNumber())) {
             isValid = true;
             return true;
