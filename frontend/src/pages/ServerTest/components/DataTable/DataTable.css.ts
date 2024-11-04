@@ -13,9 +13,7 @@ const slideUpAnimation = keyframes({
   },
 });
 
-export const container = style({
-  width: '50%',
-});
+export const container = style({});
 
 export const header = style({
   display: 'flex',
@@ -36,10 +34,10 @@ export const headerItem = style({
   fontSize: '18px',
   fontWeight: '500',
   color: `${colorPalette.grey[500]}`,
-  WebkitUserSelect: 'none', 
-  MozUserSelect: 'none',  
+  WebkitUserSelect: 'none',
+  MozUserSelect: 'none',
   msUserSelect: 'none',
-  userSelect: 'none' 
+  userSelect: 'none',
 });
 
 export const resizeBar = style({
