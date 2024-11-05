@@ -1,8 +1,6 @@
-require("dotenv").config();
-
 export const checkProjectName = async (projectName) => {
     try {
-        const response = await fetch(`${process.env.EXPRESS_BASE_URL}/projects/search?projectName=${projectName}`);
+        const response = await fetch(`https://shooot.co.kr/express/projects/search?projectName=${projectName}`);
         const data = await response.json();
         return data.canUse;
     } catch (error) {
