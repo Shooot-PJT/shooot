@@ -4,7 +4,10 @@ import { useNavBarStore } from '../../../stores/navbarStore';
 import Icon from '../../Icon';
 import Typography from '../../Typography';
 import Button from '../../Button';
-import * as global from '../../../styles/globalStyle.css';
+import usePopup from '../../../hooks/usePopup';
+import { useQuery } from '@tanstack/react-query';
+import { getMyProjectList } from '../../../pages/MyProject/apis';
+import { useResize } from '../../../hooks/useResize';
 
 interface MenuItemProps extends React.ComponentProps<'div'> {
   menu: string;
@@ -13,7 +16,25 @@ interface MenuItemProps extends React.ComponentProps<'div'> {
 }
 
 const MenuItems = ({ menu, icon, idx }: MenuItemProps) => {
+  const { isLarge } = useResize();
   const navbarStore = useNavBarStore();
+
+  const popup = usePopup();
+  const projectsListQuery = useQuery({
+    queryKey: ['project-list'],
+    queryFn: async () => await getMyProjectList(),
+  });
+
+  const handler = (idx: number) => {
+    if (idx === 2 || projectsListQuery.data?.data.length) {
+      navbarStore.setMenu(idx);
+    } else {
+      popup.push({
+        title: '프로젝트 없음',
+        children: <Typography>속한 프로젝트가 없습니다.</Typography>,
+      });
+    }
+  };
 
   return (
     <Button
@@ -31,26 +52,15 @@ const MenuItems = ({ menu, icon, idx }: MenuItemProps) => {
           padding: '0.75rem 2rem',
           cursor: 'pointer',
         }}
-        onClick={() => navbarStore.setMenu(idx)}
+        onClick={() => handler(idx)}
       >
-        <div className={global.desktopL}>
-          <Icon
-            color={navbarStore.menu === idx ? 'light' : 'disabled'}
-            size={2}
-            background="none"
-          >
-            {icon}
-          </Icon>
-        </div>
-        <div className={global.desktopS}>
-          <Icon
-            color={navbarStore.menu === idx ? 'light' : 'disabled'}
-            size={1.5}
-            background="none"
-          >
-            {icon}
-          </Icon>
-        </div>
+        <Icon
+          color={navbarStore.menu === idx ? 'light' : 'disabled'}
+          size={isLarge ? 2 : 1.5}
+          background="none"
+        >
+          {icon}
+        </Icon>
         <Typography
           color={navbarStore.menu === idx ? 'light' : 'disabled'}
           size={1}

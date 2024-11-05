@@ -1,7 +1,7 @@
 import { HiRocketLaunch } from 'react-icons/hi2';
-import Typography from '../../../components/Typography';
-import Flexbox from '../../../components/Flexbox';
-import Icon from '../../../components/Icon';
+import Typography from '../../../../components/Typography';
+import Flexbox from '../../../../components/Flexbox';
+import Icon from '../../../../components/Icon';
 
 export const Logo = () => {
   return (
