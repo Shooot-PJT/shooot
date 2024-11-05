@@ -10,16 +10,29 @@ sw.delay = 0;
 sw.setConfigs = async function setConfigs(projectName, delay) {
     const projectNameRegex = /^[a-z0-9-]{1,20}$/;
 
+    // 비어있거나 정규식에 맞지 않는 project name
     if (!projectName.trim().length || !projectNameRegex.test(projectName)) {
         console.error("사용 불가능한 projectName 입니다");
     } else {
-        const canUse = await checkProjectName(projectName);
+        const canUse = await checkProjectName(projectName); // 사용 가능한지 확인
         if (canUse === "AVAILABLE") {
+            // 사용 가능
             this.projectName = projectName;
-            this.delay = delay;
-            console.log("[프로젝트 설정]: 정보 설정 완료");
+            if (delay) this.delay = delay;
+
+            // service worker 에게 정보 전달
+            if (navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({
+                    type: "SET_CONFIGS",
+                    projectName: this.projectName,
+                    delay: this.delay,
+                });
+            } else {
+                // 전달 실패
+                console.warn("활성화된 Service Worker 가 없습니다");
+            }
         } else if (canUse === "UNAVAILABLE") {
-            console.error("중복된 projectName 입니다");
+            console.error(`${projectName} 프로젝트가 존재하지 않습니다`);
         }
     }
 };
