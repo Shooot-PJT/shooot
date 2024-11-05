@@ -13,7 +13,7 @@ export interface APIDetailInfo {
   apiTitle: string;
   apiDescription: string;
   method: Method;
-  nominalUrl: string;
+  nominalUrl: NominalUrl;
   isRealServer: boolean;
   isSecure: boolean;
   modifiedAt: string;
