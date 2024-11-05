@@ -14,7 +14,7 @@ const meta: Meta<typeof API.Header> = {
   decorators: [
     (Story) => (
       <div className={darkTheme} style={{ padding: '1rem', width: '95%' }}>
-        <API header_info={DUMMY_API_HEADER_INFO_LIST[0]}>
+        <API headerInfo={DUMMY_API_HEADER_INFO_LIST[0]}>
           <Story />
         </API>
       </div>
@@ -101,8 +101,8 @@ export const MultipleHeaders: Story = {
         width: '100%',
       }}
     >
-      {DUMMY_API_HEADER_INFO_LIST.map((header_info, index) => (
-        <API key={index} header_info={header_info}>
+      {DUMMY_API_HEADER_INFO_LIST.map((headerInfo, index) => (
+        <API key={index} headerInfo={headerInfo}>
           <API.Header />
         </API>
       ))}
