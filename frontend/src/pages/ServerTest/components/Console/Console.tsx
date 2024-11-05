@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import Flexbox from '../../../../components/Flexbox';
 import * as s from './Console.css';
 
 export interface ConsoleProps {
@@ -59,7 +58,7 @@ export const Console = ({ state = 'distributing', data }: ConsoleProps) => {
   }, [displayedData]);
 
   return (
-    <Flexbox flexDirections="col">
+    <div>
       <div className={s.Header}>
         <div className={s.HeaderWrapper}>
           <div className={s.stateHeader}>{stateHeaderRender()}</div>
@@ -92,6 +91,6 @@ export const Console = ({ state = 'distributing', data }: ConsoleProps) => {
           </div>
         </div>
       </div>
-    </Flexbox>
+    </div>
   );
 };

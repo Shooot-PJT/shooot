@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef, ReactNode } from 'react';
 import * as s from './DataTable.css';
+import React from 'react';
 
 interface DataTableProps {
   colWidths: number[];
   headers: string[];
   data: ReactNode[][];
   selectable?: boolean;
+  expandedRowIndex?: number;
+  ExpandedRow?: ReactNode;
 }
 
 export const DataTable = ({
@@ -13,6 +16,8 @@ export const DataTable = ({
   headers,
   selectable = false,
   data,
+  expandedRowIndex,
+  ExpandedRow,
 }: DataTableProps) => {
   const [colWidths, setColWidths] = useState<number[]>(initialColWidths);
   const [selectedRow, setSelectedRow] = useState<number>(-1);
@@ -97,27 +102,36 @@ export const DataTable = ({
 
       <div className={s.body}>
         {data.map((row, rowIndex) => (
-          <div
-            className={rowIndex === selectedRow ? s.selectedRow : s.row}
-            key={rowIndex}
-            onClick={() => {
-              handleSelectRow(rowIndex);
-            }}
-          >
-            {row.map((item, colIndex) => (
+          <React.Fragment key={data.length - rowIndex}>
+            <div
+              className={`${rowIndex === selectedRow ? s.selectedRow : s.row} ${selectable ? s.hoverRow : ''}`}
+              key={data.length - rowIndex}
+              onClick={() => {
+                handleSelectRow(rowIndex);
+              }}
+            >
+              {row.map((item, colIndex) => (
+                <div
+                  className={s.rowItem}
+                  key={`${data.length - rowIndex}-${colIndex}-${item}`}
+                  style={
+                    {
+                      '--width': `${colWidths[colIndex]}%`,
+                    } as React.CSSProperties
+                  }
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+            {ExpandedRow && (
               <div
-                className={s.rowItem}
-                key={`${rowIndex}-${colIndex}-${item}`}
-                style={
-                  {
-                    '--width': `${colWidths[colIndex]}%`,
-                  } as React.CSSProperties
-                }
+                className={`${s.expandedRowContainer} ${expandedRowIndex === rowIndex ? 'expanded' : ''}`}
               >
-                {item}
+                {ExpandedRow}
               </div>
-            ))}
-          </div>
+            )}
+          </React.Fragment>
         ))}
       </div>
     </div>
