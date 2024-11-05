@@ -56,22 +56,26 @@ const consoleData = [
 
 export const ServerTest = () => {
   return (
-    <div>
+    <div
+      style={{
+        display: 'grid',
+        gridAutoRows: '1fr 1fr',
+        width: '100%',
+        gap: '2rem',
+        marginTop: '1rem',
+      }}
+    >
+      <div style={{ gridRow: '1/2', width: '100%', marginLeft: '1rem' }}>
+        <ProjectTable />
+      </div>
       <div
         style={{
-          display: 'grid',
-          gridAutoRows: '1fr 1fr',
-          width: '100%',
-          gap: '2rem',
-          marginTop: '1rem',
+          gridRow: '1/2',
+          marginTop: '2.5rem',
+          marginRight: '1rem',
         }}
       >
-        <div style={{ gridRow: '1/2', width: '100%' }}>
-          <ProjectTable />
-        </div>
-        <div style={{ gridRow: '1/2', width: '100%', marginTop: '2.5rem' }}>
-          <Console data={consoleData} />
-        </div>
+        <Console data={consoleData} />
       </div>
     </div>
   );
