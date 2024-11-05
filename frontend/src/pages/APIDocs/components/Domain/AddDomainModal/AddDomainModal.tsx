@@ -47,18 +47,14 @@ export const AddDomainModal = ({
         type: 'fail',
         children: (
           <Flexbox flexDirections="col" style={{ gap: '2rem' }}>
-            <Typography weight="500">
-              모든 정보를 제대로 입력해주세요.
-            </Typography>
-
             <Flexbox flexDirections="col" style={{ gap: '1rem' }}>
               {validationTitleResult !== true && (
-                <Typography color="secondary">
+                <Typography color="originalRed">
                   {`제목에 ${validationTitleResult}.`}
                 </Typography>
               )}
               {validationDescriptionResult !== true && (
-                <Typography color="secondary">
+                <Typography color="originalRed">
                   {`설명에 ${validationDescriptionResult}.`}
                 </Typography>
               )}
@@ -91,10 +87,6 @@ export const AddDomainModal = ({
         type: 'fail',
         children: (
           <Flexbox flexDirections="col" style={{ gap: '2rem' }}>
-            <Typography weight="500">
-              모든 정보를 제대로 입력해주세요.
-            </Typography>
-
             <Flexbox flexDirections="col" style={{ gap: '1rem' }}>
               {validationTitleResult !== true && (
                 <Typography color="originalRed">
