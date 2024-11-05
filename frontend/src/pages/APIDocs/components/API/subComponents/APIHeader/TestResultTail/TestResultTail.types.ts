@@ -1,3 +1,3 @@
-import { TestResult } from '../../../API.types';
+import { TestResult } from '../../../API.data.types';
 
 export type { TestResult };

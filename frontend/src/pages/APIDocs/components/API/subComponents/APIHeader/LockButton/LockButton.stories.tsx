@@ -17,7 +17,7 @@ const meta: Meta<typeof LockButton> = {
   ],
   tags: ['autodocs'],
   argTypes: {
-    needAuthorize: {
+    isSecure: {
       description: '권한이 필요한지 여부',
       control: 'boolean',
       defaultValue: false,
@@ -35,15 +35,15 @@ type Story = StoryObj<typeof LockButton>;
 
 export const Default: Story = {
   args: {
-    needAuthorize: false,
+    isSecure: false,
   },
 };
 
 export const Variants: Story = {
   render: (args) => (
     <div style={{ display: 'flex', gap: '1rem' }}>
-      <LockButton {...args} needAuthorize={true} />
-      <LockButton {...args} needAuthorize={false} />
+      <LockButton {...args} isSecure={true} />
+      <LockButton {...args} isSecure={false} />
     </div>
   ),
 };
