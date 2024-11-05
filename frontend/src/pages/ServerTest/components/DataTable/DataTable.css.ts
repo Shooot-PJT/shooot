@@ -102,11 +102,14 @@ export const rowItem = style({
 export const expandedRowContainer = style({
   width: '100%',
   overflow: 'hidden',
-  maxHeight: '0',
-  transition: 'all 0.5s ease-in-out',
+  height:'0',
+  minHeight: '0',
+  transition: 'all 0.2s ease-in-out',
   selectors: {
     '&.expanded': {
-      maxHeight: '200px',
+      opacity: '1',
+      height:'200px',
+      minHeight: '200px',
     },
   },
 });
