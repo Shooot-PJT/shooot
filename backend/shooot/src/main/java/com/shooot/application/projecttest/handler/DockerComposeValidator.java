@@ -2,6 +2,7 @@ package com.shooot.application.projecttest.handler;
 
 import com.shooot.application.projecttest.exception.DockerComposeCanNotUseImageException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -69,6 +70,9 @@ public class DockerComposeValidator {
                         log.info("Service {} does not use an official Docker image with tag: library/{}:{}", serviceEntry.getKey(), imageName, tag);
                         throw new DockerComposeCanNotUseImageException();
                     }
+                }else {
+                    log.info("Can not use project Image");
+                    throw new DockerComposeCanNotUseImageException();
                 }
 
                 // 2. 서비스 내부 네트워크 설정이 없는지 검증
