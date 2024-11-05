@@ -37,7 +37,7 @@ public class ProjectBuildUploadService {
 
         Project project = findProjectById(projectId);
 
-        dockerComposeValidator.canUse(dockerFile);
+        dockerComposeValidator.validateComposeFile(dockerFile.getAbsolutePath());
 
         File jarFile = convertToFile(uploadedProjectFile, project.getName());
         String jarFileChecksum = FileHandler.getMD5Checksum(jarFile);
