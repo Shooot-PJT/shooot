@@ -5,5 +5,5 @@ export interface DomainInfo {
   projectId: number;
   title: string;
   description: string;
-  isSubscribed: isSubscribed; // 요청자의 알림 구독여부
+  isSubscribed?: isSubscribed; // 요청자의 알림 구독여부
 }
