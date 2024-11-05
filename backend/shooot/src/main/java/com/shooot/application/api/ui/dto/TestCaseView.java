@@ -1,18 +1,19 @@
 package com.shooot.application.api.ui.dto;
 
+
+import com.shooot.application.api.domain.ApiTestStatusType;
 import lombok.*;
 
 import java.util.Map;
-import java.util.Objects;
 
 @Builder
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApiTestCaseRequestView {
+public class TestCaseView {
     private Integer id;
-    private Integer apiTestCaseId;
     private String type;
     private Map<String, Object> content;
+
 }

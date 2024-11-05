@@ -12,15 +12,18 @@ import com.shooot.application.api.exception.testcase.TestCaseNotFoundException;
 import com.shooot.application.api.service.command.test.dto.ApiTestCaseModifyRequest;
 import com.shooot.application.api.ui.dto.ApiTestCaseView;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ApiTestCaseModifyService {
     private final ApiRepository apiRepository;
     private final ApiTestCaseRepository apiTestCaseRepository;
@@ -31,7 +34,7 @@ public class ApiTestCaseModifyService {
         ApiTestCase apiTestCase = modifyApiTestCase(testcaseId, request);
         ApiTestCaseRequest apiTestCaseRequest = modifyApiTestCaseRequest(apiTestCase, request);
 
-        Api api = apiRepository.findById(apiTestCase.getId())
+        Api api = apiRepository.findById(apiTestCase.getApi().getId())
                 .orElseThrow(ApiNotFoundException::new);
         api.testCaseUpdate();
 
@@ -54,10 +57,11 @@ public class ApiTestCaseModifyService {
     }
 
     private ApiTestCaseRequest modifyApiTestCaseRequest(ApiTestCase apiTestCase, Map<String,Object> request){
+        log.info("content get = {}", request.get("content"));
         ApiTestCaseRequest apiTestCaseRequest = ApiTestCaseRequest.builder()
                 .apiTestCase(apiTestCase)
-                .type(request.get("type").equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART)
-                .content((Map<String, Object>) request.get("data"))
+                .type(Objects.equals(request.get("type"), "JSON") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART)
+                .content((Map<String, Object>) request.get("content"))
                 .build();
 
         return apiTestCaseRequestRepository.save(apiTestCaseRequest);

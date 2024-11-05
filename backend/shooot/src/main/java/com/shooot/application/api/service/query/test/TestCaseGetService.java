@@ -1,25 +1,19 @@
 package com.shooot.application.api.service.query.test;
 
-import com.shooot.application.api.domain.Api;
-import com.shooot.application.api.domain.ApiTestCase;
 import com.shooot.application.api.domain.ApiTestCaseRequest;
-import com.shooot.application.api.domain.ApiTestLog;
 import com.shooot.application.api.domain.repository.ApiTestCaseRepository;
 import com.shooot.application.api.domain.repository.ApiTestCaseRequestRepository;
 import com.shooot.application.api.domain.repository.ApiTestLogRepository;
 import com.shooot.application.api.exception.api.ApiNotFoundException;
 import com.shooot.application.api.exception.testcase.TestCaseNotFoundException;
-import com.shooot.application.api.exception.testcase.TestCaseRequestNotFoundException;
-import com.shooot.application.api.ui.dto.ApiDetailView;
 import com.shooot.application.api.ui.dto.ApiTestCaseListView;
-import com.shooot.application.api.ui.dto.ApiTestCaseView;
-import com.shooot.application.api.ui.dto.ApiView;
+import com.shooot.application.api.ui.dto.TestCaseView;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,9 +31,22 @@ public class TestCaseGetService {
     }
 
     @Transactional(readOnly = true)
-    public ApiDetailView get(Integer testcaseId){
-        return apiTestCaseRepository.findApiDetailByTestCaseId(testcaseId)
-                .orElseThrow(ApiNotFoundException::new);
+    public TestCaseView get(Integer testcaseId){
+        PageRequest pageRequest = PageRequest.of(0, 1);
+        List<ApiTestCaseRequest> apiTestCaseRequests = apiTestCaseRequestRepository.findLatestByTestCaseId(testcaseId, pageRequest);
+
+        if (!apiTestCaseRequests.isEmpty()) {
+            ApiTestCaseRequest latestApiTestCaseRequest = apiTestCaseRequests.get(0);
+
+            return TestCaseView.builder()
+                    .id(latestApiTestCaseRequest.getId())
+                    .type(latestApiTestCaseRequest.getType().name())
+                    .content(latestApiTestCaseRequest.getContent())
+                    .build();
+        }
+
+        return null;
+
     }
 
 

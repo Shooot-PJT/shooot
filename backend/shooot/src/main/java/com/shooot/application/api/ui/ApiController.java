@@ -7,6 +7,7 @@ import com.shooot.application.api.service.command.api.dto.ApiCreateRequest;
 import com.shooot.application.api.service.command.api.dto.ApiModifyRequest;
 import com.shooot.application.api.service.command.api.dto.ApiToggleModifyRequest;
 import com.shooot.application.api.service.query.api.ApiGetService;
+import com.shooot.application.api.ui.dto.ApiDetailListView;
 import com.shooot.application.api.ui.dto.ApiView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -74,9 +75,9 @@ public class ApiController {
     public ResponseEntity<?> getApi(
             @PathVariable(name = "apiId") Integer apiId
     ){
-        ApiView apiView = apiGetService.getApi(apiId);
+        ApiDetailListView apiDetailListView = apiGetService.getApiWithTestCases(apiId);
 
-        return ResponseEntity.ok(apiView);
+        return ResponseEntity.ok(apiDetailListView);
     }
 
 

@@ -49,7 +49,7 @@ public class ApiTestCaseCreateService {
         ApiTestCaseRequest apiTestCaseRequest = ApiTestCaseRequest.builder()
                 .apiTestCase(apiTestCase)
                 .type(request.get("type").equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART)
-                .content((Map<String, Object>) request.get("data"))
+                .content((Map<String, Object>) request.get("content"))
                 .build();
 
         return apiTestCaseRequestRepository.save(apiTestCaseRequest);

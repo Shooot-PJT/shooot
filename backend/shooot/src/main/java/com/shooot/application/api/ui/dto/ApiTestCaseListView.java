@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ApiTestCaseListView {
     private Integer id;
-    private Api apiId;
+    private Integer apiId;
     private String title;
     private ApiTestStatusType type;
     private HttpStatus httpStatusCode;
@@ -25,7 +25,7 @@ public class ApiTestCaseListView {
     public static ApiTestCaseListView from(ApiTestCase apiTestCase){
         return ApiTestCaseListView.builder()
                 .id(apiTestCase.getId())
-                .apiId(apiTestCase.getApi())
+                .apiId(apiTestCase.getApi().getId())
                 .title(apiTestCase.getTitle())
                 .httpStatusCode(apiTestCase.getHttpStatus())
                 .type(apiTestCase.getTestCaseStatus())
