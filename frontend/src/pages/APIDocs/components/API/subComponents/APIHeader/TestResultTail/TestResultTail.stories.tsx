@@ -26,7 +26,7 @@ const meta: Meta<typeof TestResultTail> = {
         TEST_RESULTS.FAIL,
         TEST_RESULTS.NOT_TESTED,
       ],
-      defaultValue: 'yet',
+      defaultValue: TEST_RESULTS.NOT_TESTED,
     },
   },
 };
