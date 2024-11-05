@@ -70,6 +70,10 @@ export const input = recipe({
       '&:focus': {
         outline: 'none',
       },
+      '&::-webkit-inner-spin-button, &::-webkit-outer-spin-button': {
+        WebkitAppearance: 'none',
+        margin: 0,
+      },
     },
   },
   variants: {

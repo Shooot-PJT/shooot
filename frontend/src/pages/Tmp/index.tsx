@@ -38,7 +38,7 @@ export const Tmp = () => {
   };
   return (
     <>
-      <Graph frameColor="primary" lineColor="put" />
+      <Graph frameColor="primary" lineColor="primary" />
       <Button
         onClick={handleModal}
         children="모달추가"

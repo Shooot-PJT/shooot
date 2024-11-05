@@ -3,14 +3,15 @@ import Icon from '../../Icon';
 import { HiRocketLaunch, HiBars3 } from 'react-icons/hi2';
 import Typography from '../../Typography';
 import { useNavBarStore } from '../../../stores/navbarStore';
-import * as global from '../../../styles/globalStyle.css';
+import { useResize } from '../../../hooks/useResize';
 
 export const Title = () => {
   const navbarStore = useNavBarStore();
+  const { isLarge } = useResize();
 
   return (
     <>
-      <div className={global.desktopL}>
+      {isLarge ? (
         <Flexbox
           justifyContents="center"
           alignItems="center"
@@ -23,8 +24,7 @@ export const Title = () => {
             SHOOOT!
           </Typography>
         </Flexbox>
-      </div>
-      <div className={global.desktopS}>
+      ) : (
         <Flexbox justifyContents="between">
           <Flexbox justifyContents="center" style={{ columnGap: '1rem' }}>
             <Icon background="none" size={1.5}>
@@ -43,7 +43,7 @@ export const Title = () => {
             <HiBars3 />
           </Icon>
         </Flexbox>
-      </div>
+      )}
     </>
   );
 };

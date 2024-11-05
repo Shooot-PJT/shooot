@@ -1,7 +1,30 @@
 import Flexbox from '../Flexbox';
-import Typography from '../Typography';
+import { ProjectContents } from './ProjectContents';
+import { UserContents } from './UserContents';
+import { UserInfo } from '../../pages/Main/types';
+import { ProjectInfo, ProjectMember } from '../../pages/MyProject/types';
 
-export const Contents = () => {
+interface ContentsProps {
+  menu: number;
+  userInfo: UserInfo;
+  projectInfo: ProjectInfo;
+  memberInfo: ProjectMember[];
+  nicknameChangeModalHandler: () => void;
+  editProjectModalHandler: () => void;
+  inviteMembersModalHandler: () => void;
+  kickMemberModalHandler: () => void;
+}
+
+export const Contents = ({
+  menu,
+  userInfo,
+  projectInfo,
+  memberInfo,
+  nicknameChangeModalHandler,
+  editProjectModalHandler,
+  inviteMembersModalHandler,
+  kickMemberModalHandler,
+}: ContentsProps) => {
   return (
     <Flexbox
       flexDirections="col"
@@ -11,22 +34,20 @@ export const Contents = () => {
         rowGap: '3rem',
       }}
     >
-      <Flexbox flexDirections="col" style={{ rowGap: '0.25rem' }}>
-        <Flexbox alignItems="end" style={{ columnGap: '0.25rem' }}>
-          <Typography color="secondary" size={1.25} weight="700">
-            닉네임입니다
-          </Typography>
-          <Typography color="light" weight="700" size={0.875}>
-            님 오늘도 와주셨군요!
-          </Typography>
-        </Flexbox>
-        <Typography color="disabled" size={0.875} weight="500">
-          ssafy@ssafy.com
-        </Typography>
-      </Flexbox>
-      <Typography color="disabled" size={0.875}>
-        <a>닉네임 수정</a>
-      </Typography>
+      {menu !== 2 ? (
+        <ProjectContents
+          projectInfo={projectInfo}
+          memberInfo={memberInfo}
+          editProjectModalHandler={editProjectModalHandler}
+          inviteMembersModalHandler={inviteMembersModalHandler}
+          kickMemberModalHandler={kickMemberModalHandler}
+        />
+      ) : (
+        <UserContents
+          userInfo={userInfo}
+          handler={nicknameChangeModalHandler}
+        />
+      )}
     </Flexbox>
   );
 };
