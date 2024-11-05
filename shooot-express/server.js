@@ -2,19 +2,20 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
+require("dotenv").config();
 
 const app = express();
-const port = 3001;
+const port = process.env.EXPRESS_PORT;
 
 app.use(cors());
 
 // MySQL 연결 설정
 const db = mysql.createConnection({
-    host: "k11d109.p.ssafy.io",
-    port: 44132,
-    user: "root",
-    password: "ssafyrnal1qks",
-    database: "shooot",
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
 });
 
 // MySQL 연결 확인
@@ -50,6 +51,24 @@ app.post("/mock/data", (req, res) => {
     console.log("Method:", method);
 
     res.json({ message: "Data received", endpoint, method });
+});
+
+// projectName 사용 가능 여부 검사
+app.get("/projects/search", (req, res) => {
+    const { projectName } = req.query;
+    const query = `SELECT * FROM project WHERE english_name = "${projectName}"`;
+    db.execute(query, (err, results) => {
+        if (err) {
+            console.error("[get, /projects/search]:", err);
+            return res.status(500).json({ error: "Database query error" });
+        }
+
+        if (results.length) {
+            return res.status(200).json({ canUse: "AVAILABLE" });
+        } else {
+            return res.status(401).json({ canUse: "UNAVAILABLE" });
+        }
+    });
 });
 
 // 서버 시작
