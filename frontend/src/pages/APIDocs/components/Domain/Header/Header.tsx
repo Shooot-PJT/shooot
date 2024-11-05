@@ -8,6 +8,10 @@ import { CollapseIcon } from '../../API/subComponents/APICommon/CollapseIcon/Col
 import Button from '../../../../../components/Button';
 import TestButton from '../../TestButton/TestButton';
 import { SubscribeButton } from './SubscribeButton/SubscribeButton';
+import {
+  EditDomainButton,
+  RemoveDomainButton,
+} from '../DomainButtons/DomainButtons';
 
 export const Header = () => {
   const context = useDomainContext();
@@ -26,11 +30,16 @@ export const Header = () => {
       flexDirections="col"
       style={{ width: '100%', marginBottom: '1rem' }}
     >
-      <Flexbox flexDirections="row" style={{ gap: '0.5rem' }}>
+      <Flexbox
+        flexDirections="row"
+        style={{ gap: '0.5rem', alignItems: 'center' }}
+      >
         <Typography size={1.75} weight="600">
           {context.domainInfo.title}
         </Typography>
         <SubscribeButton isSubscribed={context.domainInfo.isSubscribed} />
+        <EditDomainButton domainInfo={context.domainInfo} />
+        <RemoveDomainButton domainId={context.domainInfo.domainId} />
       </Flexbox>
       <Flexbox
         justifyContents="between"
