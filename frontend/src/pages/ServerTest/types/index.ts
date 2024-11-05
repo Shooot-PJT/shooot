@@ -4,7 +4,7 @@ export type TestMethodType = 'FIXED' | 'SPIKE' | 'RAMP_UP';
 
 export interface APITestFormData {
   apiId: number;
-  method: Method;
+  method: TestMethodType;
   vuserNum: number;
   duration: number;
   checked: boolean;

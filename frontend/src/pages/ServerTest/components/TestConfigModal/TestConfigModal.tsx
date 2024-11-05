@@ -10,6 +10,7 @@ import Checkbox from '../Checkbox/Checkbox';
 import { APITestFormData, TestMethodType } from '../../types';
 import { Method } from '../../../APIDocs/types/methods';
 import Typography from '../../../../components/Typography';
+import { HiRocketLaunch, HiCog6Tooth } from 'react-icons/hi2';
 
 const apiData = {
   includes: [
@@ -39,6 +40,18 @@ const apiData = {
       method: 'POST' as Method,
       endPoint: 'api/users',
     },
+    {
+      method: 'PUT' as Method,
+      endPoint: 'api/users',
+    },
+    {
+      method: 'PATCH' as Method,
+      endPoint: 'api/users',
+    },
+    {
+      method: 'DELETE' as Method,
+      endPoint: 'api/users',
+    },
   ],
 };
 
@@ -56,11 +69,27 @@ export const TestConfigModal = () => {
     );
   };
 
+  const handleExpanedRowIdx = (idx: number) => {
+    setExpandedRowIndex((prevIndex) => (prevIndex === idx ? -1 : idx));
+  };
+
+  const handleFormChange = (
+    idx: number,
+    key: keyof APITestFormData,
+    value: number | TestMethodType,
+  ) => {
+    setTestFormData((prevData) =>
+      prevData.map((item, index) =>
+        index === idx ? { ...item, [key]: value } : item,
+      ),
+    );
+  };
+
   // Form 초기 상태 생성
   useEffect(() => {
     const newTestFormData = apiData.includes.map((item) => ({
       apiId: item.apiId,
-      method: item.method,
+      method: item.testMethod,
       vuserNum: item.vuser,
       duration: item.duration,
       checked: false,
@@ -75,7 +104,11 @@ export const TestConfigModal = () => {
       <MethodChip method={item.method.toLowerCase() as Method} />,
       item.endPoint,
       item.description,
-      <div onClick={() => handleExpanedRowIdx(idx)}>설정하기</div>,
+      <HiCog6Tooth
+        size={24}
+        className={s.ConfigIcon}
+        onClick={() => handleExpanedRowIdx(idx)}
+      />,
       <Checkbox
         checked={testFormData[idx]?.checked}
         onChange={() => handleCheckbox(idx)}
@@ -96,10 +129,6 @@ export const TestConfigModal = () => {
     return [...newTableIncludeData, ...newTableExcludeData];
   };
 
-  const handleExpanedRowIdx = (idx: number) => {
-    setExpandedRowIndex((prevIndex) => (prevIndex === idx ? -1 : idx));
-  };
-
   const headers = [
     '도메인',
     'API 메서드',
@@ -111,18 +140,38 @@ export const TestConfigModal = () => {
 
   return (
     <div className={s.container}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.5rem',
+          marginBottom: '2rem',
+        }}
+      >
+        <Typography size={2} weight="700">
+          테스트 실행
+        </Typography>
+        <Typography size={1}>테스트할 API 목록들을 체크해주세요</Typography>
+      </div>
       <DataTable
         data={convertTableData()}
         colWidths={colWidths}
         headers={headers}
         expandedRowIndex={expandedRowIndex}
         ExpandedRow={
-          <TestConfigForm vuser={10} duration={1} testMethod="FIXED" />
+          <TestConfigForm
+            vuser={testFormData[expandedRowIndex]?.vuserNum}
+            duration={testFormData[expandedRowIndex]?.duration}
+            testMethod={testFormData[expandedRowIndex]?.method}
+            onChange={(key, value) =>
+              handleFormChange(expandedRowIndex, key, value)
+            }
+          />
         }
       />
-      <Flexbox justifyContents="end" style={{ gap: '1rem' }}>
+      <Flexbox justifyContents="end" style={{ gap: '1rem', marginTop: '1rem' }}>
         <Button paddingX={2} paddingY={1} color="primary">
-          업로드
+          Shooot! <HiRocketLaunch />
         </Button>
         <Button paddingX={2} paddingY={1} color="delete" onClick={modal.pop}>
           취소

@@ -1,25 +1,30 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { HiCog6Tooth, HiMiniUser } from 'react-icons/hi2';
 import { LuTimer } from 'react-icons/lu';
 import Textfield from '../../../../components/Textfield';
 import Typography from '../../../../components/Typography';
 import * as s from './TestConfigForm.css';
-import { Method } from '../../../APIDocs/types/methods';
+import { TestMethodType } from '../../types';
+import { SelectBox } from '../SelectBox/SelectBox';
 
 export interface TestConfigFormProps {
   vuser: number;
   duration: number;
-  testMethod: Method;
+  testMethod: TestMethodType;
+  onChange: (
+    key: 'vuserNum' | 'duration' | 'method',
+    value: number | TestMethodType,
+  ) => void;
 }
 
 export const TestConfigForm = ({
   vuser,
   duration,
   testMethod,
+  onChange,
 }: TestConfigFormProps) => {
   const userInputRef = useRef<HTMLInputElement>(null);
   const testTimeRef = useRef<HTMLInputElement>(null);
-  const testMethodRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className={s.Container}>
@@ -32,7 +37,7 @@ export const TestConfigForm = ({
             ref={userInputRef}
             value={vuser}
             type="number"
-            style={{ paddingRight: '101000rem' }}
+            onChange={(e) => onChange('vuserNum', Number(e.target.value))}
           />
           <div
             style={{
@@ -50,7 +55,13 @@ export const TestConfigForm = ({
         <LuTimer size={32} />
         <Typography weight="600"> 테스트 시간</Typography>
         <div style={{ position: 'relative' }}>
-          <Textfield ratio={2} ref={testTimeRef} value={duration} />
+          <Textfield
+            ratio={2}
+            ref={testTimeRef}
+            value={duration}
+            type="number"
+            onChange={(e) => onChange('duration', Number(e.target.value))}
+          />
           <div
             style={{
               position: 'absolute',
@@ -66,7 +77,11 @@ export const TestConfigForm = ({
       <div className={s.FormGrid}>
         <HiCog6Tooth size={32} />
         <Typography weight="600"> 테스트 매서드 종류</Typography>
-        <Textfield ref={testMethodRef} value={testMethod} />
+        <SelectBox
+          value={testMethod}
+          options={['FIXED', 'SPIKE', 'RAMP_UP']}
+          onChange={(value) => onChange('method', value)}
+        />
       </div>
     </div>
   );
