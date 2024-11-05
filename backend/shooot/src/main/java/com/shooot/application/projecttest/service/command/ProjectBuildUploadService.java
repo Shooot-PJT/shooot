@@ -32,6 +32,8 @@ public class ProjectBuildUploadService {
     private final ProjectBuildRepository projectBuildRepository;
 
     public Integer buildFileApiExtractor(Integer projectId, MultipartFile uploadedProjectFile, MultipartFile uploadedDockerComposeFile) {
+        File dockerFile = convertToFile(uploadedDockerComposeFile, "docker-compose.yml");
+
 
         Project project = findProjectById(projectId);
         File jarFile = convertToFile(uploadedProjectFile, project.getName());
@@ -43,7 +45,7 @@ public class ProjectBuildUploadService {
 
         validateDuplicateFile(projectId, projectFileName, jarFileChecksum);
 
-        File dockerFile = convertToFile(uploadedDockerComposeFile, jarFile.getName());
+
         int temporaryVersion = getTemporaryVersion(projectId, projectFileName, projectVersion);
         projectVersion.setTemporary(temporaryVersion);
 
