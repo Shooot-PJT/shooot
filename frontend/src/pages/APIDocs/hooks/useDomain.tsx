@@ -12,7 +12,9 @@ import {
 import { DomainInfo } from '../components/Domain/Domain.data.types';
 import { RemoveDomainModal } from '../components/Domain/RemoveDomainModal/RemoveDomainModal';
 import Flexbox from '../../../components/Flexbox';
-import shooot_remove from '/assets/shooot_remove.png';
+import shooot_remove from '/assets/shooot/shooot_remove.png';
+import shooot_new from '/assets/shooot/shooot_new.png';
+import shooot_oops from '/assets/shooot/shooot_oops.png';
 
 export const useDomain = () => {
   const modal = useModal();
@@ -27,8 +29,30 @@ export const useDomain = () => {
     onSuccess: () => {
       popup.push({
         type: 'success',
-        title: '도메인 생성',
-        children: <Typography>도메인을 생성하였습니다.</Typography>,
+        title: '',
+        children: (
+          <Flexbox
+            flexDirections="col"
+            style={{
+              gap: '2rem',
+              alignItems: 'center',
+              padding: '2rem 0rem',
+            }}
+          >
+            <img
+              height="100px"
+              src={shooot_new}
+              style={{
+                width: '12.5rem',
+                height: 'auto',
+              }}
+            />
+
+            <Typography size={1.5} weight="600">
+              성공적으로 추가하였습니다.
+            </Typography>
+          </Flexbox>
+        ),
         onClose: () => {
           modal.pop();
         },
@@ -63,7 +87,29 @@ export const useDomain = () => {
       popup.push({
         type: 'fail',
         title: '도메인 편집 실패',
-        children: <Typography>다시 시도해주세요.</Typography>,
+        children: (
+          <Flexbox
+            flexDirections="col"
+            style={{
+              gap: '2rem',
+              alignItems: 'center',
+              padding: '2rem 0rem',
+            }}
+          >
+            <img
+              height="100px"
+              src={shooot_oops}
+              style={{
+                width: '12.5rem',
+                height: 'auto',
+              }}
+            />
+
+            <Typography size={1.5} weight="600">
+              다시 시도해주세요.
+            </Typography>
+          </Flexbox>
+        ),
       });
     },
   });
@@ -110,7 +156,29 @@ export const useDomain = () => {
       popup.push({
         type: 'fail',
         title: '도메인 삭제 실패',
-        children: <Typography>다시 시도해주세요.</Typography>,
+        children: (
+          <Flexbox
+            flexDirections="col"
+            style={{
+              gap: '2rem',
+              alignItems: 'center',
+              padding: '2rem 0rem',
+            }}
+          >
+            <img
+              height="100px"
+              src={shooot_oops}
+              style={{
+                width: '12.5rem',
+                height: 'auto',
+              }}
+            />
+
+            <Typography size={1.5} weight="600">
+              다시 시도해주세요.
+            </Typography>
+          </Flexbox>
+        ),
       });
     },
   });
