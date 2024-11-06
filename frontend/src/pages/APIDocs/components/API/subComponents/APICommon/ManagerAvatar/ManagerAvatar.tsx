@@ -20,8 +20,8 @@ const ManagerAvatar = ({
   size = 1.2,
   withLabel = false,
 }: ManagerAvatarProps) => {
-  const bgColor = manager?.id ? getRandomColor() : colorPalette.grey[600];
-  const tooltipTitle = manager?.id ? manager?.nickname : '담당자 미정';
+  const bgColor = manager?.nickname ? getRandomColor() : colorPalette.grey[600];
+  const tooltipTitle = manager?.nickname ? manager?.nickname : '담당자 미정';
 
   return (
     <Flexbox flexDirections="row" style={{ gap: '1rem', alignItems: 'center' }}>

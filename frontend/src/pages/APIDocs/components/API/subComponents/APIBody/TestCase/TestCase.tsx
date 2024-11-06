@@ -7,7 +7,7 @@ import {
 } from 'react';
 import Typography from '../../../../../../../components/Typography';
 import { CollapseIcon } from '../../APICommon/CollapseIcon/CollapseIcon';
-import TestButton from '../../APICommon/TestButton/TestButton';
+import TestButton from '../../../../TestButton/TestButton';
 import { ExpectedResponse } from './ExpectedResponse/ExpectedResponse';
 import { TestCaseTable } from './TestCaseTable/TestCaseTable';
 import Button from '../../../../../../../components/Button';
@@ -27,6 +27,7 @@ import useIsFocusedHook, {
 } from '../../../../../hooks/useIsFocusedHook';
 import { throttle } from 'lodash';
 import { HTTP_STATUS_CODES } from '../../../../../types/httpStatus';
+import { TEST_RESULTS } from '../../../API.data.types';
 
 interface TestCaseProps {
   children: React.ReactNode;
@@ -137,9 +138,9 @@ TestCase.Header = function Header() {
           gap: '0.5rem',
         }}
       >
-        <TestButton.API />
+        <TestButton.TestCase />
         <CollapseIcon isOpen={false} />
-        <TestResultTail lastTestResult="success" />
+        <TestResultTail testStatus={TEST_RESULTS.SUCCESS} />
       </Flexbox>
     </div>
   );
@@ -184,7 +185,7 @@ TestCase.Body = function Body() {
             <CustomTab label="Req Body" />
           </CustomTabs>
 
-          <Button onClick={toggleEditMode} rounded={0.5}>
+          <Button onClick={toggleEditMode} rounded={0.5} color="grey">
             <Typography size={0.75}>{isEditing ? '완료' : '편집'}</Typography>
           </Button>
         </Flexbox>
