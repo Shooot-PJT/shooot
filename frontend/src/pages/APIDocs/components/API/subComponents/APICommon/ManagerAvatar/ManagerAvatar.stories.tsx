@@ -17,13 +17,8 @@ const meta: Meta<typeof ManagerAvatar> = {
   ],
   tags: ['autodocs'],
   argTypes: {
-    id: {
-      description: '담당자 ID, 값이 없으면 담당자 미정으로 표시',
-      control: 'number',
-    },
-    nickname: {
-      description: '담당자의 닉네임',
-      control: 'text',
+    manager: {
+      description: '담당자 기본정보 객체 (id, nickname)',
     },
     rounded: {
       description: '아바타의 테두리 둥글기 (rem 단위)',
@@ -44,8 +39,6 @@ type Story = StoryObj<typeof ManagerAvatar>;
 
 export const Default: Story = {
   args: {
-    id: undefined,
-    nickname: '담당자 미정',
     rounded: 99,
     size: 1.2,
   },
@@ -53,8 +46,6 @@ export const Default: Story = {
 
 export const AssignedManager: Story = {
   args: {
-    id: 1,
-    nickname: '김현진',
     rounded: 99,
     size: 1.5,
   },
@@ -62,8 +53,6 @@ export const AssignedManager: Story = {
 
 export const CustomSize: Story = {
   args: {
-    id: 2,
-    nickname: '박민수',
     rounded: 50,
     size: 2,
   },
@@ -71,8 +60,6 @@ export const CustomSize: Story = {
 
 export const CustomRounded: Story = {
   args: {
-    id: 3,
-    nickname: '이서현',
     rounded: 10,
     size: 1.2,
   },

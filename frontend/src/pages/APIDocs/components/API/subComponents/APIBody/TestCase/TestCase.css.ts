@@ -39,7 +39,7 @@ export const testBodyContainerRecipe = recipe({
   variants: {
     isOpen: {
       true: {
-        maxHeight: '1000px',
+        maxHeight: '5000px',
         opacity: 1,
         pointerEvents: 'auto',
         marginBottom: '3rem',

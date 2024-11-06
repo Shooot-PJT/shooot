@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import TestResultTail from './TestResultTail';
 import darkTheme from '../../../../../../../styles/darkTheme.css';
+import { TEST_RESULTS } from '../../../API.data.types';
 
 const meta: Meta<typeof TestResultTail> = {
   title: 'UI/Components/API/Header/TestResultTail',
@@ -17,11 +18,15 @@ const meta: Meta<typeof TestResultTail> = {
   ],
   tags: ['autodocs'],
   argTypes: {
-    lastTestResult: {
+    testStatus: {
       description: '마지막 테스트 결과를 나타냅니다.',
       control: 'select',
-      options: ['success', 'fail', 'yet'],
-      defaultValue: 'yet',
+      options: [
+        TEST_RESULTS.SUCCESS,
+        TEST_RESULTS.FAIL,
+        TEST_RESULTS.NOT_TESTED,
+      ],
+      defaultValue: TEST_RESULTS.NOT_TESTED,
     },
   },
 };
@@ -32,28 +37,28 @@ type Story = StoryObj<typeof TestResultTail>;
 
 export const Default: Story = {
   args: {
-    lastTestResult: 'yet',
+    testStatus: TEST_RESULTS.NOT_TESTED,
   },
 };
 
 export const Success: Story = {
   args: {
-    lastTestResult: 'success',
+    testStatus: TEST_RESULTS.SUCCESS,
   },
 };
 
 export const Fail: Story = {
   args: {
-    lastTestResult: 'fail',
+    testStatus: TEST_RESULTS.FAIL,
   },
 };
 
 export const Variants: Story = {
   render: () => (
     <div style={{ display: 'flex', gap: '1rem', height: '4rem' }}>
-      <TestResultTail lastTestResult="success" />
-      <TestResultTail lastTestResult="fail" />
-      <TestResultTail lastTestResult="yet" />
+      <TestResultTail testStatus={TEST_RESULTS.SUCCESS} />
+      <TestResultTail testStatus={TEST_RESULTS.FAIL} />
+      <TestResultTail testStatus={TEST_RESULTS.NOT_TESTED} />
     </div>
   ),
 };
