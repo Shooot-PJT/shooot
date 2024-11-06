@@ -40,7 +40,7 @@ public class VagrantRepository {
     }
 
     public String getFirstEmptyInstance() {
-        for (int i = 1; i <= repository.size(); i++) {
+        for (int i = 1; i <= maxSize; i++) {
             String target = INSTANCE_PREFIX + i;
             if (!repository.containsKey(target)) {
                 return target;
