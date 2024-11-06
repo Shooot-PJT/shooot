@@ -119,9 +119,9 @@ export const TestConfigModal = () => {
       '-',
       <MethodChip method={item.method.toLowerCase() as Method} />,
       item.endPoint,
-      <Typography color="post">
+      <div className={s.UndefinedAPIDescription}>
         현재 API Docs에 정의되지 않은 API입니다.
-      </Typography>,
+      </div>,
       '-',
       '-',
     ]);

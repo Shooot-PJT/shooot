@@ -51,7 +51,7 @@ const consoleData = [
   '[ERROR] 10:20:15 - 알 수 없는 오류 발생',
   '[INFO] 10:21:50 - 서버가 정상적으로 종료되었습니다.',
   '[INFO] 10:22:30 - 백업 완료: 모든 데이터 저장됨',
-  '[INFO] 10:23:10 - 서비스 점검 모드 활성화',
+  '[INFO] 10:23:10 - 서비스 점검 모드 활성화 asd sakfjsalfhaskldjsald ajl asd sakfjsalfhaskldjsald ajl asd sakfjsalfhaskldjsald ajl asd sakfjsalfhaskldjsald ajl asd sakfjsalfhaskldjsald ajl asd sakfjsalfhaskldjsald ajl asd sakfjsalfhaskldjsald ajl asd sakfjsalfhaskldjsald ajl asd sakfjsalfhaskldjsald ajl asd sakfjsalfhaskldjsald ajl',
 ];
 
 export const ServerTest = () => {

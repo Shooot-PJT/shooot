@@ -6,11 +6,19 @@ export const container = style({
 });
 
 export const ConfigIcon = style({
-  verticalAlign:'middle',
+  verticalAlign: 'middle',
   color: colorPalette.purple[500],
   selectors: {
     '&:hover': {
       color: colorPalette.purple[300],
     },
   },
+});
+
+export const UndefinedAPIDescription = style({
+  width: '100%',
+  color: colorPalette.amber[500],
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
 });
