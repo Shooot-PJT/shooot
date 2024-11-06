@@ -17,9 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
@@ -70,15 +68,22 @@ public class DockerManager {
                 projectDirectoryManager.setFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.JAR, projectFile.getProjectFile());
                 projectDirectoryManager.setMetaData(dto.getProjectId(), dto.getProjectJarFileId(), MetaData.builder().projectJarFileId(dto.getProjectJarFileId()).projectId(dto.getProjectId()).projectName(project.getEnglishName()).build());
 
-                dockerComposeManager.mergeDockerCompose(projectDirectoryManager.getFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE).orElseThrow(IllegalArgumentException::new), project.getEnglishName(), Integer.parseInt(target.replace("instance", "")) + 1);
+                File copyTargetFile = new File("/home/hyunjinkim/deployment/scripts/Dockerfile");
+                File copyDir = new File("/home/hyunjinkim/deployment/vagrant-instance-volumn/" + dto.getProjectId() + "/" + dto.getProjectJarFileId()+"/Dockerfile");
 
+                FileInputStream fileInputStream = new FileInputStream(copyTargetFile);
+                FileOutputStream fileOutputStream = new FileOutputStream(copyDir);
+                fileOutputStream.write(fileInputStream.readAllBytes());
+
+                dockerComposeManager.mergeDockerCompose(projectDirectoryManager.getFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE).orElseThrow(IllegalArgumentException::new), project.getEnglishName(), Integer.parseInt(target.replace("instance", "")) + 1);
+                System.out.println("instance : " + target);
                 ProcessBuilder processBuilder =  new ProcessBuilder("vagrant", "ssh", target, "-c", "docker compose -f "+ vagrantProjectJarFilePath(dto.getProjectId(), dto.getProjectJarFileId()) + "/docker-compose.yml" + " up -d");
                 processBuilder.directory(new File("/home/hyunjinkim/deployment/scripts/"));
                 Process process = processBuilder.start();
 
                 int exitCode = process.waitFor();
                 if (exitCode != 0) {
-                    throw new RuntimeException("Error occurred while starting Docker Compose on instance" + target);
+                    throw new RuntimeException("Error occurred while starting Docker Compose on instance " + target);
                 }
 
                 // Health check 및 로그 모니터링 시작
