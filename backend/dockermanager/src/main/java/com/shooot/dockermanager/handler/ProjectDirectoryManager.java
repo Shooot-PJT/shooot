@@ -78,7 +78,7 @@ ProjectDirectoryManager {
 
     public void setMetaData(Integer projectId, Integer projectJarFileId, MetaData metaData) {
         File file = file(projectId, projectJarFileId);
-        File target = new File(file.getPath() + "metadata");
+        File target = new File(file.getPath() + "/metadata");
         if (!target.exists()) {
             try {
                 target.createNewFile();
@@ -95,7 +95,7 @@ ProjectDirectoryManager {
     }
 
     public MetaData getMetaData(Path path) {
-        File target = new File(path.toString() + "metadata");
+        File target = new File(path.toString() + "/metadata");
         if (!target.exists()) {
             try {
                 target.createNewFile();
