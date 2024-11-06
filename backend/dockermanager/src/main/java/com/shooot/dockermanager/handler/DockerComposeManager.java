@@ -32,17 +32,29 @@ public class DockerComposeManager {
         Map<String, Object> projectService = new HashMap<>();
         projectService.put("container_name", englishProjectName);
         projectService.put("ports", new String[]{"808" + portSuffix + ":8080"});
+        projectService.put("restart", "always");
+
 
         Map<String, String> buildConfig = new HashMap<>();
         buildConfig.put("context", ".");
         buildConfig.put("dockerfile", "Dockerfile");
         projectService.put("build", buildConfig);
 
+        Map<String, Object> deployConfig = new HashMap<>();
+
+        Map<String, Object> restartPolicyConfig = new HashMap<>();
+        restartPolicyConfig.put("condition", "on-failure");
+        restartPolicyConfig.put("max_attempts", 10);
+
+        deployConfig.put("restart_policy", restartPolicyConfig);
+
         Map<String, String> labels = new HashMap<>();
         labels.put("traefik.enable", "true");
         labels.put("traefik.http.routers." + englishProjectName + ".rule", "Host(`" + englishProjectName + ".shooot.shop`)");
         labels.put("traefik.http.routers." + englishProjectName + ".entrypoints", "websecure");
-        labels.put("traefik.http.routers." + englishProjectName + ".loadbalancer.server.port=", "808"+portSuffix);
+        labels.put("traefik.http.routers." + englishProjectName + ".loadbalancer.server.port", "808"+portSuffix);
+
+        projectService.put("deploy", deployConfig);
         projectService.put("labels", labels);
 
         services.put(englishProjectName, projectService);
@@ -60,8 +72,9 @@ public class DockerComposeManager {
         }
 
         // 사용자 정의 Compose와 Spring Compose 병합
-        Map<String, Object> mergedCompose = new HashMap<>(userCompose);
-        mergedCompose.putAll(springCompose);
+        Map<String, Object> mergedServices = (Map<String, Object>) userCompose.getOrDefault("services", new HashMap<>());
+        mergedServices.putAll((Map<String, Object>) springCompose.get("services"));
+        userCompose.put("services", mergedServices);
 
         // YAML 파일로 저장
         DumperOptions options = new DumperOptions();
@@ -70,7 +83,7 @@ public class DockerComposeManager {
         Yaml outputYaml = new Yaml(representer, options);
 
         try (FileWriter writer = new FileWriter(dockerComposeFile)) {
-            outputYaml.dump(mergedCompose, writer);
+            outputYaml.dump(userCompose, writer);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

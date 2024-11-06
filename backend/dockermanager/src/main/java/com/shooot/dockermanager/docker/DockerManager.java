@@ -76,8 +76,9 @@ public class DockerManager {
                 fileOutputStream.write(fileInputStream.readAllBytes());
 
                 dockerComposeManager.mergeDockerCompose(projectDirectoryManager.getFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE).orElseThrow(IllegalArgumentException::new), project.getEnglishName(), Integer.parseInt(target.replace("instance", "")) + 1);
+
                 System.out.println("instance : " + target);
-                ProcessBuilder processBuilder =  new ProcessBuilder("vagrant", "ssh", target, "-c", "docker compose -f "+ vagrantProjectJarFilePath(dto.getProjectId(), dto.getProjectJarFileId()) + "/docker-compose.yml" + " up -d");
+                ProcessBuilder processBuilder =  new ProcessBuilder("vagrant", "ssh", target, "-c", "docker-compose -f "+ vagrantProjectJarFilePath(dto.getProjectId(), dto.getProjectJarFileId()) + "/docker-compose.yml" + " up -d");
                 processBuilder.directory(new File("/home/hyunjinkim/deployment/scripts/"));
                 Process process = processBuilder.start();
 
@@ -104,7 +105,7 @@ public class DockerManager {
             boolean keepRunning = true;
             while (keepRunning) {
                 try {
-                    Process process = new ProcessBuilder("vagrant", "ssh", target, "-c", "docker compose -f "+ vagrantProjectJarFilePath(projectId, projectJarFileId) + "/docker-compose.yml logs -f").directory(new File("/home/hyunjinkim/deployment/scripts/"))
+                    Process process = new ProcessBuilder("vagrant", "ssh", target, "-c", "docker-compose -f "+ vagrantProjectJarFilePath(projectId, projectJarFileId) + "/docker-compose.yml logs -f").directory(new File("/home/hyunjinkim/deployment/scripts/"))
                             .start();
 
                     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -162,7 +163,7 @@ public class DockerManager {
      */
     public void stopDockerCompose(String target, Integer projectId, Integer projectJarFileId) {
         try {
-            Process process = new ProcessBuilder("vagrant", "ssh", target, "-c", "docker compose -f " + vagrantProjectJarFilePath(projectId, projectJarFileId) + "/docker-compose.yml" + " down --rmi all").directory(new File("/home/hyunjinkim/deployment/scripts/"))
+            Process process = new ProcessBuilder("vagrant", "ssh", target, "-c", "docker-compose -f " + vagrantProjectJarFilePath(projectId, projectJarFileId) + "/docker-compose.yml" + " down --rmi all").directory(new File("/home/hyunjinkim/deployment/scripts/"))
                     .start();
 
             int exitCode = process.waitFor();
@@ -186,7 +187,7 @@ public class DockerManager {
         MetaData metaData = projectDirectoryManager.getMetaData(Path.of(metadataFile.getPath()));
 
         try {
-            Process process = new ProcessBuilder("vagrant", "ssh", metaData.getInstanceName(), "-c", "docker compose -f " +vagrantProjectJarFilePath(serviceStopDto.getProjectId(), serviceStopDto.getProjectJarFileId()) + "/docker-compose.yml" + "down --rmi all").directory(new File("/home/hyunjinkim/deployment/scripts/"))
+            Process process = new ProcessBuilder("vagrant", "ssh", metaData.getInstanceName(), "-c", "docker-compose -f " +vagrantProjectJarFilePath(serviceStopDto.getProjectId(), serviceStopDto.getProjectJarFileId()) + "/docker-compose.yml" + "down --rmi all").directory(new File("/home/hyunjinkim/deployment/scripts/"))
                     .start();
 
             int exitCode = process.waitFor();
