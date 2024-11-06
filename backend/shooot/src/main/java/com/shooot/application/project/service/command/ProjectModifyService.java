@@ -58,6 +58,7 @@ public class ProjectModifyService {
         project.changeLogoImageFile(logoImageFile);
     }
 
+    @Transactional
     public void projectModify(
         ProjectModifyRequest request,
         Integer projectId,

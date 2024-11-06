@@ -1,7 +1,6 @@
-package com.shooot.application.projecttest.domain;
+package com.shooot.dockermanager.domain.projecttest;
 
-import com.shooot.application.common.jpa.SoftDeleteEntity;
-import com.shooot.application.project.domain.Project;
+import com.shooot.dockermanager.jpa.SoftDeleteEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
