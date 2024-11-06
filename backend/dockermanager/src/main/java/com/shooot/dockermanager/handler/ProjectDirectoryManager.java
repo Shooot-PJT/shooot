@@ -47,9 +47,9 @@ ProjectDirectoryManager {
         }
 
         File target = switch (structure) {
-            case METADATA -> new File(file.getPath() + "metadata");
-            case JAR -> new File(file.getPath() + "application.jar");
-            case DOCKER_COMPOSE -> new File(file.getPath() + "docker-compose.yml");
+            case METADATA -> new File(file.getPath() + "/metadata");
+            case JAR -> new File(file.getPath() + "/application.jar");
+            case DOCKER_COMPOSE -> new File(file.getPath() + "/docker-compose.yml");
             default -> null;
         };
 
