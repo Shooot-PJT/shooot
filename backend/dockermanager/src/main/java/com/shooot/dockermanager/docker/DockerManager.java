@@ -91,6 +91,7 @@ public class DockerManager {
                 fetchDockerComposeLogs(target, dto.getProjectId(), dto.getProjectJarFileId());
                 monitorHealthCheck(target, hosts.get(target), dto.getProjectId(), dto.getProjectJarFileId());
             } catch (Exception e) {
+                e.printStackTrace();
                 System.err.println("Error on " + target + ": " + e.getMessage());
             }
         });
@@ -125,6 +126,7 @@ public class DockerManager {
                     Thread.sleep(100); // 0.1초 후 재시도
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                     System.err.println("Error fetching logs on " + target + " : " + e.getMessage());
                     keepRunning = false; // 오류 발생 시 루프 종료, 필요 시 재시도
                 }
@@ -152,6 +154,7 @@ public class DockerManager {
                     Thread.sleep(5000); // 5초마다 health check
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 System.err.println("Health check error on " + target + ": " + e.getMessage());
                 stopDockerCompose(target, projectId, projectJarFileId);
             }
@@ -174,6 +177,7 @@ public class DockerManager {
                 System.err.println("Failed to stop Docker Compose on " + target);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println("Error on " + target + ": " + e.getMessage());
         }
     }
@@ -198,6 +202,7 @@ public class DockerManager {
                 System.err.println("Failed to stop Docker Compose on " + metaData.getInstanceName());
             }
         } catch (Exception e) {
+            e.printStackTrace();
             System.err.println("Error on " + metaData.getInstanceName() + ": " + e.getMessage());
         }
     }
