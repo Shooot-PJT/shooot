@@ -65,7 +65,7 @@ export const row = style({
   width: '100%',
   minHeight: '48px',
   justifyContent: 'space-around',
-  transition: 'all 0.25s ease-in-out',
+  transition: 'all 0.5s ease-in-out',
 });
 
 export const hoverRow = style({
@@ -102,13 +102,13 @@ export const rowItem = style({
 export const expandedRowContainer = style({
   width: '100%',
   overflow: 'hidden',
-  height:'0',
+  height: '0',
   minHeight: '0',
   transition: 'all 0.2s ease-in-out',
   selectors: {
     '&.expanded': {
       opacity: '1',
-      height:'200px',
+      height: '200px',
       minHeight: '200px',
     },
   },

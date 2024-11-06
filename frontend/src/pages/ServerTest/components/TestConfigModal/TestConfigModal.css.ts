@@ -22,3 +22,10 @@ export const UndefinedAPIDescription = style({
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
 });
+
+export const Description = style({
+  width: '100%',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+});
