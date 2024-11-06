@@ -32,14 +32,7 @@ self.addEventListener("fetch", function (event) {
 
             if (!url.origin.includes(projectName)) {
                 console.error("[프로젝트 설정]: 다른 도메인으로의 호출은 불가능합니다.");
-                event.respondWith(
-                    new Response(
-                        JSON.stringify({
-                            message: "[프로젝트 설정]: 다른 도메인으로의 호출은 불가능합니다.",
-                        }),
-                        { status: 204 }
-                    )
-                );
+                event.respondWith(new Response(null, { status: 200 }));
             } else {
                 // 요청 정보 추출
                 const endpoint = url.pathname;
