@@ -3,6 +3,7 @@ package com.shooot.dockermanager.vagrant;
 import com.shooot.dockermanager.handler.MetaData;
 import com.shooot.dockermanager.handler.ProjectDirectoryManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class VagrantRepository {
@@ -29,6 +31,7 @@ public class VagrantRepository {
     }
 
     public void put(String instance, MetaData metaData) {
+        log.info("instance put : {}, metadata : {}" , instance, metaData);
         repository.put(instance, metaData);
     }
 
@@ -39,7 +42,7 @@ public class VagrantRepository {
     public String getFirstEmptyInstance() {
         for (int i = 1; i <= repository.size(); i++) {
             String target = INSTANCE_PREFIX + i;
-            if (!repository.contains(target)) {
+            if (!repository.containsKey(target)) {
                 return target;
             }
         }
