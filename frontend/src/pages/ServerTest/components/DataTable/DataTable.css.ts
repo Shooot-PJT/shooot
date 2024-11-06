@@ -33,7 +33,7 @@ export const headerItem = style({
   alignItems: 'center',
   fontSize: '18px',
   fontWeight: '500',
-  color: `${colorPalette.grey[500]}`,
+  color: `${colorPalette.grey[400]}`,
   WebkitUserSelect: 'none',
   MozUserSelect: 'none',
   msUserSelect: 'none',
@@ -55,7 +55,7 @@ export const body = style({
   flexDirection: 'column',
   alignItems: 'center',
   backgroundColor: themeCss.color.background[100],
-  maxHeight: '360px',
+  height: '360px',
   overflow: 'auto',
 });
 
@@ -65,7 +65,10 @@ export const row = style({
   width: '100%',
   minHeight: '48px',
   justifyContent: 'space-around',
-  transition: 'all 0.25s ease-in-out',
+  transition: 'all 0.5s ease-in-out',
+});
+
+export const hoverRow = style({
   selectors: {
     '&:hover': {
       backgroundColor: colorPalette.util[200],
@@ -87,10 +90,26 @@ export const rowItem = style({
   height: '100%',
   flexBasis: 'var(--width)',
   textAlign: 'center',
+  alignContent: 'center',
   justifyItems: 'center',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
 
   animation: `${slideUpAnimation} 0.5s ease-out`,
+});
+
+export const expandedRowContainer = style({
+  width: '100%',
+  overflow: 'hidden',
+  height: '0',
+  minHeight: '0',
+  transition: 'all 0.2s ease-in-out',
+  selectors: {
+    '&.expanded': {
+      opacity: '1',
+      height: '200px',
+      minHeight: '200px',
+    },
+  },
 });

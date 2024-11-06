@@ -1,132 +1,82 @@
-import { useState } from 'react';
-import Button from '../../components/Button';
-import useModal from '../../hooks/useModal';
-import { AddProjectModal } from './components/AddProjectModal/AddProjectModal';
 import { Console } from './components/Console/Console';
-import { DataTable } from './components/DataTable/DataTable';
-import { DistributeIcon } from './components/DistributeIcon/DistributeIcon';
-import { DocsIcon } from './components/DocsIcon/DocsIcon';
-import { StateIcon } from './components/StateIcon/StateIcon';
+import { ProjectTable } from './components/ProjectTable/ProjectTable';
 
-const data = [
-  [
-    '0.0.6',
-    '2024-10-17 18:24:17',
-    <StateIcon state="Approved" />,
-    <DocsIcon active={true} />,
-    <DistributeIcon active={true} />,
-  ],
-  [
-    '0.0.5',
-    '2024-10-16 17:24:17',
-    <StateIcon state="Pending" />,
-    <DocsIcon active={true} />,
-    <DistributeIcon active={false} />,
-  ],
-  [
-    '0.0.4',
-    '2024-10-15 16:24:17',
-    <StateIcon state="Disabled" />,
-    <DocsIcon active={false} />,
-    <DistributeIcon active={true} />,
-  ],
-  [
-    '0.0.3',
-    '2024-10-15 14:24:17',
-    <StateIcon state="No-Build" />,
-    <DocsIcon active={true} />,
-    <DistributeIcon active={true} />,
-  ],
-  [
-    '0.0.2',
-    '2024-10-15 14:24:17',
-    <StateIcon state="Error" />,
-    <DocsIcon active={true} />,
-    <DistributeIcon active={true} />,
-  ],
-  [
-    '0.0.1',
-    '2024-10-15 14:24:17',
-    <StateIcon state="Approved" />,
-    <DocsIcon active={true} />,
-    <DistributeIcon active={true} />,
-  ],
+const consoleData = [
+  '[INFO] 10:00:01 - 서버가 시작되었습니다.',
+  '[INFO] 10:01:15 - 데이터베이스 연결 성공',
+  '[WARN] 10:02:05 - 메모리 사용량이 80%를 초과했습니다.',
+  '[ERROR] 10:02:45 - 사용자 인증 실패: 유효하지 않은 토큰',
+  '[DEBUG] 10:03:12 - API 요청 수락: /api/user/info',
+  '[INFO] 10:04:01 - 새로운 사용자가 등록되었습니다.',
+  '[INFO] 10:05:30 - 데이터베이스 연결 재확립 성공',
+  '[DEBUG] 10:06:11 - 데이터 캐싱 시작',
+  '[INFO] 10:07:23 - 백업 프로세스 시작',
+  '[ERROR] 10:08:45 - 네트워크 연결 끊김',
+  '[INFO] 10:09:57 - 네트워크 연결 재확립',
+  '[WARN] 10:10:13 - 응답 시간 지연 감지 (500ms)',
+  '[INFO] 10:11:05 - 스케줄러 작업 완료',
+  '[DEBUG] 10:12:34 - 사용자 정보 업데이트 완료',
+  '[INFO] 10:13:12 - 로그 파일 회전 완료',
+  '[INFO] 10:14:07 - 자동 백업 성공',
+  '[ERROR] 10:15:23 - 파일 저장 실패: 권한 오류',
+  '[WARN] 10:16:45 - 디스크 공간 부족 경고',
+  '[INFO] 10:17:32 - 시스템 업데이트 완료',
+  '[DEBUG] 10:18:09 - 세션 갱신 시도',
+  '[INFO] 10:19:40 - 시스템 로그 초기화',
+  '[ERROR] 10:20:15 - 알 수 없는 오류 발생',
+  '[INFO] 10:21:50 - 서버가 정상적으로 종료되었습니다.',
+  '[INFO] 10:22:30 - 백업 완료: 모든 데이터 저장됨',
+  '[INFO] 10:23:10 - 서비스 점검 모드 활성화',
+  '[INFO] 10:00:01 - 서버가 시작되었습니다.',
+  '[INFO] 10:01:15 - 데이터베이스 연결 성공',
+  '[WARN] 10:02:05 - 메모리 사용량이 80%를 초과했습니다.',
+  '[ERROR] 10:02:45 - 사용자 인증 실패: 유효하지 않은 토큰',
+  '[DEBUG] 10:03:12 - API 요청 수락: /api/user/info',
+  '[INFO] 10:04:01 - 새로운 사용자가 등록되었습니다.',
+  '[INFO] 10:05:30 - 데이터베이스 연결 재확립 성공',
+  '[DEBUG] 10:06:11 - 데이터 캐싱 시작',
+  '[INFO] 10:07:23 - 백업 프로세스 시작',
+  '[ERROR] 10:08:45 - 네트워크 연결 끊김',
+  '[INFO] 10:09:57 - 네트워크 연결 재확립',
+  '[WARN] 10:10:13 - 응답 시간 지연 감지 (500ms)',
+  '[INFO] 10:11:05 - 스케줄러 작업 완료',
+  '[DEBUG] 10:12:34 - 사용자 정보 업데이트 완료',
+  '[INFO] 10:13:12 - 로그 파일 회전 완료',
+  '[INFO] 10:14:07 - 자동 백업 성공',
+  '[ERROR] 10:15:23 - 파일 저장 실패: 권한 오류',
+  '[WARN] 10:16:45 - 디스크 공간 부족 경고',
+  '[INFO] 10:17:32 - 시스템 업데이트 완료',
+  '[DEBUG] 10:18:09 - 세션 갱신 시도',
+  '[INFO] 10:19:40 - 시스템 로그 초기화',
+  '[ERROR] 10:20:15 - 알 수 없는 오류 발생',
+  '[INFO] 10:21:50 - 서버가 정상적으로 종료되었습니다.',
+  '[INFO] 10:22:30 - 백업 완료: 모든 데이터 저장됨',
+  '[INFO] 10:23:10 - 서비스 점검 모드 활성화',
 ];
 
 export const ServerTest = () => {
-  const [tableData, setTableData] = useState(data);
-  const modal = useModal();
-
-  const colWidths = [10, 35, 25, 15, 15];
-  const headers = ['버전', '빌드 시각', '최근 빌드', 'API 문서', '배포하기'];
-
-  const newData = [
-    [
-      '0.0.7',
-      '2024-10-17 18:24:17',
-      <StateIcon state="Approved" />,
-      <DocsIcon active={true} />,
-      <DistributeIcon active={true} />,
-    ],
-    [
-      '0.0.5',
-      '2024-10-16 17:24:17',
-      <StateIcon state="Pending" />,
-      <DocsIcon active={true} />,
-      <DistributeIcon active={false} />,
-    ],
-    [
-      '0.0.4',
-      '2024-10-15 16:24:17',
-      <StateIcon state="Disabled" />,
-      <DocsIcon active={false} />,
-      <DistributeIcon active={true} />,
-    ],
-    [
-      '0.0.3',
-      '2024-10-15 14:24:17',
-      <StateIcon state="No-Build" />,
-      <DocsIcon active={true} />,
-      <DistributeIcon active={true} />,
-    ],
-    [
-      '0.0.2',
-      '2024-10-15 14:24:17',
-      <StateIcon state="Error" />,
-      <DocsIcon active={true} />,
-      <DistributeIcon active={true} />,
-    ],
-    [
-      '0.0.1',
-      '2024-10-15 14:24:17',
-      <StateIcon state="Approved" />,
-      <DocsIcon active={true} />,
-      <DistributeIcon active={true} />,
-    ],
-  ];
-
-  const handleModal = () => {
-    modal.push({
-      children: <AddProjectModal />,
-    });
-  };
-  const handleData = () => {
-    setTableData(newData);
-  };
-
   return (
-    <>
-      <Button onClick={handleModal}>프로젝트 추가</Button>
-      <Button color="delete" onClick={handleData}>
-        프로젝트 제거
-      </Button>
-      <DataTable
-        colWidths={colWidths}
-        headers={headers}
-        data={tableData}
-        selectable={true}
-      />
-      <Console />
-    </>
+    <div
+      style={{
+        display: 'grid',
+        gridAutoRows: '1fr 1fr',
+        width: '100%',
+        gap: '2rem',
+        marginTop: '1rem',
+      }}
+    >
+      <div style={{ gridRow: '1/2', width: '100%', marginLeft: '1rem' }}>
+        <ProjectTable />
+      </div>
+      <div
+        style={{
+          gridRow: '1/2',
+          marginTop: '2.5rem',
+          marginRight: '1rem',
+        }}
+      >
+        <Console data={consoleData} />
+      </div>
+    </div>
   );
 };
