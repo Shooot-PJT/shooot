@@ -8,6 +8,9 @@ import { DistributeIcon } from '../DistributeIcon/DistributeIcon';
 import { DocsIcon } from '../DocsIcon/DocsIcon';
 import { StateIcon } from '../StateIcon/StateIcon';
 import { TestConfigModal } from '../TestConfigModal/TestConfigModal';
+import { useNavBarStore } from '../../../../stores/navbarStore';
+import { useQuery } from '@tanstack/react-query';
+import { getJarFiles } from '../../apis';
 
 const data = [
   [
@@ -109,6 +112,16 @@ const newdata = [
 export const ProjectTable = () => {
   const [tableData, setTableData] = useState(data);
   const modal = useModal();
+
+  const { project } = useNavBarStore();
+
+  const { data: jarFiles, error } = useQuery({
+    queryKey: ['jarFiles', project],
+    queryFn: async () => {
+      console.log(jarFiles);
+      await getJarFiles({ projectId: project });
+    },
+  });
 
   const handleNewData = () => {
     setTableData(newdata);

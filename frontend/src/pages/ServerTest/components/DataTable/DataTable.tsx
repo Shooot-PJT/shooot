@@ -80,23 +80,26 @@ export const DataTable = ({
     <div className={s.container}>
       <div className={s.header}>
         {headers.map((item, idx) => (
-          <div
-            className={s.headerItem}
-            key={idx}
-            style={
-              {
-                '--width': `${colWidths[idx]}%`,
-              } as React.CSSProperties
-            }
-          >
-            {item}
+          <React.Fragment key={`RF-${idx}`}>
+            <div
+              className={s.headerItem}
+              key={idx}
+              style={
+                {
+                  '--width': `${colWidths[idx]}%`,
+                } as React.CSSProperties
+              }
+            >
+              {item}
+            </div>
             {idx < headers.length - 1 && (
               <div
+                key={`bar-${idx}`}
                 className={s.resizeBar}
                 onMouseDown={(e) => handleMouseDown(e, idx)}
               />
             )}
-          </div>
+          </React.Fragment>
         ))}
       </div>
 

@@ -3,7 +3,6 @@ import Backdrop from '../../components/Backdrop';
 import useModalStore from '../../stores/useModalStore';
 import Modal from '../../components/Modal/Modal';
 import darkTheme from '../../styles/darkTheme.css';
-import { Mobile } from '../../components/Layout/Mobile';
 import { Desktop } from '../../components/Layout/Desktop';
 import React from 'react';
 
@@ -29,17 +28,6 @@ const ModalPortal = () => {
               </Modal>
             </Backdrop>
           </Desktop>
-          <Mobile>
-            <Backdrop isClosing={modal.isClosing}>
-              <Modal
-                onClose={modal.onClose}
-                isClosing={modal.isClosing}
-                isMobile={true}
-              >
-                {modal.children}
-              </Modal>
-            </Backdrop>
-          </Mobile>
         </React.Fragment>
       ))}
     </div>,
