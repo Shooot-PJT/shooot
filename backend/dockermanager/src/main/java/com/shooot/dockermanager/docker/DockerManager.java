@@ -70,7 +70,7 @@ public class DockerManager {
                 projectDirectoryManager.setFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.JAR, projectFile.getProjectFile());
                 projectDirectoryManager.setMetaData(dto.getProjectId(), dto.getProjectJarFileId(), MetaData.builder().projectJarFileId(dto.getProjectJarFileId()).projectId(dto.getProjectId()).projectName(project.getEnglishName()).build());
 
-                dockerComposeManager.mergeDockerCompose(projectDirectoryManager.getFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE).orElseThrow(IllegalArgumentException::new), project.getEnglishName(), Integer.parseInt(target.replace("instance", "") + 1));
+                dockerComposeManager.mergeDockerCompose(projectDirectoryManager.getFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE).orElseThrow(IllegalArgumentException::new), project.getEnglishName(), Integer.parseInt(target.replace("instance", "")) + 1);
 
                 ProcessBuilder processBuilder =  new ProcessBuilder("vagrant", "ssh", target, "-c", "docker compose -f "+ vagrantProjectJarFilePath(dto.getProjectId(), dto.getProjectJarFileId()) + "/docker-compose.yml" + " up -d");
                 processBuilder.directory(new File("/home/hyunjinkim/deployment/scripts"));

@@ -22,7 +22,7 @@ public class DockerComposeManager {
 
     public void mergeDockerCompose(File dockerComposeFile, String englishProjectName, int portSuffix) {
         if(portSuffix < 2 || portSuffix > 2 + maxSize) {
-            throw new IllegalArgumentException("port Suffix는 2이상 maxSize + 2 이하여야 합니다. ");
+            throw new IllegalArgumentException("port Suffix는 2이상 maxSize + 2 이하여야 합니다. , : " + portSuffix);
         }
 
         // Spring Boot에서 관리하는 Docker Compose 구성 설정
