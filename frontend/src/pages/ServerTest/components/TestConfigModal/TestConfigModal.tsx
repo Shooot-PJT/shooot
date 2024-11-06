@@ -11,6 +11,7 @@ import { APITestFormData, TestMethodType } from '../../types';
 import { Method } from '../../../APIDocs/types/methods';
 import Typography from '../../../../components/Typography';
 import { HiRocketLaunch, HiCog6Tooth } from 'react-icons/hi2';
+import { CustomTooltip } from '../../../../components/CustomToolTip';
 
 const apiData = {
   includes: [
@@ -19,7 +20,8 @@ const apiData = {
       domainName: 'egg',
       method: 'GET' as Method,
       endPoint: 'api/eggs/count',
-      description: '특별한 계란 목록을 가져옵니다',
+      description:
+        '특별한 계란 목록을 가져옵니다 특별한 계란 목록을 가져옵니다 특별한 계란 목록을 가져옵니다 특별한 계란 목록을 가져옵니다',
       vuser: 10,
       duration: 1,
       testMethod: 'FIXED' as TestMethodType,
@@ -100,10 +102,16 @@ export const TestConfigModal = () => {
   // tableData를 생성하는 함수
   const convertTableData = () => {
     const newTableIncludeData = apiData.includes.map((item, idx) => [
-      item.domainName,
+      <CustomTooltip title={item.domainName} placement="bottom" arrow={true}>
+        <div className={s.Description}>{item.domainName}</div>
+      </CustomTooltip>,
       <MethodChip method={item.method.toLowerCase() as Method} />,
-      item.endPoint,
-      item.description,
+      <CustomTooltip title={item.endPoint} placement="bottom" arrow={true}>
+        <div className={s.Description}>{item.endPoint}</div>
+      </CustomTooltip>,
+      <CustomTooltip title={item.description} placement="bottom" arrow={true}>
+        <div className={s.Description}>{item.description}</div>
+      </CustomTooltip>,
       <HiCog6Tooth
         size={24}
         className={s.ConfigIcon}
