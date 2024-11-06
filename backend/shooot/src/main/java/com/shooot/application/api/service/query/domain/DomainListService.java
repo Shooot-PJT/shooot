@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class DomainListService {
-
     private final DomainRepository domainRepository;
 
     public List<DomainView> getDomainList(Integer projectId){
