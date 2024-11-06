@@ -1,6 +1,5 @@
 package com.shooot.dockermanager.handler;
 
-import com.shooot.dockermanager.domain.projecttest.ProjectVersion;
 import lombok.*;
 
 import java.io.Serial;
@@ -17,6 +16,5 @@ public class MetaData implements Serializable {
     private Integer projectId;
     private Integer projectJarFileId;
     private String projectName;
-    private ProjectVersion projectVersion;
     private String instanceName;
 }

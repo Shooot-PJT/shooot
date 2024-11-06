@@ -1,6 +1,14 @@
 package com.shooot.dockermanager.docker;
 
+import com.shooot.dockermanager.domain.projecttest.Project;
+import com.shooot.dockermanager.domain.projecttest.ProjectFile;
+import com.shooot.dockermanager.domain.projecttest.repository.ProjectFileRepository;
+import com.shooot.dockermanager.domain.projecttest.repository.ProjectRepository;
 import com.shooot.dockermanager.dto.ServiceStartDto;
+import com.shooot.dockermanager.dto.ServiceStopDto;
+import com.shooot.dockermanager.handler.DockerComposeManager;
+import com.shooot.dockermanager.handler.MetaData;
+import com.shooot.dockermanager.handler.ProjectDirectoryManager;
 import com.shooot.dockermanager.vagrant.VagrantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -20,10 +31,14 @@ import java.util.concurrent.Executors;
 public class DockerManager {
 
     private final VagrantRepository vagrantRepository;
+    private final ProjectFileRepository projectFileRepository;
+    private final ProjectRepository projectRepository;
 
-    private static final Map<String, String> hosts = Map.of("instance1", "192.168.53.1", "instance2", "192.168.53.2", "instance3", "192.168.53.3", "instance4", "192.168.53.4");
+    private static final Map<String, String> hosts = Map.of("instance1", "192.168.56.10", "instance2", "192.168.56.11", "instance3", "192.168.56.12", "instance4", "192.168.56.13");
     private static final String LOG_CHANNEL = "docker_logs";
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
+    private final ProjectDirectoryManager projectDirectoryManager;
+    private final DockerComposeManager dockerComposeManager;
 
 
     @Autowired
@@ -40,12 +55,26 @@ public class DockerManager {
         }
 
         String target = vagrantRepository.getFirstEmptyInstance();
-
+        if(target == null) {
+            //TODO : 사용할 수 있는 인스턴스가 없는 에러 작성.
+            throw new IllegalArgumentException();
+        }
         // Docker Compose up
         executorService.submit(() -> {
             try {
-                Process process = new ProcessBuilder("vagrant", "ssh", target, "-c", "docker-compose up -d")
-                        .start();
+                ProjectFile projectFile = projectFileRepository.findById(dto.getProjectJarFileId()).orElseThrow(IllegalArgumentException::new);
+                Project project = projectRepository.findByProjectJarFileId(dto.getProjectJarFileId()).orElseThrow(IllegalArgumentException::new);
+                projectDirectoryManager.mkDir(dto.getProjectId(), dto.getProjectJarFileId());
+
+                projectDirectoryManager.setFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE, projectFile.getDockerComposeFile());
+                projectDirectoryManager.setFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.JAR, projectFile.getProjectFile());
+                projectDirectoryManager.setMetaData(dto.getProjectId(), dto.getProjectJarFileId(), MetaData.builder().projectJarFileId(dto.getProjectJarFileId()).projectId(dto.getProjectId()).projectName(project.getEnglishName()).build());
+
+                dockerComposeManager.mergeDockerCompose(projectDirectoryManager.getFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE).orElseThrow(IllegalArgumentException::new), project.getEnglishName(), Integer.parseInt(target.replace("instance", "") + 1));
+
+                ProcessBuilder processBuilder =  new ProcessBuilder("vagrant", "ssh", target, "-c", "docker compose -f "+ vagrantProjectJarFilePath(dto.getProjectId(), dto.getProjectJarFileId()) + "/docker-compose.yml" + " up -d");
+                processBuilder.directory(new File("/home/hyunjinkim/deployment/scripts"));
+                Process process = processBuilder.start();
 
                 int exitCode = process.waitFor();
                 if (exitCode != 0) {
@@ -54,7 +83,7 @@ public class DockerManager {
 
                 // Health check 및 로그 모니터링 시작
                 fetchDockerComposeLogs(target);
-                monitorHealthCheck(target, hosts.get(target));
+                monitorHealthCheck(target, hosts.get(target), dto.getProjectId(), dto.getProjectJarFileId());
             } catch (Exception e) {
                 System.err.println("Error on " + target + ": " + e.getMessage());
             }
@@ -100,7 +129,7 @@ public class DockerManager {
     /**
      * Health check 모니터링. Spring Actuator의 /actuator/health 엔드포인트를 통해 상태 확인.
      */
-    private void monitorHealthCheck(String target, String host) {
+    private void monitorHealthCheck(String target, String host, Integer projectId, Integer projectJarFileId) {
         new Thread(() -> {
             String healthUrl = "http://" + host + ":8080/actuator/health"; // 각 인스턴스의 health check URL
             try {
@@ -111,14 +140,14 @@ public class DockerManager {
                         System.out.println("[" + target + "] Service is healthy.");
                     } else {
                         System.out.println("[" + target + "] Service is down. Shutting down Docker Compose...");
-                        stopDockerCompose(target);
+                        stopDockerCompose(target, projectId, projectJarFileId);
                         isRunning = false; // health check 종료
                     }
                     Thread.sleep(5000); // 5초마다 health check
                 }
             } catch (Exception e) {
                 System.err.println("Health check error on " + target + ": " + e.getMessage());
-                stopDockerCompose(target);
+                stopDockerCompose(target, projectId, projectJarFileId);
             }
         }).start();
     }
@@ -126,9 +155,9 @@ public class DockerManager {
     /**
      * Docker Compose 종료
      */
-    public void stopDockerCompose(String target) {
+    public void stopDockerCompose(String target, Integer projectId, Integer projectJarFileId) {
         try {
-            Process process = new ProcessBuilder("vagrant", "ssh", target, "-c", "docker-compose down")
+            Process process = new ProcessBuilder("vagrant", "ssh", target, "-c", "docker compose -f " + vagrantProjectJarFilePath(projectId, projectJarFileId) + "/docker-compose.yml" + " down --rmi all").directory(new File("/home/hyunjinkim/deployment/scripts"))
                     .start();
 
             int exitCode = process.waitFor();
@@ -143,10 +172,38 @@ public class DockerManager {
         }
     }
 
+
+    /**
+     * Docker Compose 종료
+     */
+    public void stopDockerCompose(ServiceStopDto serviceStopDto) {
+        File metadataFile = projectDirectoryManager.file(serviceStopDto.getProjectId(), serviceStopDto.getProjectJarFileId());
+        MetaData metaData = projectDirectoryManager.getMetaData(Path.of(metadataFile.getPath()));
+
+        try {
+            Process process = new ProcessBuilder("vagrant", "ssh", metaData.getInstanceName(), "-c", "docker compose -f " +vagrantProjectJarFilePath(serviceStopDto.getProjectId(), serviceStopDto.getProjectJarFileId()) + "/docker-compose.yml" + "down --rmi all").directory(new File("/home/hyunjinkim/deployment/scripts"))
+                    .start();
+
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                System.out.println("Docker Compose stopped successfully on instance" + metaData.getInstanceName());
+                vagrantRepository.remove(metaData.getInstanceName());
+            } else {
+                System.err.println("Failed to stop Docker Compose on " + metaData.getInstanceName());
+            }
+        } catch (Exception e) {
+            System.err.println("Error on " + metaData.getInstanceName() + ": " + e.getMessage());
+        }
+    }
+
     /**
      * Redis를 통해 로그 메시지 전송
      */
     private void publishLog(String logMessage) {
         redisTemplate.convertAndSend(LOG_CHANNEL, logMessage);
+    }
+
+    private String vagrantProjectJarFilePath(Integer projectId, Integer projectJarFileId) {
+        return "/vagrant-instance-volumn/"+ projectId + "/" + projectJarFileId ;
     }
 }

@@ -23,11 +23,12 @@ public class ProjectFile {
     @JoinColumn(name = "project_build_id")
     private ProjectBuild projectBuild;
 
-
+    @Getter
     @Lob
     @Column(name = "project_file")
     private byte[] projectFile;
 
+    @Getter
     @Lob
     @Column(name = "docker_compose_file")
     private byte[] dockerComposeFile;

@@ -10,7 +10,8 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
-public class ProjectDirectoryManager {
+public class
+ProjectDirectoryManager {
 
     @Value("${vagrant.base-dir}")
     private String BASE_DIR;
@@ -111,7 +112,7 @@ public class ProjectDirectoryManager {
     }
 
 
-    private File file(Integer projectId, Integer projectJarFileId) {
+    public File file(Integer projectId, Integer projectJarFileId) {
         return new File(BASE_DIR + "/" + projectId + "/" + projectJarFileId);
     }
 
