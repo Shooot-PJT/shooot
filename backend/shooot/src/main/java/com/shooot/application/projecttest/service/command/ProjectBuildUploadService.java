@@ -27,6 +27,7 @@ import java.util.Map;
 @Service
 public class ProjectBuildUploadService {
 
+    private final ProjectFileRepository projectFileRepository;
     private final ProjectRepository projectRepository;
     private final ProjectBuildFindService projectBuildFindService;
     private final ProjectBuildRepository projectBuildRepository;
@@ -50,7 +51,7 @@ public class ProjectBuildUploadService {
         ProjectBuild projectBuild = createProjectBuild(project, projectFileName, projectVersion, jarFileChecksum);
         ProjectFile projectFile = createProjectFile(jarFile, dockerFile, projectBuild);
 
-        projectBuild.setProjectFile(projectFile);
+        projectFileRepository.save(projectFile);
 
         Integer id = projectBuildRepository.save(projectBuild).getId();
         Events.raise(new ProjectBuildUploadedEvent(id, jarFile));

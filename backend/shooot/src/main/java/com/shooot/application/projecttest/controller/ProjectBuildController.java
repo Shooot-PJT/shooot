@@ -28,7 +28,7 @@ public class ProjectBuildController {
     private final ProjectTestRunService projectTestRunService;
 
     @PostMapping("/jarFile")
-    public ResponseEntity<ProjectJarFileUploadView> jarFileUpload(ProjectIdDto projectIdDto, @RequestParam MultipartFile jarFile, @RequestParam MultipartFile dockerComposeFile, @AuthenticationPrincipal UserLoginContext userLoginContext) {
+    public ResponseEntity<ProjectJarFileUploadView> jarFileUpload(@RequestPart ProjectIdDto projectIdDto, @RequestPart MultipartFile jarFile, @RequestPart MultipartFile dockerComposeFile, @AuthenticationPrincipal UserLoginContext userLoginContext) {
         Integer id = projectBuildUploadService.buildFileApiExtractor(projectIdDto.getProjectId(), jarFile, dockerComposeFile);
         ProjectJarFileUploadView projectJarFileUploadView = new ProjectJarFileUploadView(id);
         return ResponseEntity.ok(projectJarFileUploadView);
