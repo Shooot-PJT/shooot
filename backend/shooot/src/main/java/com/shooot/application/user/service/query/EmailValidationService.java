@@ -50,7 +50,7 @@ public class EmailValidationService {
         }
 
         UserVerificationEmailDto dto = attribute.get();
-        if(dto.getIsValid() == null || !dto.getIsValid() || Objects.equals(email, dto.getEmail())) {
+        if(dto.getIsValid() == null || !dto.getIsValid() || !Objects.equals(email, dto.getEmail())) {
             throw new EmailVerificationNotFoundException();
         }
 
