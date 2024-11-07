@@ -2,7 +2,7 @@ import Typography from '../../../../../components/Typography';
 import Flexbox from '../../../../../components/Flexbox';
 import { DomainInfo } from '../Domain.data.types';
 import Button from '../../../../../components/Button';
-import { RemoveDomainRequest } from '../types/domain.types';
+import { RemoveDomainRequest } from '../../../apis/domain/types';
 
 interface RemoveDomainModalProps {
   domainId: DomainInfo['domainId'];
