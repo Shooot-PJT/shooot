@@ -29,7 +29,6 @@ export const Primary: Story = {
   render: () => (
     <div style={{ width: '100%', height: '1080px' }}>
       <NavBar>
-        <NavBar.Title />
         <div className={style.nav}>
           <div className={style.divi} />
           <NavBar.Menu />

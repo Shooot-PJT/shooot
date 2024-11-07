@@ -50,7 +50,7 @@ export const ProjectContents = ({
           {memberInfo?.length ? (
             <>
               {memberInfo?.map((member) => (
-                <CustomTooltip title={member.nickname}>
+                <CustomTooltip key={member.email} title={member.nickname}>
                   <div>
                     <Icon
                       key={member.email}
