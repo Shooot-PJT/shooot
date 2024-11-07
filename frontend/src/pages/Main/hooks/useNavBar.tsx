@@ -7,6 +7,7 @@ import {
   editProject,
   getUserInfo,
   logout,
+  removeProject,
 } from '../apis';
 import { getProjectInfo, getProjectMembers } from '../../MyProject/apis';
 import { useEffect } from 'react';
@@ -17,6 +18,7 @@ import { NicknameChangePopup } from '../popups/Banner/NicknameChangeModal';
 import { ProjectWriteModal } from '../popups/Banner/ProjectWriteModal/ProjectWriteModal';
 import { InviteMembersModal } from '../popups/Banner/InviteMembersModal/InviteMembersModal';
 import { KickMemberModal } from '../popups/Banner/KickMemberModal/KickMemberModal';
+import { ProjectRemoveModal } from '../popups/Banner/ProjectRemoveModal';
 export const useNavBar = () => {
   const navbarStore = useNavBarStore();
   const modal = useModal();
@@ -198,6 +200,42 @@ export const useNavBar = () => {
       });
   };
 
+  // 프로젝트 삭제
+  const removeProjectMutation = useMutation({
+    mutationKey: ['remove-project'],
+    mutationFn: async (projectId: number) => await removeProject(projectId),
+    onSuccess: () => {
+      popup.push({
+        title: '프로젝트 삭제',
+        children: <Typography>프로젝트가 삭제되었습니다.</Typography>,
+        onClose: () => {
+          modal.pop();
+          projectInfo.refetch();
+          memberInfo.refetch();
+          navbarStore.setMenu(2);
+        },
+      });
+    },
+    onError: () => {
+      popup.push({
+        title: '프로젝트 삭제 실패',
+        children: <Typography>다시 시도해주세요.</Typography>,
+        type: 'fail',
+      });
+    },
+  });
+  const removeProjectModalHandler = () => {
+    modal.push({
+      children: (
+        <ProjectRemoveModal
+          projectId={projectInfo.data!.data.projectId}
+          popHandler={modalPopHandler}
+          removeHandler={removeProjectMutation.mutate}
+        />
+      ),
+    });
+  };
+
   useEffect(() => {
     if (navbarStore.menu !== 2) {
       projectInfo.refetch();
@@ -216,5 +254,6 @@ export const useNavBar = () => {
     inviteMembersModalHandler,
     kickMemberModalHandler,
     handleLogout,
+    removeProjectModalHandler,
   };
 };

@@ -12,6 +12,7 @@ interface ProjectInfoProps {
   editProjectModalHandler: () => void;
   inviteMembersModalHandler: () => void;
   kickMemberModalHandler: () => void;
+  removeProjectModalHandler: () => void;
 }
 
 const colors: IconColor[] = [
@@ -32,6 +33,7 @@ export const ProjectContents = ({
   editProjectModalHandler,
   inviteMembersModalHandler,
   kickMemberModalHandler,
+  removeProjectModalHandler,
 }: ProjectInfoProps) => {
   return (
     <>
@@ -90,6 +92,13 @@ export const ProjectContents = ({
           onClick={editProjectModalHandler}
         >
           <a>정보 수정</a>
+        </Typography>
+        <Typography
+          color="disabled"
+          size={0.875}
+          onClick={removeProjectModalHandler}
+        >
+          <a>프로젝트 삭제</a>
         </Typography>
       </Flexbox>
     </>
