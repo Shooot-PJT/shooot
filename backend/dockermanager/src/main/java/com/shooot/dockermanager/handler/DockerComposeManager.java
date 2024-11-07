@@ -1,8 +1,6 @@
 package com.shooot.dockermanager.handler;
 
-
 import com.shooot.dockermanager.domain.projecttest.ProjectVersion;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
@@ -11,7 +9,6 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,81 +16,113 @@ import java.util.Map;
 @Component
 public class DockerComposeManager {
 
-    public void mergeDockerCompose(File dockerComposeFile, String englishProjectName, String instanceName, ProjectVersion projectVersion) {
+    private static final String RESTART_POLICY = "on-failure";
+    private static final int MAX_RESTART_ATTEMPTS = 10;
+    private static final String NETWORK_TRAEFIK = "traefik";
+    private static final String NETWORK_INTERNAL = "internal_network";
+    private static final String DEFAULT_VERSION = "3.8";
+    private static final String HOST_DOMAIN = ".shooot.shop";
+    private static final String DOCKER_REGISTRY = "192.168.56.1:5000/";
 
-        // Spring Boot에서 관리하는 Docker Compose 구성 설정
-        Map<String, Object> springCompose = new HashMap<>();
+    public void mergeDockerCompose(File dockerComposeFile, String projectName, String instanceName, ProjectVersion projectVersion) {
+        Map<String, Object> springCompose = createSpringCompose(projectName, instanceName, projectVersion);
+        Map<String, Object> userCompose = loadYamlFile(dockerComposeFile);
+
+        mergeComposes(userCompose, springCompose, instanceName, projectName);
+        saveYamlToFile(userCompose, dockerComposeFile);
+    }
+
+    private Map<String, Object> createSpringCompose(String projectName, String instanceName, ProjectVersion projectVersion) {
         Map<String, Object> services = new HashMap<>();
+        services.put(projectName, createProjectServiceConfig(projectName, instanceName, projectVersion));
 
-        Map<String, Object> projectService = new HashMap<>();
-        projectService.put("restart", "always");
-        projectService.put("ports", List.of("808"+Integer.parseInt(instanceName.replace("instance", ""))+":8080"));
-        Map<String, String> buildConfig = new HashMap<>();
-        projectService.put("build", "./");
-        projectService.put("image", "192.168.56.1:5000/"+englishProjectName+":"+projectVersion.toString());
+        Map<String, Object> springCompose = new HashMap<>();
+        springCompose.put("services", services);
+        return springCompose;
+    }
+
+    private Map<String, Object> createProjectServiceConfig(String projectName, String instanceName, ProjectVersion projectVersion) {
+        Map<String, Object> serviceConfig = new HashMap<>();
+        serviceConfig.put("restart", "always");
+        serviceConfig.put("ports", List.of("808" + extractInstanceNumber(instanceName) + ":8080"));
+        serviceConfig.put("image", DOCKER_REGISTRY + projectName + ":" + projectVersion);
+        serviceConfig.put("networks", List.of(NETWORK_TRAEFIK, NETWORK_INTERNAL));
+        serviceConfig.put("deploy", createDeployConfig(instanceName, projectName));
+
+        return serviceConfig;
+    }
+
+    private int extractInstanceNumber(String instanceName) {
+        return Integer.parseInt(instanceName.replace("instance", ""));
+    }
+
+    private Map<String, Object> createDeployConfig(String instanceName, String projectName) {
         Map<String, Object> deployConfig = new HashMap<>();
         deployConfig.put("replicas", 1);
         deployConfig.put("placement", Map.of("constraints", List.of("node.hostname == " + instanceName)));
+        deployConfig.put("restart_policy", Map.of("condition", RESTART_POLICY, "max_attempts", MAX_RESTART_ATTEMPTS));
+        deployConfig.put("labels", createTraefikLabels(projectName));
 
-        Map<String, Object> restartPolicyConfig = new HashMap<>();
-        restartPolicyConfig.put("condition", "on-failure");
-        restartPolicyConfig.put("max_attempts", 10);
-
-        deployConfig.put("restart_policy", restartPolicyConfig);
-
-        projectService.put("networks", List.of("traefik"));
-
-        Map<String, String> labels = new HashMap<>();
-        labels.put("traefik.enable", "true");
-        labels.put("traefik.http.routers." + englishProjectName+"_"+englishProjectName + ".rule", "Host(`" + englishProjectName + ".shooot.shop`)");
-        labels.put("traefik.http.routers." + englishProjectName+"_"+englishProjectName + ".entrypoints", "websecure");
-        labels.put("traefik.http.services." + englishProjectName+"_"+englishProjectName + ".loadbalancer.server.port", "8080");
-
-        deployConfig.put("labels", labels);
-        projectService.put("deploy", deployConfig);
-
-        services.put(englishProjectName, projectService);
-        springCompose.put("services", services);
-
-        // 사용자 정의 Compose 파일 로드
-        Yaml yaml = new Yaml(new Constructor(Map.class, new LoaderOptions()));
-        Map<String, Object> userCompose;
-        try (FileInputStream inputStream = new FileInputStream(dockerComposeFile)) {
-            userCompose = yaml.load(inputStream);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        Map<String, Object> userServices = (Map<String, Object>)userCompose.get("services");
-
-        Map<String, Object> userDeployConfig = Map.of("replicas", 1, "placement", Map.of("constraints", List.of("node.hostname == " + instanceName)));
-
-        for (Map.Entry<String, Object> entry : userServices.entrySet()) {
-            Map<String, Object> maps = (Map<String, Object>) entry.getValue();
-            maps.put("deploy", userDeployConfig);
-        }
-
-
-        // 사용자 정의 Compose와 Spring Compose 병합
-        Map<String, Object> mergedServices = (Map<String, Object>) userCompose.getOrDefault("services", new HashMap<>());
-        mergedServices.putAll((Map<String, Object>) springCompose.get("services"));
-        userCompose.put("services", mergedServices);
-        userCompose.put("networks", Map.of("traefik", Map.of("external", true)));
-        userCompose.put("version", "3.8");
-        // YAML 파일로 저장
-        DumperOptions options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        Representer representer = new Representer(new DumperOptions());
-        Yaml outputYaml = new Yaml(representer, options);
-
-        try (FileWriter writer = new FileWriter(dockerComposeFile)) {
-            outputYaml.dump(userCompose, writer);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+        return deployConfig;
     }
 
+    private Map<String, String> createTraefikLabels(String projectName) {
+        return Map.of(
+                "traefik.enable", "true",
+                "traefik.http.routers." + projectName + "_" + projectName + ".rule", "Host(`" + projectName + HOST_DOMAIN + "`)",
+                "traefik.http.routers." + projectName + "_" + projectName + ".entrypoints", "websecure",
+                "traefik.http.services." + projectName + "_" + projectName + ".loadbalancer.server.port", "8080"
+        );
+    }
+
+    private Map<String, Object> loadYamlFile(File file) {
+        Yaml yaml = new Yaml(new Constructor(Map.class, new LoaderOptions()));
+        try (FileInputStream inputStream = new FileInputStream(file)) {
+            return yaml.load(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load YAML file", e);
+        }
+    }
+
+    private void mergeComposes(Map<String, Object> userCompose, Map<String, Object> springCompose, String instanceName, String projectName) {
+        Map<String, Object> userServices = (Map<String, Object>) userCompose.getOrDefault("services", new HashMap<>());
+        applyUserDeployConfig(userServices, instanceName);
+
+        userServices.putAll((Map<String, Object>) springCompose.get("services"));
+        userCompose.put("services", userServices);
+        userCompose.put("networks", createNetworksConfig());
+        userCompose.put("version", DEFAULT_VERSION);
+    }
+
+    private void applyUserDeployConfig(Map<String, Object> userServices, String instanceName) {
+        Map<String, Object> userDeployConfig = Map.of(
+                "replicas", 1,
+                "placement", Map.of("constraints", List.of("node.hostname == " + instanceName))
+        );
+
+        for (Map.Entry<String, Object> entry : userServices.entrySet()) {
+            Map<String, Object> serviceConfig = (Map<String, Object>) entry.getValue();
+            serviceConfig.put("deploy", userDeployConfig);
+            serviceConfig.put("networks", List.of(NETWORK_INTERNAL));
+        }
+    }
+
+    private Map<String, Object> createNetworksConfig() {
+        return Map.of(
+                NETWORK_TRAEFIK, Map.of("external", true),
+                NETWORK_INTERNAL, Map.of("driver", "overlay")
+        );
+    }
+
+    private void saveYamlToFile(Map<String, Object> data, File file) {
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        Yaml yaml = new Yaml(new Representer(options), options);
+
+        try (FileWriter writer = new FileWriter(file)) {
+            yaml.dump(data, writer);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save YAML file", e);
+        }
+    }
 }
