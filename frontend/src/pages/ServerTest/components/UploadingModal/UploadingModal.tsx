@@ -3,11 +3,23 @@ import rocket from '../../../../assets/Rocket.json';
 import Flexbox from '../../../../components/Flexbox';
 import Typography from '../../../../components/Typography';
 import * as s from './UploadingModal.css';
-export interface UploadingModalProps {
-  panding: boolean;
-}
+import { useUploadStateStore } from '../../stores/useUploadStateStore';
+import { useEffect } from 'react';
+import useModal from '../../../../hooks/useModal';
 
 export const UploadingModal = () => {
+  const modal = useModal();
+  const { state, setState } = useUploadStateStore();
+
+  useEffect(() => {
+    return () => {
+      if (state === 'End') {
+        modal.pop();
+        setState('None');
+      }
+    };
+  }, [state]);
+
   return (
     <Flexbox flexDirections="col" justifyContents="center" alignItems="center">
       <Typography size={1.5} weight="600">

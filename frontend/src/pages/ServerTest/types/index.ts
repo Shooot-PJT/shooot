@@ -2,7 +2,7 @@ import { Method } from '../../APIDocs/types/methods';
 
 export type TestMethodType = 'FIXED' | 'SPIKE' | 'RAMP_UP';
 
-export type UploadState = 'Panding' | 'End' | 'None';
+export type UploadState = 'Pending' | 'End' | 'Error' | 'None';
 
 export interface APITestFormData {
   apiId: number;
@@ -43,7 +43,11 @@ export interface GetJarFilesRequest {
   projectId: number;
 }
 
-export type ProjectStatus = 'READY' | 'RUN' | 'RUNTIME_ERROR' | 'DONE';
+export interface DeleteJarFileRequest {
+  projectJarFileId: number;
+}
+
+export type ProjectStatus = 'READY' | 'RUN' | 'RUNTIME_ERROR' | 'DONE' | 'NONE';
 
 export interface ProjectVersion {
   major: number;
@@ -52,13 +56,11 @@ export interface ProjectVersion {
   temporary: number;
 }
 
-export interface jarFiles {
+export interface jarFile {
   projectJarFileId: number;
   status: ProjectStatus;
   fileName: string;
   version: ProjectVersion;
 }
 
-export interface GetJarFilesResponse {
-  Files: jarFiles[];
-}
+export type GetJarFilesResponse = jarFile[];

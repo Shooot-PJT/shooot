@@ -17,7 +17,7 @@ export const moon = style({
   width: '100px',
   height: '100px',
   top: '10%',
-  left: '70%',
+  left: '58%',
   borderRadius: '50%',
   aspectRatio: '1',
   backgroundColor: colorPalette.amber[500],
