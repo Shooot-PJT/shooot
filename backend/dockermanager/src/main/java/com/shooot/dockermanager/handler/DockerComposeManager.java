@@ -30,7 +30,7 @@ public class DockerComposeManager {
         projectService.put("ports", List.of("808"+Integer.parseInt(instanceName.replace("instance", ""))+":8080"));
         Map<String, String> buildConfig = new HashMap<>();
         projectService.put("build", "./");
-        projectService.put("image", englishProjectName+":"+projectVersion.toString());
+        projectService.put("image", "192.168.56.1:5000/"+englishProjectName+":"+projectVersion.toString());
         Map<String, Object> deployConfig = new HashMap<>();
         deployConfig.put("replicas", 1);
         deployConfig.put("placement", Map.of("constraints", List.of("node.hostname == " + instanceName)));
