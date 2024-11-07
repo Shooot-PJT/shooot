@@ -9,7 +9,11 @@ import {
   logout,
   removeProject,
 } from '../apis';
-import { getProjectInfo, getProjectMembers } from '../../MyProject/apis';
+import {
+  getMyProjectList,
+  getProjectInfo,
+  getProjectMembers,
+} from '../../MyProject/apis';
 import { useEffect } from 'react';
 import useModal from '../../../hooks/useModal';
 import Typography from '../../../components/Typography';
@@ -26,7 +30,7 @@ export const useNavBar = () => {
   const modal = useModal();
   const popup = usePopup();
   const queryClient = useQueryClient();
-  const [userInfo, projectInfo, memberInfo] = useQueries({
+  const [userInfo, projectInfo, memberInfo, projectsInfo] = useQueries({
     queries: [
       {
         queryKey: ['userinfo'],
@@ -41,6 +45,11 @@ export const useNavBar = () => {
       {
         queryKey: ['memberInfo', navbarStore.project],
         queryFn: async () => await getProjectMembers(navbarStore.project),
+        enabled: false,
+      },
+      {
+        queryKey: ['project-list'],
+        queryFn: async () => await getMyProjectList(),
         enabled: false,
       },
     ],
@@ -87,13 +96,14 @@ export const useNavBar = () => {
   const addProjectMutation = useMutation({
     mutationKey: ['add-project'],
     mutationFn: async (info: AddProjectRequest) => await addProject(info),
-    onSuccess: () => {
+    onSuccess: (data) => {
       popup.push({
         title: '프로젝트 생성',
         children: <Typography>프로젝트를 생성하였습니다.</Typography>,
         onClose: () => {
           modal.pop();
-          navbarStore.setProject(addProjectMutation.data!.data.projectId);
+          projectsInfo.refetch();
+          navbarStore.setProject(data.data.projectId);
           navbarStore.setMenu(0);
         },
       });
@@ -133,6 +143,7 @@ export const useNavBar = () => {
         children: <Typography>프로젝트가 수정되었습니다.</Typography>,
         onClose: () => {
           modal.pop();
+          projectsInfo.refetch();
           projectInfo.refetch();
           memberInfo.refetch();
         },
@@ -182,6 +193,7 @@ export const useNavBar = () => {
         />
       ),
       onClose: () => {
+        projectsInfo.refetch();
         projectInfo.refetch();
         memberInfo.refetch();
       },
@@ -215,9 +227,8 @@ export const useNavBar = () => {
         children: <Typography>프로젝트가 삭제되었습니다.</Typography>,
         onClose: () => {
           modal.pop();
-          projectInfo.refetch();
-          memberInfo.refetch();
           navbarStore.setMenu(2);
+          projectsInfo.refetch();
         },
       });
     },
