@@ -66,7 +66,7 @@ public class DockerManager {
 
                 projectDirectoryManager.setFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE, projectFile.getDockerComposeFile());
                 projectDirectoryManager.setFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.JAR, projectFile.getProjectFile());
-                projectDirectoryManager.setMetaData(dto.getProjectId(), dto.getProjectJarFileId(), MetaData.builder().projectJarFileId(dto.getProjectJarFileId()).projectId(dto.getProjectId()).projectName(project.getEnglishName()).build());
+                projectDirectoryManager.setMetaData(dto.getProjectId(), dto.getProjectJarFileId(), MetaData.builder().projectJarFileId(dto.getProjectJarFileId()).projectId(dto.getProjectId()).projectName(project.getEnglishName()).instanceName(target).build());
 
                 File copyTargetFile = new File("/home/hyunjinkim/deployment/scripts/Dockerfile");
                 File copyDir = new File("/home/hyunjinkim/deployment/vagrant-instance-volumn/" + dto.getProjectId() + "/" + dto.getProjectJarFileId()+"/Dockerfile");
