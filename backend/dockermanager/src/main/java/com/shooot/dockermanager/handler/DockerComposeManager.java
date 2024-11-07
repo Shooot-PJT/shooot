@@ -66,6 +66,16 @@ public class DockerComposeManager {
             throw new RuntimeException(e);
         }
 
+        Map<String, Object> userServices = (Map<String, Object>)userCompose.get("services");
+
+        Map<String, Object> userDeployConfig = Map.of("replicas", 1, "placement", Map.of("constraints", List.of("node.hostname == " + instanceName)));
+
+        for (Map.Entry<String, Object> entry : userServices.entrySet()) {
+            Map<String, Object> maps = (Map<String, Object>) entry.getValue();
+            maps.put("deploy", userDeployConfig);
+        }
+
+
         // 사용자 정의 Compose와 Spring Compose 병합
         Map<String, Object> mergedServices = (Map<String, Object>) userCompose.getOrDefault("services", new HashMap<>());
         mergedServices.putAll((Map<String, Object>) springCompose.get("services"));

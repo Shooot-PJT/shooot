@@ -22,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -56,7 +55,7 @@ public class DockerManager {
         }
 
         String target = vagrantRepository.getFirstEmptyInstance();
-        if(target == null) {
+        if (target == null) {
             //TODO : 사용할 수 있는 인스턴스가 없는 에러 작성.
             throw new IllegalArgumentException();
         }
@@ -74,7 +73,7 @@ public class DockerManager {
                 projectDirectoryManager.setMetaData(dto.getProjectId(), dto.getProjectJarFileId(), MetaData.builder().projectJarFileId(dto.getProjectJarFileId()).projectId(dto.getProjectId()).projectName(project.getEnglishName()).instanceName(target).build());
 
                 File copyTargetFile = new File("/home/hyunjinkim/deployment/scripts/Dockerfile");
-                File copyDir = new File("/home/hyunjinkim/deployment/vagrant-instance-volumn/" + dto.getProjectId() + "/" + dto.getProjectJarFileId()+"/Dockerfile");
+                File copyDir = new File("/home/hyunjinkim/deployment/vagrant-instance-volumn/" + dto.getProjectId() + "/" + dto.getProjectJarFileId() + "/Dockerfile");
 
                 FileInputStream fileInputStream = new FileInputStream(copyTargetFile);
                 FileOutputStream fileOutputStream = new FileOutputStream(copyDir);
@@ -84,20 +83,34 @@ public class DockerManager {
 
                 System.out.println("instance : " + target);
 
-                File directory = new File("/home/hyunjinkim/deployment/vagrant-instance-volumn/"+dto.getProjectId() +"/"+dto.getProjectJarFileId()+"/");
+                File directory = new File("/home/hyunjinkim/deployment/vagrant-instance-volumn/" + dto.getProjectId() + "/" + dto.getProjectJarFileId() + "/");
 
-                ProcessBuilder imageGenerator = new ProcessBuilder("docker", "build", "-t", "192.168.56.1:5000/" + project.getEnglishName() +":"+projectBuild.getVersion(), ".");
+                ProcessBuilder imageGenerator = new ProcessBuilder("docker", "build", "-t", project.getEnglishName() + ":" + projectBuild.getVersion(), ".");
                 imageGenerator.directory(directory);
 
-                ProcessBuilder imagePush = new ProcessBuilder("docker", "push", "192.168.56.1:5000/" + project.getEnglishName() +":"+projectBuild.getVersion());
-                imageGenerator.directory(directory);
 
-                ProcessBuilder processBuilder =  new ProcessBuilder("docker", "stack", "deploy", "-c", "docker-compose.yml", project.getEnglishName());
+                ProcessBuilder imageTag = new ProcessBuilder("docker", "tag", project.getEnglishName() + ":" + projectBuild.getVersion(), "192.168.56.1:5000/" + project.getEnglishName() + ":" + projectBuild.getVersion());
+                ProcessBuilder imagePush = new ProcessBuilder("docker", "push", "192.168.56.1:5000/" + project.getEnglishName() + ":" + projectBuild.getVersion());
+
+
+                ProcessBuilder processBuilder = new ProcessBuilder("docker", "stack", "deploy", "-c", "docker-compose.yml", project.getEnglishName());
                 processBuilder.directory(directory);
 
                 int imageBuildExitCode = imageGenerator.start().waitFor();
-                if(imageBuildExitCode != 0) {
+
+
+                if (imageBuildExitCode != 0) {
                     throw new RuntimeException(imageBuildExitCode + "Error occurred while starting Docker build image on instance " + target);
+                }
+
+                int imageTagExitCode = imageTag.start().waitFor();
+                if (imageTagExitCode != 0) {
+                    throw new RuntimeException(imageBuildExitCode + "Error occurred while starting Docker image tag on instance " + target);
+                }
+
+                int imagePushExitCode = imagePush.start().waitFor();
+                if (imagePushExitCode != 0) {
+                    throw new RuntimeException(imagePushExitCode + "Error occurred while starting Docker image push on instance " + target);
                 }
 
                 Process process = processBuilder.start();
@@ -126,7 +139,7 @@ public class DockerManager {
             boolean keepRunning = true;
             while (keepRunning) {
                 try {
-                    Process process = new ProcessBuilder("docker", "service", "logs", "-f", projectEnglishName+"_"+projectEnglishName)
+                    Process process = new ProcessBuilder("docker", "service", "logs", "-f", projectEnglishName + "_" + projectEnglishName)
                             .start();
 
                     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -171,9 +184,9 @@ public class DockerManager {
                         System.out.println("[" + target + "] Service is healthy.");
                     } else {
 
-                        if(count == 30) {
+                        if (count == 30) {
                             System.out.println("[" + target + "] Service is down. Shutting down Docker Compose...");
-                            stopDockerCompose(target,englishName);
+                            stopDockerCompose(target, englishName);
                             isRunning = false; // health check 종료
                             break;
                         }
