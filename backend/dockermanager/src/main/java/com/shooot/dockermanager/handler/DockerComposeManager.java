@@ -32,7 +32,7 @@ public class DockerComposeManager {
         projectService.put("image", englishProjectName+":latest");
         Map<String, Object> deployConfig = new HashMap<>();
         deployConfig.put("replicas", 1);
-        deployConfig.put("placement", Map.of("constraints", "node.hostname == " + instanceName));
+        deployConfig.put("placement", Map.of("constraints", List.of("node.hostname == " + instanceName)));
 
         Map<String, Object> restartPolicyConfig = new HashMap<>();
         restartPolicyConfig.put("condition", "on-failure");
