@@ -59,7 +59,12 @@ export const UploadFile = React.forwardRef<HTMLInputElement, UploadFileProps>(
             </Typography>
           )}
           {fileInfo.size && (
-            <div className={s.fileSize}>{fileInfo.size} Kb</div>
+            <div
+              style={{ textAlign: 'end', marginRight: '1rem' }}
+              className={s.fileSize}
+            >
+              {fileInfo.size} Kb
+            </div>
           )}
           <label htmlFor={requiredExtension} className={s.uploadButton}>
             <Button>업로드</Button>

@@ -21,12 +21,11 @@ export const header = style({
   alignItems: 'center',
   height: '50px',
   borderRadius: '0.5rem 0.5rem 0rem 0rem',
-  borderBottom: `2px solid ${themeCss.color.background[300]}`,
+  borderBottom: `3px solid ${themeCss.color.background[300]}`,
   backgroundColor: themeCss.color.background[100],
 });
 
 export const headerItem = style({
-  position: 'relative',
   display: 'flex',
   flexBasis: 'var(--width)',
   justifyContent: 'center',
@@ -41,13 +40,11 @@ export const headerItem = style({
 });
 
 export const resizeBar = style({
-  position: 'absolute',
-  right: 0,
-  top: 0,
   width: '3px',
   height: '100%',
   cursor: 'col-resize',
-  backgroundColor: `${themeCss.color.background[300]}`,
+  backgroundColor: colorPalette.util[300],
+  borderRadius: '10%',
 });
 
 export const body = style({
