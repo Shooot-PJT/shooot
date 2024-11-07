@@ -7,6 +7,7 @@ import com.shooot.application.project.service.command.ProjectDeleteParticipantSe
 import com.shooot.application.project.service.command.ProjectInviteService;
 import com.shooot.application.project.service.command.ProjectModifyService;
 import com.shooot.application.project.service.command.ProjectRegisterService;
+import com.shooot.application.project.service.command.ProjectRemoveService;
 import com.shooot.application.project.service.dto.ProjectInviteRequest;
 import com.shooot.application.project.service.dto.ProjectModifyRequest;
 import com.shooot.application.project.service.dto.ProjectRegisterRequest;
@@ -54,6 +55,7 @@ public class ProjectController {
     private final GetLogoService getLogoService;
     private final GetAllProjectsService getAllProjectsService;
     private final GetProjectService getProjectService;
+    private final ProjectRemoveService projectRemoveService;
 
     @Value("${url.project.base}")
     private String baseUrl;
@@ -120,6 +122,16 @@ public class ProjectController {
     ) {
         Integer userId = userLoginContext.getUserId();
         return ResponseEntity.ok(getProjectService.getProject(projectId, userId));
+    }
+
+    @DeleteMapping("/{projectId}")
+    public ResponseEntity<Void> removeProject(
+        @AuthenticationPrincipal UserLoginContext userLoginContext,
+        @PathVariable(name = "projectId") Integer projectId
+    ) {
+        Integer userId = userLoginContext.getUserId();
+        projectRemoveService.projectRemove(userId, projectId);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{projectId}/invite")
