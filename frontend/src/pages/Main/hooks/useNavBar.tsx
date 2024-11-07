@@ -1,7 +1,14 @@
-import { useMutation, useQueries } from '@tanstack/react-query';
+import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query';
 import { useNavBarStore } from '../../../stores/navbarStore';
 import usePopup from '../../../hooks/usePopup';
-import { addProject, changeNickname, editProject, getUserInfo } from '../apis';
+import {
+  addProject,
+  changeNickname,
+  editProject,
+  getUserInfo,
+  logout,
+  removeProject,
+} from '../apis';
 import { getProjectInfo, getProjectMembers } from '../../MyProject/apis';
 import { useEffect } from 'react';
 import useModal from '../../../hooks/useModal';
@@ -11,11 +18,12 @@ import { NicknameChangePopup } from '../popups/Banner/NicknameChangeModal';
 import { ProjectWriteModal } from '../popups/Banner/ProjectWriteModal/ProjectWriteModal';
 import { InviteMembersModal } from '../popups/Banner/InviteMembersModal/InviteMembersModal';
 import { KickMemberModal } from '../popups/Banner/KickMemberModal/KickMemberModal';
-
+import { ProjectRemoveModal } from '../popups/Banner/ProjectRemoveModal';
 export const useNavBar = () => {
   const navbarStore = useNavBarStore();
   const modal = useModal();
   const popup = usePopup();
+  const queryClient = useQueryClient();
   const [userInfo, projectInfo, memberInfo] = useQueries({
     queries: [
       {
@@ -178,6 +186,56 @@ export const useNavBar = () => {
     });
   };
 
+  // 로그아웃
+  const handleLogout = async () => {
+    await logout()
+      .then(() => queryClient.clear())
+      .catch((err) => {
+        console.log(err);
+        popup.push({
+          title: '로그아웃 실패',
+          children: <Typography>다시 시도해주세요.</Typography>,
+          type: 'fail',
+        });
+      });
+  };
+
+  // 프로젝트 삭제
+  const removeProjectMutation = useMutation({
+    mutationKey: ['remove-project'],
+    mutationFn: async (projectId: number) => await removeProject(projectId),
+    onSuccess: () => {
+      popup.push({
+        title: '프로젝트 삭제',
+        children: <Typography>프로젝트가 삭제되었습니다.</Typography>,
+        onClose: () => {
+          modal.pop();
+          projectInfo.refetch();
+          memberInfo.refetch();
+          navbarStore.setMenu(2);
+        },
+      });
+    },
+    onError: () => {
+      popup.push({
+        title: '프로젝트 삭제 실패',
+        children: <Typography>다시 시도해주세요.</Typography>,
+        type: 'fail',
+      });
+    },
+  });
+  const removeProjectModalHandler = () => {
+    modal.push({
+      children: (
+        <ProjectRemoveModal
+          projectId={projectInfo.data!.data.projectId}
+          popHandler={modalPopHandler}
+          removeHandler={removeProjectMutation.mutate}
+        />
+      ),
+    });
+  };
+
   useEffect(() => {
     if (navbarStore.menu !== 2) {
       projectInfo.refetch();
@@ -195,5 +253,7 @@ export const useNavBar = () => {
     editProjectModalHandler,
     inviteMembersModalHandler,
     kickMemberModalHandler,
+    handleLogout,
+    removeProjectModalHandler,
   };
 };
