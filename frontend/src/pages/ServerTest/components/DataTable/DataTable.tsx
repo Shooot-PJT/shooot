@@ -9,6 +9,8 @@ interface DataTableProps {
   selectable?: boolean;
   expandedRowIndex?: number;
   ExpandedRow?: ReactNode;
+  selectedRowIndex?: number;
+  handleSelectRow?: (rowIndex: number, selecteRow: number) => void;
 }
 
 export const DataTable = ({
@@ -16,11 +18,13 @@ export const DataTable = ({
   headers,
   selectable = false,
   data,
+  selectedRowIndex = -1,
+  handleSelectRow,
   expandedRowIndex,
   ExpandedRow,
 }: DataTableProps) => {
   const [colWidths, setColWidths] = useState<number[]>(initialColWidths);
-  const [selectedRow, setSelectedRow] = useState<number>(-1);
+
   const startX = useRef<number | null>(null);
   const startWidth = useRef<number | null>(null);
   const currentIndex = useRef<number | null>(null);
@@ -29,13 +33,9 @@ export const DataTable = ({
     setColWidths(initialColWidths);
   }, []);
 
-  const handleSelectRow = (rowIndex: number) => {
+  const handleClickRow = (rowIndex: number) => {
     if (!selectable) return;
-    if (rowIndex !== selectedRow) {
-      setSelectedRow(rowIndex);
-    } else {
-      setSelectedRow(-1);
-    }
+    if (handleSelectRow) handleSelectRow(rowIndex, selectedRowIndex);
   };
 
   const handleMouseDown = (e: React.MouseEvent, idx: number) => {
@@ -80,23 +80,26 @@ export const DataTable = ({
     <div className={s.container}>
       <div className={s.header}>
         {headers.map((item, idx) => (
-          <div
-            className={s.headerItem}
-            key={idx}
-            style={
-              {
-                '--width': `${colWidths[idx]}%`,
-              } as React.CSSProperties
-            }
-          >
-            {item}
+          <React.Fragment key={`RF-${idx}`}>
+            <div
+              className={s.headerItem}
+              key={idx}
+              style={
+                {
+                  '--width': `${colWidths[idx]}%`,
+                } as React.CSSProperties
+              }
+            >
+              {item}
+            </div>
             {idx < headers.length - 1 && (
               <div
+                key={`bar-${idx}`}
                 className={s.resizeBar}
                 onMouseDown={(e) => handleMouseDown(e, idx)}
               />
             )}
-          </div>
+          </React.Fragment>
         ))}
       </div>
 
@@ -104,10 +107,10 @@ export const DataTable = ({
         {data.map((row, rowIndex) => (
           <React.Fragment key={data.length - rowIndex}>
             <div
-              className={`${rowIndex === selectedRow ? s.selectedRow : s.row} ${selectable ? s.hoverRow : ''}`}
+              className={`${rowIndex === selectedRowIndex ? s.selectedRow : s.row} ${selectable ? s.hoverRow : ''}`}
               key={data.length - rowIndex}
               onClick={() => {
-                handleSelectRow(rowIndex);
+                handleClickRow(rowIndex);
               }}
             >
               {row.map((item, colIndex) => (
