@@ -15,4 +15,12 @@ public interface ApiRepository extends JpaRepository<Api, Integer> {
 
     List<Api> findAllByDomain_Project_Id(Integer projectId);
 
+    @Query("""
+    SELECT a FROM Api a
+    JOIN FETCH a.domain d
+    JOIN FETCH d.project p
+    WHERE a.id = :apiId
+    """)
+    Optional<Api> findByIdWithDomainAndProject(@Param("apiId") Integer apiId);
+
 }

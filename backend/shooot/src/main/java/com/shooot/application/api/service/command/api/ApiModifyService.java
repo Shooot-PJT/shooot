@@ -20,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class ApiModifyService {
@@ -32,12 +34,13 @@ public class ApiModifyService {
     public ApiView modifyApi(Integer apiId, ApiModifyRequest apiModifyRequest){
         Api api = findApiById(apiId);
 
-        checkPermission(api);
+//        checkPermission(api);
 
         if(apiModifyRequest.getManagerId() != null){
             //todo user 없을때 예외 던지기
             updateApiManager(api.getProjectParticipant().getId(), apiModifyRequest.getManagerId());
         }
+
         api.update(apiModifyRequest);
 
         return ApiView.from(api);

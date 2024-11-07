@@ -3,6 +3,8 @@ package com.shooot.application.api.ui;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shooot.application.api.domain.ApiTestCaseRequestType;
+import com.shooot.application.api.domain.interceptor.ProjectDomainType;
+import com.shooot.application.api.domain.interceptor.RequiresProjectParticipation;
 import com.shooot.application.api.service.command.test.ApiTestCaseCreateService;
 import com.shooot.application.api.service.command.test.ApiTestCaseDeleteService;
 import com.shooot.application.api.service.command.test.ApiTestCaseModifyService;
@@ -37,6 +39,7 @@ public class ApiTestCaseController {
     private final TestCaseLogsGetService testCaseLogsGetService;
 
     @PostMapping("/{apiId}/testcases")
+    @RequiresProjectParticipation(type = ProjectDomainType.API)
     public ResponseEntity<?> createTestCase(
             @PathVariable(name = "apiId") Integer apiId,
                 ApiTestCaseCreateRequest apiTestCaseCreateRequest,
@@ -58,6 +61,7 @@ public class ApiTestCaseController {
     }
 
     @DeleteMapping("/testcases/{testcaseId}")
+    @RequiresProjectParticipation(type = ProjectDomainType.TESTCASE)
     public ResponseEntity<?> deleteTestCase(@PathVariable Integer testcaseId){
         apiTestCaseDeleteService.delete(testcaseId);
 
@@ -65,6 +69,7 @@ public class ApiTestCaseController {
     }
 
     @PatchMapping("/testcases/{testcaseId}")
+    @RequiresProjectParticipation(type = ProjectDomainType.TESTCASE)
     public ResponseEntity<?> modifyTestCase(
             @PathVariable Integer testcaseId,
             ApiTestCaseModifyRequest apiTestCaseModifyRequest,
@@ -87,6 +92,7 @@ public class ApiTestCaseController {
     }
 
     @GetMapping("/{apiId}/testcases")
+    @RequiresProjectParticipation(type = ProjectDomainType.API)
     public ResponseEntity<?> getTestCaseList(
             @PathVariable(name = "apiId") Integer apiId
     ){
@@ -96,6 +102,7 @@ public class ApiTestCaseController {
     }
 
     @GetMapping("/testcases/{testcaseId}")
+    @RequiresProjectParticipation(type = ProjectDomainType.TESTCASE)
     public ResponseEntity<?> getTestCase(
             @PathVariable(name = "testcaseId") Integer testcaseId
     ){
@@ -105,6 +112,7 @@ public class ApiTestCaseController {
     }
 
     @GetMapping("/{apiId}/testcases/logs")
+    @RequiresProjectParticipation(type = ProjectDomainType.API)
     public ResponseEntity<?> getTestLogs(
             @PathVariable(name = "apiId") Integer apiId,
             @RequestParam Integer testcaseId,

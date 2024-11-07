@@ -46,6 +46,7 @@ public class ApiGetService {
 //        ApiTestLastLogView apiTestLastLogView = getLastLog(api);
 
         return ApiDetailListView.builder()
+                .apiView(ApiView.from(api))
                 .testCases(testCaseRequestViews)
 //                .lastLog(apiTestLastLogView)
                 .build();
@@ -69,9 +70,5 @@ public class ApiGetService {
 
         return ApiTestLastLogView.from(apiTestLog);
     }
-
-
-
-
 
 }

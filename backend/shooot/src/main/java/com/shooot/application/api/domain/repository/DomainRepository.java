@@ -14,4 +14,7 @@ public interface DomainRepository extends JpaRepository<Domain, Integer> {
 
     @Query("SELECT d FROM Domain d WHERE d.id = :domainId AND d.isDeleted = false")
     Optional<Domain> findByIdAndNotDeleted(@Param("domainId") Integer domainId);
+
+    @Query("SELECT d.project.id FROM Domain d WHERE d.id = :domainId")
+    Integer findProjectIdByDomainId(@Param("domainId") Integer domainId);
 }

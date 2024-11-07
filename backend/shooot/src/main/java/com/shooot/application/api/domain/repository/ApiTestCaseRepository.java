@@ -16,5 +16,13 @@ public interface ApiTestCaseRepository extends JpaRepository<ApiTestCase, Intege
     @Query("SELECT t FROM ApiTestCase t WHERE t.id = :testcaseId AND t.api.isDeleted = false")
     Optional<ApiTestCase> findApiTestCaseById(@Param("testcaseId") Integer testcaseId);
 
+    @Query("""
+    SELECT tc FROM ApiTestCase tc
+    JOIN FETCH tc.api a
+    JOIN FETCH a.domain d
+    JOIN FETCH d.project p
+    WHERE tc.id = :testCaseId
+    """)
+    Optional<ApiTestCase> findByIdWithApiDomainAndProject(@Param("testCaseId") Integer testCaseId);
 
 }

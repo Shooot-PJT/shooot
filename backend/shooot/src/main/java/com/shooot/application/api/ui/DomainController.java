@@ -48,6 +48,7 @@ public class DomainController {
     }
 
     @PatchMapping("/domains/{domainId}")
+    @RequiresProjectParticipation(type = ProjectDomainType.DOMAIN)
     public ResponseEntity<?> modifyService(
             @PathVariable(name = "domainId") Integer domainId,
             @RequestBody DomainModifyRequest domainModifyRequest

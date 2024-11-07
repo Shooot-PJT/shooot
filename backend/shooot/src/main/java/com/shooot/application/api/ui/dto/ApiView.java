@@ -5,6 +5,7 @@ import com.shooot.application.api.domain.ApiTestStatusType;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Builder
 @Setter
@@ -20,6 +21,8 @@ public class ApiView {
     private String description;
     private String method;
     private String url;
+    private String example_url;
+    private Map<String, Object> example_content;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private Boolean isRealServer;
@@ -38,6 +41,8 @@ public class ApiView {
                 .description(api.getDescription())
                 .method(api.getMethod())
                 .url(api.getUrl())
+                .example_url(api.getExampleUrl())
+                .example_content(api.getExampleContent())
                 .createdAt(api.getCreatedAt())
                 .modifiedAt(api.getModifiedAt())
                 .isRealServer(api.getIsRealServer())
