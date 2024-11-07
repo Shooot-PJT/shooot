@@ -1,7 +1,13 @@
-import { useMutation, useQueries } from '@tanstack/react-query';
+import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query';
 import { useNavBarStore } from '../../../stores/navbarStore';
 import usePopup from '../../../hooks/usePopup';
-import { addProject, changeNickname, editProject, getUserInfo } from '../apis';
+import {
+  addProject,
+  changeNickname,
+  editProject,
+  getUserInfo,
+  logout,
+} from '../apis';
 import { getProjectInfo, getProjectMembers } from '../../MyProject/apis';
 import { useEffect } from 'react';
 import useModal from '../../../hooks/useModal';
@@ -11,11 +17,11 @@ import { NicknameChangePopup } from '../popups/Banner/NicknameChangeModal';
 import { ProjectWriteModal } from '../popups/Banner/ProjectWriteModal/ProjectWriteModal';
 import { InviteMembersModal } from '../popups/Banner/InviteMembersModal/InviteMembersModal';
 import { KickMemberModal } from '../popups/Banner/KickMemberModal/KickMemberModal';
-
 export const useNavBar = () => {
   const navbarStore = useNavBarStore();
   const modal = useModal();
   const popup = usePopup();
+  const queryClient = useQueryClient();
   const [userInfo, projectInfo, memberInfo] = useQueries({
     queries: [
       {
@@ -178,6 +184,20 @@ export const useNavBar = () => {
     });
   };
 
+  // 로그아웃
+  const handleLogout = async () => {
+    await logout()
+      .then(() => queryClient.clear())
+      .catch((err) => {
+        console.log(err);
+        popup.push({
+          title: '로그아웃 실패',
+          children: <Typography>다시 시도해주세요.</Typography>,
+          type: 'fail',
+        });
+      });
+  };
+
   useEffect(() => {
     if (navbarStore.menu !== 2) {
       projectInfo.refetch();
@@ -195,5 +215,6 @@ export const useNavBar = () => {
     editProjectModalHandler,
     inviteMembersModalHandler,
     kickMemberModalHandler,
+    handleLogout,
   };
 };
