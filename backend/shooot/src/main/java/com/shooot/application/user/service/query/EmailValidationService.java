@@ -43,14 +43,14 @@ public class EmailValidationService {
         return EmailIsValidView.builder().isValid(verifyEmail(request)).build();
     }
 
-    public void emailCanUseValidCheck() {
+    public void emailCanUseValidCheck(String email) {
         Optional<UserVerificationEmailDto> attribute = sessionFinder.getAttribute(UserSessionConstants.USER_VERIFICATION_EMAIL);
         if(attribute.isEmpty()) {
             throw new EmailVerificationRequestNotFoundException();
         }
 
         UserVerificationEmailDto dto = attribute.get();
-        if(dto.getIsValid() == null || !dto.getIsValid()) {
+        if(dto.getIsValid() == null || !dto.getIsValid() || Objects.equals(email, dto.getEmail())) {
             throw new EmailVerificationNotFoundException();
         }
 
