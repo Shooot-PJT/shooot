@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import * as s from './Console.css';
+import Typography from '../../../../components/Typography';
 
 export interface ConsoleProps {
   state?: 'building' | 'distributing' | 'idle' | 'disconnecting';
@@ -59,6 +60,11 @@ export const Console = ({ state = 'distributing', data }: ConsoleProps) => {
 
   return (
     <div>
+      <div style={{ marginBottom: '1.25rem' }}>
+        <Typography size={1.5} weight="600">
+          배포 프로젝트 로그 조회
+        </Typography>
+      </div>
       <div className={s.Header}>
         <div className={s.HeaderWrapper}>
           <div className={s.stateHeader}>{stateHeaderRender()}</div>

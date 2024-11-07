@@ -126,7 +126,9 @@ export const TestConfigModal = () => {
     const newTableExcludeData = apiData.excludes.map((item) => [
       '-',
       <MethodChip method={item.method.toLowerCase() as Method} />,
-      item.endPoint,
+      <CustomTooltip title={item.endPoint} placement="bottom" arrow={true}>
+        <div className={s.Description}>{item.endPoint}</div>
+      </CustomTooltip>,
       <div className={s.UndefinedAPIDescription}>
         현재 API Docs에 정의되지 않은 API입니다.
       </div>,

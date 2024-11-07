@@ -12,7 +12,7 @@ export const uploadBox = style({
   display: 'grid',
   width: '100%',
   height: '100%',
-  gridTemplateColumns: '1fr 5fr 1fr 1fr',
+  gridTemplateColumns: '3fr 10fr 3fr 2fr',
 });
 
 export const icon = style({

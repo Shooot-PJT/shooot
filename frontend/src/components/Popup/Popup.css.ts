@@ -5,7 +5,7 @@ import theme from '../../styles/theme.css';
 const scaleUp = keyframes({
   '0%': {
     opacity: 0,
-    transform: 'scale(0.05)',
+    transform: 'scale(0.5)',
   },
   '100%': {
     opacity: 1,
@@ -20,7 +20,7 @@ const scaleDown = keyframes({
   },
   '100%': {
     opacity: 0,
-    transform: 'scale(0.05)',
+    transform: 'scale(0.5)',
   },
 });
 
@@ -30,12 +30,12 @@ export const popup = recipe({
     padding: '1.5rem',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between', // 자식 요소 간 여유 공간을 분배
+    justifyContent: 'space-between',
 
     '@media': {
       'screen and (min-width: 768px)': {
         minWidth: '30rem',
-        maxHeight: '80vh', // 부모 요소의 높이 제한을 viewport에 맞춤
+        maxHeight: '80vh',
       },
       'screen and (max-width: 767px)': {
         width: '80%',

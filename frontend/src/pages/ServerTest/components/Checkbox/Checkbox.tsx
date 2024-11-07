@@ -11,7 +11,7 @@ const Checkbox = ({ checked, onChange }: CheckboxProps) => (
     <input
       type="checkbox"
       className={s.hiddenCheckbox}
-      checked={checked}
+      checked={checked || false}
       onChange={onChange}
     />
     <span className={s.checkboxSymbol}>
