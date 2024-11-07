@@ -79,7 +79,7 @@ public class DockerManager {
 
                 System.out.println("instance : " + target);
                 ProcessBuilder processBuilder =  new ProcessBuilder("docker", "stack", "deploy", "-c", "docker-compose.yml", project.getEnglishName());
-                processBuilder.directory(new File("/vagrant-instance-volumn/"+dto.getProjectId() +"/"+dto.getProjectJarFileId()+"/"));
+                processBuilder.directory(new File("/home/hyunjinkim/deployment/vagrant-instance-volumn/"+dto.getProjectId() +"/"+dto.getProjectJarFileId()+"/"));
                 Process process = processBuilder.start();
 
                 int exitCode = process.waitFor();
