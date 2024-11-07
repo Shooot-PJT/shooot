@@ -176,6 +176,8 @@ export const useNavBar = () => {
       children: (
         <InviteMembersModal
           projectId={projectInfo.data!.data.projectId}
+          userInfo={userInfo.data!.data}
+          memberInfo={memberInfo.data!.data}
           popHandler={modalPopHandler}
         />
       ),
