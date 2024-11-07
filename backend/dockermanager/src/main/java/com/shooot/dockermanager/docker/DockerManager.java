@@ -143,24 +143,39 @@ public class DockerManager {
     private void monitorHealthCheck(String target, String englishName) {
         String healthUrl = "http://" + HOSTS.get(target) + "/actuator/health";
         new Thread(() -> {
-            try {
-                int failureCount = 0;
-                boolean isRunning = true;
-                while (isRunning) {
-                    ResponseEntity<String> response = restTemplate.getForEntity(healthUrl, String.class);
-                    if (response.getStatusCode().is2xxSuccessful() && response.getBody().contains("\"status\":\"UP\"")) {
-                        log.info("[{}] Service is healthy.", target);
-                    } else if (++failureCount >= 30) {
-                        log.info("[{}] Service is down. Shutting down Docker Compose...", target);
-                        stopDockerCompose(target, englishName);
-                        isRunning = false;
+
+            int failureCount = 0;
+            boolean isRunning = true;
+            while (isRunning) {
+                ResponseEntity<String> response = null;
+                try {
+                    response = restTemplate.getForEntity(healthUrl, String.class);
+                } catch (Exception e) {
+                    log.error("Health check error on {}: {}", target, e.getMessage());
+                    try {
+                        if (++failureCount >= 30) {
+                            log.info("[{}] Service is down. Shutting down Docker Compose...", target);
+                            stopDockerCompose(target, englishName);
+                            isRunning = false;
+                        }
+                        Thread.sleep(5000);
+                        continue;
+                    } catch (InterruptedException e2) {
+                        throw new RuntimeException(e2);
                     }
-                    Thread.sleep(5000);
                 }
-            } catch (Exception e) {
-                log.error("Health check error on {}: {}", target, e.getMessage());
-                stopDockerCompose(target, englishName);
+                if (response != null && response.getStatusCode().is2xxSuccessful() && response.getBody().contains("\"status\":\"UP\"")) {
+                    log.info("[{}] Service is healthy.", target);
+                    failureCount = 0;
+                } else if (++failureCount >= 30) {
+                    log.info("[{}] Service is down. Shutting down Docker Compose...", target);
+                    stopDockerCompose(target, englishName);
+                    isRunning = false;
+                }
+
+
             }
+
         }).start();
     }
 
