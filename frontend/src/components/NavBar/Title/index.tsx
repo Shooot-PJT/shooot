@@ -1,11 +1,20 @@
 import Flexbox from '../../Flexbox';
 import Icon from '../../Icon';
-import { HiRocketLaunch, HiBars3 } from 'react-icons/hi2';
+import {
+  HiRocketLaunch,
+  HiBars3,
+  HiArrowRightStartOnRectangle,
+} from 'react-icons/hi2';
 import Typography from '../../Typography';
 import { useNavBarStore } from '../../../stores/navbarStore';
 import { useResize } from '../../../hooks/useResize';
+import { CustomTooltip } from '../../CustomToolTip';
 
-export const Title = () => {
+interface TitleProps {
+  handleLogout: () => Promise<void>;
+}
+
+export const Title = ({ handleLogout }: TitleProps) => {
   const navbarStore = useNavBarStore();
   const { isLarge } = useResize();
 
@@ -34,14 +43,34 @@ export const Title = () => {
               SHOOOT!
             </Typography>
           </Flexbox>
-          <Icon
-            size={1.5}
-            background="none"
-            color="light"
-            onClick={() => navbarStore.setIsOpen(!navbarStore.isOpen)}
-          >
-            <HiBars3 />
-          </Icon>
+          <Flexbox style={{ columnGap: '1rem' }}>
+            <CustomTooltip title="로그아웃">
+              <div>
+                <Icon
+                  size={1.5}
+                  background="none"
+                  color="light"
+                  onClick={async () => await handleLogout()}
+                >
+                  <HiArrowRightStartOnRectangle />
+                </Icon>
+              </div>
+            </CustomTooltip>
+            <CustomTooltip
+              title={navbarStore.isOpen ? '메뉴 접기' : '메뉴 펼치기'}
+            >
+              <div>
+                <Icon
+                  size={1.5}
+                  background="none"
+                  color="light"
+                  onClick={() => navbarStore.setIsOpen(!navbarStore.isOpen)}
+                >
+                  <HiBars3 />
+                </Icon>
+              </div>
+            </CustomTooltip>
+          </Flexbox>
         </Flexbox>
       )}
     </>
