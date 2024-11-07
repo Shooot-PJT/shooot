@@ -49,11 +49,19 @@ export const ProjectWriteModal = ({
   const addProject = () => {
     const file = logoImg.current!.files![0];
 
-    if (
-      validateName(name.current!.value.trim()) &&
-      validateEnglishName(englishName.current!.value.trim()) &&
-      file
-    ) {
+    if (!validateName(name.current!.value.trim()) || !file) {
+      popup.push({
+        title: '생성 실패',
+        children: <Typography>모든 정보를 제대로 입력해주세요.</Typography>,
+        type: 'fail',
+      });
+    } else if (!validateEnglishName(englishName.current!.value.trim())) {
+      popup.push({
+        title: '생성 실패',
+        children: <Typography>올바른 영문명 형식이 아닙니다.</Typography>,
+        type: 'fail',
+      });
+    } else {
       const logo = new File([file], file.name, { type: file.type });
 
       addHandler!({
@@ -61,12 +69,6 @@ export const ProjectWriteModal = ({
         englishName: englishName.current!.value.trim(),
         memo: memo.current!.value.trim(),
         logo: logo,
-      });
-    } else {
-      popup.push({
-        title: '생성 실패',
-        children: <Typography>모든 정보를 제대로 입력해주세요</Typography>,
-        type: 'fail',
       });
     }
   };
@@ -182,7 +184,7 @@ export const ProjectWriteModal = ({
             ratio={5.5}
             size={2.5}
             fullWidth
-            placeholder="한글 이름"
+            placeholder="프로젝트 이름"
             defaultValue={type === 'add' ? '' : projectInfo?.name}
           />
         </Flexbox>
