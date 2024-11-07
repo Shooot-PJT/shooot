@@ -1,5 +1,10 @@
+import { useQuery } from '@tanstack/react-query';
+import { useNavBarStore } from '../../stores/navbarStore';
 import { Console } from './components/Console/Console';
 import { ProjectTable } from './components/ProjectTable/ProjectTable';
+import { getJarFiles } from './apis';
+import { convertDataTable, convertJarFileIdList } from './utils';
+import { useState } from 'react';
 
 const consoleData = [
   '[INFO] 10:00:01 - 서버가 시작되었습니다.',
@@ -55,6 +60,21 @@ const consoleData = [
 ];
 
 export const ServerTest = () => {
+  const [renderKey, setRenderKey] = useState<number>(0);
+  const { project } = useNavBarStore();
+
+  const handleRender = () => {
+    setRenderKey(renderKey + 1);
+  };
+
+  const { data: jarFiles = [] } = useQuery({
+    queryKey: ['jarFiles', project, renderKey],
+    queryFn: async () => {
+      const response = await getJarFiles({ projectId: project });
+      return response?.data ?? [];
+    },
+  });
+
   return (
     <div
       style={{
@@ -66,7 +86,11 @@ export const ServerTest = () => {
       }}
     >
       <div style={{ gridRow: '1/2', width: '100%', marginLeft: '1rem' }}>
-        <ProjectTable />
+        <ProjectTable
+          tableData={convertDataTable(jarFiles)}
+          idList={convertJarFileIdList(jarFiles)}
+          handleRender={handleRender}
+        />
       </div>
       <div
         style={{

@@ -27,7 +27,7 @@ const slideDown = keyframes({
 const scaleUp = keyframes({
   '0%': {
     opacity: 0,
-    transform: 'scale(0.05)',
+    transform: 'scale(0.5)',
   },
   '100%': {
     opacity: 1,
@@ -42,7 +42,7 @@ const scaleDown = keyframes({
   },
   '100%': {
     opacity: 0,
-    transform: 'scale(0.05)',
+    transform: 'scale(0.5)',
   },
 });
 

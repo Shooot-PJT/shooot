@@ -9,29 +9,34 @@ import * as s from './AddProjectModal.css';
 import { useNavBarStore } from '../../../../stores/navbarStore';
 import { uploadJarFile } from '../../apis';
 import { UploadingModal } from '../UploadingModal/UploadingModal';
-import { UploadState } from '../../types';
-export const AddProjectModal = () => {
+import { useUploadStateStore } from '../../stores/useUploadStateStore';
+
+interface AddProjectModalProps {
+  handleRender: () => void;
+}
+
+export const AddProjectModal = ({ handleRender }: AddProjectModalProps) => {
   const [validationFiles, setValidationFiles] = useState<
     Record<string, boolean>
   >({ projectId: false, jar: false, yml: false });
-  const [panding, setPanding] = useState<UploadState>('None');
   const jarRef = useRef<HTMLInputElement>(null);
   const ymlRef = useRef<HTMLInputElement>(null);
   const modal = useModal();
   const popup = usePopup();
 
   const { project } = useNavBarStore();
+  const { state, setState } = useUploadStateStore();
 
   useEffect(() => {
-    if (panding === 'Panding') {
+    if (state === 'Pending') {
       modal.push({
         children: <UploadingModal />,
       });
-    } else if (panding === 'End') {
+    } else if (state === 'End' || state === 'Error') {
       modal.pop();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [panding]);
+  }, [state]);
 
   const handlevalidateFile = (extension: string, requireExtension: string) => {
     if (extension === requireExtension) {
@@ -59,17 +64,18 @@ export const AddProjectModal = () => {
         jarFile: jarRef.current.files[0],
         dockerComposeFile: ymlRef.current.files[0],
       };
-      setPanding('Panding');
+      setState('Pending');
       uploadJarFile(request)
         .then(() => {
+          setState('End');
           modal.pop();
-          setPanding('End');
+          handleRender();
         })
         .catch((error) => {
-          // setPanding('End');
+          setState('Error');
           popup.push({
             title: '업로드 실패',
-            children: error.message,
+            children: error.response.data.message,
             type: 'fail',
           });
           console.error(error);
