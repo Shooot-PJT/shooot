@@ -13,12 +13,12 @@ function App() {
   return (
     <div className={darkTheme}>
       <Routes>
-        <Route path="/" element={<Tmp />} />
+        <Route path="/temp" element={<Tmp />} />
         <Route path="/auth">
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
         </Route>
-        <Route path="/main" element={<Main />} />
+        <Route path="/" element={<Main />} />
         <Route
           path="/docs"
           element={
