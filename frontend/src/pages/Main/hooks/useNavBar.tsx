@@ -19,8 +19,10 @@ import { ProjectWriteModal } from '../popups/Banner/ProjectWriteModal/ProjectWri
 import { InviteMembersModal } from '../popups/Banner/InviteMembersModal/InviteMembersModal';
 import { KickMemberModal } from '../popups/Banner/KickMemberModal/KickMemberModal';
 import { ProjectRemoveModal } from '../popups/Banner/ProjectRemoveModal';
+import { useNavigate } from 'react-router-dom';
 export const useNavBar = () => {
   const navbarStore = useNavBarStore();
+  const nav = useNavigate();
   const modal = useModal();
   const popup = usePopup();
   const queryClient = useQueryClient();
@@ -85,13 +87,14 @@ export const useNavBar = () => {
   const addProjectMutation = useMutation({
     mutationKey: ['add-project'],
     mutationFn: async (info: AddProjectRequest) => await addProject(info),
-    onSuccess: () => {
+    onSuccess: (data) => {
       popup.push({
         title: '프로젝트 생성',
         children: <Typography>프로젝트를 생성하였습니다.</Typography>,
         onClose: () => {
           modal.pop();
-          navbarStore.setProject(addProjectMutation.data!.data.projectId);
+          queryClient.refetchQueries({ queryKey: ['project-list'] });
+          navbarStore.setProject(data.data.projectId);
           navbarStore.setMenu(0);
         },
       });
@@ -131,6 +134,7 @@ export const useNavBar = () => {
         children: <Typography>프로젝트가 수정되었습니다.</Typography>,
         onClose: () => {
           modal.pop();
+          queryClient.refetchQueries({ queryKey: ['project-list'] });
           projectInfo.refetch();
           memberInfo.refetch();
         },
@@ -163,6 +167,8 @@ export const useNavBar = () => {
       children: (
         <InviteMembersModal
           projectId={projectInfo.data!.data.projectId}
+          userInfo={userInfo.data!.data}
+          memberInfo={memberInfo.data!.data}
           popHandler={modalPopHandler}
         />
       ),
@@ -176,10 +182,12 @@ export const useNavBar = () => {
         <KickMemberModal
           projectId={projectInfo.data!.data.projectId}
           memberInfo={memberInfo.data!.data}
+          userInfo={userInfo.data!.data}
           popHandler={modalPopHandler}
         />
       ),
       onClose: () => {
+        queryClient.refetchQueries({ queryKey: ['project-list'] });
         projectInfo.refetch();
         memberInfo.refetch();
       },
@@ -189,7 +197,10 @@ export const useNavBar = () => {
   // 로그아웃
   const handleLogout = async () => {
     await logout()
-      .then(() => queryClient.clear())
+      .then(() => {
+        queryClient.clear();
+        nav('/auth/login');
+      })
       .catch((err) => {
         console.log(err);
         popup.push({
@@ -210,9 +221,8 @@ export const useNavBar = () => {
         children: <Typography>프로젝트가 삭제되었습니다.</Typography>,
         onClose: () => {
           modal.pop();
-          projectInfo.refetch();
-          memberInfo.refetch();
           navbarStore.setMenu(2);
+          queryClient.refetchQueries({ queryKey: ['project-list'] });
         },
       });
     },
