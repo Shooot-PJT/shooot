@@ -14,12 +14,14 @@ const icons: ReactNode[] = [
 const Menu = () => {
   const { isLarge } = useResize();
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: isLarge ? '100%' : '50%' }}>
       <Flexbox
         flexDirections="col"
         justifyContents="center"
         style={{
+          width: '100%',
           rowGap: isLarge ? '1rem' : '0.5rem',
+          boxSizing: 'border-box',
           padding: isLarge ? '1rem' : '0',
         }}
       >
