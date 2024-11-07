@@ -5,7 +5,6 @@ import { ProjectTable } from './components/ProjectTable/ProjectTable';
 import { getJarFiles } from './apis';
 import { convertDataTable, convertJarFileIdList } from './utils';
 import { useState } from 'react';
-import Typography from '../../components/Typography';
 
 const consoleData = [
   '[INFO] 10:00:01 - 서버가 시작되었습니다.',
