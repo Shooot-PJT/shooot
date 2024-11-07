@@ -3,10 +3,21 @@ import { API } from './components/API/API';
 import { AuthorizeButton } from './components/AuthorizeButton/AuthorizeButton';
 import { Domain } from './components/Domain/Domain';
 import { AddDomainButton } from './components/Domain/DomainButtons/DomainButtons';
+import { useGetDomainList } from './reactQueries';
 import { DUMMY_API_HEADER_INFO_LIST } from './dummies/api_header_info_list';
-import { DOMAIN_INFO_LIST_DUMMY } from './dummies/domain_list_dummy';
+import { useNavBarStore } from '../../stores/navbarStore';
 
 export const APIDocs = () => {
+  const currentProjectId = useNavBarStore((state) => state.project);
+
+  const { data: domainList, isLoading } = useGetDomainList({
+    projectId: Number(currentProjectId),
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Flexbox
       flexDirections="col"
@@ -21,9 +32,11 @@ export const APIDocs = () => {
         style={{ gap: '1rem', width: '100%' }}
       >
         <AuthorizeButton isAuthorized={true} />
-        <AddDomainButton />
+        <AddDomainButton
+        // onClick={addDomainModalHandler}
+        />
       </Flexbox>
-      {DOMAIN_INFO_LIST_DUMMY.map((domainInfo) => (
+      {domainList?.map((domainInfo) => (
         <Domain key={domainInfo.domainId} domainInfo={domainInfo}>
           <Domain.Header />
           <Domain.Body>
@@ -39,3 +52,14 @@ export const APIDocs = () => {
     </Flexbox>
   );
 };
+
+{
+  /* <Domain.Body>
+{DUMMY_API_HEADER_INFO_LIST.map((headerInfo) => (
+  <API key={headerInfo.apiId} headerInfo={headerInfo}>
+    <API.Header />
+    <API.Body />
+  </API>
+))}
+</Domain.Body> */
+}
