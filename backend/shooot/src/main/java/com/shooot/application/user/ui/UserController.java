@@ -6,15 +6,11 @@ import com.shooot.application.user.service.dto.UserInfoModifyRequest;
 import com.shooot.application.user.service.query.UserFindService;
 import com.shooot.application.user.ui.dto.FindByEmailView;
 import com.shooot.application.user.ui.dto.UserView;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/user")
@@ -40,5 +36,11 @@ public class UserController {
     @GetMapping("/search")
     public ResponseEntity<FindByEmailView> findByEmail(@RequestParam String email) {
         return ResponseEntity.ok(userFindService.findByEmail(email));
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<Void> logout(@AuthenticationPrincipal UserLoginContext userLoginContext, HttpServletRequest httpServletRequest) {
+        httpServletRequest.getSession().invalidate();
+        return ResponseEntity.ok().build();
     }
 }
