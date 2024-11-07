@@ -35,7 +35,7 @@ public class DockerManager {
     private final ProjectRepository projectRepository;
     private final ProjectBuildRepository projectBuildRepository;
 
-    private static final Map<String, String> hosts = Map.of("instance1", "192.168.56.10", "instance2", "192.168.56.11", "instance3", "192.168.56.12", "instance4", "192.168.56.13");
+    private static final Map<String, String> hosts = Map.of("instance1", "192.168.56.10:8081", "instance2", "192.168.56.11:8082", "instance3", "192.168.56.12:8083", "instance4", "192.168.56.13:8085");
     private static final String LOG_CHANNEL = "docker_logs";
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private final ProjectDirectoryManager projectDirectoryManager;
@@ -156,8 +156,10 @@ public class DockerManager {
      * Health check 모니터링. Spring Actuator의 /actuator/health 엔드포인트를 통해 상태 확인.
      */
     private void monitorHealthCheck(String target, String englishName) {
+        String host = hosts.get(target);
         new Thread(() -> {
-            String healthUrl = "https://" + englishName+".shooot.shop/actuator/health"; // 각 인스턴스의 health check URL
+            int count = 0;
+            String healthUrl = "http://" + host + "/actuator/health"; // 각 인스턴스의 health check URL
             try {
                 boolean isRunning = true;
                 while (isRunning) {
@@ -165,9 +167,14 @@ public class DockerManager {
                     if (response.getStatusCode().is2xxSuccessful() && response.getBody().contains("\"status\":\"UP\"")) {
                         System.out.println("[" + target + "] Service is healthy.");
                     } else {
-                        System.out.println("[" + target + "] Service is down. Shutting down Docker Compose...");
-                        stopDockerCompose(target,englishName);
-                        isRunning = false; // health check 종료
+
+                        if(count == 30) {
+                            System.out.println("[" + target + "] Service is down. Shutting down Docker Compose...");
+                            stopDockerCompose(target,englishName);
+                            isRunning = false; // health check 종료
+                            break;
+                        }
+                        count++;
                     }
                     Thread.sleep(5000); // 5초마다 health check
                 }
