@@ -75,10 +75,10 @@ public class DockerManager {
                 FileOutputStream fileOutputStream = new FileOutputStream(copyDir);
                 fileOutputStream.write(fileInputStream.readAllBytes());
 
-                dockerComposeManager.mergeDockerCompose(projectDirectoryManager.getFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE).orElseThrow(IllegalArgumentException::new), project.getEnglishName(), Integer.parseInt(target.replace("instance", "")) + 1);
+                dockerComposeManager.mergeDockerCompose(projectDirectoryManager.getFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE).orElseThrow(IllegalArgumentException::new), project.getEnglishName(), target);
 
                 System.out.println("instance : " + target);
-                ProcessBuilder processBuilder =  new ProcessBuilder("vagrant", "ssh", target, "-c", "docker-compose -f "+ vagrantProjectJarFilePath(dto.getProjectId(), dto.getProjectJarFileId()) + "/docker-compose.yml" + " up -d");
+                ProcessBuilder processBuilder =  new ProcessBuilder("docker", "stack", "deploy", "-c", "docker-compose.yml", project.getEnglishName());
                 processBuilder.directory(new File("/home/hyunjinkim/deployment/scripts/"));
                 Process process = processBuilder.start();
 
@@ -88,7 +88,7 @@ public class DockerManager {
                 }
 
                 // Health check 및 로그 모니터링 시작
-                fetchDockerComposeLogs(target, dto.getProjectId(), dto.getProjectJarFileId());
+                fetchDockerComposeLogs(target, project.getEnglishName());
                 monitorHealthCheck(target, hosts.get(target), dto.getProjectId(), dto.getProjectJarFileId());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -101,12 +101,12 @@ public class DockerManager {
     /**
      * Docker Compose 로그 실시간 추적 및 Redis Pub/Sub로 전송
      */
-    private void fetchDockerComposeLogs(String target, Integer projectId, Integer projectJarFileId) {
+    private void fetchDockerComposeLogs(String target, String projectEnglishName) {
         new Thread(() -> {
             boolean keepRunning = true;
             while (keepRunning) {
                 try {
-                    Process process = new ProcessBuilder("vagrant", "ssh", target, "-c", "docker-compose -f "+ vagrantProjectJarFilePath(projectId, projectJarFileId) + "/docker-compose.yml logs -f").directory(new File("/home/hyunjinkim/deployment/scripts/"))
+                    Process process = new ProcessBuilder("docker", "service", "logs", "-f", projectEnglishName+"_"+projectEnglishName)
                             .start();
 
                     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -119,6 +119,7 @@ public class DockerManager {
 
                     int exitCode = process.waitFor();
                     if (exitCode != 0) {
+                        keepRunning = false;
                         System.err.println("Docker Compose logs process terminated unexpectedly on " + target);
                     }
 
@@ -137,9 +138,9 @@ public class DockerManager {
     /**
      * Health check 모니터링. Spring Actuator의 /actuator/health 엔드포인트를 통해 상태 확인.
      */
-    private void monitorHealthCheck(String target, String host, Integer projectId, Integer projectJarFileId) {
+    private void monitorHealthCheck(String target, String englishName, Integer projectId, Integer projectJarFileId) {
         new Thread(() -> {
-            String healthUrl = "http://" + host + ":8080/actuator/health"; // 각 인스턴스의 health check URL
+            String healthUrl = "https://" + englishName+".shooot.shop/actuator/health"; // 각 인스턴스의 health check URL
             try {
                 boolean isRunning = true;
                 while (isRunning) {
@@ -148,7 +149,7 @@ public class DockerManager {
                         System.out.println("[" + target + "] Service is healthy.");
                     } else {
                         System.out.println("[" + target + "] Service is down. Shutting down Docker Compose...");
-                        stopDockerCompose(target, projectId, projectJarFileId);
+                        stopDockerCompose(target,englishName);
                         isRunning = false; // health check 종료
                     }
                     Thread.sleep(5000); // 5초마다 health check
@@ -156,7 +157,7 @@ public class DockerManager {
             } catch (Exception e) {
                 e.printStackTrace();
                 System.err.println("Health check error on " + target + ": " + e.getMessage());
-                stopDockerCompose(target, projectId, projectJarFileId);
+                stopDockerCompose(target, englishName);
             }
         }).start();
     }
@@ -164,9 +165,9 @@ public class DockerManager {
     /**
      * Docker Compose 종료
      */
-    public void stopDockerCompose(String target, Integer projectId, Integer projectJarFileId) {
+    public void stopDockerCompose(String target, String englishName) {
         try {
-            Process process = new ProcessBuilder("vagrant", "ssh", target, "-c", "docker-compose -f " + vagrantProjectJarFilePath(projectId, projectJarFileId) + "/docker-compose.yml" + " down --rmi all").directory(new File("/home/hyunjinkim/deployment/scripts/"))
+            Process process = new ProcessBuilder("docker", "stack", "rm", englishName)
                     .start();
 
             int exitCode = process.waitFor();
@@ -191,7 +192,7 @@ public class DockerManager {
         MetaData metaData = projectDirectoryManager.getMetaData(Path.of(metadataFile.getPath()));
 
         try {
-            Process process = new ProcessBuilder("vagrant", "ssh", metaData.getInstanceName(), "-c", "docker-compose -f " +vagrantProjectJarFilePath(serviceStopDto.getProjectId(), serviceStopDto.getProjectJarFileId()) + "/docker-compose.yml" + "down --rmi all").directory(new File("/home/hyunjinkim/deployment/scripts/"))
+            Process process = new ProcessBuilder("docker", "stack", "rm", metaData.getProjectName())
                     .start();
 
             int exitCode = process.waitFor();
@@ -214,7 +215,4 @@ public class DockerManager {
         redisTemplate.convertAndSend(LOG_CHANNEL, logMessage);
     }
 
-    private String vagrantProjectJarFilePath(Integer projectId, Integer projectJarFileId) {
-        return "/vagrant-instance-volumn/"+ projectId + "/" + projectJarFileId ;
-    }
 }

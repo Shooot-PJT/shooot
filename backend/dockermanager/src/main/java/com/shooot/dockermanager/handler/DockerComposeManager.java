@@ -12,18 +12,13 @@ import org.yaml.snakeyaml.representer.Representer;
 import java.io.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
 public class DockerComposeManager {
 
-    @Value("${vagrant.max-size}")
-    private Integer maxSize;
-
-    public void mergeDockerCompose(File dockerComposeFile, String englishProjectName, int portSuffix) {
-        if(portSuffix < 2 || portSuffix > 2 + maxSize) {
-            throw new IllegalArgumentException("port Suffix는 2이상 maxSize + 2 이하여야 합니다. , : " + portSuffix);
-        }
+    public void mergeDockerCompose(File dockerComposeFile, String englishProjectName, String instanceName) {
 
         // Spring Boot에서 관리하는 Docker Compose 구성 설정
         Map<String, Object> springCompose = new HashMap<>();
@@ -31,9 +26,7 @@ public class DockerComposeManager {
 
         Map<String, Object> projectService = new HashMap<>();
         projectService.put("container_name", englishProjectName);
-        projectService.put("ports", new String[]{"808" + portSuffix + ":8080"});
         projectService.put("restart", "always");
-
 
         Map<String, String> buildConfig = new HashMap<>();
         buildConfig.put("context", ".");
@@ -41,6 +34,8 @@ public class DockerComposeManager {
         projectService.put("build", buildConfig);
 
         Map<String, Object> deployConfig = new HashMap<>();
+        deployConfig.put("replicas", 1);
+        deployConfig.put("constraints", "node.hostname == " + instanceName);
 
         Map<String, Object> restartPolicyConfig = new HashMap<>();
         restartPolicyConfig.put("condition", "on-failure");
@@ -48,14 +43,16 @@ public class DockerComposeManager {
 
         deployConfig.put("restart_policy", restartPolicyConfig);
 
+        projectService.put("networks", List.of("traefik"));
+
         Map<String, String> labels = new HashMap<>();
         labels.put("traefik.enable", "true");
-        labels.put("traefik.http.routers." + englishProjectName + ".rule", "Host(`" + englishProjectName + ".shooot.shop`)");
-        labels.put("traefik.http.routers." + englishProjectName + ".entrypoints", "websecure");
-        labels.put("traefik.http.routers." + englishProjectName + ".loadbalancer.server.port", "808"+portSuffix);
+        labels.put("traefik.http.routers." + englishProjectName+"_"+englishProjectName + ".rule", "Host(`" + englishProjectName + ".shooot.shop`)");
+        labels.put("traefik.http.routers." + englishProjectName+"_"+englishProjectName + ".entrypoints", "websecure");
+        labels.put("traefik.http.services." + englishProjectName+"_"+englishProjectName + ".loadbalancer.server.port", "8080");
 
+        deployConfig.put("labels", labels);
         projectService.put("deploy", deployConfig);
-        projectService.put("labels", labels);
 
         services.put(englishProjectName, projectService);
         springCompose.put("services", services);
@@ -75,6 +72,7 @@ public class DockerComposeManager {
         Map<String, Object> mergedServices = (Map<String, Object>) userCompose.getOrDefault("services", new HashMap<>());
         mergedServices.putAll((Map<String, Object>) springCompose.get("services"));
         userCompose.put("services", mergedServices);
+        userCompose.put("networks", Map.of("traefik", Map.of("external", "true")));
 
         // YAML 파일로 저장
         DumperOptions options = new DumperOptions();
