@@ -7,8 +7,12 @@ import Flexbox from '../../../../../components/Flexbox';
 import Textfield from '../../../../../components/Textfield';
 import { ProjectInfo } from '../../../../MyProject/types';
 import { DomainInfo } from '../Domain.data.types';
-import { AddDomainRequest, EditDomainRequest } from '../types/domain.types';
+
 import Button from '../../../../../components/Button';
+import {
+  AddDomainRequest,
+  EditDomainRequest,
+} from '../../../apis/domain/types';
 
 interface AddDomainModalProps {
   type: 'add' | 'edit';
