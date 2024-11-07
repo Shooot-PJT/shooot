@@ -17,6 +17,7 @@ interface BannerProps extends React.ComponentProps<'div'> {
   editProjectModalHandler: () => void;
   inviteMembersModalHandler: () => void;
   kickMemberModalHandler: () => void;
+  removeProjectModalHandler: () => void;
 }
 
 export const Banner = ({
@@ -29,6 +30,7 @@ export const Banner = ({
   editProjectModalHandler,
   inviteMembersModalHandler,
   kickMemberModalHandler,
+  removeProjectModalHandler,
   ...props
 }: BannerProps) => {
   const { isLarge } = useResize();
@@ -57,6 +59,7 @@ export const Banner = ({
           editProjectModalHandler={editProjectModalHandler}
           inviteMembersModalHandler={inviteMembersModalHandler}
           kickMemberModalHandler={kickMemberModalHandler}
+          removeProjectModalHandler={removeProjectModalHandler}
         />
         <Img src="man" />
         {children}
