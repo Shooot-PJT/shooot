@@ -19,7 +19,7 @@ spring:
     show-sql: true
     open-in-view: false #default : true이기에 수정해야 함.
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
         highlight_sql: true
