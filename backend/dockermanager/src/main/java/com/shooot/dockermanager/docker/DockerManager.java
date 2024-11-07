@@ -86,7 +86,10 @@ public class DockerManager {
 
                 File directory = new File("/home/hyunjinkim/deployment/vagrant-instance-volumn/"+dto.getProjectId() +"/"+dto.getProjectJarFileId()+"/");
 
-                ProcessBuilder imageGenerator = new ProcessBuilder("docker", "build", "-t", project.getEnglishName() +":"+projectBuild.getVersion(), ".");
+                ProcessBuilder imageGenerator = new ProcessBuilder("docker", "build", "-t", "192.168.56.1:5000/" + project.getEnglishName() +":"+projectBuild.getVersion(), ".");
+                imageGenerator.directory(directory);
+
+                ProcessBuilder imagePush = new ProcessBuilder("docker", "push", "192.168.56.1:5000/" + project.getEnglishName() +":"+projectBuild.getVersion());
                 imageGenerator.directory(directory);
 
                 ProcessBuilder processBuilder =  new ProcessBuilder("docker", "stack", "deploy", "-c", "docker-compose.yml", project.getEnglishName());
