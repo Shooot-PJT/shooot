@@ -19,8 +19,10 @@ import { ProjectWriteModal } from '../popups/Banner/ProjectWriteModal/ProjectWri
 import { InviteMembersModal } from '../popups/Banner/InviteMembersModal/InviteMembersModal';
 import { KickMemberModal } from '../popups/Banner/KickMemberModal/KickMemberModal';
 import { ProjectRemoveModal } from '../popups/Banner/ProjectRemoveModal';
+import { useNavigate } from 'react-router-dom';
 export const useNavBar = () => {
   const navbarStore = useNavBarStore();
+  const nav = useNavigate();
   const modal = useModal();
   const popup = usePopup();
   const queryClient = useQueryClient();
@@ -189,7 +191,10 @@ export const useNavBar = () => {
   // 로그아웃
   const handleLogout = async () => {
     await logout()
-      .then(() => queryClient.clear())
+      .then(() => {
+        queryClient.clear();
+        nav('/auth/login');
+      })
       .catch((err) => {
         console.log(err);
         popup.push({
