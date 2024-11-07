@@ -28,7 +28,7 @@ public class ApiTestCaseRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    private ApiTestCaseType type;
+    private ApiTestCaseRequestType type;
 
     @Convert(converter = MapToJsonConverter.class)
     @Column(name = "content")

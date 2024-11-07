@@ -21,7 +21,6 @@ public enum ProjectExceptionConstants implements CustomExceptionDefinition {
         HttpStatus.BAD_REQUEST),
     DUPLICATE_PROJECT_PARTICIPANT("프로젝트 참여자가 이미 존재합니다.", "P009", HttpStatus.CONFLICT),
     PROJECT_INTERNAL_SERVER_ERROR("관리자에게 문의하세요.", "P010", HttpStatus.INTERNAL_SERVER_ERROR);
-
     private final String message;
     private final String code;
     private final HttpStatus statusCode;

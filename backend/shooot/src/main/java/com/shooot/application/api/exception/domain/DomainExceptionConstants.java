@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @Getter
 public enum DomainExceptionConstants implements CustomExceptionDefinition{
-    DOMAIN_NOT_FOUND_EXCEPTION("도메인이 존재하지 않습ㄴ니다.", "D001", HttpStatus.NOT_FOUND),
+    DOMAIN_NOT_FOUND_EXCEPTION("도메인이 존재하지 않습니다.", "D001", HttpStatus.NOT_FOUND),
+    DOMAIN_DELETE_DENIED_EXCEPTION("삭제할 권한이 없습니다", "D002", HttpStatus.FORBIDDEN),
     ;
 
     private final String message;
