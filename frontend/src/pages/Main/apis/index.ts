@@ -64,3 +64,11 @@ export const sendInvitingMail = (projectId: number, userId: number) => {
 export const kickMember = (projectId: number, userId: number) => {
   return api.delete(`/projects/${projectId}/users/${userId}`);
 };
+
+export const logout = () => {
+  return api.delete('/user/logout');
+};
+
+export const removeProject = (projectId: number) => {
+  return api.delete(`/projects/${projectId}`);
+};
