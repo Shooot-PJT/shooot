@@ -79,7 +79,7 @@ public class DockerManager {
 
                 System.out.println("instance : " + target);
                 ProcessBuilder processBuilder =  new ProcessBuilder("docker", "stack", "deploy", "-c", "docker-compose.yml", project.getEnglishName());
-                processBuilder.directory(new File("/home/hyunjinkim/deployment/scripts/"));
+                processBuilder.directory(new File("/"+dto.getProjectId() +"/"+dto.getProjectJarFileId()+"/"));
                 Process process = processBuilder.start();
 
                 int exitCode = process.waitFor();
