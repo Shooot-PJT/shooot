@@ -9,6 +9,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
@@ -31,7 +32,7 @@ public class JsonLoginAuthenticationProvider implements AuthenticationProvider {
 
         //pw 검증
         if(!passwordEncoder.matches(password, userLoginContext.getPassword())){
-            throw new BadCredentialsException("Invalid Password");
+            throw new UsernameNotFoundException("Invalid Password");
         }
 
         /* 여기서 추가 검증 절차 진행 가능 */
