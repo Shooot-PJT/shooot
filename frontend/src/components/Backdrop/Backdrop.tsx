@@ -11,7 +11,7 @@ export interface BackDropProps {
 export const Backdrop = ({
   isClosing,
   opacity = 40,
-  blur = 40,
+  blur = 0,
   children,
 }: BackDropProps) => {
   const backdropRef = useRef<HTMLDivElement>(null);

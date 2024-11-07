@@ -34,6 +34,9 @@ export const AddProjectModal = ({ handleRender }: AddProjectModalProps) => {
       });
     } else if (state === 'End' || state === 'Error') {
       modal.pop();
+      if (state === 'Error') {
+        setState('None');
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
@@ -113,7 +116,11 @@ export const AddProjectModal = ({ handleRender }: AddProjectModalProps) => {
         <Button
           paddingX={2}
           paddingY={1}
-          disabled={!validationFiles['jar'] || !validationFiles['yml']}
+          disabled={
+            !validationFiles['jar'] ||
+            !validationFiles['yml'] ||
+            state === 'Pending'
+          }
           color="primary"
           onClick={handleSubmit}
         >
