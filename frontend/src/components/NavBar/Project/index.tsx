@@ -48,55 +48,102 @@ export const Project = ({ addProjectModalHandler }: ProjectProps) => {
   return (
     <>
       {projectsListQuery.data.data.length ? (
-        <div className="slider-container">
-          <Slider
-            ref={(slider) => (sliderRef.current = slider)}
-            speed={500}
-            slidesToShow={1}
-            slidesToScroll={1}
-            afterChange={(current) => {
-              navbarStore.setProject(
-                projectsListQuery.data.data[current].projectId,
-              );
-            }}
-          >
-            {projectsListQuery.data.data.map((info) => (
-              <div key={info.name}>
+        <>
+          {projectsListQuery.data.data.length === 1 ? (
+            <Flexbox
+              justifyContents="start"
+              alignItems="center"
+              style={{
+                columnGap: '1rem',
+                padding: '1rem',
+                borderRadius: '0.5rem',
+                backgroundColor: theme.color.background['200'],
+              }}
+            >
+              <img
+                src={projectsListQuery.data.data[0].logoImageUrl}
+                className={style.logo}
+              />
+              <div>
+                <Typography weight="700">
+                  {projectsListQuery.data.data[0].name}
+                </Typography>
                 <Flexbox
                   justifyContents="start"
                   alignItems="center"
                   style={{
-                    columnGap: '1rem',
-                    padding: '1rem',
-                    borderRadius: '0.5rem',
+                    columnGap: '0.125rem',
+                    margin: '0.25rem 0 0 0',
                     backgroundColor: theme.color.background['200'],
                   }}
                 >
-                  <img src={info.logoImageUrl} className={style.logo} />
-                  <div>
-                    <Typography weight="700">{info.name}</Typography>
-                    <Flexbox
-                      justifyContents="start"
-                      alignItems="center"
-                      style={{
-                        columnGap: '0.125rem',
-                        margin: '0.25rem 0 0 0',
-                        backgroundColor: theme.color.background['200'],
-                      }}
-                    >
-                      <Icon color="disabled" background="none" size={1}>
-                        <HiUser />
-                      </Icon>
-                      <Typography size={0.875} weight="700" color="disabled">
-                        {info.userCount}명
-                      </Typography>
-                    </Flexbox>
-                  </div>
+                  <Icon color="disabled" background="none" size={1}>
+                    <HiUser />
+                  </Icon>
+                  <Typography size={0.875} weight="700" color="disabled">
+                    {projectsListQuery.data.data[0].userCount}명
+                  </Typography>
                 </Flexbox>
               </div>
-            ))}
-          </Slider>
-        </div>
+            </Flexbox>
+          ) : (
+            <>
+              <div className="slider-container">
+                <Slider
+                  ref={(slider) => (sliderRef.current = slider)}
+                  speed={500}
+                  slidesToShow={1}
+                  slidesToScroll={1}
+                  afterChange={(current) => {
+                    navbarStore.setProject(
+                      projectsListQuery.data.data[current].projectId,
+                    );
+                  }}
+                >
+                  {projectsListQuery.data.data.map((info) => (
+                    <div key={info.name}>
+                      <Flexbox
+                        justifyContents="start"
+                        alignItems="center"
+                        style={{
+                          columnGap: '1rem',
+                          padding: '1rem',
+                          borderRadius: '0.5rem',
+                          backgroundColor: theme.color.background['200'],
+                        }}
+                      >
+                        <img src={info.logoImageUrl} className={style.logo} />
+                        <div>
+                          <Typography weight="700">{info.name}</Typography>
+                          <Flexbox
+                            justifyContents="start"
+                            alignItems="center"
+                            style={{
+                              columnGap: '0.125rem',
+                              margin: '0.25rem 0 0 0',
+                              backgroundColor: theme.color.background['200'],
+                            }}
+                          >
+                            <Icon color="disabled" background="none" size={1}>
+                              <HiUser />
+                            </Icon>
+                            <Typography
+                              size={0.875}
+                              weight="700"
+                              color="disabled"
+                            >
+                              {info.userCount}명
+                            </Typography>
+                          </Flexbox>
+                        </div>
+                      </Flexbox>
+                    </div>
+                  ))}
+                </Slider>
+              </div>
+            </>
+          )}
+        </>
       ) : (
         <Flexbox
           flexDirections="col"
