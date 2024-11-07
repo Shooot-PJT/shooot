@@ -35,7 +35,7 @@ public class DummyDataBuilder implements ApplicationListener<ContextRefreshedEve
 
 
     private void createDummyProjectBuild() {
-        createProjectBuildIfNotNull(1, 1, "/home/hyunjinkim/deployment/dummy/dummy/build/libs/dummy-0.0.1-SNAPSHOT.jar", "/home/hyunjinkim/deployment/dummy/dummy/docker-compose.yml");
+        createProjectBuildIfNotNull(2, 2, "/home/hyunjinkim/deployment/dummy/dummy/build/libs/dummy-0.0.1-SNAPSHOT.jar", "/home/hyunjinkim/deployment/dummy/dummy/docker-compose.yml");
     }
 
 
