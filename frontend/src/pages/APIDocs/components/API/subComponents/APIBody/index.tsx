@@ -8,6 +8,7 @@ import {
 import { useAPIContext } from '../../API';
 import ManagerAvatar from '../APICommon/ManagerAvatar/ManagerAvatar';
 import * as s from './index.css';
+import { RequestDocs } from './RequestDocs/RequestDocs';
 import { TestCase, TestCaseList } from './TestCase/TestCase';
 import { TestLogBox } from './TestLogBox/TestLogBox';
 
@@ -107,21 +108,59 @@ export const Body = () => {
               </Button>
             </Flexbox>
           </Flexbox>
-          {/* 1.2 RIGHT: 테스트케이스 리스트 섹션*/}
+          {/* 1.2 RIGHT: API 요청 정의서 & 테스트케이스 리스트 섹션*/}
+
           <Flexbox
             style={{
               flexGrow: 1,
             }}
           >
-            {/*  */}
-            <TestCaseList>
-              {testCaseSummaryList.map((item: TestCaseHeaderInfo) => (
-                <TestCase key={item.id} testCaseHeaderInfo={item}>
-                  <TestCase.Header />
-                  <TestCase.Body />
-                </TestCase>
-              ))}
-            </TestCaseList>
+            <Flexbox
+              flexDirections="col"
+              style={{ gap: '3rem', width: '100%' }}
+            >
+              {/* 1.2.1 RIGHT-TOP: API 요청 정의서  */}
+              {/* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ */}
+              <Typography
+                style={{
+                  textAlign: 'start',
+                  fontSize: '1.4rem',
+                  fontWeight: '600',
+                }}
+              >
+                API 요청 정의서
+              </Typography>
+              {/* Request Docs 컴포넌트 */}
+              {/* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ */}
+              <RequestDocs />
+              {/* HORIZONTAL DIVIDER */}
+              <div
+                style={{
+                  width: '100%',
+                  height: '0.125rem',
+                  backgroundColor: 'red',
+                }}
+              />
+              {/* 1.2.2 RIGHT-BOTTOM: 테스트케이스 리스트 섹션*/}
+              <Typography
+                style={{
+                  textAlign: 'start',
+                  fontSize: '1.4rem',
+                  fontWeight: '600',
+                }}
+              >
+                테스트 케이스
+              </Typography>
+
+              <TestCaseList>
+                {testCaseSummaryList.map((item: TestCaseHeaderInfo) => (
+                  <TestCase key={item.id} testCaseHeaderInfo={item}>
+                    <TestCase.Header />
+                    <TestCase.Body />
+                  </TestCase>
+                ))}
+              </TestCaseList>
+            </Flexbox>
 
             {/*  */}
           </Flexbox>
