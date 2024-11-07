@@ -12,6 +12,8 @@ import Flexbox from '../../../../../components/Flexbox';
 import Button from '../../../../../components/Button';
 import Textfield from '../../../../../components/Textfield';
 import { ProjectInfo } from '../../../../MyProject/types';
+import { HiExclamationTriangle } from 'react-icons/hi2';
+import Icon from '../../../../../components/Icon';
 
 interface ProjectWriteModalProps {
   type?: 'add' | 'edit';
@@ -185,9 +187,19 @@ export const ProjectWriteModal = ({
           />
         </Flexbox>
         <Flexbox flexDirections="col" style={{ rowGap: '0.25rem' }}>
-          <Typography weight="600" size={0.875} color="disabled">
-            프로젝트 영문명
-          </Typography>
+          <Flexbox alignItems="center" style={{ columnGap: '0.5rem' }}>
+            <Typography weight="600" size={0.875} color="disabled">
+              프로젝트 영문명
+            </Typography>
+            <Flexbox style={{ columnGap: '0.25rem' }}>
+              <Icon size={0.8125} background="none" color="secondary">
+                <HiExclamationTriangle />
+              </Icon>
+              <Typography weight="500" size={0.8125} color="secondary">
+                영문명은 수정이 불가능합니다
+              </Typography>
+            </Flexbox>
+          </Flexbox>
           <Textfield
             ref={englishName}
             ratio={5.5}
