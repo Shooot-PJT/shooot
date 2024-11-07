@@ -9,7 +9,7 @@ import { HiPlus, HiUser } from 'react-icons/hi2';
 import theme from '../../../styles/theme.css';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { getMyProjectList } from '../../../pages/MyProject/apis';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavBarStore } from '../../../stores/navbarStore';
 
 interface ProjectProps {
@@ -18,6 +18,7 @@ interface ProjectProps {
 
 export const Project = ({ addProjectModalHandler }: ProjectProps) => {
   const navbarStore = useNavBarStore();
+  const sliderRef = useRef<Slider | null>(null);
   const projectsListQuery = useSuspenseQuery({
     queryKey: ['project-list'],
     queryFn: async () => await getMyProjectList(),
@@ -27,6 +28,14 @@ export const Project = ({ addProjectModalHandler }: ProjectProps) => {
   if (projectsListQuery.error && !projectsListQuery.isFetching) {
     throw projectsListQuery.error;
   }
+
+  useEffect(() => {
+    projectsListQuery.data.data.forEach((project, idx: number) => {
+      if (navbarStore.project === project.projectId) {
+        sliderRef.current?.slickGoTo(idx);
+      }
+    });
+  }, [projectsListQuery]);
 
   useEffect(() => {
     navbarStore.setProject(
@@ -41,6 +50,7 @@ export const Project = ({ addProjectModalHandler }: ProjectProps) => {
       {projectsListQuery.data.data.length ? (
         <div className="slider-container">
           <Slider
+            ref={(slider) => (sliderRef.current = slider)}
             speed={500}
             slidesToShow={1}
             slidesToScroll={1}
