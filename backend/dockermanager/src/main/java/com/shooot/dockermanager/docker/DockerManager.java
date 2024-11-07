@@ -101,7 +101,7 @@ public class DockerManager {
     }
 
     private void buildAndDeployDockerImage(Project project, ProjectBuild projectBuild, String target) throws IOException, InterruptedException {
-        File directory = new File("/home/hyunjinkim/deployment/vagrant-instance-volumn/" + project.getEnglishName() + "/" + projectBuild.getVersion());
+        File directory = new File("/home/hyunjinkim/deployment/vagrant-instance-volumn/" + project.getId() + "/" + projectBuild.getId());
         executeProcess(new ProcessBuilder("docker", "build", "-t", project.getEnglishName() + ":" + projectBuild.getVersion(), ".").directory(directory), "Docker build image", target);
         executeProcess(new ProcessBuilder("docker", "tag", project.getEnglishName() + ":" + projectBuild.getVersion(), "192.168.56.1:5000/" + project.getEnglishName() + ":" + projectBuild.getVersion()), "Docker image tag", target);
         executeProcess(new ProcessBuilder("docker", "push", "192.168.56.1:5000/" + project.getEnglishName() + ":" + projectBuild.getVersion()), "Docker image push", target);
