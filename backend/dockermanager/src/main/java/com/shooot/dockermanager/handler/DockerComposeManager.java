@@ -25,17 +25,14 @@ public class DockerComposeManager {
         Map<String, Object> services = new HashMap<>();
 
         Map<String, Object> projectService = new HashMap<>();
-        projectService.put("container_name", englishProjectName);
         projectService.put("restart", "always");
 
         Map<String, String> buildConfig = new HashMap<>();
-        buildConfig.put("context", ".");
-        buildConfig.put("dockerfile", "Dockerfile");
-        projectService.put("build", buildConfig);
-
+        projectService.put("build", "./");
+        projectService.put("image", englishProjectName+":latest");
         Map<String, Object> deployConfig = new HashMap<>();
         deployConfig.put("replicas", 1);
-        deployConfig.put("constraints", "node.hostname == " + instanceName);
+        deployConfig.put("placement", Map.of("constraints", "node.hostname == " + instanceName));
 
         Map<String, Object> restartPolicyConfig = new HashMap<>();
         restartPolicyConfig.put("condition", "on-failure");
@@ -72,8 +69,8 @@ public class DockerComposeManager {
         Map<String, Object> mergedServices = (Map<String, Object>) userCompose.getOrDefault("services", new HashMap<>());
         mergedServices.putAll((Map<String, Object>) springCompose.get("services"));
         userCompose.put("services", mergedServices);
-        userCompose.put("networks", Map.of("traefik", Map.of("external", "true")));
-
+        userCompose.put("networks", Map.of("traefik", Map.of("external", true)));
+        userCompose.put("version", "3.8");
         // YAML 파일로 저장
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
