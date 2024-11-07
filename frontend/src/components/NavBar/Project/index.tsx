@@ -54,8 +54,10 @@ export const Project = ({ addProjectModalHandler }: ProjectProps) => {
               justifyContents="start"
               alignItems="center"
               style={{
-                columnGap: '1rem',
+                width: '50%',
+                boxSizing: 'border-box',
                 padding: '1rem',
+                columnGap: '1rem',
                 borderRadius: '0.5rem',
                 backgroundColor: theme.color.background['200'],
               }}
