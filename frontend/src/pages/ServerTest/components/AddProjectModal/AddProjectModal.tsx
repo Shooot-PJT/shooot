@@ -1,35 +1,45 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Button from '../../../../components/Button';
 import Flexbox from '../../../../components/Flexbox';
-import Textfield from '../../../../components/Textfield';
 import Typography from '../../../../components/Typography';
 import useModal from '../../../../hooks/useModal';
 import usePopup from '../../../../hooks/usePopup';
 import { UploadFile } from '../UploadFile/UploadFile';
 import * as s from './AddProjectModal.css';
-export const AddProjectModal = () => {
+import { useNavBarStore } from '../../../../stores/navbarStore';
+import { uploadJarFile } from '../../apis';
+import { UploadingModal } from '../UploadingModal/UploadingModal';
+import { useUploadStateStore } from '../../stores/useUploadStateStore';
+
+interface AddProjectModalProps {
+  handleRender: () => void;
+}
+
+export const AddProjectModal = ({ handleRender }: AddProjectModalProps) => {
   const [validationFiles, setValidationFiles] = useState<
     Record<string, boolean>
   >({ projectId: false, jar: false, yml: false });
   const jarRef = useRef<HTMLInputElement>(null);
   const ymlRef = useRef<HTMLInputElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   const modal = useModal();
   const popup = usePopup();
 
-  const handlevalidationText = () => {
-    if (inputRef.current && inputRef.current.value.length > 0) {
-      setValidationFiles((prev) => ({
-        ...prev,
-        ['projectId']: true,
-      }));
-    } else {
-      setValidationFiles((prev) => ({
-        ...prev,
-        ['projectId']: false,
-      }));
+  const { project } = useNavBarStore();
+  const { state, setState } = useUploadStateStore();
+
+  useEffect(() => {
+    if (state === 'Pending') {
+      modal.push({
+        children: <UploadingModal />,
+      });
+    } else if (state === 'End' || state === 'Error') {
+      modal.pop();
+      if (state === 'Error') {
+        setState('None');
+      }
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
 
   const handlevalidateFile = (extension: string, requireExtension: string) => {
     if (extension === requireExtension) {
@@ -46,14 +56,33 @@ export const AddProjectModal = () => {
   };
 
   const handleSubmit = () => {
-    if (jarRef.current?.files && ymlRef.current?.files) {
-      console.log(jarRef.current.files[0]);
-      console.log(ymlRef.current.files[0]);
-      popup.push({
-        title: '프로젝트 추가 결과',
-        type: 'success',
-        children: '업로드 되었습니다.',
-      });
+    if (
+      jarRef.current &&
+      jarRef.current.files &&
+      ymlRef.current &&
+      ymlRef.current.files
+    ) {
+      const request = {
+        projectId: project,
+        jarFile: jarRef.current.files[0],
+        dockerComposeFile: ymlRef.current.files[0],
+      };
+      setState('Pending');
+      uploadJarFile(request)
+        .then(() => {
+          setState('End');
+          modal.pop();
+          handleRender();
+        })
+        .catch((error) => {
+          setState('Error');
+          popup.push({
+            title: '업로드 실패',
+            children: error.response.data.message,
+            type: 'fail',
+          });
+          console.error(error);
+        });
     }
   };
 
@@ -65,16 +94,7 @@ export const AddProjectModal = () => {
       >
         <Typography size={1.5}>프로젝트 추가</Typography>
         <Flexbox flexDirections="col" style={{ gap: '0.25rem' }}>
-          <Typography>프로젝트 ID</Typography>
-          <Textfield
-            ratio={4}
-            ref={inputRef}
-            onChange={handlevalidationText}
-            type="number"
-          />
-        </Flexbox>
-        <Flexbox flexDirections="col" style={{ gap: '0.25rem' }}>
-          <Typography style={{ marginBottom: '0.5rem' }}>Jar파일</Typography>
+          <Typography style={{ marginBottom: '0.5rem' }}>Jar 파일</Typography>
           <UploadFile
             requiredExtension="jar"
             handlevalidationFile={handlevalidateFile}
@@ -97,9 +117,9 @@ export const AddProjectModal = () => {
           paddingX={2}
           paddingY={1}
           disabled={
-            !validationFiles['projectId'] ||
             !validationFiles['jar'] ||
-            !validationFiles['yml']
+            !validationFiles['yml'] ||
+            state === 'Pending'
           }
           color="primary"
           onClick={handleSubmit}

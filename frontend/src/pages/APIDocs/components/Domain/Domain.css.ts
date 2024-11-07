@@ -1,5 +1,17 @@
 import { recipe } from '@vanilla-extract/recipes';
+import { keyframes } from '@vanilla-extract/css';
 import colorPalette from '../../../../styles/colorPalette';
+
+const popIn = keyframes({
+  '0%': {
+    opacity: 0,
+    transform: 'scale(0.85)',
+  },
+  '100%': {
+    opacity: 1,
+    transform: 'scale(1)',
+  },
+});
 
 export const BellSubscriptionRecipe = recipe({
   base: {
@@ -33,6 +45,7 @@ export const BellSubscriptionRecipe = recipe({
 
 export const domainContainerRecipe = recipe({
   base: {
+    animation: `${popIn} 300ms ease-in-out`,
     transition: 'all 0.2s ease-in-out',
     border: '0.05rem solid',
     borderColor: colorPalette.grey[500],
