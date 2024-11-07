@@ -6,6 +6,8 @@ import { Banner } from '../Banner';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useResize } from '../../hooks/useResize';
 import { useNavBar } from '../../pages/Main/hooks/useNavBar';
+import Button from '../Button';
+import Typography from '../Typography';
 
 interface LayoutProps extends React.ComponentProps<'div'> {
   children: ReactNode;
@@ -23,12 +25,14 @@ export const Layout = ({ children, ...props }: LayoutProps) => {
     editProjectModalHandler,
     inviteMembersModalHandler,
     kickMemberModalHandler,
+    handleLogout,
+    removeProjectModalHandler,
   } = useNavBar();
 
   return (
     <div className={style.layout} {...props}>
       <NavBar>
-        <NavBar.Title />
+        <NavBar.Title handleLogout={handleLogout} />
         <div className={style.nav}>
           <ErrorBoundary fallback={<>에러</>}>
             <Suspense fallback={<>로딩중</>}>
@@ -38,6 +42,20 @@ export const Layout = ({ children, ...props }: LayoutProps) => {
           <div className={style.divi} />
           <NavBar.Menu />
         </div>
+        {isLarge && (
+          <div style={{ width: '90%', margin: '5rem auto -2rem auto' }}>
+            <Button
+              color="grey"
+              fullWidth
+              paddingY={0.75}
+              onClick={async () => await handleLogout()}
+            >
+              <Typography color="disabled" size={0.8125}>
+                로그아웃
+              </Typography>
+            </Button>
+          </div>
+        )}
       </NavBar>
       <div style={{ width: '100%' }}>
         <Flexbox
@@ -59,6 +77,7 @@ export const Layout = ({ children, ...props }: LayoutProps) => {
             editProjectModalHandler={editProjectModalHandler}
             inviteMembersModalHandler={inviteMembersModalHandler}
             kickMemberModalHandler={kickMemberModalHandler}
+            removeProjectModalHandler={removeProjectModalHandler}
           />
           {children}
         </Flexbox>
