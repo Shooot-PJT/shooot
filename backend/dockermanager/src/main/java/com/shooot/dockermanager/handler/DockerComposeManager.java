@@ -27,7 +27,7 @@ public class DockerComposeManager {
 
         Map<String, Object> projectService = new HashMap<>();
         projectService.put("restart", "always");
-
+        projectService.put("ports", List.of("808"+Integer.parseInt(instanceName.replace("instance", ""))+":8080"));
         Map<String, String> buildConfig = new HashMap<>();
         projectService.put("build", "./");
         projectService.put("image", englishProjectName+":"+projectVersion.toString());
