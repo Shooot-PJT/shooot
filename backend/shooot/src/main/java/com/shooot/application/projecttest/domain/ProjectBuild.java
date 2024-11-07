@@ -39,9 +39,6 @@ public class ProjectBuild extends SoftDeleteEntity {
     @Column(name = "md5_check_sum")
     private String md5CheckSum;
 
-    @Setter
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "projectBuild", cascade = CascadeType.ALL)
-    private ProjectFile projectFile;
 
     @OneToMany(mappedBy = "projectBuild", cascade = CascadeType.ALL)
     private List<ProjectBuildLog> projectBuildLog;
