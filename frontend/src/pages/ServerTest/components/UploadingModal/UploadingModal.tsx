@@ -18,6 +18,7 @@ export const UploadingModal = () => {
         setState('None');
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   return (
