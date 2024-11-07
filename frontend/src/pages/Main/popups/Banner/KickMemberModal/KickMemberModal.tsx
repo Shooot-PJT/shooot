@@ -7,16 +7,19 @@ import { CustomTooltip } from '../../../../../components/CustomToolTip';
 import Button from '../../../../../components/Button';
 import useModal from '../../../../../hooks/useModal';
 import { ConfirmKickModal } from './ConfirmKickModal';
+import { UserInfo } from '../../../types';
 
 interface KickMemberModalProps {
   projectId: number;
   memberInfo: ProjectMember[];
+  userInfo: UserInfo;
   popHandler: () => void;
 }
 
 export const KickMemberModal = ({
   projectId,
   memberInfo,
+  userInfo,
   popHandler,
 }: KickMemberModalProps) => {
   const modal = useModal();
@@ -50,28 +53,32 @@ export const KickMemberModal = ({
         style={{ rowGap: '1rem', padding: '0 1rem' }}
       >
         {memberInfo.map((member) => (
-          <Flexbox justifyContents="between" alignItems="center">
-            {/* 프로필 */}
-            <Flexbox alignItems="center" style={{ columnGap: '1rem' }}>
-              <CustomTooltip title={member.email}>
-                <div>
-                  <Icon color="primary">
-                    <HiUser />
-                  </Icon>
-                </div>
-              </CustomTooltip>
-              <Typography size={0.875} weight="700">
-                {member.nickname}
-              </Typography>
-            </Flexbox>
+          <>
+            {member.email !== userInfo.email && (
+              <Flexbox justifyContents="between" alignItems="center">
+                {/* 프로필 */}
+                <Flexbox alignItems="center" style={{ columnGap: '1rem' }}>
+                  <CustomTooltip title={member.email}>
+                    <div>
+                      <Icon color="primary">
+                        <HiUser />
+                      </Icon>
+                    </div>
+                  </CustomTooltip>
+                  <Typography size={0.875} weight="700">
+                    {member.nickname}
+                  </Typography>
+                </Flexbox>
 
-            {/* 추방 버튼 */}
-            <Button color="delete" onClick={() => kickHandler(member)}>
-              <Typography size={0.8125} weight="600">
-                추방
-              </Typography>
-            </Button>
-          </Flexbox>
+                {/* 추방 버튼 */}
+                <Button color="delete" onClick={() => kickHandler(member)}>
+                  <Typography size={0.8125} weight="600">
+                    추방
+                  </Typography>
+                </Button>
+              </Flexbox>
+            )}
+          </>
         ))}
       </Flexbox>
     </Flexbox>

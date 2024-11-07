@@ -191,6 +191,7 @@ export const useNavBar = () => {
         <KickMemberModal
           projectId={projectInfo.data!.data.projectId}
           memberInfo={memberInfo.data!.data}
+          userInfo={userInfo.data!.data}
           popHandler={modalPopHandler}
         />
       ),
