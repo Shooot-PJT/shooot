@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS project_participant;
 DROP TABLE IF EXISTS project;
 DROP TABLE IF EXISTS notification;
 DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS api_test_case;
 
 CREATE TABLE user
 (
@@ -57,6 +58,7 @@ CREATE TABLE domain
     domain_description TEXT        NOT NULL,
     created_at         DATETIME    NOT NULL,
     modified_at        DATETIME    NOT NULL,
+    is_deleted         BOOL        NOT NULL,
     FOREIGN KEY (project_id) REFERENCES project (project_id)
 );
 
@@ -67,16 +69,28 @@ CREATE TABLE api
     api_manager_id  INTEGER     NOT NULL,
     api_title       VARCHAR(30) NOT NULL,
     api_description TEXT        NOT NULL,
-    method          VARCHAR(10) NOT NULL,
-    url             TEXT        NOT NULL,
+    method          VARCHAR(10),
+    url             TEXT,
     created_at      DATETIME    NOT NULL,
     modified_at     DATETIME    NOT NULL,
     is_real_server  BOOL        NOT NULL,
     is_secure       BOOL        NOT NULL,
+    is_deleted      BOOL        NOT NULL,
     test_status     VARCHAR(10),
     FOREIGN KEY (api_domain_id) REFERENCES domain (api_domain_id),
     FOREIGN KEY (api_manager_id) REFERENCES project_participant (project_participant_id)
 );
+
+CREATE TABLE api_test_case
+(
+    api_test_case_id INTEGER NOT NULL,
+    api_id INTEGER NOT NULL,
+    test_title VARCHAR(20) NOT NULL,
+    http_case_status VARCHAR(30) NOT NULL,
+    modified_at DATETIME NOT NULL,
+    is_deleted BOOL NOT NULL,
+    created_at DATETIME NOT NULL
+)
 
 CREATE TABLE api_subscribe
 (
