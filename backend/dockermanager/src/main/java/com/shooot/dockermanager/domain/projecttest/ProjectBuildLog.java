@@ -24,7 +24,7 @@ public class ProjectBuildLog extends BaseEntity {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_build_file_id")
+    @JoinColumn(name = "project_build_id")
     private ProjectBuild projectBuild;
 
     @Column(name = "status")
