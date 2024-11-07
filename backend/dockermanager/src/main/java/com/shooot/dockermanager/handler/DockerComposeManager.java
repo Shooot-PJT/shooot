@@ -1,6 +1,7 @@
 package com.shooot.dockermanager.handler;
 
 
+import com.shooot.dockermanager.domain.projecttest.ProjectVersion;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.DumperOptions;
@@ -18,7 +19,7 @@ import java.util.Map;
 @Component
 public class DockerComposeManager {
 
-    public void mergeDockerCompose(File dockerComposeFile, String englishProjectName, String instanceName) {
+    public void mergeDockerCompose(File dockerComposeFile, String englishProjectName, String instanceName, ProjectVersion projectVersion) {
 
         // Spring Boot에서 관리하는 Docker Compose 구성 설정
         Map<String, Object> springCompose = new HashMap<>();
@@ -29,7 +30,7 @@ public class DockerComposeManager {
 
         Map<String, String> buildConfig = new HashMap<>();
         projectService.put("build", "./");
-        projectService.put("image", englishProjectName+":latest");
+        projectService.put("image", englishProjectName+":"+projectVersion.toString());
         Map<String, Object> deployConfig = new HashMap<>();
         deployConfig.put("replicas", 1);
         deployConfig.put("placement", Map.of("constraints", List.of("node.hostname == " + instanceName)));

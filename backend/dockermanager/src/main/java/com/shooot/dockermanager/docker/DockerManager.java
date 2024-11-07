@@ -1,7 +1,9 @@
 package com.shooot.dockermanager.docker;
 
 import com.shooot.dockermanager.domain.projecttest.Project;
+import com.shooot.dockermanager.domain.projecttest.ProjectBuild;
 import com.shooot.dockermanager.domain.projecttest.ProjectFile;
+import com.shooot.dockermanager.domain.projecttest.repository.ProjectBuildRepository;
 import com.shooot.dockermanager.domain.projecttest.repository.ProjectFileRepository;
 import com.shooot.dockermanager.domain.projecttest.repository.ProjectRepository;
 import com.shooot.dockermanager.dto.ServiceStartDto;
@@ -31,6 +33,7 @@ public class DockerManager {
     private final VagrantRepository vagrantRepository;
     private final ProjectFileRepository projectFileRepository;
     private final ProjectRepository projectRepository;
+    private final ProjectBuildRepository projectBuildRepository;
 
     private static final Map<String, String> hosts = Map.of("instance1", "192.168.56.10", "instance2", "192.168.56.11", "instance3", "192.168.56.12", "instance4", "192.168.56.13");
     private static final String LOG_CHANNEL = "docker_logs";
@@ -62,6 +65,8 @@ public class DockerManager {
             try {
                 ProjectFile projectFile = projectFileRepository.findById(dto.getProjectJarFileId()).orElseThrow(IllegalArgumentException::new);
                 Project project = projectRepository.findByProjectJarFileId(dto.getProjectJarFileId()).orElseThrow(IllegalArgumentException::new);
+                ProjectBuild projectBuild = projectBuildRepository.findById(dto.getProjectJarFileId()).orElseThrow(IllegalArgumentException::new);
+
                 projectDirectoryManager.mkDir(dto.getProjectId(), dto.getProjectJarFileId());
 
                 projectDirectoryManager.setFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE, projectFile.getDockerComposeFile());
@@ -75,11 +80,23 @@ public class DockerManager {
                 FileOutputStream fileOutputStream = new FileOutputStream(copyDir);
                 fileOutputStream.write(fileInputStream.readAllBytes());
 
-                dockerComposeManager.mergeDockerCompose(projectDirectoryManager.getFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE).orElseThrow(IllegalArgumentException::new), project.getEnglishName(), target);
+                dockerComposeManager.mergeDockerCompose(projectDirectoryManager.getFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE).orElseThrow(IllegalArgumentException::new), project.getEnglishName(), target, projectBuild.getVersion());
 
                 System.out.println("instance : " + target);
+
+                File directory = new File("/home/hyunjinkim/deployment/vagrant-instance-volumn/"+dto.getProjectId() +"/"+dto.getProjectJarFileId()+"/");
+
+                ProcessBuilder imageGenerator = new ProcessBuilder("docker", "build", "-t", project.getEnglishName() +":"+projectBuild.getVersion(), ".");
+                imageGenerator.directory(directory);
+
                 ProcessBuilder processBuilder =  new ProcessBuilder("docker", "stack", "deploy", "-c", "docker-compose.yml", project.getEnglishName());
-                processBuilder.directory(new File("/home/hyunjinkim/deployment/vagrant-instance-volumn/"+dto.getProjectId() +"/"+dto.getProjectJarFileId()+"/"));
+                processBuilder.directory(directory);
+
+                int imageBuildExitCode = imageGenerator.start().waitFor();
+                if(imageBuildExitCode != 0) {
+                    throw new RuntimeException(imageBuildExitCode + "Error occurred while starting Docker build image on instance " + target);
+                }
+
                 Process process = processBuilder.start();
 
                 int exitCode = process.waitFor();
@@ -89,7 +106,7 @@ public class DockerManager {
 
                 // Health check 및 로그 모니터링 시작
                 fetchDockerComposeLogs(target, project.getEnglishName());
-                monitorHealthCheck(target, hosts.get(target), dto.getProjectId(), dto.getProjectJarFileId());
+                monitorHealthCheck(target, project.getEnglishName());
             } catch (Exception e) {
                 e.printStackTrace();
                 System.err.println("Error on " + target + ": " + e.getMessage());
@@ -138,7 +155,7 @@ public class DockerManager {
     /**
      * Health check 모니터링. Spring Actuator의 /actuator/health 엔드포인트를 통해 상태 확인.
      */
-    private void monitorHealthCheck(String target, String englishName, Integer projectId, Integer projectJarFileId) {
+    private void monitorHealthCheck(String target, String englishName) {
         new Thread(() -> {
             String healthUrl = "https://" + englishName+".shooot.shop/actuator/health"; // 각 인스턴스의 health check URL
             try {

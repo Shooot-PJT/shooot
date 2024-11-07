@@ -49,7 +49,7 @@ public class ProjectVersion implements Serializable {
     }
 
 
-    private String getVersion() {
+    public String toString() {
         return major + "." + minor + "." + patch + (temporary == 0 ? "" : "-" + temporary);
     }
 }
