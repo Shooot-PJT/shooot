@@ -9,14 +9,19 @@ import { UserInfo } from '../../../types';
 import { Chip } from '../../../components/Chip';
 import { findMember, sendInvitingMail } from '../../../apis';
 import usePopup from '../../../../../hooks/usePopup';
+import { ProjectMember } from '../../../../MyProject/types';
 
 interface InviteMembersModalProps {
   projectId: number;
+  userInfo: UserInfo;
+  memberInfo: ProjectMember[];
   popHandler: () => void;
 }
 
 export const InviteMembersModal = ({
   projectId,
+  userInfo,
+  memberInfo,
   popHandler,
 }: InviteMembersModalProps) => {
   const popup = usePopup();
@@ -35,11 +40,32 @@ export const InviteMembersModal = ({
       .catch(() => setResult(undefined));
   };
   const addTarget = (info: UserInfo) => {
-    setTargets((prev) => {
-      const before = [...prev];
-      before.push(info);
-      return before;
-    });
+    if (info.email === userInfo.email) {
+      popup.push({
+        title: '팀원 초대',
+        children: <Typography>본인은 초대할 수 없습니다.</Typography>,
+        type: 'fail',
+      });
+    } else {
+      let res = true;
+      memberInfo.forEach((member: ProjectMember) => {
+        if (member.email === info.email) res = false;
+      });
+
+      if (res) {
+        setTargets((prev) => {
+          const before = [...prev];
+          before.push(info);
+          return before;
+        });
+      } else {
+        popup.push({
+          title: '팀원 초대',
+          children: <Typography>이미 소속된 팀원입니다.</Typography>,
+          type: 'fail',
+        });
+      }
+    }
   };
   const exceptTarget = (idx: number) => {
     setTargets((prev) => {
@@ -49,25 +75,33 @@ export const InviteMembersModal = ({
     });
   };
   const sendMail = async () => {
-    targets.forEach(async (t: UserInfo, idx: number) => {
-      await sendInvitingMail(projectId, t.userId)
-        .then(() => {
-          if (idx + 1 === targets.length) {
+    if (targets.length) {
+      targets.forEach(async (t: UserInfo, idx: number) => {
+        await sendInvitingMail(projectId, t.userId)
+          .then(() => {
+            if (idx + 1 === targets.length) {
+              popup.push({
+                title: '메일 전송',
+                children: <Typography>초대 메일을 전송하였습니다.</Typography>,
+                onClose: () => popHandler(),
+              });
+            }
+          })
+          .catch(() => {
             popup.push({
-              title: '메일 전송',
-              children: <Typography>초대 메일을 전송하였습니다.</Typography>,
-              onClose: () => popHandler(),
+              title: '메일 전송 실패',
+              children: <Typography>메일 전송에 실패하였습니다.</Typography>,
+              type: 'fail',
             });
-          }
-        })
-        .catch(() => {
-          popup.push({
-            title: '메일 전송 실패',
-            children: <Typography>메일 전송에 실패하였습니다.</Typography>,
-            type: 'fail',
           });
-        });
-    });
+      });
+    } else {
+      popup.push({
+        title: '메일 전송 실패',
+        children: <Typography>초대할 사람이 없습니다.</Typography>,
+        type: 'fail',
+      });
+    }
   };
 
   return (
