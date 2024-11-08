@@ -11,12 +11,14 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { getMyProjectList } from '../../../pages/MyProject/apis';
 import { useEffect, useRef } from 'react';
 import { useNavBarStore } from '../../../stores/navbarStore';
+import { useResize } from '../../../hooks/useResize';
 
 interface ProjectProps {
   addProjectModalHandler: () => void;
 }
 
 export const Project = ({ addProjectModalHandler }: ProjectProps) => {
+  const { isLarge } = useResize();
   const navbarStore = useNavBarStore();
   const sliderRef = useRef<Slider | null>(null);
   const projectsListQuery = useSuspenseQuery({
@@ -54,7 +56,7 @@ export const Project = ({ addProjectModalHandler }: ProjectProps) => {
               justifyContents="start"
               alignItems="center"
               style={{
-                width: '50%',
+                width: isLarge ? '90%' : '50%',
                 boxSizing: 'border-box',
                 padding: '1rem',
                 columnGap: '1rem',
