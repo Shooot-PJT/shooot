@@ -1,87 +1,16 @@
-import { checkProjectName, checkServiceWorker, getAxiosConfigs } from "./utils";
 import axios from "axios";
-
-const sw = {};
-
-// 설정 변수 등록
-sw.projectName = "";
-sw.delay = 0;
-sw.axios = {};
-
-// 변수 설정 함수
-sw.setConfigs = async function setConfigs(projectName, delay) {
-    const projectNameRegex = /^[a-z0-9-]{1,20}$/;
-
-    // 비어있거나 정규식에 맞지 않는 project name
-    if (!projectName.trim().length || !projectNameRegex.test(projectName)) {
-        console.error("사용 불가능한 projectName 입니다");
-    } else {
-        const canUse = await checkProjectName(projectName); // 사용 가능한지 확인
-        if (canUse === "AVAILABLE") {
-            // 사용 가능
-            this.projectName = projectName;
-            if (delay) this.delay = delay;
-
-            // service worker 에게 정보 전달
-            const swState = await checkServiceWorker();
-            if (swState) {
-                console.log("[SW]:", navigator.serviceWorker);
-                await navigator.serviceWorker.ready.then((registration) => {
-                    registration.active.postMessage({
-                        type: "SET_CONFIGS",
-                        projectName: this.projectName,
-                        delay: this.delay,
-                    });
-                });
-            } else {
-                // 전달 실패
-                console.warn("활성화된 Service Worker 가 없습니다");
-            }
-        } else if (canUse === "UNAVAILABLE") {
-            console.error(`${projectName} 프로젝트가 존재하지 않습니다`);
-        }
-    }
-};
-
-// service worker 등록 함수
-sw.register = async function registerServiceWorker() {
-    if ("serviceWorker" in navigator) {
-        try {
-            const registration = await navigator.serviceWorker.register("/service-worker.js");
-            console.log("Service Worker 등록 범위:", registration.scope);
-        } catch (error) {
-            console.error("Service Worker 등록 실패:", error);
-        }
-    } else {
-        console.warn("Service Workers 를 지원하지 않는 브라우저입니다");
-    }
-};
-
-// service worker 등록 해제 함수
-sw.unregister = async function unregisterServiceWorker() {
-    if ("serviceWorker" in navigator) {
-        try {
-            const registration = await navigator.serviceWorker.getRegistration();
-            if (registration) {
-                await registration.unregister();
-                console.log("Service Worker 등록 해제");
-            } else {
-                console.warn("등록 해제할 Service Worker 가 없습니다");
-            }
-        } catch (error) {
-            console.error("Service Worker 등록 해제 실패:", error);
-        }
-    } else {
-        console.warn("Service Workers 를 지원하지 않는 브라우저입니다");
-    }
-};
-
-// service worker 가 실행시키는 custom axios
+import { checkDomain, checkProjectName, checkServiceWorker, getAxiosConfigs } from "./utils";
 
 const methods = ["get", "post", "put", "patch", "delete"];
+const shooot = {};
+
+shooot.projectName = "";
+shooot.delay = 0;
+shooot.axios = {};
+
 Object.keys(axios).forEach((v) => {
     if (!methods.includes(v)) {
-        sw.axios[v] = axios[v];
+        shooot.axios[v] = axios[v];
     }
 });
 
@@ -91,22 +20,23 @@ Object.keys(axios).forEach((v) => {
  * @template R - AxiosResponse 타입
  * @template D - AxiosRequestConfig 데이터 타입
  * @param {string} url - 요청 url
- * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
  * @param {import('axios').AxiosRequestConfig<D>} [config] - 기존 axios 에서 사용하던 config
+ * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
  * @returns {Promise<R>} - 요청 결과를 포함한 AxiosResponse
  */
-sw.axios.get = async function (url, pathVariables, config) {
+shooot.axios.get = async function (url, config = {}, pathVariables = {}) {
     let to = url;
     if (pathVariables) {
         Object.keys(pathVariables).forEach((k) => (to += `/${pathVariables[k]}`));
     }
-    console.log("[To]:", to);
 
-    const swState = await checkServiceWorker();
-    console.log("[SW-State]:", swState);
-    const newConfig = swState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log(swState ? "[Mock Config]:" : "[Real Config]:", newConfig);
-
+    const swState = await checkServiceWorker("Axios-Get");
+    const domainState = checkDomain(to, shooot.projectName);
+    const newConfig =
+        swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
+    console.log("[Axios-Get]==========");
+    console.log("[Axios-Get]: url", to);
+    console.log("[Axios-Get]: newConfig", newConfig);
     return axios.get(to, newConfig);
 };
 
@@ -116,22 +46,26 @@ sw.axios.get = async function (url, pathVariables, config) {
  * @template R - AxiosResponse 타입
  * @template D - AxiosRequestConfig 데이터 타입
  * @param {string} url - 요청 url
- * @param {any} data - 담아 보낼 data
- * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
+ * @param {any | undefined} data - 담아 보낼 data
  * @param {import('axios').AxiosRequestConfig<D>} [config] - 기존 axios 에서 사용하던 config
+ * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
  * @returns {Promise<R>} - 요청 결과를 포함한 AxiosResponse
  */
-sw.axios.post = async function (url, data, pathVariables, config) {
+shooot.axios.post = async function (url, data = {}, config = {}, pathVariables = {}) {
     let to = url;
     if (pathVariables) {
         Object.keys(pathVariables).forEach((k) => (to += `/${pathVariables[k]}`));
     }
-    console.log("[To]:", to);
 
-    const swState = await checkServiceWorker();
-    const newConfig = swState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log(swState ? "[Mock Config]:" : "[Real Config]:", newConfig);
-
+    const swState = await checkServiceWorker("Axios-Post");
+    const domainState = checkDomain(to, shooot.projectName);
+    const newConfig =
+        swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
+    console.log("[Axios-Post]==========");
+    console.log("[Axios-Post]: url", to);
+    console.log("[Axios-Post]: newConfig", newConfig);
+    console.log("[Axios-Post]: data");
+    Object.keys(data).forEach((v) => console.log(`(${v} : ${data[v]})`));
     return axios.post(to, data, newConfig);
 };
 
@@ -141,47 +75,54 @@ sw.axios.post = async function (url, data, pathVariables, config) {
  * @template R - AxiosResponse 타입
  * @template D - AxiosRequestConfig 데이터 타입
  * @param {string} url - 요청 url
- * @param {any} data - 담아 보낼 data
- * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
+ * @param {any | undefined} data - 담아 보낼 data
  * @param {import('axios').AxiosRequestConfig<D>} [config] - 기존 axios 에서 사용하던 config
+ * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
  * @returns {Promise<R>} - 요청 결과를 포함한 AxiosResponse
  */
-sw.axios.put = async function (url, data, pathVariables, config) {
+shooot.axios.put = async function (url, data = {}, config = {}, pathVariables = {}) {
     let to = url;
     if (pathVariables) {
         Object.keys(pathVariables).forEach((k) => (to += `/${pathVariables[k]}`));
     }
-    console.log("[To]:", to);
 
-    const swState = await checkServiceWorker();
-    const newConfig = swState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log(swState ? "[Mock Config]:" : "[Real Config]:", newConfig);
-
+    const swState = await checkServiceWorker("Axios-Put");
+    const domainState = checkDomain(to, shooot.projectName);
+    const newConfig =
+        swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
+    console.log("[Axios-Put]==========");
+    console.log("[Axios-Put]: url", to);
+    console.log("[Axios-Put]: newConfig", newConfig);
+    console.log("[Axios-Put]: data");
+    Object.keys(data).forEach((v) => console.log(`(${v} : ${data[v]})`));
     return axios.put(to, data, newConfig);
 };
-
 /**
  * Custom PATCH request
  * @template T - 응답 데이터 타입
  * @template R - AxiosResponse 타입
  * @template D - AxiosRequestConfig 데이터 타입
  * @param {string} url - 요청 url
- * @param {any} data - 담아 보낼 data
- * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
+ * @param {any | undefined} data - 담아 보낼 data
  * @param {import('axios').AxiosRequestConfig<D>} [config] - 기존 axios 에서 사용하던 config
+ * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
  * @returns {Promise<R>} - 요청 결과를 포함한 AxiosResponse
  */
-sw.axios.patch = async function (url, data, pathVariables, config) {
+shooot.axios.patch = async function (url, data = {}, config = {}, pathVariables = {}) {
     let to = url;
     if (pathVariables) {
         Object.keys(pathVariables).forEach((k) => (to += `/${pathVariables[k]}`));
     }
-    console.log("[To]:", to);
 
-    const swState = await checkServiceWorker();
-    const newConfig = swState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log(swState ? "[Mock Config]:" : "[Real Config]:", newConfig);
-
+    const swState = await checkServiceWorker("Axios-Patch");
+    const domainState = checkDomain(to, shooot.projectName);
+    const newConfig =
+        swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
+    console.log("[Axios-Patch]==========");
+    console.log("[Axios-Patch]: url", to);
+    console.log("[Axios-Patch]: newConfig", newConfig);
+    console.log("[Axios-Patch]: data");
+    Object.keys(data).forEach((v) => console.log(`(${v} : ${data[v]})`));
     return axios.patch(to, data, newConfig);
 };
 
@@ -191,22 +132,101 @@ sw.axios.patch = async function (url, data, pathVariables, config) {
  * @template R - AxiosResponse 타입
  * @template D - AxiosRequestConfig 데이터 타입
  * @param {string} url - 요청 url
- * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
  * @param {import('axios').AxiosRequestConfig<D>} [config] - 기존 axios 에서 사용하던 config
+ * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
  * @returns {Promise<R>} - 요청 결과를 포함한 AxiosResponse
  */
-sw.axios.delete = async function (url, pathVariables, config) {
+shooot.axios.delete = async function (url, config = {}, pathVariables = {}) {
     let to = url;
     if (pathVariables) {
         Object.keys(pathVariables).forEach((k) => (to += `/${pathVariables[k]}`));
     }
-    console.log("[To]:", to);
 
-    const swState = await checkServiceWorker();
-    const newConfig = swState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log(swState ? "[Mock Config]:" : "[Real Config]:", newConfig);
-
+    const swState = await checkServiceWorker("Axios-Delete");
+    const domainState = checkDomain(to, shooot.projectName);
+    const newConfig =
+        swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
+    console.log("[Axios-Delete]==========");
+    console.log("[Axios-Delete]: url", to);
+    console.log("[Axios-Delete]: newConfig", newConfig);
     return axios.delete(to, newConfig);
 };
 
-export default sw;
+shooot.register = async function () {
+    console.log("[Register]==========");
+    if ("serviceWorker" in navigator) {
+        try {
+            await navigator.serviceWorker.register("/service-worker.js");
+            console.log(`[Register]: service worker 등록 완료`);
+        } catch (error) {
+            console.error("[Register]: service worker 등록에 실패하였습니다");
+        }
+    } else {
+        console.warn("[Register]: service worker 지원하지 않는 브라우저입니다");
+    }
+};
+
+shooot.unregister = async function () {
+    console.log("[UnRegister]==========");
+    if ("serviceWorker" in navigator) {
+        try {
+            const registration = await navigator.serviceWorker.getRegistration();
+            if (registration) {
+                await registration.unregister();
+                console.log("[UnRegister]: service worker 등록 해제하였습니다");
+            } else {
+                console.warn("[UnRegister]: 등록 해제할 service worker 가 없습니다");
+            }
+        } catch (error) {
+            console.error("[UnRegister]: service worker 등록 해제를 실패하였습니다");
+        }
+    } else {
+        console.warn("[UnRegister]: service worker 지원하지 않는 브라우저입니다");
+    }
+};
+
+shooot.controller = async function (mode) {
+    if (process.env.NODE_ENV === (mode ? mode : "development")) {
+        await this.register();
+    } else {
+        await this.unregister();
+    }
+};
+
+shooot.setConfigs = async function (projectName, delay) {
+    const projectNameRegex = /^[a-z0-9-]{1,20}$/;
+
+    console.log("[Set-Config]==========");
+    if (!projectName) {
+        console.error("[Set-Config]: projectName 을 입력해주세요");
+    } else if (!projectName.trim().length || !projectNameRegex.test(projectName.trim())) {
+        console.error("[Set-Config]: projectName 은 1자 이상 20자 이하 소문자, 숫자, '-' 로 구성되어야 합니다");
+    } else {
+        // 등록된 프로젝트인지 확인
+        const pn = projectName.trim();
+        const canUse = await checkProjectName(pn);
+
+        // 등록된 프로젝트
+        if (canUse === "AVAILABLE") {
+            const checkServiceWorkerResult = await checkServiceWorker("Set-Config");
+            if (checkServiceWorkerResult) {
+                shooot.projectName = projectName;
+                shooot.delay = delay;
+
+                const message = {
+                    type: "SET_CONFIGS",
+                    projectName: shooot.projectName,
+                    delay: shooot.delay,
+                };
+
+                checkServiceWorkerResult.active.postMessage(message);
+                console.log(`[Set-Config]: message 를 전달했습니다`);
+            }
+        } else if (canUse === "UNAVAILABLE") {
+            // 등록되지 않은 프로젝트
+            console.error(`[Set-Config]: 존재하지 않는 프로젝트입니다`);
+        }
+    }
+};
+
+export default shooot;
