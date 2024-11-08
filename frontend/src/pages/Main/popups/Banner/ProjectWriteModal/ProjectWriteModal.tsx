@@ -12,6 +12,8 @@ import Flexbox from '../../../../../components/Flexbox';
 import Button from '../../../../../components/Button';
 import Textfield from '../../../../../components/Textfield';
 import { ProjectInfo } from '../../../../MyProject/types';
+import { HiExclamationTriangle } from 'react-icons/hi2';
+import Icon from '../../../../../components/Icon';
 
 interface ProjectWriteModalProps {
   type?: 'add' | 'edit';
@@ -47,11 +49,19 @@ export const ProjectWriteModal = ({
   const addProject = () => {
     const file = logoImg.current!.files![0];
 
-    if (
-      validateName(name.current!.value.trim()) &&
-      validateEnglishName(englishName.current!.value.trim()) &&
-      file
-    ) {
+    if (!validateName(name.current!.value.trim()) || !file) {
+      popup.push({
+        title: '생성 실패',
+        children: <Typography>모든 정보를 제대로 입력해주세요.</Typography>,
+        type: 'fail',
+      });
+    } else if (!validateEnglishName(englishName.current!.value.trim())) {
+      popup.push({
+        title: '생성 실패',
+        children: <Typography>올바른 영문명 형식이 아닙니다.</Typography>,
+        type: 'fail',
+      });
+    } else {
       const logo = new File([file], file.name, { type: file.type });
 
       addHandler!({
@@ -59,12 +69,6 @@ export const ProjectWriteModal = ({
         englishName: englishName.current!.value.trim(),
         memo: memo.current!.value.trim(),
         logo: logo,
-      });
-    } else {
-      popup.push({
-        title: '생성 실패',
-        children: <Typography>모든 정보를 제대로 입력해주세요</Typography>,
-        type: 'fail',
       });
     }
   };
@@ -180,14 +184,24 @@ export const ProjectWriteModal = ({
             ratio={5.5}
             size={2.5}
             fullWidth
-            placeholder="한글 이름"
+            placeholder="프로젝트 이름"
             defaultValue={type === 'add' ? '' : projectInfo?.name}
           />
         </Flexbox>
         <Flexbox flexDirections="col" style={{ rowGap: '0.25rem' }}>
-          <Typography weight="600" size={0.875} color="disabled">
-            프로젝트 영문명
-          </Typography>
+          <Flexbox alignItems="center" style={{ columnGap: '0.5rem' }}>
+            <Typography weight="600" size={0.875} color="disabled">
+              프로젝트 영문명
+            </Typography>
+            <Flexbox style={{ columnGap: '0.25rem' }}>
+              <Icon size={0.8125} background="none" color="secondary">
+                <HiExclamationTriangle />
+              </Icon>
+              <Typography weight="500" size={0.8125} color="secondary">
+                영문명은 수정이 불가능합니다
+              </Typography>
+            </Flexbox>
+          </Flexbox>
           <Textfield
             ref={englishName}
             ratio={5.5}

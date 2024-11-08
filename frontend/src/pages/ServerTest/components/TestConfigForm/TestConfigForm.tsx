@@ -35,7 +35,7 @@ export const TestConfigForm = ({
           <Textfield
             ratio={2}
             ref={userInputRef}
-            value={vuser}
+            value={vuser || 10}
             type="number"
             onChange={(e) => onChange('vuserNum', Number(e.target.value))}
           />
@@ -58,7 +58,7 @@ export const TestConfigForm = ({
           <Textfield
             ratio={2}
             ref={testTimeRef}
-            value={duration}
+            value={duration || 1}
             type="number"
             onChange={(e) => onChange('duration', Number(e.target.value))}
           />
