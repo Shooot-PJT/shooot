@@ -19,7 +19,7 @@ spring:
     show-sql: true
     open-in-view: false #default : true이기에 수정해야 함.
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         highlight_sql: true
@@ -27,7 +27,7 @@ spring:
         default_batch_fetch_size: 1000
   sql:
     init:
-      mode: never
+      mode: always
   servlet:
     multipart:
       max-file-size: 1000MB
