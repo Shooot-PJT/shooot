@@ -151,9 +151,9 @@ public class SecurityConfig {
         });
 
         http.authorizeHttpRequests(
-            (auth) -> auth.requestMatchers("/", "/auth/**", "/admin/**", "/health-check",
-                    "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .anyRequest().authenticated());
+//            (auth) -> auth.requestMatchers("/", "/auth/**", "/admin/**", "/health-check",
+//                    "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+            (auth) -> auth.anyRequest().permitAll());
         http.addFilterAt(jsonLoginAuthenticationFilter(authenticationManager),
             UsernamePasswordAuthenticationFilter.class);
         http.sessionManagement(httpSecuritySessionManagementConfigurer -> {
