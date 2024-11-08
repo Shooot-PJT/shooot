@@ -5,6 +5,8 @@ import { ProjectTable } from './components/ProjectTable/ProjectTable';
 import { getJarFiles } from './apis';
 import { convertDataTable, convertJarFileIdList } from './utils';
 import { useState } from 'react';
+import { RecentTest } from './components/RecentTest/RecentTest';
+import Flexbox from '../../components/Flexbox';
 
 const consoleData = [
   '[INFO] 10:00:01 - 서버가 시작되었습니다.',
@@ -76,31 +78,38 @@ export const ServerTest = () => {
   });
 
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridAutoRows: '1fr 1fr',
-        width: '100%',
-        gap: '2rem',
-        marginTop: '1rem',
-      }}
+    <Flexbox
+      flexDirections="col"
+      style={{ gap: '5rem', marginLeft: '1rem', marginRight: '1rem' }}
     >
-      <div style={{ gridRow: '1/2', width: '100%', marginLeft: '1rem' }}>
-        <ProjectTable
-          tableData={convertDataTable(jarFiles)}
-          idList={convertJarFileIdList(jarFiles)}
-          handleRender={handleRender}
-        />
-      </div>
       <div
         style={{
-          gridRow: '1/2',
-          marginTop: '0.5rem',
-          marginRight: '1rem',
+          display: 'grid',
+          gridAutoRows: '1fr 1fr',
+          width: '100%',
+          gap: '2rem',
+          marginTop: '1rem',
         }}
       >
-        <Console data={consoleData} />
+        <div style={{ gridRow: '1/2', width: '100%' }}>
+          <ProjectTable
+            tableData={convertDataTable(jarFiles)}
+            idList={convertJarFileIdList(jarFiles)}
+            handleRender={handleRender}
+          />
+        </div>
+        <div
+          style={{
+            gridRow: '1/2',
+            marginTop: '0.5rem',
+          }}
+        >
+          <Console data={consoleData} />
+        </div>
       </div>
-    </div>
+      <div style={{}}>
+        <RecentTest />
+      </div>
+    </Flexbox>
   );
 };

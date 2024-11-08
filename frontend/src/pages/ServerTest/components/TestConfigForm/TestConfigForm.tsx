@@ -70,7 +70,7 @@ export const TestConfigForm = ({
               fontWeight: '700',
             }}
           >
-            분
+            초
           </div>
         </div>
       </div>
