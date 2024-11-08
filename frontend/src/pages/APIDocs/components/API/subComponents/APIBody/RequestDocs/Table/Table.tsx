@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import * as styles from './Table.css';
 import CellTextField from './CellTextfield/CellTextfield';
 import DropdownMenu from './DropdownMenu/DropdownMenu';
+import Icon from '../../../../../../../../components/Icon';
+import { FaPlus } from 'react-icons/fa';
 
 interface ParamBase {
   key: string;
@@ -169,10 +171,11 @@ export const Table = <T extends Param>({
         </tbody>
       </table>
       {isEditMode && (
-        <div className={styles.addButtonContainer}>
-          <button className={styles.addButton} onClick={handleAddRow}>
-            +
-          </button>
+        <div className={styles.addButtonContainer} onClick={handleAddRow}>
+          {/* <button className={styles.addButton} > */}
+          <Icon background="none" color="light">
+            <FaPlus />
+          </Icon>
         </div>
       )}
     </div>

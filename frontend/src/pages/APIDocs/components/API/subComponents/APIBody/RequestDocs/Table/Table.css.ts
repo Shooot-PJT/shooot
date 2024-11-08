@@ -1,4 +1,16 @@
-import { style } from '@vanilla-extract/css';
+import { keyframes, style } from '@vanilla-extract/css';
+import colorPalette from '../../../../../../../../styles/colorPalette';
+
+const popIn = keyframes({
+  '0%': {
+    opacity: 0,
+    transform: 'scale(0.85)',
+  },
+  '100%': {
+    opacity: 1,
+    transform: 'scale(1)',
+  },
+});
 
 export const tableStyle = style({
   width: '100%',
@@ -15,6 +27,7 @@ export const headerCellStyle = style({
 });
 
 export const rowStyle = style({
+  animation: `${popIn} 0.15s ease-in-out`,
   backgroundColor: '#444',
   transition: 'background-color 0.25s ease-in-out',
 });
@@ -51,24 +64,14 @@ export const requiredCellStyle = style([cellStyle, { width: '10%' }]);
 export const descriptionCellStyle = style([cellStyle, { width: '60%' }]);
 
 export const addButtonContainer = style({
-  display: 'flex',
-  justifyContent: 'center',
-  padding: '8px',
-});
-
-export const addButton = style({
-  width: '32px',
-  height: '32px',
-  borderRadius: '50%',
-  backgroundColor: '#333',
-  color: '#fff',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
   cursor: 'pointer',
-  fontSize: '24px',
-  border: 'none',
-  outline: 'none',
+  animation: `${popIn} 0.15s ease-in-out`,
+  display: 'flex',
+  justifyContent: 'center',
+  width: '100%',
+  backgroundColor: colorPalette.grey[800],
+  padding: '0.6rem 0rem',
+  borderRadius: '0rem 0rem 0.5rem 0.5rem',
   transition: 'background-color 0.25s ease-in-out',
   ':hover': {
     backgroundColor: '#555',
