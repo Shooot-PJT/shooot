@@ -1,5 +1,6 @@
 package com.shooot.application.api.domain;
 
+import com.shooot.application.api.service.query.test.dto.ApiTestLogInfiniteResponse;
 import com.shooot.application.common.jpa.SoftDeleteEntity;
 import com.shooot.application.common.jpa.uuid.UUIDv7;
 import com.shooot.application.project.domain.ProjectParticipant;
@@ -21,7 +22,7 @@ import java.util.UUID;
 public class ApiTestLog extends SoftDeleteEntity {
     @Id
     @GeneratedValue
-    @Column(name = "api_test_log")
+    @Column(name = "api_test_log_id")
     @UUIDv7
     private UUID id;
 
@@ -46,4 +47,17 @@ public class ApiTestLog extends SoftDeleteEntity {
     @Column(name = "http_header")
     @Lob
     private String httpHeader;
+
+    public static ApiTestLogInfiniteResponse from(ApiTestLog apiTestLog){
+        return ApiTestLogInfiniteResponse.builder()
+                .id(apiTestLog.getId())
+                .projectId(apiTestLog.getProjectParticipant().getId())
+                .tester(apiTestLog.getProjectParticipant().getUser().getNickname())
+                .testCaseId(apiTestLog.getApiTestCase().getId())
+                .isSuccess(apiTestLog.getIsSuccess())
+                .httpStatus(apiTestLog.getHttpStatus())
+                .httpBody(apiTestLog.getHttpBody())
+                .httpHeader(apiTestLog.getHttpHeader())
+                .build();
+    }
 }

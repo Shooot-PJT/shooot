@@ -114,8 +114,6 @@ public class ParticipantCheckInterceptor implements HandlerInterceptor {
         Api api = apiRepository.findByIdWithDomainAndProject(apiId)
                 .orElseThrow(ApiNotFoundException::new);
 
-        System.out.println("apiapiapiapai = " + api.getDomain().getProject().getId());
-
         ProjectParticipant projectParticipant = projectParticipantRepository.findByProjectIdAndUserId(api.getDomain().getProject().getId(), userId);
 
         return projectParticipant != null;

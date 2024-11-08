@@ -14,19 +14,29 @@ import java.util.UUID;
 
 public interface ApiTestLogRepository extends JpaRepository<ApiTestLog, UUID> {
 
-//    Slice<> findFilteredTestLog()
+//    @Query("SELECT log FROM ApiTestLog log " +
+//            "WHERE log.apiTestCase IN (" +
+//            "    SELECT tc FROM ApiTestCase tc " +
+//            "    WHERE tc.api.id = :apiId" +
+//            ") " +
+//            "AND log.createdAt = (" +
+//            "    SELECT MAX(l.createdAt) " +
+//            "    FROM ApiTestLog l " +
+//            "    WHERE l.apiTestCase IN (" +
+//            "        SELECT tc FROM ApiTestCase tc WHERE tc.api.id = :apiId" +
+//            "    )" +
+//            ")")
+//    Optional<ApiTestLog> findLatestTestLogByApiId(@Param("apiId") Integer apiId);
 
-    @Query("SELECT log FROM ApiTestLog log " +
-            "WHERE log.apiTestCase IN (" +
-            "    SELECT tc FROM ApiTestCase tc " +
-            "    WHERE tc.api.id = :apiId" +
-            ") " +
-            "AND log.createdAt = (" +
-            "    SELECT MAX(l.createdAt) " +
-            "    FROM ApiTestLog l " +
-            "    WHERE l.apiTestCase IN (" +
-            "        SELECT tc FROM ApiTestCase tc WHERE tc.api.id = :apiId" +
-            "    )" +
-            ")")
+    @Query("SELECT l FROM ApiTestLog l " +
+            "JOIN FETCH l.apiTestCase c " +
+            "JOIN FETCH c.api a " +
+            "WHERE l.createdAt = (" +
+            "SELECT MAX(l2.createdAt) " +
+            "FROM ApiTestLog l2 " +
+            "WHERE l.apiTestCase.api.id = :apiId " +
+            ") "
+    )
     Optional<ApiTestLog> findLatestTestLogByApiId(@Param("apiId") Integer apiId);
+
 }

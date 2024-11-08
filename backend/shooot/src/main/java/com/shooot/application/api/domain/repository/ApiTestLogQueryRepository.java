@@ -5,11 +5,16 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.shooot.application.api.domain.ApiTestLog;
 import com.shooot.application.api.domain.QApiTestLog;
 import com.shooot.application.api.service.command.test.dto.TestLogSearchRequest;
+import com.shooot.application.api.service.query.test.dto.ApiTestLogInfiniteResponse;
+import com.shooot.application.project.domain.Project;
+import com.shooot.application.project.domain.ProjectParticipant;
+import com.shooot.application.project.domain.repository.ProjectParticipantRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,7 +29,8 @@ public class ApiTestLogQueryRepository {
         this.query = new JPAQueryFactory(em);
     }
 
-    public Slice<ApiTestLog> getTestLogs(TestLogSearchRequest testLogSearchRequest, Pageable pageable){
+    @Transactional
+    public Slice<ApiTestLogInfiniteResponse> getTestLogs(TestLogSearchRequest testLogSearchRequest, Pageable pageable){
         List<ApiTestLog> results = query
                 .select(apiTestLog)
                 .from(apiTestLog)
@@ -39,7 +45,12 @@ public class ApiTestLogQueryRepository {
                 .orderBy(apiTestLog.id.desc())
                 .fetch();
 
-        return new SliceImpl<>(results, pageable, hasNextPage(results, pageable.getPageSize()));
+        List<ApiTestLogInfiniteResponse> infiniteResponseList = results.stream()
+                .limit(pageable.getPageSize())
+                .map(ApiTestLog::from)
+                .toList();
+
+        return new SliceImpl<>(infiniteResponseList, pageable, hasNextPage(results, pageable.getPageSize()));
 
     }
 
@@ -84,6 +95,5 @@ public class ApiTestLogQueryRepository {
 
         return condition;
     }
-
 
 }
