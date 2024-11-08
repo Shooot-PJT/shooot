@@ -4,41 +4,58 @@ export const checkProjectName = async (projectName) => {
         const data = await response.json();
         return data.canUse;
     } catch (error) {
-        console.error("[checkProjectName Error]:", error);
+        console.error("[Set-Config]:", error);
         return "ERROR";
     }
 };
 
-export const checkServiceWorker = async () => {
+export const checkServiceWorker = async (keyword) => {
     if ("serviceWorker" in navigator) {
         try {
             const registration = await navigator.serviceWorker.getRegistration();
-            if (registration) {
-                console.log("Service Worker 가 확인되었습니다");
-                return true;
+            if (registration.active.state === "activated") {
+                console.log(`[${keyword}]: service worker 확인되었습니다`);
+                return registration;
             } else {
-                console.error("등록된 Service Worker 가 존재하지 않습니다");
+                console.log(`[${keyword}]: service worker controller 가 확인되지 않습니다`);
                 return false;
             }
         } catch (error) {
-            console.error("Service Worker 확인 실패");
+            console.error(`[${keyword}]: service worker 확인에 실패했습니다`);
             return false;
         }
     } else {
-        console.warn("Service Worker 를 지원하지 않는 브라우저입니다");
+        console.warn(`[${keyword}]: service worker 지원하지 않는 브라우저입니다`);
         return false;
     }
 };
 
+export const checkDomain = (to, domain) => {
+    const url = new URL(to);
+    if (url.origin.split(/[/.]/).includes(domain)) return true;
+    else return false;
+};
+
 export const getAxiosConfigs = (pathVariables, config) => {
-    let axiosConfigs = {};
+    let axiosConfigs = { ...config, params: {} };
     if (config) {
-        axiosConfigs = { ...config, params: {} };
-        if (config.params) axiosConfigs.params["requestParameters"] = { ...config.params };
-        if (pathVariables) axiosConfigs.params["pathVariables"] = { ...pathVariables };
+        if (config.params) {
+            const rps = {};
+            Object.keys(config.params).forEach((v) => (rps[v] = config.params[v]));
+            axiosConfigs.params["requestParameters"] = JSON.stringify(rps);
+        }
+        if (pathVariables) {
+            const pvs = {};
+            Object.keys(pathVariables).forEach((v) => (pvs[v] = pathVariables[v]));
+            axiosConfigs.params["pathVariables"] = JSON.stringify(pvs);
+        }
     } else {
         axiosConfigs = {};
-        if (pathVariables) axiosConfigs.params["pathVariables"] = { ...pathVariables };
+        if (pathVariables) {
+            const pvs = {};
+            Object.keys(pathVariables).forEach((v) => (pvs[v] = pathVariables[v]));
+            axiosConfigs.params["pathVariables"] = JSON.stringify(pvs);
+        }
     }
     return axiosConfigs;
 };
