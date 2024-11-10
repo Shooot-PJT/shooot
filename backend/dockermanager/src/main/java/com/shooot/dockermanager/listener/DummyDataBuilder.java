@@ -35,7 +35,7 @@ public class DummyDataBuilder implements ApplicationListener<ContextRefreshedEve
 
 
     private void createDummyProjectBuild() {
-        createProjectBuildIfNotNull(31, 2, "/home/hyunjinkim/deployment/dummy/dummy/build/libs/dummy-0.0.1-SNAPSHOT.jar", "/home/hyunjinkim/deployment/dummy/dummy/docker-compose.yml");
+        createProjectBuildIfNotNull(2, 2, "/home/hyunjinkim/deployment/dummy/dummy/build/libs/dummy-0.0.1-SNAPSHOT.jar", "/home/hyunjinkim/deployment/dummy/dummy/docker-compose.yml");
     }
 
 
@@ -57,7 +57,7 @@ public class DummyDataBuilder implements ApplicationListener<ContextRefreshedEve
         int temporaryVersion = 0;
         projectVersion.setTemporary(temporaryVersion);
 
-        ProjectBuild projectBuild = createProjectBuild(id, project, projectFileName, projectVersion, jarFileChecksum);
+        ProjectBuild projectBuild = createProjectBuild(project, projectFileName, projectVersion, jarFileChecksum);
         ProjectFile projectFile = createProjectFile(jarFile, dockerFile, projectBuild);
 
         projectBuild.setProjectFile(projectFile);
@@ -90,9 +90,8 @@ public class DummyDataBuilder implements ApplicationListener<ContextRefreshedEve
                 .orElseThrow(() -> new IllegalArgumentException("Project not found with ID: " + projectId));
     }
 
-    private ProjectBuild createProjectBuild(Integer id, Project project, String fileName, ProjectVersion version, String md5CheckSum) {
+    private ProjectBuild createProjectBuild(Project project, String fileName, ProjectVersion version, String md5CheckSum) {
         return ProjectBuild.builder()
-                .id(id)
                 .fileName(fileName)
                 .version(version)
                 .isDeployment(false)

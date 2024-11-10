@@ -152,7 +152,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(
             (auth) -> auth.requestMatchers("/", "/auth/**", "/admin/**", "/health-check",
-                    "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                    "/swagger-ui/**", "/v3/api-docs/**", "/projects/invitations/**").permitAll()
                 .anyRequest().authenticated());
         http.addFilterAt(jsonLoginAuthenticationFilter(authenticationManager),
             UsernamePasswordAuthenticationFilter.class);

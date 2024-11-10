@@ -1,5 +1,7 @@
 package com.shooot.application.api.domain;
 
+import com.shooot.application.api.service.command.test.dto.ApiTestCaseModifyRequest;
+import com.shooot.application.common.jpa.SoftDeleteEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table
 @Entity
-public class ApiTestCase {
+public class ApiTestCase extends SoftDeleteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "api_test_case_id")
@@ -32,7 +34,29 @@ public class ApiTestCase {
     @Column(name = "http_status_code")
     private HttpStatus httpStatus;
 
-    @Column(name = "description")
-    private String description;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "test_case_status")
+    private ApiTestStatusType testCaseStatus;
+
+    @LastModifiedDate
+    @Column(name = "modified_at")
+    private LocalDateTime modifiedAt;
+
+    @Override
+    public void prePersistAction(){
+        if(testCaseStatus == null){
+            this.testCaseStatus = ApiTestStatusType.YET;
+        }
+    }
+
+    public void update(ApiTestCaseModifyRequest apiTestCaseModifyRequest){
+        if(apiTestCaseModifyRequest.getTitle() != null){
+            this.title = apiTestCaseModifyRequest.getTitle();
+        }
+
+        if(apiTestCaseModifyRequest.getExpectHttpStatus() != null){
+            this.httpStatus = HttpStatus.valueOf(apiTestCaseModifyRequest.getExpectHttpStatus());
+        }
+    }
 
 }
