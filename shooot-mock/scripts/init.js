@@ -22,4 +22,4 @@ if (!fs.existsSync(targetDir)) {
 
 // 파일 복사
 fs.copyFileSync(sourceFile, targetPath);
-console.log(`[결과]: 'sw.js' 파일이 ${targetDir}에 성공적으로 복사되었습니다.`);
+console.log(`[결과]: 'service-worker.js' 파일이 ${targetDir}에 성공적으로 복사되었습니다.`);
