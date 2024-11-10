@@ -1,13 +1,10 @@
 package com.shooot.dockermanager.config;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
-import org.springframework.stereotype.Service;
 
 public class RedisConfig {
 

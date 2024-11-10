@@ -2,8 +2,6 @@ package com.shooot.dockermanager.dto;
 
 import lombok.*;
 
-import java.util.List;
-
 @Builder
 @Setter
 @Getter
@@ -11,5 +9,5 @@ import java.util.List;
 @AllArgsConstructor
 public class ServiceStartDto {
     private Integer projectJarFileId;
-    private List<Integer> testingApiId;
+    private Integer projectId;
 }

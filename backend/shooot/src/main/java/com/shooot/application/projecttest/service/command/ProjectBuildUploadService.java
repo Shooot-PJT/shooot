@@ -4,14 +4,14 @@ import com.shooot.application.common.events.Events;
 import com.shooot.application.project.domain.Project;
 import com.shooot.application.project.domain.repository.ProjectRepository;
 import com.shooot.application.projecttest.domain.ProjectBuild;
-import com.shooot.application.projecttest.domain.ProjectBuildStatus;
 import com.shooot.application.projecttest.domain.ProjectFile;
 import com.shooot.application.projecttest.domain.ProjectVersion;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
-import com.shooot.application.projecttest.domain.repository.ProjectFileRepository;
 import com.shooot.application.projecttest.event.dto.ProjectBuildUploadedEvent;
+import com.shooot.application.projecttest.exception.DockerComposeCanNotUseImageException;
 import com.shooot.application.projecttest.exception.FileIsExistException;
 import com.shooot.application.projecttest.exception.FileIsNotJarFileException;
+import com.shooot.application.projecttest.handler.DockerComposeValidator;
 import com.shooot.application.projecttest.handler.ProjectFileHandler;
 import com.shooot.application.projecttest.service.query.ProjectBuildFindService;
 import com.shooot.application.utils.FileHandler;
@@ -31,10 +31,15 @@ public class ProjectBuildUploadService {
     private final ProjectRepository projectRepository;
     private final ProjectBuildFindService projectBuildFindService;
     private final ProjectBuildRepository projectBuildRepository;
+    private final DockerComposeValidator dockerComposeValidator;
 
     public Integer buildFileApiExtractor(Integer projectId, MultipartFile uploadedProjectFile, MultipartFile uploadedDockerComposeFile) {
+        File dockerFile = convertToFile(uploadedDockerComposeFile, "docker-compose.yml");
 
         Project project = findProjectById(projectId);
+
+        dockerComposeValidator.validateComposeFile(dockerFile.getAbsolutePath());
+
         File jarFile = convertToFile(uploadedProjectFile, project.getName());
         String jarFileChecksum = FileHandler.getMD5Checksum(jarFile);
 
@@ -44,7 +49,7 @@ public class ProjectBuildUploadService {
 
         validateDuplicateFile(projectId, projectFileName, jarFileChecksum);
 
-        File dockerFile = convertToFile(uploadedDockerComposeFile, jarFile.getName());
+
         int temporaryVersion = getTemporaryVersion(projectId, projectFileName, projectVersion);
         projectVersion.setTemporary(temporaryVersion);
 

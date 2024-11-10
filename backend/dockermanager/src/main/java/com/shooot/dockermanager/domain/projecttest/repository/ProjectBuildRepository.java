@@ -1,5 +1,6 @@
 package com.shooot.dockermanager.domain.projecttest.repository;
 
+import com.shooot.dockermanager.domain.projecttest.Project;
 import com.shooot.dockermanager.domain.projecttest.ProjectBuild;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
