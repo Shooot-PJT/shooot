@@ -42,5 +42,5 @@ export interface Shooot extends Configs {
     unregister: () => Promise<void>;
 }
 
-declare const sw: Shooot;
-export default sw;
+declare const shooot: Shooot;
+export default shooot;
