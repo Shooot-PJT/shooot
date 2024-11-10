@@ -1,4 +1,4 @@
-package com.shooot.dockermanager.publisher;
+package com.shooot.application.projecttest.subscriber;
 
 public interface Message {
 
@@ -6,6 +6,6 @@ public interface Message {
         return this;
     }
 
-    public Integer getProjectJarFileId();
     public Integer getProjectId();
+    public Integer getProjectJarFileId();
 }

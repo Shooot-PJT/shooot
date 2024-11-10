@@ -17,7 +17,7 @@ public interface ProjectBuildRepository extends JpaRepository<ProjectBuild, Inte
     @Query("SELECT pb FROM ProjectBuild pb WHERE pb.project.id = :projectId AND pb.version.major = :majorVersion AND pb.version.minor = :minorVersion AND pb.version.patch = :patchVersion AND pb.fileName = :fileName")
     List<ProjectBuild> findAllByProjectNameAndVersionAndCheckSum(@Param("projectId") Integer projectId, @Param("majorVersion") Integer majorVersion, @Param("minorVersion") Integer minorVersion, @Param("patchVersion") Integer patchVersion, @Param("fileName") String fileName);
 
-    @Query("SELECT new com.shooot.application.projecttest.controller.dto.ProjectBuildView(pb, pbl.status) FROM ProjectBuild pb LEFT JOIN ProjectBuildLog pbl ON pbl.projectBuild = pb WHERE pb.project.id = :projectId AND (pbl.id IN (SELECT MAX(id) FROM ProjectBuildLog GROUP BY projectBuild) OR pbl.id IS NULL) ORDER BY pb.createdAt DESC ")
+    @Query("SELECT new com.shooot.application.projecttest.controller.dto.ProjectBuildView(pb, pbl.status) FROM ProjectBuild pb LEFT JOIN ProjectBuildLog pbl ON pbl.projectBuild = pb WHERE pb.project.id = :projectId ORDER BY pb.createdAt DESC ")
     List<ProjectBuildView> findAllByProject_Id(@Param("projectId") Integer projectId);
 
     Optional<ProjectBuild> findByProject_IdAndIsDeploymentTrue(Integer projectId);
