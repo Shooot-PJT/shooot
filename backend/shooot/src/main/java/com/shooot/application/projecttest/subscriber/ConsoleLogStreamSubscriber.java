@@ -3,73 +3,91 @@ package com.shooot.application.projecttest.subscriber;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shooot.application.sseemitter.repository.SseProjectRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.stream.MapRecord;
+import org.springframework.data.redis.connection.stream.ReadOffset;
 import org.springframework.data.redis.connection.stream.StreamOffset;
+import org.springframework.data.redis.connection.stream.StreamReadOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.stream.StreamListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-
-@RequiredArgsConstructor
+@Slf4j
 @Service
-public class ConsoleLogStreamSubscriber {
-
+public class ConsoleLogStreamSubscriber  implements StreamListener<String, MapRecord<String, Object, Object>> {
 
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
-    private final SseProjectRepository sseProjectRepository;
-    private final Map<Integer, String> consumerNames = new ConcurrentHashMap<>();
+    private final Map<Integer, Map<Integer, SseEmitter>> projectEmitters = new ConcurrentHashMap<>();
 
-    @PostConstruct
-    public void startListeningToStream() {
-        // 각 프로젝트에 대해 Consumer Group을 생성하여 팀원이 개별적으로 읽을 수 있게 설정
-        sseProjectRepository.getProjectIds().forEach(this::initializeConsumerGroup);
+    @Autowired
+    public ConsoleLogStreamSubscriber(StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
+        this.redisTemplate = redisTemplate;
+        this.objectMapper = objectMapper;
+        startListening();
     }
 
-    private void initializeConsumerGroup(Integer projectId) {
-        String streamKey = "project.stream." + projectId;
-        String groupName = "projectGroup-" + projectId;
+    public SseEmitter addEmitter(Integer projectId, Integer projectParticipantId) {
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+        projectEmitters.computeIfAbsent(projectId, k -> new ConcurrentHashMap<>()).put(projectParticipantId, emitter);
+
+        // 콜드 스트림 - 구독 시 이전 로그 데이터 전송
+        List<MapRecord<String, Object, Object>> coldStreamLogs = redisTemplate.opsForStream()
+                .read(StreamOffset.fromStart("project_logs_" + projectId));
+
+        for (MapRecord<String, Object, Object> record : coldStreamLogs) {
+            sendLog(emitter, record);
+        }
+
+        emitter.onCompletion(() -> projectEmitters.get(projectId).remove(projectParticipantId));
+        emitter.onTimeout(() -> projectEmitters.get(projectId).remove(projectParticipantId));
+        return emitter;
+    }
+
+    private void startListening() {
+        new Thread(() -> {
+            while (true) {
+                projectEmitters.keySet().forEach(projectId -> {
+                    redisTemplate.opsForStream()
+                            .read(StreamReadOptions.empty().count(1000).noack(), StreamOffset.fromStart("project_logs_" + projectId));
+                });
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+        }).start();
+    }
+
+    @Override
+    public void onMessage(MapRecord<String, Object, Object> record) {
+        Integer projectId = Integer.valueOf(record.getValue().get("projectId").toString());
+        String jsonMessage = record.getValue().get("message").toString();
+        log.info("[{}] : {}", projectId, jsonMessage);
+        projectEmitters.getOrDefault(projectId, Map.of()).forEach((userId, emitter) -> sendLog(emitter, record));
+    }
+
+    private void sendLog(SseEmitter emitter, MapRecord<String, Object, Object> record) {
+        String jsonMessage = record.getValue().get("message").toString();
 
         try {
-            redisTemplate.opsForStream().createGroup(streamKey, groupName);
-        } catch (Exception e) {
-            // Consumer Group이 이미 존재하는 경우 예외 무시
-        }
-    }
-
-    public void subscribeToProjectLog(Integer projectId, Integer userId) {
-        String streamKey = "project.stream." + projectId;
-        String groupName = "projectGroup-" + projectId;
-        String consumerName = "user-" + userId;
-
-        consumerNames.put(userId, consumerName); // 각 사용자별 Consumer 이름 등록
-
-        // Redis Streams에서 각 사용자가 개별 오프셋으로 구독하도록 설정
-        redisTemplate.opsForStream()
-                .readGroup(groupName, consumerName, MapRecord.class, StreamOffset.lastConsumed(streamKey))
-                .forEach(record -> processRecord(record, projectId, userId));
-    }
-
-    private void processRecord(MapRecord<String, String, String> record, Integer projectId, Integer userId) {
-        String logMessage = record.getValue().get("message"); // 메시지 내용 추출
-        sendLogToSubscriber(projectId, userId, logMessage);
-    }
-
-    private void sendLogToSubscriber(Integer projectId, Integer userId, String logMessage) {
-        SseEmitter emitter = sseProjectRepository.getEmitterByUserId(projectId, userId);
-
-        if (emitter != null) {
-            try {
-                emitter.send(SseEmitter.event().name("log").data(logMessage));
-            } catch (IOException e) {
-                emitter.complete();
-                sseProjectRepository.removeEmitter(projectId, userId);
-            }
+            MessageDto messageDto = objectMapper.readValue(jsonMessage, MessageDto.class);
+            emitter.send(SseEmitter.event()
+                    .name("project-log")
+                    .data(messageDto));
+        } catch (IOException e) {
+            emitter.completeWithError(e);
         }
     }
 }

@@ -20,9 +20,4 @@ public class MessageDto {
         DOCKER_RUN_DONE,
         ;
     }
-
-    public Message getMessage() {
-        return message.getMessage();
-    }
-
 }

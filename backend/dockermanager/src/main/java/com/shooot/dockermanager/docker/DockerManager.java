@@ -67,6 +67,7 @@ public class DockerManager {
             Project project = projectRepository.findByProjectJarFileId(dto.getProjectJarFileId()).orElseThrow(IllegalArgumentException::new);
             ProjectBuild projectBuild = projectBuildRepository.findById(dto.getProjectJarFileId()).orElseThrow(IllegalArgumentException::new);
 
+            redisMessagePublisher.initializeLogStream(dto.getProjectId());
 
             setupProjectDirectory(dto, projectFile, project, target, projectBuild.getVersion());
             buildAndDeployDockerImage(project, projectBuild, target);

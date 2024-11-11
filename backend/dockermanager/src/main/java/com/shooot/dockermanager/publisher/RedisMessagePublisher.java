@@ -3,11 +3,9 @@ package com.shooot.dockermanager.publisher;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.connection.stream.ObjectRecord;
+import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.connection.stream.StreamRecords;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -19,33 +17,34 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RedisMessagePublisher {
 
     private final StringRedisTemplate redisTemplate;
-    private final Map<String, Boolean> groupCache = new ConcurrentHashMap<>();
+    private final ObjectMapper objectMapper;
+    private static final String LOG_CHANNEL = "project_logs_";
 
-    private static final String LOG_CHANNEL = "project.stream.";
-
-    public void publishLog(MessageDto logMessage) {
-        Integer projectId = logMessage.getMessage().getProjectId();
-
-        String streamKey = "project.stream." + projectId;
-        String groupName = "projectGroup-" + projectId;
-
-        groupCache.computeIfAbsent(groupName, key -> {
-            try {
-                redisTemplate.opsForStream().createGroup(streamKey, key);
-                return true;
-            } catch (Exception e) {
-                return true;
-            }
-        });
-
-        // 메시지 추가, 최대 엔트리 1000개로 제한
-        ObjectRecord<String, MessageDto> record = StreamRecords.newRecord()
-                .ofObject(logMessage)
-                .withStreamKey(streamKey);
-
-        redisTemplate.opsForStream()
-                .trim(streamKey, 1000); // 최대 엔트리 수 제한
-        redisTemplate.opsForStream().add(record);
+    // 프로젝트 로그 스트림 초기화 메서드
+    public void initializeLogStream(Integer projectId) {
+        String streamKey = LOG_CHANNEL + projectId;
+        // 기존 스트림 삭제
+        redisTemplate.delete(streamKey);
+        // 새로운 스트림 시작을 알리는 초기 메시지 추가 (선택사항)
+        redisTemplate.opsForStream().trim(streamKey, 1000);
     }
+
+    // 로그 전송 메서드
+    public void publishLog(MessageDto messageDto) {
+        String streamKey = LOG_CHANNEL + messageDto.getMessage().getProjectId();
+        try {
+            String jsonMessage = objectMapper.writeValueAsString(messageDto);
+
+            // MapRecord 생성 후 Redis Stream에 추가
+            MapRecord<String, Object, Object> record = StreamRecords.newRecord()
+                    .in(streamKey)
+                    .ofMap(Map.of("message", jsonMessage));
+
+            redisTemplate.opsForStream().add(record);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+
+        }
     }
+
 }

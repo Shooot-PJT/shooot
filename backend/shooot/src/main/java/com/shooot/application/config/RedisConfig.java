@@ -42,25 +42,4 @@ public class RedisConfig {
         return new StringRedisTemplate(redisConnection());
     }
 
-    @Bean
-    public ChannelTopic channelTopic() {
-        return new ChannelTopic("docker_logs");
-    }
-
-    @Bean
-    public RedisMessageListenerContainer redisContainer() {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(redisConnection());
-        container.addMessageListener();
-    }
-
-    @Bean
-    public MessageListenerAdapter messageListenerAdapter() {
-        return new MessageListenerAdapter(new MessageListener() {
-            @Override
-            public void onMessage(Message message, byte[] pattern) {
-
-            }
-        });
-    }
 }

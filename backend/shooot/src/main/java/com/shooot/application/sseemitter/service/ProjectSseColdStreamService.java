@@ -16,7 +16,7 @@ public class ProjectSseColdStreamService {
 
     public SseEmitter subscribe(Integer projectId, Integer userId) {
         SseEmitter emitter = sseProjectRepository.putNewSseEmitter(projectId, userId);
-
+        return emitter;
     }
 
 }
