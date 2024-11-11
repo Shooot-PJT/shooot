@@ -146,7 +146,7 @@ public class DockerManager {
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            String logMessage = "[" + target + "] " + line;
+                            String logMessage = "[" + projectEnglishName + "] " + line;
                             log.info(logMessage);
                             redisMessagePublisher.publishLog(MessageDto.builder()
                                     .message(DockerConsoleLogMessage.builder()
