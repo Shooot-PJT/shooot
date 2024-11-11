@@ -16,13 +16,13 @@ export const testResultTailRecipe = recipe({
       FAIL: {
         backgroundColor: colorPalette.originalRed,
       },
-      NOT_TESTED: {
+      YET: {
         backgroundColor: colorPalette.grey[800],
       },
     },
   },
 
   defaultVariants: {
-    testStatus: TEST_RESULTS.NOT_TESTED,
+    testStatus: TEST_RESULTS.YET,
   },
 });

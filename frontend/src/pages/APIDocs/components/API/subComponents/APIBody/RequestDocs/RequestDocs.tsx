@@ -1,68 +1,25 @@
 import React, { useState } from 'react';
 import Flexbox from '../../../../../../../components/Flexbox';
-import { Table } from './Table/Table';
+import { ParamBase, RequestSchemaTable } from './Table/RequestSchemaTable';
+import {
+  CustomTab,
+  CustomTabs,
+} from '../../../../../../../components/CustomTabs/CustomTabs';
+import Button from '../../../../../../../components/Button';
+import Typography from '../../../../../../../components/Typography';
+import { ExampleUrl } from './ExampleUrl/ExampleUrl';
 
-interface ParamBase {
-  key: string;
-  value: string;
-  description: string;
-  required: string;
+interface TabValue {
+  value: number;
+  type: 'params' | 'path variable' | 'headers' | 'req body';
 }
 
-interface ReqBodyParam extends ParamBase {
-  type: string;
-}
+// data 6종류 :
+// type 6종류 : Params, Path variables, Header, ( Req Body-1: none ), ( Req Body-1: form-data ), ( Req Body-1: row )
+type TabValueTypes = 0 | 1 | 2 | 3; // Params, Path variables, headers, Req Body
+type ReqBodyTypes = 0 | 1 | 2; // none, form-data, row;
 
 export const RequestDocs = () => {
-  const [paramsData, setParamsData] = useState<ParamBase[]>([
-    {
-      key: 'category',
-      value: 'value1333',
-      description: '검색대상 카테고리 지정하는 용도',
-      required: '선택',
-    },
-  ]);
-
-  const [pathVariableData, setPathVariableData] = useState<ParamBase[]>([
-    {
-      key: 'userId',
-      value: 'value1234',
-      description: '조회할 유저의 ID 명시',
-      required: '필수',
-    },
-  ]);
-
-  const [headersData, setHeadersData] = useState<ParamBase[]>([
-    {
-      key: 'customHeader',
-      value: 'value5678',
-      description: '커스텀 헤더',
-      required: '선택',
-    },
-  ]);
-
-  const [reqBodyData, setReqBodyData] = useState<ReqBodyParam[]>([
-    {
-      key: 'username',
-      value: 'value123',
-      description: '단순 username입니다.',
-      required: '선택',
-      type: 'Text',
-    },
-    {
-      key: 'file',
-      value: 'file123',
-      description: '첨부 파일',
-      required: '필수',
-      type: 'File',
-    },
-  ]);
-
-  const [isParamsEditMode, setParamsEditMode] = useState(false);
-  const [isPathVariableEditMode, setPathVariableEditMode] = useState(false);
-  const [isHeadersEditMode, setHeadersEditMode] = useState(false);
-  const [isReqBodyEditMode, setReqBodyEditMode] = useState(false);
-
   const toggleEditMode = <T extends ParamBase>(
     isEditMode: boolean,
     setEditMode: React.Dispatch<React.SetStateAction<boolean>>,
@@ -75,111 +32,154 @@ export const RequestDocs = () => {
     setEditMode(!isEditMode);
   };
 
+  const [isEditMode, setEditMode] = useState(false);
+
+  const [tabValue, setTabValue] = useState<TabValue>({
+    value: 0,
+    type: 'params',
+  });
+
+  const [contentData, setContentData] = useState<ParamBase[]>(
+    REQUEST_CONTENT_LIST_DUMMIES.PARAMS_DATA_LIST_DUMMY,
+  );
+  const [reqBodyMode, setReqBodyMode] = useState<number>(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    console.log(event);
+
+    if (newValue === 0) {
+      setTabValue({ type: 'params', value: newValue });
+      setContentData(REQUEST_CONTENT_LIST_DUMMIES.PARAMS_DATA_LIST_DUMMY);
+    } else if (newValue === 1) {
+      setTabValue({ type: 'path variable', value: newValue });
+      setContentData(
+        REQUEST_CONTENT_LIST_DUMMIES.PATHVARIABLES_DATA_LIST_DUMMY,
+      );
+    } else if (newValue === 2) {
+      setTabValue({ type: 'headers', value: newValue });
+      setContentData(REQUEST_CONTENT_LIST_DUMMIES.HEADERS_DATA_LIST_DUMMY);
+    } else if (newValue === 3) {
+      setTabValue({ type: 'req body', value: newValue });
+      setContentData(REQUEST_CONTENT_LIST_DUMMIES.REQUESTBODY_DATA_LIST_DUMMY);
+    }
+  };
+
   return (
     <Flexbox
       flexDirections="col"
       style={{
-        gap: '2rem',
         width: '100%',
         height: 'max-content',
-        backgroundColor: 'blue',
       }}
     >
-      <div
-        style={{ width: '100%', height: '8rem', backgroundColor: 'white' }}
-      />
-
-      {/* Params Table */}
-      <div>
-        <button
-          onClick={() =>
-            toggleEditMode(
-              isParamsEditMode,
-              setParamsEditMode,
-              setParamsData,
-              paramsData,
-            )
-          }
+      <Flexbox flexDirections="row" justifyContents="between">
+        <Typography
+          style={{
+            textAlign: 'start',
+            fontSize: '1.4rem',
+            fontWeight: '600',
+            marginBottom: '2rem',
+          }}
         >
-          {isParamsEditMode ? 'View Mode' : 'Edit Mode'}
-        </button>
-        <Table
-          data={paramsData}
-          type="params"
-          isEditMode={isParamsEditMode}
-          onChange={(newData) => setParamsData(newData)}
-        />
-      </div>
-
-      {/* Path Variable Table */}
-      <div>
-        <button
-          onClick={() =>
-            toggleEditMode(
-              isPathVariableEditMode,
-              setPathVariableEditMode,
-              setPathVariableData,
-              pathVariableData,
-            )
-          }
+          API 요청 정의서
+        </Typography>
+        <Flexbox
+          style={{
+            justifyContent: 'end',
+          }}
         >
-          {isPathVariableEditMode ? 'View Mode' : 'Edit Mode'}
-        </button>
-        <Table
-          data={pathVariableData}
-          type="path variable"
-          isEditMode={isPathVariableEditMode}
-          onChange={(newData) => setPathVariableData(newData)}
-        />
-      </div>
+          <Button
+            color="grey"
+            rounded={0.4}
+            onClick={() =>
+              toggleEditMode(
+                isEditMode,
+                setEditMode,
+                setContentData,
+                contentData,
+              )
+            }
+          >
+            <Typography>{isEditMode ? '저장' : '편집'}</Typography>
+          </Button>
+        </Flexbox>
+      </Flexbox>
+      <Flexbox
+        flexDirections="col"
+        style={{
+          gap: '3rem',
+        }}
+      >
+        {' '}
+        <ExampleUrl method={DUMMY_METHOD} isEditMode={isEditMode} />
+        {/* 테이블 컨텐츠 */}
+        <Flexbox flexDirections="col" style={{ gap: '0.7rem' }}>
+          <CustomTabs value={tabValue.value} onChange={handleChange}>
+            <CustomTab label="Params" />
+            <CustomTab label="Path variables" />
+            <CustomTab label="Header" />
+            <CustomTab label="Req Body" />
+          </CustomTabs>
+          <RequestSchemaTable
+            data={contentData}
+            type={tabValue.type}
+            isEditMode={isEditMode}
+            onChange={(newData) => setContentData(newData)}
+          />
+        </Flexbox>
+        {/* --------------*/}
+      </Flexbox>
 
-      {/* Headers Table */}
-      <div>
-        <button
-          onClick={() =>
-            toggleEditMode(
-              isHeadersEditMode,
-              setHeadersEditMode,
-              setHeadersData,
-              headersData,
-            )
-          }
-        >
-          {isHeadersEditMode ? 'View Mode' : 'Edit Mode'}
-        </button>
-        <Table
-          data={headersData}
-          type="headers"
-          isEditMode={isHeadersEditMode}
-          onChange={(newData) => setHeadersData(newData)}
-        />
-      </div>
-
-      {/* Req Body Table */}
-      <div>
-        <button
-          onClick={() =>
-            toggleEditMode(
-              isReqBodyEditMode,
-              setReqBodyEditMode,
-              setReqBodyData,
-              reqBodyData,
-            )
-          }
-        >
-          {isReqBodyEditMode ? 'View Mode' : 'Edit Mode'}
-        </button>
-        <Table
-          data={reqBodyData}
-          type="req body"
-          isEditMode={isReqBodyEditMode}
-          onChange={(newData) => setReqBodyData(newData)}
-        />
-      </div>
-
-      <div
-        style={{ width: '100%', height: '10rem', backgroundColor: 'white' }}
-      />
+      {/* ========================================== */}
     </Flexbox>
   );
 };
+
+// 더미
+const PARAMS_DATA_LIST_DUMMY = [
+  {
+    key: 'category',
+    description: '검색대상 카테고리 지정하는 용도',
+    required: '선택',
+  },
+];
+
+const PATHVARIABLES_DATA_LIST_DUMMY = [
+  {
+    key: 'userId',
+    description: '조회할 유저의 ID 명시',
+    required: '필수',
+  },
+];
+
+const HEADERS_DATA_LIST_DUMMY = [
+  {
+    key: 'customHeader',
+    description: '커스텀 헤더',
+    required: '선택',
+  },
+];
+
+const REQUESTBODY_DATA_LIST_DUMMY = [
+  {
+    key: 'username',
+    description: '단순 username입니다.',
+    required: '선택',
+    type: 'Text',
+  },
+  {
+    key: 'file',
+    description: '첨부 파일',
+    required: '필수',
+    type: 'File',
+  },
+];
+
+const REQUEST_CONTENT_LIST_DUMMIES = {
+  PARAMS_DATA_LIST_DUMMY: PARAMS_DATA_LIST_DUMMY,
+  PATHVARIABLES_DATA_LIST_DUMMY: PATHVARIABLES_DATA_LIST_DUMMY,
+  HEADERS_DATA_LIST_DUMMY: HEADERS_DATA_LIST_DUMMY,
+  REQUESTBODY_DATA_LIST_DUMMY: REQUESTBODY_DATA_LIST_DUMMY,
+};
+
+const DUMMY_METHOD = 'get';

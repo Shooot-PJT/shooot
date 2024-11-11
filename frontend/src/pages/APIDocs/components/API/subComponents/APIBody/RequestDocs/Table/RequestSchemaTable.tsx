@@ -1,13 +1,12 @@
 import { useState } from 'react';
-import * as styles from './Table.css';
+import * as styles from './RequestSchemaTable.css';
 import CellTextField from './CellTextfield/CellTextfield';
 import DropdownMenu from './DropdownMenu/DropdownMenu';
 import Icon from '../../../../../../../../components/Icon';
 import { FaPlus } from 'react-icons/fa';
 
-interface ParamBase {
+export interface ParamBase {
   key: string;
-  value: string;
   description: string;
   required: string;
 }
@@ -25,7 +24,7 @@ interface TableProps<T extends Param> {
   onChange: (newData: T[]) => void;
 }
 
-export const Table = <T extends Param>({
+export const RequestSchemaTable = <T extends Param>({
   data,
   type,
   isEditMode = false,
@@ -68,12 +67,15 @@ export const Table = <T extends Param>({
       type === 'req body'
         ? ({
             key: '',
-            value: '',
             description: '',
             required: '선택',
             type: 'Text',
           } as T)
-        : ({ key: '', value: '', description: '', required: '선택' } as T);
+        : ({
+            key: '',
+            description: '',
+            required: '선택',
+          } as T);
     onChange([...data, newRow]);
   };
 

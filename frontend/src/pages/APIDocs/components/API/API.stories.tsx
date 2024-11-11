@@ -87,7 +87,7 @@ export const TestPending: Story = {
     method: METHODS.put,
     isSecure: true,
     nominalUrl: '/api/orders/status',
-    testStatus: TEST_RESULTS.NOT_TESTED,
+    testStatus: TEST_RESULTS.YET,
   },
 };
 

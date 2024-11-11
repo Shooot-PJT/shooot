@@ -96,3 +96,58 @@ TestCaseTable.Section = function Section({
     </TableContainer>
   );
 };
+
+//=============================================================
+// 더미
+const PARAMS_DATA_LIST_DUMMY = [
+  {
+    key: 'category',
+    value: 'value1333',
+    description: '검색대상 카테고리 지정하는 용도',
+    required: '선택',
+  },
+];
+
+const PATHVARIABLES_DATA_LIST_DUMMY = [
+  {
+    key: 'userId',
+    value: 'value1234',
+    description: '조회할 유저의 ID 명시',
+    required: '필수',
+  },
+];
+
+const HEADERS_DATA_LIST_DUMMY = [
+  {
+    key: 'customHeader',
+    value: 'value5678',
+    description: '커스텀 헤더',
+    required: '선택',
+  },
+];
+
+const REQUESTBODY_DATA_LIST_DUMMY = [
+  {
+    key: 'username',
+    value: 'value123',
+    description: '단순 username입니다.',
+    required: '선택',
+    type: 'Text',
+  },
+  {
+    key: 'file',
+    value: 'file123',
+    description: '첨부 파일',
+    required: '필수',
+    type: 'File',
+  },
+];
+
+const REQUEST_CONENT_LIST_DUMMIES = {
+  PARAMS_DATA_LIST_DUMMY: PARAMS_DATA_LIST_DUMMY,
+  PATHVARIABLES_DATA_LIST_DUMMY: PATHVARIABLES_DATA_LIST_DUMMY,
+  HEADERS_DATA_LIST_DUMMY: HEADERS_DATA_LIST_DUMMY,
+  REQUESTBODY_DATA_LIST_DUMMY: REQUESTBODY_DATA_LIST_DUMMY,
+};
+
+const DUMMY_METHOD = 'get';

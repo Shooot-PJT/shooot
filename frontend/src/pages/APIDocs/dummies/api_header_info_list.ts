@@ -30,7 +30,7 @@ export const DUMMY_API_HEADER_INFO_LIST: APIHeaderInfo[] = [
     isSecure: false,
     manager: { id: 3, nickname: '장철현' },
     nominalUrl: '/api/products/list',
-    testStatus: TEST_RESULTS.NOT_TESTED,
+    testStatus: TEST_RESULTS.YET,
   },
   {
     apiId: 4,
@@ -50,7 +50,7 @@ export const DUMMY_API_HEADER_INFO_LIST: APIHeaderInfo[] = [
     isSecure: true,
     manager: { id: 4, nickname: '박민희' },
     nominalUrl: '/api/orders/status',
-    testStatus: TEST_RESULTS.NOT_TESTED,
+    testStatus: TEST_RESULTS.YET,
   },
   {
     apiId: 6,
@@ -60,7 +60,7 @@ export const DUMMY_API_HEADER_INFO_LIST: APIHeaderInfo[] = [
     isSecure: true,
     manager: { id: 4, nickname: '박민희' },
     nominalUrl: '/api/orders/status/update',
-    testStatus: TEST_RESULTS.NOT_TESTED,
+    testStatus: TEST_RESULTS.YET,
   },
   {
     apiId: 7,

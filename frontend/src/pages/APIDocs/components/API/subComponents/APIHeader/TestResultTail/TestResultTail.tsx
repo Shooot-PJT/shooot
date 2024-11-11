@@ -13,7 +13,7 @@ const makeTestMessage = (testResult: TestResult): string => {
     message += ' 성공했습니다.';
   } else if (testResult === TEST_RESULTS.FAIL) {
     message += ' 실패했습니다.';
-  } else if (testResult === TEST_RESULTS.NOT_TESTED) {
+  } else if (testResult === TEST_RESULTS.YET) {
     message = '아직 테스트되지 않았습니다.';
   } else message = '비정상적 테스트 상태';
 

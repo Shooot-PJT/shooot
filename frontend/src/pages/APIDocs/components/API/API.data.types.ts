@@ -1,11 +1,11 @@
 import { Method } from '../../types/methods';
 
 export type NominalUrl = string | null | undefined;
-export type TestResult = 'FAIL' | 'SUCCESS' | 'NOT_TESTED';
+export type TestResult = 'FAIL' | 'SUCCESS' | 'YET';
 export const TEST_RESULTS: Record<TestResult, TestResult> = {
   FAIL: 'FAIL',
   SUCCESS: 'SUCCESS',
-  NOT_TESTED: 'NOT_TESTED',
+  YET: 'YET',
 };
 
 export interface APIDetailInfo {

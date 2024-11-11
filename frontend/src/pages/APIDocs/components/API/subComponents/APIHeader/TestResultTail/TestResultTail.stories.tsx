@@ -21,12 +21,8 @@ const meta: Meta<typeof TestResultTail> = {
     testStatus: {
       description: '마지막 테스트 결과를 나타냅니다.',
       control: 'select',
-      options: [
-        TEST_RESULTS.SUCCESS,
-        TEST_RESULTS.FAIL,
-        TEST_RESULTS.NOT_TESTED,
-      ],
-      defaultValue: TEST_RESULTS.NOT_TESTED,
+      options: [TEST_RESULTS.SUCCESS, TEST_RESULTS.FAIL, TEST_RESULTS.YET],
+      defaultValue: TEST_RESULTS.YET,
     },
   },
 };
@@ -37,7 +33,7 @@ type Story = StoryObj<typeof TestResultTail>;
 
 export const Default: Story = {
   args: {
-    testStatus: TEST_RESULTS.NOT_TESTED,
+    testStatus: TEST_RESULTS.YET,
   },
 };
 
@@ -58,7 +54,7 @@ export const Variants: Story = {
     <div style={{ display: 'flex', gap: '1rem', height: '4rem' }}>
       <TestResultTail testStatus={TEST_RESULTS.SUCCESS} />
       <TestResultTail testStatus={TEST_RESULTS.FAIL} />
-      <TestResultTail testStatus={TEST_RESULTS.NOT_TESTED} />
+      <TestResultTail testStatus={TEST_RESULTS.YET} />
     </div>
   ),
 };

@@ -64,6 +64,29 @@ export const TestCaseList = ({
         width: '100%',
       }}
     >
+      <Flexbox flexDirections="row" justifyContents="between">
+        <Typography
+          style={{
+            textAlign: 'start',
+            fontSize: '1.4rem',
+            fontWeight: '600',
+            marginBottom: '1rem',
+          }}
+        >
+          테스트 케이스
+        </Typography>
+        <Flexbox
+          flexDirections="row"
+          style={{
+            gap: '0.25rem',
+          }}
+        >
+          <TestButton.API />
+          <Button rounded={0.5}>
+            <Typography size={0.75}>케이스 추가</Typography>
+          </Button>
+        </Flexbox>
+      </Flexbox>
       {children}
     </Flexbox>
   );

@@ -1,6 +1,7 @@
 import Button from '../../../../../../components/Button';
 import Flexbox from '../../../../../../components/Flexbox';
 import Typography from '../../../../../../components/Typography';
+import colorPalette from '../../../../../../styles/colorPalette';
 import {
   TestCaseHeaderInfo,
   testCaseSummaryList,
@@ -121,15 +122,7 @@ export const Body = () => {
             >
               {/* 1.2.1 RIGHT-TOP: API 요청 정의서  */}
               {/* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ */}
-              <Typography
-                style={{
-                  textAlign: 'start',
-                  fontSize: '1.4rem',
-                  fontWeight: '600',
-                }}
-              >
-                API 요청 정의서
-              </Typography>
+
               {/* Request Docs 컴포넌트 */}
               {/* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ */}
               <RequestDocs />
@@ -137,20 +130,13 @@ export const Body = () => {
               <div
                 style={{
                   width: '100%',
-                  height: '0.125rem',
-                  backgroundColor: 'red',
+                  height: '0.25rem',
+                  backgroundColor: colorPalette.util['300'],
+                  borderRadius: '999rem',
+                  margin: '2rem 0rem',
                 }}
               />
               {/* 1.2.2 RIGHT-BOTTOM: 테스트케이스 리스트 섹션*/}
-              <Typography
-                style={{
-                  textAlign: 'start',
-                  fontSize: '1.4rem',
-                  fontWeight: '600',
-                }}
-              >
-                테스트 케이스
-              </Typography>
 
               <TestCaseList>
                 {testCaseSummaryList.map((item: TestCaseHeaderInfo) => (
