@@ -1,4 +1,4 @@
-package com.shooot.dockermanager.publisher;
+package com.shooot.application.projecttest.subscriber;
 
 import lombok.*;
 
@@ -7,7 +7,8 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DockerErrorMessage implements Message{
+public class DockerConsoleLogMessage implements Message {
     private Integer projectId;
     private Integer projectJarFileId;
+    private String log;
 }

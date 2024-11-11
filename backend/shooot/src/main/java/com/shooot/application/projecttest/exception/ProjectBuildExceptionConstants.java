@@ -14,6 +14,7 @@ public enum ProjectBuildExceptionConstants implements CustomExceptionDefinition 
     DOCKER_COMPOSE_CAN_NOT_USE_IMAGE("지정한 docker-compose의 이미지를 사용할 수 없습니다.", "T005", HttpStatus.BAD_REQUEST),
     DOCKER_COMPOSE_CAN_NOT_USE_PORT("지정한 docker-compose에 특정 포트를 사용할 수 없습니다.", "T005", HttpStatus.BAD_REQUEST),
     FILE_IS_NOT_DEPLOYMENT("현재 배포중인 서버가 아닙니다." ,"R001", HttpStatus.BAD_REQUEST),
+    PROJECT_BUILD_NOT_FOUND_EXCEPTION("프로젝트 파일을 찾을 수 없습니다.", "PB001", HttpStatus.NOT_FOUND),
     ;
 
     private final String message;
