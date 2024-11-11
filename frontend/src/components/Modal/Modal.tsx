@@ -11,6 +11,7 @@ interface ModalProps extends ModalData {
 
 const Modal = ({ color = '300', children, onClose, isClosing }: ModalProps) => {
   const [motionClass, setMotionClass] = useState<string>(s.modalOut);
+  const [isOpening, setIsOpening] = useState<boolean>(true);
   const modalRef = useRef<HTMLDivElement>(null);
   const { modals, popModal } = useModalStore();
   const { popups } = usePopupStore();
@@ -18,8 +19,10 @@ const Modal = ({ color = '300', children, onClose, isClosing }: ModalProps) => {
   useEffect(() => {
     if (!isClosing) {
       setMotionClass(s.modalIn);
+      setIsOpening(true);
     } else {
       setMotionClass(s.modalOut);
+      setIsOpening(false);
     }
 
     if (isClosing && onClose) {
@@ -28,7 +31,7 @@ const Modal = ({ color = '300', children, onClose, isClosing }: ModalProps) => {
   }, [isClosing, onClose]);
 
   const handleTransitionEnd = () => {
-    if (isClosing) {
+    if (isClosing && !isOpening) {
       if (popups.length === 0 && modals.length === 1) {
         document.body.style.overflow = '';
         document.body.style.touchAction = '';
