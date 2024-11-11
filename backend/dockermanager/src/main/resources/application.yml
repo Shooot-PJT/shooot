@@ -27,5 +27,5 @@ spring:
         default_batch_fetch_size: 1000
   servlet:
     multipart:
-      max-file-size: 50MB
-      max-request-size: 50MB
+      max-file-size: 1000MB
+      max-request-size: 1000MB
