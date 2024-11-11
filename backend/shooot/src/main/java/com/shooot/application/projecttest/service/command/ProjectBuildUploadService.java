@@ -35,11 +35,13 @@ public class ProjectBuildUploadService {
     private final DockerComposeValidator dockerComposeValidator;
 
     public Integer buildFileApiExtractor(Integer projectId, MultipartFile uploadedProjectFile, MultipartFile uploadedDockerComposeFile) {
-        File dockerFile = convertToFile(uploadedDockerComposeFile, "docker-compose.yml");
+        File dockerFile = null;
+        if(!uploadedProjectFile.isEmpty()){
+            dockerFile = convertToFile(uploadedDockerComposeFile, "docker-compose.yml");
+            dockerComposeValidator.validateComposeFile(dockerFile.getAbsolutePath());
+        }
 
         Project project = findProjectById(projectId);
-
-        dockerComposeValidator.validateComposeFile(dockerFile.getAbsolutePath());
 
         File jarFile = convertToFile(uploadedProjectFile, project.getName());
         String jarFileChecksum = FileHandler.getMD5Checksum(jarFile);
