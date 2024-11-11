@@ -53,7 +53,7 @@ public class DockerComposeManager {
     }
 
     private int extractInstanceNumber(String instanceName) {
-        return Integer.parseInt(instanceName.replace("instance", ""));
+        return Integer.parseInt(instanceName.replace("instance", "") + 1);
     }
 
     private Map<String, Object> createDeployConfig(String instanceName, String projectName) {
