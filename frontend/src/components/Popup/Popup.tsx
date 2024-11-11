@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import usePopupStore from '../../stores/usePopupStore';
 import * as s from './Popup.css';
 import Typography from '../Typography';
@@ -17,18 +17,28 @@ const Popup = ({
   onClose,
   isClosing,
 }: PopupProps) => {
+  const [motionClass, setMotionClass] = useState<string>(s.popupOut);
+  const [isOpening, setIsOpening] = useState<boolean>(true);
   const popupRef = useRef<HTMLDivElement>(null);
   const { popups, popPopup, updatePopup } = usePopupStore();
   const { modals } = useModalStore();
 
-  const handleOnClose = (e: React.AnimationEvent) => {
-    if (e.target === popupRef.current && isClosing && onClose) {
+  useEffect(() => {
+    if (!isClosing) {
+      setMotionClass(s.popupIn);
+      setIsOpening(true);
+    } else {
+      setMotionClass(s.popupOut);
+      setIsOpening(false);
+    }
+
+    if (isClosing && onClose) {
       onClose();
     }
-  };
+  }, [isClosing, onClose]);
 
-  const handleAnimationEnd = (e: React.AnimationEvent) => {
-    if (e.target === popupRef.current && isClosing) {
+  const handleTransitionEnd = () => {
+    if (isClosing && !isOpening) {
       if (popups.length === 1 && modals.length === 0) {
         document.body.style.overflow = '';
         document.body.style.touchAction = '';
@@ -39,11 +49,10 @@ const Popup = ({
 
   return (
     <div
-      className={`${s.container} ${isClosing ? s.popupOut : s.popupIn}`}
+      className={`${s.container} ${motionClass}`}
       ref={popupRef}
       onClick={updatePopup}
-      onAnimationStart={handleOnClose}
-      onAnimationEnd={handleAnimationEnd}
+      onTransitionEnd={handleTransitionEnd}
     >
       <div className={s.popup({ background: color })}>
         <div>

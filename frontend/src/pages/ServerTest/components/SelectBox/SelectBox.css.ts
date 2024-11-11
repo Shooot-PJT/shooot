@@ -1,8 +1,15 @@
 import { style } from '@vanilla-extract/css';
 import colorPalette from '../../../../styles/colorPalette';
 
-export const selectBox = style({
+export const container = style({
+  position: 'relative',
   width: '100%',
+});
+
+export const selectBox = style({
+  position: 'relative',
+  width: '100%',
+  height: '100%',
   padding: '0.5rem',
   fontSize: '1rem',
   borderRadius: '0.5rem',
@@ -11,8 +18,50 @@ export const selectBox = style({
   cursor: 'pointer',
   outline: 'none',
   backgroundColor: colorPalette.util[300],
-  ':focus': {
-    borderColor: '#4A90E2',
-  },
+  zIndex: 30,
+});
 
+export const selectedItem = style({});
+
+export const expendBox = style({
+  position: 'absolute',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'start',
+  overflow: 'hidden',
+  width: '100%',
+  right: '-1rem',
+  top: '35px',
+  backgroundColor: colorPalette.util[200],
+  borderRadius: '0rem 0rem 0.5rem 0.5rem',
+  padding: '0.5rem 0.25rem 0.5rem 0.75rem',
+  gap: '0.5rem',
+  transition: 'height 0.125s ease-in-out',
+  paddingTop: '0.75rem',
+});
+
+export const openBox = style({
+  height: '200px',
+  overflow: 'auto',
+});
+
+export const closeBox = style({
+  height: 0,
+});
+
+export const isInvisible = style({
+  display: 'none',
+});
+
+export const optionItem = style({
+  width: '100%',
+  paddingLeft: '0.5rem',
+  paddingRight: '0.5rem',
+  paddingBottom: '0.5rem',
+  paddingTop: '0.5rem',
+  selectors: {
+    '&:hover': {
+      backgroundColor: colorPalette.util[300],
+    },
+  },
 });

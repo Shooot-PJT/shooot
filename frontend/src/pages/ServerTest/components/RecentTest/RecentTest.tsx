@@ -1,53 +1,71 @@
 import Button from '../../../../components/Button';
 import Typography from '../../../../components/Typography';
+import useModal from '../../../../hooks/useModal';
 import { DataTable } from '../DataTable/DataTable';
 import { StateIcon } from '../StateIcon/StateIcon';
+import { TestResultModal } from '../TestResultModal/TestResultModal';
 
-const data = [
-  [
-    'myproject - 0.0.5',
-    '2024-10-16 18:32:25',
-    <StateIcon state="Approved" />,
-    <Typography color="primary">5</Typography>,
-    <Typography color="primary">4분 17초</Typography>,
-    <Button paddingY={0.3}>상세보기</Button>,
-  ],
-  [
-    'myproject - 0.0.5',
-    '2024-10-16 18:32:25',
-    <StateIcon state="Approved" />,
-    <Typography color="primary">5</Typography>,
-    <Typography color="primary">4분 17초</Typography>,
-    <Button paddingY={0.3}>상세보기</Button>,
-  ],
-  [
-    'myproject - 0.0.5',
-    '2024-10-16 18:32:25',
-    <StateIcon state="Approved" />,
-    <Typography color="primary">5</Typography>,
-    <Typography color="primary">4분 17초</Typography>,
-    <Button paddingY={0.3}>상세보기</Button>,
-  ],
-  [
-    'myproject - 0.0.5',
-    '2024-10-16 18:32:25',
-    <StateIcon state="Disabled" />,
-    <Typography color="primary">5</Typography>,
-    <Typography color="primary">4분 17초</Typography>,
-    <Button paddingY={0.3} color="grey" disabled>
-      상세보기
-    </Button>,
-  ],
-  [
-    'myproject - 0.0.5',
-    '2024-10-16 18:32:25',
-    <StateIcon state="Error" />,
-    <Typography color="primary">5</Typography>,
-    <Typography color="primary">4분 17초</Typography>,
-    <Button paddingY={0.3}>상세보기</Button>,
-  ],
-];
 export const RecentTest = () => {
+  const modal = useModal();
+
+  const handleTestDetail = () => {
+    modal.push({
+      children: <TestResultModal />,
+    });
+  };
+
+  const data = [
+    [
+      'myproject - 0.0.5',
+      '2024-10-16 18:32:25',
+      <StateIcon state="Approved" />,
+      <Typography color="primary">5</Typography>,
+      <Typography color="primary">4분 17초</Typography>,
+      <Button paddingY={0.3} onClick={handleTestDetail}>
+        상세보기
+      </Button>,
+    ],
+    [
+      'myproject - 0.0.5',
+      '2024-10-16 18:32:25',
+      <StateIcon state="Approved" />,
+      <Typography color="primary">5</Typography>,
+      <Typography color="primary">4분 17초</Typography>,
+      <Button paddingY={0.3} onClick={handleTestDetail}>
+        상세보기
+      </Button>,
+    ],
+    [
+      'myproject - 0.0.5',
+      '2024-10-16 18:32:25',
+      <StateIcon state="Approved" />,
+      <Typography color="primary">5</Typography>,
+      <Typography color="primary">4분 17초</Typography>,
+      <Button paddingY={0.3} onClick={handleTestDetail}>
+        상세보기
+      </Button>,
+    ],
+    [
+      'myproject - 0.0.5',
+      '2024-10-16 18:32:25',
+      <StateIcon state="Disabled" />,
+      <Typography color="primary">5</Typography>,
+      <Typography color="primary">4분 17초</Typography>,
+      <Button paddingY={0.3} color="grey" disabled>
+        상세보기
+      </Button>,
+    ],
+    [
+      'myproject - 0.0.5',
+      '2024-10-16 18:32:25',
+      <StateIcon state="Error" />,
+      <Typography color="primary">5</Typography>,
+      <Typography color="primary">4분 17초</Typography>,
+      <Button paddingY={0.3} onClick={handleTestDetail}>
+        상세보기
+      </Button>,
+    ],
+  ];
   const headers = [
     '버전',
     '테스트 시작 시간',

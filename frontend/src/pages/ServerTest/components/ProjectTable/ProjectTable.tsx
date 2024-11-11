@@ -36,9 +36,6 @@ export const ProjectTable = ({
   const handleAddProjectModal = () => {
     modal.push({
       children: <AddProjectModal handleRender={handleRender} />,
-      onClose: () => {
-        console.log('으헤헤');
-      },
     });
   };
 

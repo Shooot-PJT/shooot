@@ -55,12 +55,12 @@ export const modalIn = style({
   transform: 'translateY(0px)',
   // opacity: 1,
   transition:
-    'transform 0.66s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)',
+    'transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)',
 });
 
 export const modalOut = style({
-  transform: 'translateY(1000px)',
+  transform: 'translateY(900px)',
   // opacity: 0,
   transition:
-    'transform 0.66s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)',
+    'transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)',
 });
