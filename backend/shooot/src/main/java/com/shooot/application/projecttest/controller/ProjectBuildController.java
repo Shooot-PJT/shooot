@@ -66,7 +66,7 @@ public class ProjectBuildController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/jarFile/Deploy")
+    @PutMapping("/jarFile/Deploy")
     public ResponseEntity<Void> stopProject(@RequestBody ProjectBuildIdDto projectBuildIdDto, @AuthenticationPrincipal UserLoginContext userLoginContext) {
         projectDeployService.projectDeployStopRequest(projectBuildIdDto);
         return ResponseEntity.ok().build();
