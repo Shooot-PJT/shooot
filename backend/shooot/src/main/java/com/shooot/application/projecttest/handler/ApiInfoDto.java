@@ -7,6 +7,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ApiInfoDto {
     private String url;
     private String method;

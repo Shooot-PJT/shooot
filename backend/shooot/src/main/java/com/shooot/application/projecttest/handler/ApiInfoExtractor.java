@@ -20,16 +20,23 @@ public final class ApiInfoExtractor {
     public static List<ApiInfoDto> extractApiInfo(Map<String, List<Class<?>>> stringListMap) throws Exception {
         List<Class<?>> classes = stringListMap.get(CustomClassLoader.WRTIE_CLASSES);
         List<ApiInfoDto> endPoints = new ArrayList<>();
+
         for (Class<?> clazz : classes) {
             boolean isController = clazz.isAnnotationPresent(Controller.class);
             boolean isRestController = clazz.isAnnotationPresent(RestController.class) || (isController && clazz.isAnnotationPresent(ResponseBody.class));
+            String prefix = null;
 
+            Annotation annotation = clazz.getAnnotation(RequestMapping.class);
+
+            if (annotation != null) {
+                prefix = String.join(", ", getPathsFromAnnotation(annotation));
+            }
 
             if (isRestController || isController) {
 
                 for (Method method : clazz.getDeclaredMethods()) {
                     if (isRestController || method.isAnnotationPresent(ResponseBody.class)) {
-                        extractEndpointInfo(method,endPoints);
+                        extractEndpointInfo(method, endPoints, prefix);
                         extractReturnTypeInfo(method);
 
                         for (Parameter parameter : method.getParameters()) {
@@ -41,11 +48,12 @@ public final class ApiInfoExtractor {
                     }
                 }
             }
+
         }
         return endPoints;
     }
 
-    private static void extractEndpointInfo(Method method, List<ApiInfoDto> urls) {
+    private static void extractEndpointInfo(Method method, List<ApiInfoDto> urls, String prefix) {
         Class<? extends Annotation>[] httpAnnotations = new Class[]{
                 RequestMapping.class, GetMapping.class, PostMapping.class, PutMapping.class, DeleteMapping.class, PatchMapping.class
         };
@@ -55,10 +63,10 @@ public final class ApiInfoExtractor {
             if (annotation != null) {
 
                 String[] paths = getPathsFromAnnotation(annotation);
-                String path = String.join(", ", paths);
+                String path = prefix + String.join(", ", paths);
                 System.out.println("API Endpoint: " + path + " - Method: " + method.getName());
                 RequestMethod[] methods = getRequestMethodsFromAnnotation(annotation);
-                Arrays.stream(methods).forEach(requestMethod ->{
+                Arrays.stream(methods).forEach(requestMethod -> {
                     ApiInfoDto dto = new ApiInfoDto(path, requestMethod.name());
                     urls.add(dto);
                 });
@@ -139,11 +147,23 @@ public final class ApiInfoExtractor {
 
     private static RequestMethod[] getRequestMethodsFromAnnotation(Annotation annotation) {
         try {
-            Method valueMethod = annotation.getClass().getMethod("method");
-            return (RequestMethod[]) valueMethod.invoke(annotation);
+            if (annotation instanceof RequestMapping) {
+                return ((RequestMapping) annotation).method();
+            } else if (annotation instanceof GetMapping) {
+                return new RequestMethod[]{RequestMethod.GET};
+            } else if (annotation instanceof PostMapping) {
+                return new RequestMethod[]{RequestMethod.POST};
+            } else if (annotation instanceof PutMapping) {
+                return new RequestMethod[]{RequestMethod.PUT};
+            } else if (annotation instanceof DeleteMapping) {
+                return new RequestMethod[]{RequestMethod.DELETE};
+            } else if (annotation instanceof PatchMapping) {
+                return new RequestMethod[]{RequestMethod.PATCH};
+            }
         } catch (Exception e) {
-            return new RequestMethod[]{};
+            e.printStackTrace();
         }
+        return new RequestMethod[]{}; // 어노테이션이 없을 경우 빈 배열 반환
     }
 
     private static boolean isDto(Class<?> clazz) {

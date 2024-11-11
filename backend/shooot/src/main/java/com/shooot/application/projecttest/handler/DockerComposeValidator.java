@@ -37,7 +37,7 @@ public class DockerComposeValidator {
 
     public void validateComposeFile(String composeFilePath) {
         Yaml yaml = new Yaml();
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(composeFilePath)) {
+        try (InputStream inputStream = new FileInputStream(composeFilePath)) {
             Map<String, Object> composeFile = yaml.load(inputStream);
 
             // 최상위 networks 검증

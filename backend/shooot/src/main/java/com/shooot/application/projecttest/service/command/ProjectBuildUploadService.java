@@ -3,13 +3,13 @@ package com.shooot.application.projecttest.service.command;
 import com.shooot.application.common.events.Events;
 import com.shooot.application.project.domain.Project;
 import com.shooot.application.project.domain.repository.ProjectRepository;
+import com.shooot.application.project.exception.ProjectNotFoundException;
 import com.shooot.application.projecttest.domain.ProjectBuild;
 import com.shooot.application.projecttest.domain.ProjectFile;
 import com.shooot.application.projecttest.domain.ProjectVersion;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
 import com.shooot.application.projecttest.domain.repository.ProjectFileRepository;
 import com.shooot.application.projecttest.event.dto.ProjectBuildUploadedEvent;
-import com.shooot.application.projecttest.exception.DockerComposeCanNotUseImageException;
 import com.shooot.application.projecttest.exception.FileIsExistException;
 import com.shooot.application.projecttest.exception.FileIsNotJarFileException;
 import com.shooot.application.projecttest.handler.DockerComposeValidator;
@@ -66,8 +66,7 @@ public class ProjectBuildUploadService {
 
     private Project findProjectById(Integer projectId) {
         return projectRepository.findById(projectId)
-                //TODO : Project ID Exception 작성할 것.
-                .orElseThrow(() -> new IllegalArgumentException("Project not found with ID: " + projectId));
+                .orElseThrow(ProjectNotFoundException::new);
     }
 
     private File convertToFile(MultipartFile multipartFile, String fileName) {
