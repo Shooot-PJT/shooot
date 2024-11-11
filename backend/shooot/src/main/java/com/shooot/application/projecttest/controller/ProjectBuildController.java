@@ -5,7 +5,9 @@ import com.shooot.application.projecttest.controller.dto.ProjectBuildView;
 import com.shooot.application.projecttest.controller.dto.ProjectJarFileUploadView;
 import com.shooot.application.projecttest.service.command.ProjectApiDocsSettingService;
 import com.shooot.application.projecttest.service.command.ProjectBuildUploadService;
+import com.shooot.application.projecttest.service.command.ProjectDeployService;
 import com.shooot.application.projecttest.service.command.ProjectTestRunService;
+import com.shooot.application.projecttest.service.dto.ProjectBuildIdDto;
 import com.shooot.application.projecttest.service.dto.ProjectBuildTestRunRequest;
 import com.shooot.application.projecttest.service.dto.ProjectIdDto;
 import com.shooot.application.projecttest.service.query.ProjectBuildFindService;
@@ -26,6 +28,7 @@ public class ProjectBuildController {
     private final ProjectBuildUploadService projectBuildUploadService;
     private final ProjectApiDocsSettingService projectApiDocsSettingService;
     private final ProjectTestRunService projectTestRunService;
+    private final ProjectDeployService projectDeployService;
 
     @PostMapping("/jarFile")
     public ResponseEntity<ProjectJarFileUploadView> jarFileUpload(@RequestPart ProjectIdDto projectIdDto, @RequestPart MultipartFile jarFile, @RequestPart MultipartFile dockerComposeFile, @AuthenticationPrincipal UserLoginContext userLoginContext) {
@@ -55,5 +58,17 @@ public class ProjectBuildController {
     @GetMapping("/{projectId}/jarFile/deploy")
     public ResponseEntity<ProjectBuildView> findDeploymentByProjectId(@PathVariable("projectId") Integer projectId) {
         return ResponseEntity.ok(projectBuildFindService.findByProjectIdAndDeploymentTrue(projectId));
+    }
+
+    @PostMapping("/jarFile/Deploy")
+    public ResponseEntity<Void> deployProject(@RequestBody ProjectBuildIdDto projectBuildIdDto, @AuthenticationPrincipal UserLoginContext userLoginContext) {
+        projectDeployService.projectDeployStartRequest(projectBuildIdDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/jarFile/Deploy")
+    public ResponseEntity<Void> stopProject(@RequestBody ProjectBuildIdDto projectBuildIdDto, @AuthenticationPrincipal UserLoginContext userLoginContext) {
+        projectDeployService.projectDeployStopRequest(projectBuildIdDto);
+        return ResponseEntity.ok().build();
     }
 }
