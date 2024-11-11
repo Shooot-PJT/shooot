@@ -34,15 +34,15 @@ export const expendBox = style({
   top: '35px',
   backgroundColor: colorPalette.util[200],
   borderRadius: '0rem 0rem 0.5rem 0.5rem',
-  padding: '0.5rem 0.25rem 0.5rem 0.75rem',
+  padding: '0rem 0.25rem 0rem 0.75rem',
   gap: '0.5rem',
   transition: 'height 0.125s ease-in-out',
-  paddingTop: '0.75rem',
+  paddingTop: '0.5rem',
 });
 
 export const openBox = style({
   height: '200px',
-  overflow: 'auto',
+
 });
 
 export const closeBox = style({
@@ -55,7 +55,7 @@ export const isInvisible = style({
 
 export const optionItem = style({
   width: '100%',
-  paddingLeft: '0.5rem',
+  //paddingLeft: '0.75rem',
   paddingRight: '0.5rem',
   paddingBottom: '0.5rem',
   paddingTop: '0.5rem',

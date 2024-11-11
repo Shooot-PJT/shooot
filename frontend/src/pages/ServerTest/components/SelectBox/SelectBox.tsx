@@ -17,9 +17,10 @@ export const SelectBox: FC<SelectBoxProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const newValue = parseInt(event.target.value, 10);
-    onChange(newValue);
+  const handleValue = (index: number) => {
+    setIsOpen(false);
+    onChange(index);
+    console.log(index);
   };
 
   const handleOpen = () => {
@@ -36,7 +37,11 @@ export const SelectBox: FC<SelectBoxProps> = ({
       </div>
       <div className={`${s.expendBox} ${!isOpen ? s.closeBox : s.openBox}`}>
         {options.map((option, index) => (
-          <div className={s.optionItem} key={index}>
+          <div
+            className={s.optionItem}
+            key={index}
+            onClick={() => handleValue(index)}
+          >
             {option}
           </div>
         ))}

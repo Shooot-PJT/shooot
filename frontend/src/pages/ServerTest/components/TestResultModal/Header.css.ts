@@ -31,3 +31,8 @@ export const SectionItem = style({
   gridTemplateColumns: '4fr 1fr 2fr',
   gap: '1rem',
 });
+
+export const option = style({
+  display: 'flex',
+  gap: '1rem'
+})
