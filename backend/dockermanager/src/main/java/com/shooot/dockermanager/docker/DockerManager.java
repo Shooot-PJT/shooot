@@ -78,7 +78,7 @@ public class DockerManager {
             log.error("Error on {}: {}", target, e.getMessage());
             e.printStackTrace();
             vagrantRepository.remove(target);
-//            projectDirectoryManager.rmDir(dto.getProjectId(), dto.getProjectJarFileId());
+            projectDirectoryManager.rmDir(dto.getProjectId(), dto.getProjectJarFileId());
             redisMessagePublisher.publishLog(MessageDto.builder()
                     .message(DockerMessage.builder()
                             .projectId(dto.getProjectId())
