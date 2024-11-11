@@ -13,7 +13,7 @@ import com.shooot.dockermanager.handler.DockerComposeManager;
 import com.shooot.dockermanager.handler.MetaData;
 import com.shooot.dockermanager.handler.ProjectDirectoryManager;
 import com.shooot.dockermanager.publisher.DockerConsoleLogMessage;
-import com.shooot.dockermanager.publisher.DockerErrorMessage;
+import com.shooot.dockermanager.publisher.DockerMessage;
 import com.shooot.dockermanager.publisher.MessageDto;
 import com.shooot.dockermanager.publisher.RedisMessagePublisher;
 import com.shooot.dockermanager.vagrant.VagrantRepository;
@@ -40,7 +40,7 @@ public class DockerManager {
     private final ProjectFileRepository projectFileRepository;
     private final ProjectRepository projectRepository;
     private final ProjectBuildRepository projectBuildRepository;
-    private static final Map<String, String> HOSTS = Map.of("instance1", "192.168.56.10:8081", "instance2", "192.168.56.11:8082", "instance3", "192.168.56.12:8083", "instance4", "192.168.56.13:8085");
+    private static final Map<String, String> HOSTS = Map.of("instance1", "192.168.56.10:8082", "instance2", "192.168.56.11:8083", "instance3", "192.168.56.12:8084", "instance4", "192.168.56.13:8085");
     private final RedisMessagePublisher redisMessagePublisher;
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private final ProjectDirectoryManager projectDirectoryManager;
@@ -67,6 +67,7 @@ public class DockerManager {
             Project project = projectRepository.findByProjectJarFileId(dto.getProjectJarFileId()).orElseThrow(IllegalArgumentException::new);
             ProjectBuild projectBuild = projectBuildRepository.findById(dto.getProjectJarFileId()).orElseThrow(IllegalArgumentException::new);
 
+            redisMessagePublisher.initializeLogStream(dto.getProjectId());
 
             setupProjectDirectory(dto, projectFile, project, target, projectBuild.getVersion());
             buildAndDeployDockerImage(project, projectBuild, target);
@@ -76,8 +77,10 @@ public class DockerManager {
         } catch (Exception e) {
             log.error("Error on {}: {}", target, e.getMessage());
             e.printStackTrace();
+            vagrantRepository.remove(target);
+            projectDirectoryManager.rmDir(dto.getProjectId(), dto.getProjectJarFileId());
             redisMessagePublisher.publishLog(MessageDto.builder()
-                    .message(DockerErrorMessage.builder()
+                    .message(DockerMessage.builder()
                             .projectId(dto.getProjectId())
                             .projectJarFileId(dto.getProjectJarFileId())
                             .build())
@@ -117,6 +120,13 @@ public class DockerManager {
         executeProcess(new ProcessBuilder("docker", "tag", project.getEnglishName() + ":" + projectBuild.getVersion(), "192.168.56.1:5000/" + project.getEnglishName() + ":" + projectBuild.getVersion()), "Docker image tag", target);
         executeProcess(new ProcessBuilder("docker", "push", "192.168.56.1:5000/" + project.getEnglishName() + ":" + projectBuild.getVersion()), "Docker image push", target);
         executeProcess(new ProcessBuilder("docker", "stack", "deploy", "-c", "docker-compose.yml", project.getEnglishName()).directory(directory), "Docker Compose deployment", target);
+        redisMessagePublisher.publishLog(MessageDto.builder()
+                .message(DockerConsoleLogMessage.builder()
+                        .projectId(project.getId())
+                        .projectJarFileId(projectBuild.getId())
+                        .build())
+                .type(MessageDto.Type.DOCKER_RUN)
+                .build());
     }
 
     private void executeProcess(ProcessBuilder processBuilder, String taskDescription, String target) throws IOException, InterruptedException {
@@ -136,7 +146,7 @@ public class DockerManager {
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            String logMessage = "[" + target + "] " + line;
+                            String logMessage = "[" + projectEnglishName + "] " + line;
                             log.info(logMessage);
                             redisMessagePublisher.publishLog(MessageDto.builder()
                                     .message(DockerConsoleLogMessage.builder()
@@ -188,11 +198,11 @@ public class DockerManager {
                 } else if (++failureCount >= 30) {
                     log.info("[{}] Service is down. Shutting down Docker Compose...", target);
                     redisMessagePublisher.publishLog(MessageDto.builder()
-                                    .message(DockerErrorMessage.builder()
-                                            .projectJarFileId(projectJarFileId)
-                                            .projectId(projectId)
-                                            .build())
-                                    .type(MessageDto.Type.DOCKER_RUNTIME_ERROR)
+                            .message(DockerMessage.builder()
+                                    .projectJarFileId(projectJarFileId)
+                                    .projectId(projectId)
+                                    .build())
+                            .type(MessageDto.Type.DOCKER_RUNTIME_ERROR)
                             .build());
                     stopDockerCompose(target, englishName, projectId, projectJarFileId);
                     isRunning = false;
@@ -219,6 +229,13 @@ public class DockerManager {
         executeStopProcess("docker", "stack", "rm", metaData.getProjectName());
         vagrantRepository.remove(metaData.getInstanceName());
         projectDirectoryManager.rmDir(serviceStopDto.getProjectId(), serviceStopDto.getProjectJarFileId());
+        redisMessagePublisher.publishLog(MessageDto.builder()
+                .message(DockerConsoleLogMessage.builder()
+                        .projectId(serviceStopDto.getProjectId())
+                        .projectJarFileId(serviceStopDto.getProjectJarFileId())
+                        .build())
+                .type(MessageDto.Type.DOCKER_RUN_DONE)
+                .build());
     }
 
     private void executeStopProcess(String... commands) {

@@ -1,4 +1,4 @@
-package com.shooot.dockermanager.publisher;
+package com.shooot.application.projecttest.subscriber;
 
 import lombok.*;
 
@@ -11,13 +11,12 @@ public class MessageDto {
     private Type type;
     private Message message;
 
-
     public enum Type {
         DOCKER_BUILD_ERROR,
         DOCKER_RUNTIME_ERROR,
         DOCKER_RUN,
-        DOCKER_CONSOLE_LOG,
         DOCKER_RUN_DONE,
+        DOCKER_CONSOLE_LOG,
         ;
     }
 }
