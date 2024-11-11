@@ -4,6 +4,8 @@ import com.shooot.application.security.service.UserLoginContext;
 import com.shooot.application.sseemitter.repository.SseNotificationRepository;
 import com.shooot.application.sseemitter.service.ProjectSseColdStreamService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/sse")
 @RestController
@@ -27,9 +30,10 @@ public class SseController {
     }
 
 
-    @GetMapping("/project/{projectId}/connection")
+    @GetMapping(value = "/project/{projectId}/connection", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> connectionProjectSse(@PathVariable Integer projectId, @AuthenticationPrincipal UserLoginContext userLoginContext) {
         SseEmitter subscribe = projectSseColdStreamService.subscribe(projectId, userLoginContext.getUserId());
+        log.info("connection Return done ");
         return ResponseEntity.ok(subscribe);
     }
 }

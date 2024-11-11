@@ -42,4 +42,5 @@ public class RedisConfig {
         return new StringRedisTemplate(redisConnection());
     }
 
+
 }

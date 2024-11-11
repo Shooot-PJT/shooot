@@ -11,7 +11,6 @@ public class MessageDto {
     private Type type;
     private Message message;
 
-
     public enum Type {
         DOCKER_BUILD_ERROR,
         DOCKER_RUNTIME_ERROR,
@@ -20,9 +19,4 @@ public class MessageDto {
         DOCKER_CONSOLE_LOG,
         ;
     }
-
-    public Message getMessage() {
-        return message.getMessage();
-    }
-
 }
