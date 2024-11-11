@@ -40,6 +40,6 @@ public class ProjectBuild extends SoftDeleteEntity {
     private String md5CheckSum;
 
 
-    @OneToMany(mappedBy = "projectBuild", cascade = CascadeType.ALL)
-    private List<ProjectBuildLog> projectBuildLog;
+    @OneToOne(mappedBy = "projectBuild", cascade = CascadeType.ALL)
+    private ProjectBuildLog projectBuildLog;
 }
