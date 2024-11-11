@@ -77,7 +77,7 @@ self.addEventListener("fetch", async function (event) {
 
                     let result;
                     try {
-                        const response = await fetch("https://shooot.co.kr/express/mock/data", {
+                        const response = await fetch("http://localhost:16783/mock/data", {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",

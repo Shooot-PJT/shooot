@@ -43,16 +43,6 @@ app.get("/api/data", (req, res) => {
     });
 });
 
-app.post("/mock/data", (req, res) => {
-    const { endpoint, method } = req.body;
-
-    console.log("Received from Service Worker:");
-    console.log("Endpoint:", endpoint);
-    console.log("Method:", method);
-
-    res.json({ message: "Data received", endpoint, method });
-});
-
 // projectName 사용 가능 여부 검사
 app.get("/projects/search", (req, res) => {
     const { projectName } = req.query;
@@ -69,6 +59,23 @@ app.get("/projects/search", (req, res) => {
             return res.status(401).json({ canUse: "UNAVAILABLE" });
         }
     });
+});
+
+// service worker 로부터 받은 정보
+app.post("/mock/data", (req, res) => {
+    const { projectName, url, origin, method, headers, requestParameters, pathVariables, body } = req.body;
+
+    console.log("[Received data from Service Worker]");
+    console.log("projectName:", projectName);
+    console.log("url:", url);
+    console.log("origin:", origin);
+    console.log("method:", method);
+    console.log("headers:", headers);
+    console.log("requestParameters:", requestParameters);
+    console.log("pathVariables:", pathVariables);
+    console.log("body:", body);
+
+    res.json({ message: "데이터를 정상적으로 받았습니다" });
 });
 
 // 서버 시작
