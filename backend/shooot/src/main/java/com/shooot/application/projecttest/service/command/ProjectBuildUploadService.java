@@ -57,7 +57,7 @@ public class ProjectBuildUploadService {
         projectVersion.setTemporary(temporaryVersion);
 
         ProjectBuild projectBuild = createProjectBuild(project, projectFileName, projectVersion, jarFileChecksum);
-        ProjectFile projectFile = createProjectFile(jarFile, dockerFile, projectBuild);
+        ProjectFile projectFile = createProjectFile(jarFile, projectFileName, dockerFile, projectBuild);
 
         projectFileRepository.save(projectFile);
 
@@ -104,10 +104,10 @@ public class ProjectBuildUploadService {
                 .build();
     }
 
-    private ProjectFile createProjectFile(File jarFile, File dockerFile, ProjectBuild projectBuild) {
+    private ProjectFile createProjectFile(File jarFile, String projectFileName, File dockerFile, ProjectBuild projectBuild) {
         return ProjectFile.builder()
                 .projectFile(FileHandler.getAllBytes(jarFile))
-                .fileName(jarFile.getName())
+                .fileName(projectFileName)
                 .dockerComposeFile(FileHandler.getAllBytes(dockerFile))
                 .projectBuild(projectBuild)
                 .build();
