@@ -412,7 +412,7 @@ VALUES
 
 
 
-INSERT INTO api_test_case (api_test_case_id, api_id, test_title, http_status_code, http_case_status, modified_at, is_deleted, created_at)
+INSERT INTO api_test_case (api_test_case_id, api_id, test_title, http_status_code, test_case_status, modified_at, is_deleted, created_at)
 VALUES
 -- api_id 1
 (1, 1, 'Test Case 1', 200, 'SUCCESS', '2024-11-11 10:12:45', 0, '2024-11-11'),
