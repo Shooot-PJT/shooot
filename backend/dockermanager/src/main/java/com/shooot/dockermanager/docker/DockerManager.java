@@ -40,7 +40,7 @@ public class DockerManager {
     private final ProjectFileRepository projectFileRepository;
     private final ProjectRepository projectRepository;
     private final ProjectBuildRepository projectBuildRepository;
-    private static final Map<String, String> HOSTS = Map.of("instance1", "192.168.56.10:8081", "instance2", "192.168.56.11:8082", "instance3", "192.168.56.12:8083", "instance4", "192.168.56.13:8085");
+    private static final Map<String, String> HOSTS = Map.of("instance1", "192.168.56.10:8082", "instance2", "192.168.56.11:8083", "instance3", "192.168.56.12:8084", "instance4", "192.168.56.13:8085");
     private final RedisMessagePublisher redisMessagePublisher;
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private final ProjectDirectoryManager projectDirectoryManager;
@@ -77,6 +77,8 @@ public class DockerManager {
         } catch (Exception e) {
             log.error("Error on {}: {}", target, e.getMessage());
             e.printStackTrace();
+            vagrantRepository.remove(target);
+            projectDirectoryManager.rmDir(dto.getProjectId(), dto.getProjectJarFileId());
             redisMessagePublisher.publishLog(MessageDto.builder()
                     .message(DockerMessage.builder()
                             .projectId(dto.getProjectId())
