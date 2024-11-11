@@ -6,8 +6,10 @@ import Typography from '../../../../components/Typography';
 import { SelectBox } from '../SelectBox/SelectBox';
 import { TestMethodType } from '../../types';
 import { MethodChip } from '../MethodChip/MethodChip';
+import { useState } from 'react';
 
 export const Header = () => {
+  const [selectedAPI, setSelectedAPI] = useState<number>(0);
   return (
     <>
       <Flexbox justifyContents="between">
@@ -47,11 +49,19 @@ export const Header = () => {
         <div className={s.RightSection}>
           <SelectBox
             options={[
-              <MethodChip method="get" />,
-              <MethodChip method="post" />,
+              <div className={s.option}>
+                <MethodChip method="get" />
+                <div>api/eggs/count</div>
+              </div>,
+              <div className={s.option}>
+                <MethodChip method="post" />
+                <div>api/eggs/count</div>
+              </div>,
             ]}
-            value={0}
-            onChange={(n: number) => {}}
+            value={selectedAPI}
+            onChange={(n: number) => {
+              setSelectedAPI(n);
+            }}
           />
         </div>
       </div>
