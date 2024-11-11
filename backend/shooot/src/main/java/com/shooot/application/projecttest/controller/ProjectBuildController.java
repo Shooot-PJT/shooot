@@ -37,6 +37,12 @@ public class ProjectBuildController {
         return ResponseEntity.ok(projectJarFileUploadView);
     }
 
+    @PatchMapping("/jarFile")
+    public ResponseEntity<ProjectJarFileUploadView> dockerComposeFileUpdate(@RequestPart ProjectIdDto projectIdDto, @RequestPart MultipartFile dockerComposeFile, @AuthenticationPrincipal UserLoginContext userLoginContext) {
+        projectBuildUploadService.dockerFileUpdate(projectIdDto.getProjectId(), dockerComposeFile);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{projectId}/jarFile")
     public ResponseEntity<List<ProjectBuildView>> jarFileList(@PathVariable("projectId") Integer projectId) {
         List<ProjectBuildView> allByProjectId = projectBuildFindService.findAllByProjectId(projectId);
