@@ -1,153 +1,187 @@
-import {
-  Table,
-  TableBody,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from '@mui/material';
-import Typography from '../../../../../../../../components/Typography';
-import * as s from './TestCaseTable.css';
-import {
-  CustomTableCell,
-  CustomTableRow,
-} from '../../../../../../../../components/CustomTable/CustomTable';
-import Textfield from '../../../../../../../../components/Textfield';
-import {
-  TestCaseTableProps,
-  TestCaseTableSectionProps,
-  UrlViewerBarProps,
-} from './TestCaseTable.types';
-import { getUrlFromParamsAndPath } from '../../../../../../utils';
+import { useState } from 'react';
+import * as styles from './TestCaseTable.css';
+import CellTextField from '../../RequestDocs/Table/CellTextfield/CellTextfield';
+import DropdownMenu from '../../RequestDocs/Table/DropdownMenu/DropdownMenu';
+import Icon from '../../../../../../../../components/Icon';
+import { FaPlus } from 'react-icons/fa';
 
-{
-  /*
-  TODO:
-  1. Params, Path variable, Header, Req Body에 따라
-  테이블 종류 달라야한다면 식별, 종류별 개발
-
-  2. Body에는 none/formData/json 택1 드랍다운메뉴 있어야함
-
-  3. 
-  */
+export interface ParamBase {
+  key: string;
+  value: string;
+  description: string;
+  type?: string;
 }
-export const TestCaseTable = ({ children, isEditing }: TestCaseTableProps) => {
-  const url = getUrlFromParamsAndPath();
+
+interface ReqBodyParam extends ParamBase {
+  type: string;
+}
+
+type Param = ParamBase | ReqBodyParam;
+
+interface TableProps<T extends Param> {
+  data: T[];
+  type: 'params' | 'path variable' | 'headers' | 'req body';
+  isEditMode?: boolean;
+  onChange: (newData: T[]) => void;
+}
+
+export const TestCaseTable = <T extends Param>({
+  data,
+  type,
+  isEditMode = false,
+  onChange,
+}: TableProps<T>) => {
+  const [selectedRow, setSelectedRow] = useState<number | null>(null);
+
+  const handleRowClick = (index: number) => {
+    if (isEditMode) setSelectedRow(index);
+  };
+
+  const handleTextFieldChange = <K extends keyof T>(
+    index: number,
+    field: K,
+    newValue: string,
+  ) => {
+    const updatedData = [...data];
+    updatedData[index] = {
+      ...updatedData[index],
+      [field]: newValue,
+    };
+    onChange(updatedData);
+  };
+
+  const handleDropdownChange = <K extends keyof T>(
+    index: number,
+    field: K,
+    newValue: string,
+  ) => {
+    const updatedData = [...data];
+    updatedData[index] = {
+      ...updatedData[index],
+      [field]: newValue,
+    };
+    onChange(updatedData);
+  };
+
+  const handleAddRow = () => {
+    let newRow: T;
+    if (type === 'req body') {
+      newRow = {
+        key: '',
+        type: 'Text',
+        value: '',
+        description: '',
+      } as T;
+    } else {
+      newRow = {
+        key: '',
+        value: '',
+        description: '',
+      } as T;
+    }
+
+    onChange([...data, newRow]);
+  };
 
   return (
-    <div className={s.container}>
-      {children}
-      <UrlViewerBar url={url} isEditing={isEditing} />
-    </div>
-  );
-};
-
-const UrlViewerBar = ({ url, isEditing }: UrlViewerBarProps) => {
-  return (
-    <div className={s.urlViewerBar}>
-      {isEditing ? (
-        <Textfield color="none" value={url} fullWidth />
-      ) : (
-        <Typography size={0.85}>{url}</Typography>
+    <div>
+      <table className={styles.tableStyle}>
+        <thead>
+          <tr>
+            <th className={styles.headerCellStyle} style={{ width: '20%' }}>
+              Key
+            </th>
+            {type === 'req body' && (
+              <th className={styles.headerCellStyle} style={{ width: '10%' }}>
+                Type
+              </th>
+            )}
+            <th className={styles.headerCellStyle} style={{ width: '30%' }}>
+              Value
+            </th>
+            <th className={styles.headerCellStyle} style={{ width: '40%' }}>
+              Description
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((param, index) => (
+            <tr
+              key={index}
+              className={
+                selectedRow === index && isEditMode
+                  ? styles.selectedRowStyle
+                  : styles.rowStyle
+              }
+              onClick={() => handleRowClick(index)}
+              style={{ cursor: isEditMode ? 'pointer' : 'default' }}
+            >
+              <td className={styles.keyCellStyle}>
+                {isEditMode ? (
+                  <CellTextField
+                    value={param.key}
+                    onChange={(newValue: string) =>
+                      handleTextFieldChange(index, 'key', newValue)
+                    }
+                  />
+                ) : (
+                  <div className={styles.cellViewStyle}>{param.key}</div>
+                )}
+              </td>
+              {type === 'req body' && 'type' in param && (
+                <td className={styles.typeCellStyle}>
+                  {isEditMode ? (
+                    <DropdownMenu
+                      options={['Text', 'File']}
+                      selected={(param as ReqBodyParam).type || 'Text'}
+                      onSelect={(newValue: string) =>
+                        handleDropdownChange(index, 'type' as keyof T, newValue)
+                      }
+                    />
+                  ) : (
+                    <div className={styles.cellViewStyle}>
+                      {(param as ReqBodyParam).type || 'Text'}
+                    </div>
+                  )}
+                </td>
+              )}
+              <td className={styles.keyCellStyle}>
+                {isEditMode ? (
+                  <CellTextField
+                    value={param.value}
+                    onChange={(newValue: string) =>
+                      handleTextFieldChange(index, 'value', newValue)
+                    }
+                  />
+                ) : (
+                  <div className={styles.cellViewStyle}>{param.value}</div>
+                )}
+              </td>
+              <td className={styles.descriptionCellStyle}>
+                {isEditMode ? (
+                  <CellTextField
+                    value={param.description}
+                    onChange={(newValue: string) =>
+                      handleTextFieldChange(index, 'description', newValue)
+                    }
+                  />
+                ) : (
+                  <div className={styles.cellViewStyle}>
+                    {param.description}
+                  </div>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {isEditMode && (
+        <div className={styles.addButtonContainer} onClick={handleAddRow}>
+          <Icon background="none" color="light">
+            <FaPlus />
+          </Icon>
+        </div>
       )}
     </div>
   );
 };
-
-TestCaseTable.Section = function Section({
-  headers,
-  rows,
-  isEditing,
-}: TestCaseTableSectionProps) {
-  return (
-    <TableContainer component={Paper} className={s.tableSection}>
-      <Table aria-label="dynamic table" size="small">
-        <TableHead>
-          <TableRow>
-            {headers.map((header, index) => (
-              <CustomTableCell key={index}>{header}</CustomTableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row, index) => (
-            <CustomTableRow key={index}>
-              {Object.entries(row).map((key, idx) => (
-                <CustomTableCell key={idx}>
-                  {isEditing ? (
-                    <Textfield color="none" fullWidth value={key[1]} />
-                  ) : (
-                    <Typography
-                      style={{
-                        paddingTop: '0.4rem',
-                        paddingBottom: '0.4rem',
-                      }}
-                      size={1.05}
-                    >
-                      {key[1]}
-                    </Typography>
-                  )}
-                </CustomTableCell>
-              ))}
-            </CustomTableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-};
-
-//=============================================================
-// 더미
-const PARAMS_DATA_LIST_DUMMY = [
-  {
-    key: 'category',
-    value: 'value1333',
-    description: '검색대상 카테고리 지정하는 용도',
-    required: '선택',
-  },
-];
-
-const PATHVARIABLES_DATA_LIST_DUMMY = [
-  {
-    key: 'userId',
-    value: 'value1234',
-    description: '조회할 유저의 ID 명시',
-    required: '필수',
-  },
-];
-
-const HEADERS_DATA_LIST_DUMMY = [
-  {
-    key: 'customHeader',
-    value: 'value5678',
-    description: '커스텀 헤더',
-    required: '선택',
-  },
-];
-
-const REQUESTBODY_DATA_LIST_DUMMY = [
-  {
-    key: 'username',
-    value: 'value123',
-    description: '단순 username입니다.',
-    required: '선택',
-    type: 'Text',
-  },
-  {
-    key: 'file',
-    value: 'file123',
-    description: '첨부 파일',
-    required: '필수',
-    type: 'File',
-  },
-];
-
-const REQUEST_CONENT_LIST_DUMMIES = {
-  PARAMS_DATA_LIST_DUMMY: PARAMS_DATA_LIST_DUMMY,
-  PATHVARIABLES_DATA_LIST_DUMMY: PATHVARIABLES_DATA_LIST_DUMMY,
-  HEADERS_DATA_LIST_DUMMY: HEADERS_DATA_LIST_DUMMY,
-  REQUESTBODY_DATA_LIST_DUMMY: REQUESTBODY_DATA_LIST_DUMMY,
-};
-
-const DUMMY_METHOD = 'get';
