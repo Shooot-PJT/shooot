@@ -7,6 +7,7 @@ import com.shooot.application.projecttest.domain.ProjectBuild;
 import com.shooot.application.projecttest.domain.ProjectFile;
 import com.shooot.application.projecttest.domain.ProjectVersion;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
+import com.shooot.application.projecttest.domain.repository.ProjectFileRepository;
 import com.shooot.application.projecttest.event.dto.ProjectBuildUploadedEvent;
 import com.shooot.application.projecttest.exception.DockerComposeCanNotUseImageException;
 import com.shooot.application.projecttest.exception.FileIsExistException;
