@@ -44,7 +44,7 @@ public class DockerComposeManager {
     private Map<String, Object> createProjectServiceConfig(String projectName, String instanceName, ProjectVersion projectVersion) {
         Map<String, Object> serviceConfig = new HashMap<>();
         serviceConfig.put("restart", "always");
-        serviceConfig.put("ports", List.of("808" + extractInstanceNumber(instanceName) + 1 + ":8080"));
+        serviceConfig.put("ports", List.of("808" + (extractInstanceNumber(instanceName) + 1) + ":8080"));
         serviceConfig.put("image", DOCKER_REGISTRY + projectName + ":" + projectVersion);
         serviceConfig.put("networks", List.of(NETWORK_TRAEFIK, NETWORK_INTERNAL));
         serviceConfig.put("deploy", createDeployConfig(instanceName, projectName));
