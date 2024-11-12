@@ -10,10 +10,10 @@ const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
   <>
-    <ModalPortal />
-    <PopupPortal />
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
+        <ModalPortal />
+        <PopupPortal />
         <App />
       </QueryClientProvider>
     </BrowserRouter>
