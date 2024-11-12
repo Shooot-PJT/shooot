@@ -3,8 +3,8 @@ import Backdrop from '../../components/Backdrop';
 import useModalStore from '../../stores/useModalStore';
 import Modal from '../../components/Modal/Modal';
 import darkTheme from '../../styles/darkTheme.css';
-import { Desktop } from '../../components/Layout/Desktop';
 import React from 'react';
+import { Desktop } from '../../pages/Main/components/Layout/Desktop';
 
 const ModalPortal = () => {
   const { modals } = useModalStore();
