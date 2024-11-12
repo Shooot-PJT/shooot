@@ -7,7 +7,7 @@ import usePopup from '../../../../hooks/usePopup';
 import { UploadFile } from '../UploadFile/UploadFile';
 import * as s from './AddProjectModal.css';
 import { useNavBarStore } from '../../../../stores/navbarStore';
-import { uploadJarFile } from '../../apis';
+import { uploadJarFile } from '../../apis/JarFileApi';
 import { UploadingModal } from '../UploadingModal/UploadingModal';
 import { useUploadStateStore } from '../../stores/useUploadStateStore';
 
