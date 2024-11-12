@@ -35,4 +35,9 @@ public class ProjectBuildLog extends BaseEntity {
     public void updateStatus(ProjectBuildStatus status) {
         this.status = status;
     }
+
+
+    public Boolean isDeploy() {
+        return status != null && status.equals(ProjectBuildStatus.RUN);
+    }
 }

@@ -37,4 +37,8 @@ public class ProjectFile {
     @Column(name = "file_name")
     private String fileName;
 
+
+    public void updateDockerComposeFile(byte[] files) {
+        this.dockerComposeFile = files;
+    }
 }
