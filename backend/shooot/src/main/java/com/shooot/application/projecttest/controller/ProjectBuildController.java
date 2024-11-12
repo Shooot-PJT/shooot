@@ -64,13 +64,13 @@ public class ProjectBuildController {
         return ResponseEntity.ok(projectBuildFindService.findByProjectIdAndDeploymentTrue(projectId));
     }
 
-    @PostMapping("/jarFile/Deploy")
+    @PostMapping("/jarFile/deploy")
     public ResponseEntity<Void> deployProject(@RequestBody ProjectBuildIdDto projectBuildIdDto, @AuthenticationPrincipal UserLoginContext userLoginContext) {
         projectDeployService.projectDeployStartRequest(projectBuildIdDto);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/jarFile/Deploy")
+    @PutMapping("/jarFile/deploy")
     public ResponseEntity<Void> stopProject(@RequestBody ProjectBuildIdDto projectBuildIdDto, @AuthenticationPrincipal UserLoginContext userLoginContext) {
         projectDeployService.projectDeployStopRequest(projectBuildIdDto);
         return ResponseEntity.ok().build();
