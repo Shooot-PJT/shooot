@@ -1,12 +1,11 @@
 package com.shooot.application.projecttest.handler;
 
 import com.shooot.application.projecttest.exception.DockerComposeCanNotUseImageException;
+import com.shooot.application.projecttest.exception.DockerComposeCanNotUsePortException;
+import com.shooot.application.projecttest.exception.DockerComposeCanNotUseVolumeException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
-import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -37,7 +36,7 @@ public class DockerComposeValidator {
 
     public void validateComposeFile(String composeFilePath) {
         Yaml yaml = new Yaml();
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(composeFilePath)) {
+        try (InputStream inputStream = new FileInputStream(composeFilePath)) {
             Map<String, Object> composeFile = yaml.load(inputStream);
 
             // 최상위 networks 검증
@@ -86,14 +85,14 @@ public class DockerComposeValidator {
                 List<String> ports = (List<String>) service.get("ports");
                 if (ports != null && !ports.isEmpty()) {
                     log.info("Service {} should not have any ports forwarded.", serviceEntry.getKey());
-                    throw new DockerComposeCanNotUseImageException();
+                    throw new DockerComposeCanNotUsePortException();
                 }
 
                 // 4. 볼륨 설정이 없는지 검증
                 List<String> volumes = (List<String>) service.get("volumes");
                 if (volumes != null && !volumes.isEmpty()) {
                     log.info("Service {} should not have any volumes attached.", serviceEntry.getKey());
-                    throw new DockerComposeCanNotUseImageException();
+                    throw new DockerComposeCanNotUseVolumeException();
                 }
             }
         } catch (Exception e) {
