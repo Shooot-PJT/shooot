@@ -45,37 +45,19 @@ export const Primary: Story = {
   render: (args) => {
     return (
       <div className={darkThemeCss}>
-        <Desktop>
-          <Backdrop
-            opacity={args.opacity}
-            blur={args.blur}
+        <Backdrop
+          opacity={args.opacity}
+          blur={args.blur}
+          isClosing={args.isClosing}
+        >
+          <Modal
+            onClose={args.onClose}
             isClosing={args.isClosing}
+            color={args.color}
           >
-            <Modal
-              onClose={args.onClose}
-              isClosing={args.isClosing}
-              color={args.color}
-            >
-              {args.children}
-            </Modal>
-          </Backdrop>
-        </Desktop>
-        <Mobile>
-          <Backdrop
-            opacity={args.opacity}
-            blur={args.blur}
-            isClosing={args.isClosing}
-          >
-            <Modal
-              onClose={args.onClose}
-              isClosing={args.isClosing}
-              color={args.color}
-              isMobile={true}
-            >
-              {args.children}
-            </Modal>
-          </Backdrop>
-        </Mobile>
+            {args.children}
+          </Modal>
+        </Backdrop>
         <img src="https://cdn.pixabay.com/photo/2024/02/17/09/39/cat-8579018_1280.jpg" />
       </div>
     );
