@@ -34,7 +34,7 @@ export interface RemoveTestCaseRequest {
   testcaseId: TestCaseDetailInfo['id'];
 }
 //=== 테스트케이스 조회
-export interface GetTestCaseDetail {
+export interface GetTestCaseDetailRequest {
   testcaseId: TestCaseDetailInfo['id'];
 }
 
