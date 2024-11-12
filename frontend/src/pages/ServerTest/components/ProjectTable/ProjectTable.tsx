@@ -5,7 +5,7 @@ import useModal from '../../../../hooks/useModal';
 import { AddProjectModal } from '../AddProjectModal/AddProjectModal';
 import { DataTable } from '../DataTable/DataTable';
 import { TestConfigModal } from '../TestConfigModal/TestConfigModal';
-import { deleteJarFile } from '../../apis';
+import { deleteJarFile } from '../../apis/JarFileApi';
 import Typography from '../../../../components/Typography';
 import { DeleteJarFileModal } from './DeleteJarFileModal/DeleteJarFileModal';
 import { useUploadStateStore } from '../../stores/useUploadStateStore';
