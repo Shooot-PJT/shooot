@@ -1,13 +1,13 @@
 import React, { ReactNode, Suspense } from 'react';
 import * as style from './Layout.css';
 import NavBar from '../NavBar';
-import Flexbox from '../Flexbox';
 import { Banner } from '../Banner';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useResize } from '../../hooks/useResize';
-import { useNavBar } from '../../pages/Main/hooks/useNavBar';
-import Button from '../Button';
-import Typography from '../Typography';
+import { useResize } from '../../../../hooks/useResize';
+import Button from '../../../../components/Button';
+import { useRemoveUserInfo } from '../../hooks';
+import Typography from '../../../../components/Typography';
+import Flexbox from '../../../../components/Flexbox';
 
 interface LayoutProps extends React.ComponentProps<'div'> {
   children: ReactNode;
@@ -15,28 +15,16 @@ interface LayoutProps extends React.ComponentProps<'div'> {
 
 export const Layout = ({ children, ...props }: LayoutProps) => {
   const { isLarge } = useResize();
-  const {
-    menu,
-    userInfo,
-    projectInfo,
-    memberInfo,
-    nicknameChangeModalHandler,
-    addProjectModalHandler,
-    editProjectModalHandler,
-    inviteMembersModalHandler,
-    kickMemberModalHandler,
-    handleLogout,
-    removeProjectModalHandler,
-  } = useNavBar();
+  const { mutate } = useRemoveUserInfo();
 
   return (
     <div className={style.layout} {...props}>
       <NavBar>
-        <NavBar.Title handleLogout={handleLogout} />
+        <NavBar.Title />
         <div className={style.nav}>
           <ErrorBoundary fallback={<>에러</>}>
             <Suspense fallback={<>로딩중</>}>
-              <NavBar.Project addProjectModalHandler={addProjectModalHandler} />
+              <NavBar.Project />
             </Suspense>
           </ErrorBoundary>
           <div className={style.divi} />
@@ -48,7 +36,7 @@ export const Layout = ({ children, ...props }: LayoutProps) => {
               color="grey"
               fullWidth
               paddingY={0.75}
-              onClick={async () => await handleLogout()}
+              onClick={() => mutate()}
             >
               <Typography color="disabled" size={0.8125}>
                 로그아웃
@@ -68,17 +56,7 @@ export const Layout = ({ children, ...props }: LayoutProps) => {
             paddingTop: isLarge ? '0' : '4rem',
           }}
         >
-          <Banner
-            menu={menu}
-            userInfo={userInfo!}
-            projectInfo={projectInfo!}
-            memberInfo={memberInfo!}
-            nicknameChangeModalHandler={nicknameChangeModalHandler}
-            editProjectModalHandler={editProjectModalHandler}
-            inviteMembersModalHandler={inviteMembersModalHandler}
-            kickMemberModalHandler={kickMemberModalHandler}
-            removeProjectModalHandler={removeProjectModalHandler}
-          />
+          <Banner />
           {children}
         </Flexbox>
       </div>

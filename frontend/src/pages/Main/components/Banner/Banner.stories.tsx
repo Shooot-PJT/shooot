@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import darkTheme from '../../styles/darkTheme.css';
+import darkTheme from '../../../../styles/darkTheme.css';
 import { Banner } from '.';
 
 const meta: Meta<typeof Banner> = {

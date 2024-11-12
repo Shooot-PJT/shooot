@@ -1,38 +1,19 @@
 import { style } from '@vanilla-extract/css';
-import theme from '../../styles/theme.css';
+import theme from '../../../../styles/theme.css';
 
-export const container = style({
-  boxSizing: 'border-box',
+export const layout = style({
+  width: '100%',
+  height: '100%',
 
   '@media': {
     'screen and (min-width: 1440px)': {
-      position: 'fixed',
-      width: '20rem',
-      borderRadius: '1rem',
-      paddingBottom: '4rem',
-    },
-
-    'screen and (max-width: 1439px)': {
-      position: 'fixed',
-      overflow: 'hidden',
-      boxSizing: 'border-box',
-      width: '100%',
-      maxHeight: '4rem',
-      padding: '1rem',
-      transition: 'max-height 0.3s ease-in-out',
+      display: 'flex',
+      columnGap: '1rem',
     },
   },
 });
 
-export const scrolldown = style({
-  '@media': {
-    'screen and (max-width: 1439px)': {
-      maxHeight: '25rem',
-    },
-  },
-});
-
-/* 스토리북에서 사용 */
+/* NavBar */
 export const nav = style({
   width: '100%',
   display: 'flex',
@@ -47,7 +28,7 @@ export const nav = style({
     'screen and (max-width: 1439px)': {
       display: 'flex',
       alignItems: 'center',
-      marginTop: '3rem',
+      marginTop: '1rem',
       columnGap: '3rem',
     },
   },

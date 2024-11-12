@@ -1,9 +1,8 @@
 import { ReactNode } from 'react';
 import { HiDocumentCheck, HiServerStack, HiUserCircle } from 'react-icons/hi2';
-import Flexbox from '../../Flexbox';
 import MenuItems from './MenuItems';
-import { useResize } from '../../../hooks/useResize';
-
+import { useResize } from '../../../../../hooks/useResize';
+import Flexbox from '../../../../../components/Flexbox';
 const menus: string[] = ['API 문서', '서버 테스트 실행기', '내 프로젝트'];
 const icons: ReactNode[] = [
   <HiDocumentCheck />,
@@ -13,6 +12,7 @@ const icons: ReactNode[] = [
 
 const Menu = () => {
   const { isLarge } = useResize();
+
   return (
     <div style={{ width: isLarge ? '100%' : '50%' }}>
       <Flexbox

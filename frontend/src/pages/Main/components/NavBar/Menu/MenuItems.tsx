@@ -1,13 +1,12 @@
 import React, { ReactNode } from 'react';
-import Flexbox from '../../Flexbox';
-import { useNavBarStore } from '../../../stores/navbarStore';
-import Icon from '../../Icon';
-import Typography from '../../Typography';
-import Button from '../../Button';
-import usePopup from '../../../hooks/usePopup';
-import { useQuery } from '@tanstack/react-query';
-import { getMyProjectList } from '../../../pages/MyProject/apis';
-import { useResize } from '../../../hooks/useResize';
+import { useReadProjectList } from '../../../hooks';
+import usePopup from '../../../../../hooks/usePopup';
+import { useResize } from '../../../../../hooks/useResize';
+import { useNavBarStore } from '../../../../../stores/navbarStore';
+import Typography from '../../../../../components/Typography';
+import Button from '../../../../../components/Button';
+import Flexbox from '../../../../../components/Flexbox';
+import Icon from '../../../../../components/Icon';
 
 interface MenuItemProps extends React.ComponentProps<'div'> {
   menu: string;
@@ -16,17 +15,13 @@ interface MenuItemProps extends React.ComponentProps<'div'> {
 }
 
 const MenuItems = ({ menu, icon, idx }: MenuItemProps) => {
+  const popup = usePopup();
   const { isLarge } = useResize();
   const navbarStore = useNavBarStore();
-
-  const popup = usePopup();
-  const projectsListQuery = useQuery({
-    queryKey: ['project-list'],
-    queryFn: async () => await getMyProjectList(),
-  });
+  const { projectList } = useReadProjectList();
 
   const handler = (idx: number) => {
-    if (idx === 2 || projectsListQuery.data?.data.length) {
+    if (idx === 2 || projectList?.data.length) {
       navbarStore.setMenu(idx);
     } else {
       popup.push({

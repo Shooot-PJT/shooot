@@ -1,6 +1,6 @@
 import React from 'react';
-import Flexbox from '../Flexbox';
 import * as style from './Banner.css';
+import Flexbox from '../../../../components/Flexbox';
 
 interface ImgProps extends React.ComponentProps<'div'> {
   src: string;

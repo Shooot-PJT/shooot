@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import darkTheme from '../../styles/darkTheme.css';
+import darkTheme from '../../../../styles/darkTheme.css';
 import { Layout } from '.';
 
 const meta: Meta<typeof Layout> = {

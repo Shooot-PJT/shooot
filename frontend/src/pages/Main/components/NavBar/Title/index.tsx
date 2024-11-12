@@ -1,22 +1,20 @@
-import Flexbox from '../../Flexbox';
-import Icon from '../../Icon';
 import {
   HiRocketLaunch,
   HiBars3,
   HiArrowRightStartOnRectangle,
 } from 'react-icons/hi2';
-import Typography from '../../Typography';
-import { useNavBarStore } from '../../../stores/navbarStore';
-import { useResize } from '../../../hooks/useResize';
-import { CustomTooltip } from '../../CustomToolTip';
+import { useRemoveUserInfo } from '../../../hooks';
+import { useNavBarStore } from '../../../../../stores/navbarStore';
+import { useResize } from '../../../../../hooks/useResize';
+import Flexbox from '../../../../../components/Flexbox';
+import Icon from '../../../../../components/Icon';
+import Typography from '../../../../../components/Typography';
+import { CustomTooltip } from '../../../../../components/CustomToolTip';
 
-interface TitleProps {
-  handleLogout: () => Promise<void>;
-}
-
-export const Title = ({ handleLogout }: TitleProps) => {
+export const Title = () => {
   const navbarStore = useNavBarStore();
   const { isLarge } = useResize();
+  const { mutate } = useRemoveUserInfo();
 
   return (
     <>
@@ -50,7 +48,7 @@ export const Title = ({ handleLogout }: TitleProps) => {
                   size={1.5}
                   background="none"
                   color="light"
-                  onClick={async () => await handleLogout()}
+                  onClick={() => mutate()}
                 >
                   <HiArrowRightStartOnRectangle />
                 </Icon>
