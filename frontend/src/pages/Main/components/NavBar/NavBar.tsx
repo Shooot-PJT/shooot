@@ -1,10 +1,10 @@
 import React, { ReactNode } from 'react';
 import * as style from './NavBar.css';
-import theme from '../../styles/theme.css';
+import theme from '../../../../styles/theme.css';
 import { Title } from './Title';
 import { Project } from './Project';
 import Menu from './Menu/Menu';
-import { useNavBarStore } from '../../stores/navbarStore';
+import { useNavBarStore } from '../../../../stores/navbarStore';
 
 interface NavBarProps extends React.ComponentProps<'div'> {
   children?: ReactNode;
