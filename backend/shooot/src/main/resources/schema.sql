@@ -573,7 +573,7 @@ VALUES
 
 
 
-INSERT INTO api_test_log (api_test_log, project_participant_id, api_test_case_id, is_success, http_status, http_body, http_header, created_at, is_deleted) VALUES
+INSERT INTO api_test_log (api_test_log_ud, project_participant_id, api_test_case_id, is_success, http_status, http_body, http_header, created_at, is_deleted) VALUES
 (UNHEX('00000000000000000000000000000001'), 2, 1, 0, 404, '{"message": "response 1"}', '{"header-1": "value-1"}', '2024-11-11 10:00:00', 0),
 (UNHEX('00000000000000000000000000000002'), 3, 2, 1, 200, '{"message": "response 2"}', '{"header-2": "value-2"}', '2024-11-11 10:01:00', 0),
 (UNHEX('00000000000000000000000000000003'), 4, 3, 0, 404, '{"message": "response 3"}', '{"header-3": "value-3"}', '2024-11-11 10:02:00', 0),
