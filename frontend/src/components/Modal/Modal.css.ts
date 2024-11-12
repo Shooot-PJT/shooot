@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css';
+import { style, keyframes } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 import theme from '../../styles/theme.css';
 
@@ -23,7 +23,7 @@ export const container = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  transform: 'translate3d(0, 0, 0 )',
+  transform: 'translate3d(0, 0, 0)',
   width: '100%',
   height: '100%',
 });
@@ -51,16 +51,28 @@ export const bar = style({
   marginBottom: '1rem',
 });
 
+const modalInKeyframes = keyframes({
+  from: {
+    transform: 'translateY(900px)',
+  },
+  to: {
+    transform: 'translateY(0)',
+  },
+});
+
+const modalOutKeyframes = keyframes({
+  from: {
+    transform: 'translateY(0)',
+  },
+  to: {
+    transform: 'translateY(900px)',
+  },
+});
+
 export const modalIn = style({
-  transform: 'translateY(0px)',
-  // opacity: 1,
-  transition:
-    'transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)',
+  animation: `${modalInKeyframes} 0.5s cubic-bezier(0.4, 0.0, 0.2, 1) forwards`,
 });
 
 export const modalOut = style({
-  transform: 'translateY(900px)',
-  // opacity: 0,
-  transition:
-    'transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)',
+  animation: `${modalOutKeyframes} 0.5s cubic-bezier(0.4, 0.0, 0.2, 1) forwards`,
 });

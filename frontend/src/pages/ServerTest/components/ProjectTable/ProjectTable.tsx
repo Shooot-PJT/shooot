@@ -7,6 +7,9 @@ import { DataTable } from '../DataTable/DataTable';
 import { TestConfigModal } from '../TestConfigModal/TestConfigModal';
 import { deleteJarFile } from '../../apis';
 import Typography from '../../../../components/Typography';
+import { DeleteJarFileModal } from './DeleteJarFileModal/DeleteJarFileModal';
+import { useUploadStateStore } from '../../stores/useUploadStateStore';
+import usePopup from '../../../../hooks/usePopup';
 
 interface ProjectProps {
   tableData: ReactNode[][];
@@ -20,10 +23,11 @@ export const ProjectTable = ({
   handleRender,
 }: ProjectProps) => {
   const [selectedRow, setSelectedRow] = useState<number>(-1);
-  const modal = useModal();
-
   const colWidths = [10, 35, 25, 15, 15];
   const headers = ['버전', '파일명', '최근 빌드', 'API 문서', '배포하기'];
+  const modal = useModal();
+  const popup = usePopup();
+  const { setState } = useUploadStateStore();
 
   const handleSelectRow = (rowIndex: number, selectedRow: number) => {
     if (rowIndex !== selectedRow) {
@@ -45,9 +49,39 @@ export const ProjectTable = ({
     });
   };
 
+  const handleDeleteJarFileModal = () => {
+    modal.push({
+      children: <DeleteJarFileModal delFunction={handleDeleteProjectJarFile} />,
+    });
+  };
+
+  const handleFailDeletePopup = (text: string) => {
+    popup.push({
+      title: '프로젝트 파일 삭제 실패',
+      children: text,
+      type: 'fail',
+      onClose: () => modal.pop(),
+    });
+  };
+
   const handleDeleteProjectJarFile = () => {
-    if (selectedRow !== -1 && idList)
-      deleteJarFile({ projectJarFileId: idList[selectedRow] });
+    if (selectedRow !== -1 && idList) {
+      setState('Pending');
+      deleteJarFile({ projectJarFileId: idList[selectedRow] })
+        .then(() => {
+          modal.pop();
+          setState('None');
+          handleRender();
+        })
+        .catch((error) => {
+          if (error.response.data) {
+            handleFailDeletePopup(error.response.data.message);
+          } else {
+            handleFailDeletePopup(error.message);
+          }
+          setState('None');
+        });
+    }
   };
 
   return (
@@ -77,11 +111,16 @@ export const ProjectTable = ({
           <Button
             rounded={0.5}
             color="delete"
-            onClick={handleDeleteProjectJarFile}
+            onClick={handleDeleteJarFileModal}
+            disabled={selectedRow === -1}
           >
             프로젝트 제거
           </Button>
-          <Button rounded={0.5} onClick={handleTestConfigModal}>
+          <Button
+            rounded={0.5}
+            onClick={handleTestConfigModal}
+            disabled={selectedRow === -1}
+          >
             테스트 실행
           </Button>
         </Flexbox>

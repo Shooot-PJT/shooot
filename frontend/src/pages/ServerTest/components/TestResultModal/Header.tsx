@@ -1,12 +1,11 @@
-import * as s from './Header.css';
-import { LuTimer } from 'react-icons/lu';
+import { useState } from 'react';
 import { HiCog6Tooth, HiMiniUser } from 'react-icons/hi2';
+import { LuTimer } from 'react-icons/lu';
 import Flexbox from '../../../../components/Flexbox';
 import Typography from '../../../../components/Typography';
-import { SelectBox } from '../SelectBox/SelectBox';
-import { TestMethodType } from '../../types';
 import { MethodChip } from '../MethodChip/MethodChip';
-import { useState } from 'react';
+import { SelectBox } from '../SelectBox/SelectBox';
+import * as s from './Header.css';
 
 export const Header = () => {
   const [selectedAPI, setSelectedAPI] = useState<number>(0);

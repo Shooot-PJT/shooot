@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
+import useModalStore from '../../stores/useModalStore';
 import usePopupStore from '../../stores/usePopupStore';
-import * as s from './Popup.css';
-import Typography from '../Typography';
 import Button from '../Button';
 import Flexbox from '../Flexbox';
+import Typography from '../Typography';
+import * as s from './Popup.css';
 import { PopupData } from './Popup.types';
-import useModalStore from '../../stores/useModalStore';
 
 type PopupProps = PopupData;
 
@@ -17,28 +17,12 @@ const Popup = ({
   onClose,
   isClosing,
 }: PopupProps) => {
-  const [motionClass, setMotionClass] = useState<string>(s.popupOut);
-  const [isOpening, setIsOpening] = useState<boolean>(true);
   const popupRef = useRef<HTMLDivElement>(null);
   const { popups, popPopup, updatePopup } = usePopupStore();
   const { modals } = useModalStore();
 
-  useEffect(() => {
-    if (!isClosing) {
-      setMotionClass(s.popupIn);
-      setIsOpening(true);
-    } else {
-      setMotionClass(s.popupOut);
-      setIsOpening(false);
-    }
-
-    if (isClosing && onClose) {
-      onClose();
-    }
-  }, [isClosing, onClose]);
-
-  const handleTransitionEnd = () => {
-    if (isClosing && !isOpening) {
+  const handleAnimationEnd = (e: React.AnimationEvent) => {
+    if (e.target === popupRef.current && isClosing) {
       if (popups.length === 1 && modals.length === 0) {
         document.body.style.overflow = '';
         document.body.style.touchAction = '';
@@ -47,12 +31,19 @@ const Popup = ({
     }
   };
 
+  const handleOnClose = (e: React.AnimationEvent) => {
+    if (e.target === popupRef.current && isClosing && onClose) {
+      onClose();
+    }
+  };
+
   return (
     <div
-      className={`${s.container} ${motionClass}`}
+      className={`${s.container} ${isClosing ? s.popupOut : s.popupIn}`}
       ref={popupRef}
       onClick={updatePopup}
-      onTransitionEnd={handleTransitionEnd}
+      onAnimationStart={handleOnClose}
+      onAnimationEnd={handleAnimationEnd}
     >
       <div className={s.popup({ background: color })}>
         <div>

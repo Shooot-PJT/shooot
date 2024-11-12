@@ -42,7 +42,6 @@ export const expendBox = style({
 
 export const openBox = style({
   height: '200px',
-
 });
 
 export const closeBox = style({
@@ -55,7 +54,6 @@ export const isInvisible = style({
 
 export const optionItem = style({
   width: '100%',
-  //paddingLeft: '0.75rem',
   paddingRight: '0.5rem',
   paddingBottom: '0.5rem',
   paddingTop: '0.5rem',

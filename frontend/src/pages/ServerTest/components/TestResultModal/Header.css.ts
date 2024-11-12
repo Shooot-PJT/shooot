@@ -34,5 +34,6 @@ export const SectionItem = style({
 
 export const option = style({
   display: 'flex',
-  gap: '1rem'
-})
+  flexDirection: 'row',
+  gap: '1rem',
+});

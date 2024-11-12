@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { GoTriangleUp } from 'react-icons/go';
 import { GoTriangleDown } from 'react-icons/go';
 import * as s from './SelectBox.css';
@@ -10,11 +10,7 @@ interface SelectBoxProps {
   options: ReactNode[];
 }
 
-export const SelectBox: FC<SelectBoxProps> = ({
-  value = 0,
-  onChange,
-  options,
-}) => {
+export const SelectBox = ({ value = 0, onChange, options }: SelectBoxProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleValue = (index: number) => {
