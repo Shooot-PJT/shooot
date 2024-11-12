@@ -28,7 +28,7 @@ public class ApiView {
     private Boolean isRealServer;
     private Boolean isSecure;
     private Boolean isDeleted;
-    private ApiTestStatusType type;
+    private ApiTestStatusType testStatus;
 
     public static ApiView from(Api api){
 
@@ -48,7 +48,7 @@ public class ApiView {
                 .isRealServer(api.getIsRealServer())
                 .isSecure(api.getIsSecure())
                 .isDeleted(api.getIsDeleted())
-                .type(api.getTestStatus())
+                .testStatus(api.getTestStatus())
                 .build();
     }
 }

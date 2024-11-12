@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiDetailListView {
-    private ApiView apiView;
+    private ApiView requestDocs;
     private List<ApiTestCaseListView> testCases;
-//    private ApiTestLastLogView lastLog;
+    private ApiTestLastLogView lastLog;
 }

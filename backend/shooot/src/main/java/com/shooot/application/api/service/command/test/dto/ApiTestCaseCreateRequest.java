@@ -11,6 +11,6 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public class ApiTestCaseCreateRequest {
     private String title;
-    private Integer expectHttpStatus;
+    private Integer httpStatusCode;
     private ApiTestCaseRequestType type;
 }
