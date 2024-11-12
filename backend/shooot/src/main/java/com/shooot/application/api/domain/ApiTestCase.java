@@ -54,8 +54,8 @@ public class ApiTestCase extends SoftDeleteEntity {
             this.title = apiTestCaseModifyRequest.getTitle();
         }
 
-        if(apiTestCaseModifyRequest.getExpectHttpStatus() != null){
-            this.httpStatus = HttpStatus.valueOf(apiTestCaseModifyRequest.getExpectHttpStatus());
+        if(apiTestCaseModifyRequest.getHttpStatusCode() != null){
+            this.httpStatus = HttpStatus.valueOf(apiTestCaseModifyRequest.getHttpStatusCode());
         }
     }
 

@@ -1,5 +1,6 @@
 package com.shooot.application.api.service.command.test.dto;
 
+import com.shooot.application.api.domain.ApiTestCaseRequestType;
 import lombok.*;
 
 @Builder
@@ -9,5 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 public class ApiTestCaseModifyRequest {
     private String title;
-    private Integer expectHttpStatus;
+    private Integer httpStatusCode;
+    private ApiTestCaseRequestType type;
 }

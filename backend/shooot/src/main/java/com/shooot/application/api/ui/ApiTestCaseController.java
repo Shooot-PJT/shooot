@@ -19,6 +19,7 @@ import com.shooot.application.api.ui.dto.TestCaseView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,7 +53,7 @@ public class ApiTestCaseController {
         data.put("content", contentMap);
         data.put("title", apiTestCaseCreateRequest.getTitle());
         data.put("type", apiTestCaseCreateRequest.getType().equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART);
-        data.put("expectHttpStatus", apiTestCaseCreateRequest.getExpectHttpStatus());
+        data.put("httpStatusCode", apiTestCaseCreateRequest.getHttpStatusCode());
         log.info("asdf = {}", data);
 
         ApiTestCaseView apiTestCaseView = apiTestCaseCreateService.create(apiId, data);
@@ -81,7 +82,8 @@ public class ApiTestCaseController {
 
         data.put("content", contentMap);
         data.put("title", apiTestCaseModifyRequest.getTitle());
-        data.put("expectHttpStatus", apiTestCaseModifyRequest.getExpectHttpStatus());
+        data.put("httpStatusCode", apiTestCaseModifyRequest.getHttpStatusCode());
+        data.put("type", apiTestCaseModifyRequest.getType().equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART);
         log.info("asdf = {}", data);
         log.info("getcontent = {} ", data.get("content"));
 
@@ -115,12 +117,12 @@ public class ApiTestCaseController {
     @RequiresProjectParticipation(type = ProjectDomainType.API)
     public ResponseEntity<?> getTestLogs(
             @PathVariable(name = "apiId") Integer apiId,
-            @RequestParam Integer testcaseId,
+            @RequestParam(required = false) Integer testcaseId,
             @RequestParam(required = false) Integer testerId,
             @RequestParam(required = false) Boolean isSuccess,
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
-            Pageable pageable
+            @PageableDefault(size = 4, page = 0) Pageable pageable
     ){
 
         TestLogSearchRequest testLogSearchRequest = TestLogSearchRequest.builder()
@@ -133,10 +135,10 @@ public class ApiTestCaseController {
 
         log.info("apiId = {}" , apiId);
         log.info("testLogSearchRequest = {}", testLogSearchRequest);
+        log.info("pageable = {}", pageable);
 
         return ResponseEntity.ok(testCaseLogsGetService.getFilterLogs(testLogSearchRequest, pageable));
     }
-
 
 
 }

@@ -28,11 +28,13 @@ public class ApiTestCaseModifyService {
     private final ApiRepository apiRepository;
     private final ApiTestCaseRepository apiTestCaseRepository;
     private final ApiTestCaseRequestRepository apiTestCaseRequestRepository;
+    private final ApiTestCaseCreateService apiTestCaseCreateService;
 
     @Transactional
     public ApiTestCaseView modify(Integer testcaseId, Map<String, Object> request){
         ApiTestCase apiTestCase = modifyApiTestCase(testcaseId, request);
-        ApiTestCaseRequest apiTestCaseRequest = modifyApiTestCaseRequest(apiTestCase, request);
+//        ApiTestCaseRequest apiTestCaseRequest = modifyApiTestCaseRequest(apiTestCase, request);
+        ApiTestCaseRequest apiTestCaseRequest = apiTestCaseCreateService.createApiTestCaseRequest(apiTestCase, request);
 
         Api api = apiRepository.findById(apiTestCase.getApi().getId())
                 .orElseThrow(ApiNotFoundException::new);
@@ -48,7 +50,7 @@ public class ApiTestCaseModifyService {
         ApiTestCaseModifyRequest apiTestCaseModifyRequest = ApiTestCaseModifyRequest
                 .builder()
                 .title((String) request.get("title"))
-                .expectHttpStatus((Integer) request.get("expectHttpStatus"))
+                .httpStatusCode((Integer) request.get("httpStatusCode"))
                 .build();
 
         apiTestCase.update(apiTestCaseModifyRequest);
@@ -63,7 +65,7 @@ public class ApiTestCaseModifyService {
                 .type(Objects.equals(request.get("type"), "JSON") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART)
                 .content((Map<String, Object>) request.get("content"))
                 .build();
-
+        // TODO : s3저장하는 로직 작성
         return apiTestCaseRequestRepository.save(apiTestCaseRequest);
     }
 

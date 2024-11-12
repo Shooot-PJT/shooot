@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS project_file;
 DROP TABLE IF EXISTS project_build;
 DROP TABLE IF EXISTS api_subscribe;
 DROP TABLE IF EXISTS api_test_case_request;
+DROP TABLE IF EXISTS api_test_file;
 DROP TABLE IF EXISTS api_test_log;
 DROP TABLE IF EXISTS api_test_case;
 DROP TABLE IF EXISTS api;
@@ -100,7 +101,7 @@ CREATE TABLE api_test_case
 
 CREATE TABLE api_test_log
 (
-    api_test_log BINARY(16) PRIMARY KEY,
+    api_test_log_id BINARY(16) PRIMARY KEY,
     project_participant_id INTEGER NOT NULL,
     api_test_case_id INTEGER NOT NULL,
     is_success BOOL NOT NULL,
@@ -113,12 +114,23 @@ CREATE TABLE api_test_log
     FOREIGN KEY (api_test_case_id) REFERENCES api_test_case (api_test_case_id)
 );
 
+CREATE TABLE api_test_file
+(
+    api_file_id BINARY(16) PRIMARY KEY,
+    api_test_case_id INTEGER NOT NULL,
+    file_path TEXT NOT NULL,
+    file_extension VARCHAR(20) NOT NULL,
+    file_original_name TEXT NOT NULL,
+    file_size INTEGER NOT NULL,
+    FOREIGN KEY (api_test_case_id) REFERENCES api_test_case (api_test_case_id)
+);
+
 CREATE TABLE api_test_case_request(
-                                      api_test_request_id INTEGER AUTO_INCREMENT PRIMARY KEY,
-                                      api_test_case_id INTEGER NOT NULL,
-                                      type VARCHAR(10),
-                                      content JSON NOT NULL,
-                                      FOREIGN KEY (api_test_case_id) REFERENCES api_test_case(api_test_case_id)
+    api_test_request_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    api_test_case_id INTEGER NOT NULL,
+    type VARCHAR(10),
+    content TEXT NOT NULL,
+    FOREIGN KEY (api_test_case_id) REFERENCES api_test_case(api_test_case_id)
 );
 
 CREATE TABLE api_subscribe
@@ -563,7 +575,7 @@ VALUES
 
 
 
-INSERT INTO api_test_log (api_test_log, project_participant_id, api_test_case_id, is_success, http_status, http_body, http_header, created_at, is_deleted) VALUES
+INSERT INTO api_test_log (api_test_log_ud, project_participant_id, api_test_case_id, is_success, http_status, http_body, http_header, created_at, is_deleted) VALUES
 (UNHEX('00000000000000000000000000000001'), 2, 1, 0, 404, '{"message": "response 1"}', '{"header-1": "value-1"}', '2024-11-11 10:00:00', 0),
 (UNHEX('00000000000000000000000000000002'), 3, 2, 1, 200, '{"message": "response 2"}', '{"header-2": "value-2"}', '2024-11-11 10:01:00', 0),
 (UNHEX('00000000000000000000000000000003'), 4, 3, 0, 404, '{"message": "response 3"}', '{"header-3": "value-3"}', '2024-11-11 10:02:00', 0),

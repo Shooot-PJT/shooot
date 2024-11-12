@@ -17,8 +17,8 @@ public class ApiTestCaseListView {
     private Integer id;
     private Integer apiId;
     private String title;
-    private ApiTestStatusType type;
-    private HttpStatus httpStatusCode;
+    private ApiTestStatusType testStatus;
+    private Integer httpStatusCode;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -27,8 +27,8 @@ public class ApiTestCaseListView {
                 .id(apiTestCase.getId())
                 .apiId(apiTestCase.getApi().getId())
                 .title(apiTestCase.getTitle())
-                .httpStatusCode(apiTestCase.getHttpStatus())
-                .type(apiTestCase.getTestCaseStatus())
+                .httpStatusCode(apiTestCase.getHttpStatus().value())
+                .testStatus(apiTestCase.getTestCaseStatus())
                 .createdAt(apiTestCase.getCreatedAt())
                 .modifiedAt(apiTestCase.getModifiedAt())
                 .build();

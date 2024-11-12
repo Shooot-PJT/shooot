@@ -43,12 +43,12 @@ public class ApiGetService {
                 .orElseThrow(ApiNotFoundException::new);
 
         List<ApiTestCaseListView> testCaseRequestViews = getTestCases(api);
-//        ApiTestLastLogView apiTestLastLogView = getLastLog(api);
+        ApiTestLastLogView apiTestLastLogView = getLastLog(api);
 
         return ApiDetailListView.builder()
-                .apiView(ApiView.from(api))
+                .requestDocs(ApiView.from(api))
                 .testCases(testCaseRequestViews)
-//                .lastLog(apiTestLastLogView)
+                .lastLog(apiTestLastLogView)
                 .build();
     }
 
