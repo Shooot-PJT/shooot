@@ -46,8 +46,16 @@ export const ProjectWriteModal = ({ type = 'add' }: ProjectWriteModalProps) => {
     const logo = logoImg.current!.files![0];
 
     if (logo) {
-      const url = URL.createObjectURL(logo);
-      setImgSrc(url);
+      if (logo.type !== 'image/*' && logo.type !== '.gif') {
+        popup.push({
+          title: '이미지',
+          children: <Typography>사진 혹은 gif 파일만 가능합니다</Typography>,
+          type: 'fail',
+        });
+      } else {
+        const url = URL.createObjectURL(logo);
+        setImgSrc(url);
+      }
     }
   };
 
@@ -136,7 +144,7 @@ export const ProjectWriteModal = ({ type = 'add' }: ProjectWriteModalProps) => {
               <label htmlFor="logo-img">
                 <Button>
                   <Typography size={0.875} weight="500">
-                    등록하기
+                    {type === 'add' ? '등록하기' : '변경하기'}
                   </Typography>
                 </Button>
               </label>
@@ -153,6 +161,7 @@ export const ProjectWriteModal = ({ type = 'add' }: ProjectWriteModalProps) => {
               <input
                 ref={logoImg}
                 type="file"
+                accept="image/*, .gif"
                 id="logo-img"
                 style={{ display: 'none' }}
                 onChange={imgHandler}
@@ -209,7 +218,7 @@ export const ProjectWriteModal = ({ type = 'add' }: ProjectWriteModalProps) => {
                     <HiExclamationTriangle />
                   </Icon>
                   <Typography weight="500" size={0.8125} color="secondary">
-                    영문명은 수정이 불가능합니다
+                    영문명은 한 번 등록되면 수정이 불가능합니다
                   </Typography>
                 </Flexbox>
               </Flexbox>
