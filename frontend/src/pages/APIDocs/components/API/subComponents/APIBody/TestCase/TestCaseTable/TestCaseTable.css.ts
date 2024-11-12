@@ -78,3 +78,9 @@ export const addButtonContainer = style({
     backgroundColor: colorPalette.util[400],
   },
 });
+
+export const roundedBorder = style({
+  borderColor: colorPalette.util[400],
+  border: '0.05rem solid',
+  borderRadius: '0.75rem',
+});

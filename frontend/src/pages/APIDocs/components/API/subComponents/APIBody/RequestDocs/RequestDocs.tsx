@@ -194,16 +194,16 @@ const REQUEST_CONTENT_LIST_DUMMIES = {
 };
 const DUMMY_METHOD = 'get';
 
-const initial_json_dummy = {
-  status: 'success',
-  data: {
-    users: [
-      { id: 1, name: 'Alice' },
-      { id: 2, name: 'Bob' },
-    ],
-  },
-  meta: {
-    total: 2,
-    page: 1,
-  },
-};
+// const initial_json_dummy = {
+//   status: 'success',
+//   data: {
+//     users: [
+//       { id: 1, name: 'Alice' },
+//       { id: 2, name: 'Bob' },
+//     ],
+//   },
+//   meta: {
+//     total: 2,
+//     page: 1,
+//   },
+// };

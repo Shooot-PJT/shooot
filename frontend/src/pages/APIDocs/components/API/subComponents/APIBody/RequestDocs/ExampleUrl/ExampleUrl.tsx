@@ -1,5 +1,5 @@
 import Flexbox from '../../../../../../../../components/Flexbox';
-import { APIDetailInfo } from '../../../../API.data.types';
+import { APIRequestDocsInfo } from '../../../../API.data.types';
 import colorPalette from '../../../../../../../../styles/colorPalette';
 
 import Typography from '../../../../../../../../components/Typography';
@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { cellViewStyle } from '../RequestContents/RequestSchemaTable/RequestSchemaTable.css';
 
 interface ExampleUrlProps {
-  method?: APIDetailInfo['method'];
+  method?: APIRequestDocsInfo['method'];
   isEditMode: boolean;
 }
 

@@ -11,8 +11,7 @@ import { getJsonErrorMessage } from './JsonEditor.utils';
 import PopupPortal from '../../../../../../../hooks/usePopup/PopupPortal';
 import usePopup from '../../../../../../../hooks/usePopup';
 import Typography from '../../../../../../../components/Typography';
-import Icon from '../../../../../../../components/Icon';
-import { HiPlusCircle } from 'react-icons/hi2';
+
 import Flexbox from '../../../../../../../components/Flexbox';
 
 interface JsonEditorProps {

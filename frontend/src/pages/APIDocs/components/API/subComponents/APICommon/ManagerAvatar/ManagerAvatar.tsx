@@ -8,7 +8,7 @@ import Typography from '../../../../../../../components/Typography';
 import Flexbox from '../../../../../../../components/Flexbox';
 
 interface ManagerAvatarProps {
-  manager?: Manager;
+  manager?: Manager | null;
   rounded?: number;
   size?: number;
   withLabel?: boolean;
