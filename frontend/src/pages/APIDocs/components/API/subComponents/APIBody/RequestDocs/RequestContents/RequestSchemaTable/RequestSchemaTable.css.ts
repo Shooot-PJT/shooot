@@ -1,7 +1,7 @@
 import { keyframes, style } from '@vanilla-extract/css';
-import colorPalette from '../../../../../../../../styles/colorPalette';
+import colorPalette from '../../../../../../../../../styles/colorPalette';
 
-const popIn = keyframes({
+export const popIn = keyframes({
   '0%': {
     opacity: 0,
     transform: 'scale(0.85)',

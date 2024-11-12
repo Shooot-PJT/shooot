@@ -5,7 +5,10 @@ interface UrlTextfieldProps {
   onChange: (newValue: string) => void;
 }
 
-const UrlTextField: React.FC<UrlTextfieldProps> = ({ value, onChange }) => {
+export const UrlTextField: React.FC<UrlTextfieldProps> = ({
+  value,
+  onChange,
+}) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
   };

@@ -20,9 +20,12 @@ interface JsonEditorProps {
   isEditing: boolean;
 }
 
-const JsonEditor: React.FC<JsonEditorProps> = ({ jsonData }) => {
-  const [hasJsonData] = useState<boolean>(!!jsonData);
+const JsonEditor: React.FC<JsonEditorProps> = ({ jsonData, isEditing }) => {
+  const [hasJsonData, setHasJsonData] = useState<boolean>(!!jsonData);
 
+  const onClickAddButton = () => {
+    setHasJsonData(true);
+  };
   const popup = usePopup();
 
   const pushPopup = (
@@ -45,7 +48,7 @@ const JsonEditor: React.FC<JsonEditorProps> = ({ jsonData }) => {
 
   //
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  // const [isEditing, setIsEditing] = useState(false);
 
   const handleEditorDidMount: OnMount = (editor, monacoInstance) => {
     editorRef.current = editor;
@@ -57,16 +60,16 @@ const JsonEditor: React.FC<JsonEditorProps> = ({ jsonData }) => {
     monacoInstance.editor.setTheme('dracula');
   };
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
+  // const handleEdit = () => {
+  //   setIsEditing(true);
+  // };
 
-  const handleCancel = () => {
-    if (editorRef.current && jsonData) {
-      editorRef.current.setValue(JSON.stringify(jsonData, null, 2));
-    }
-    setIsEditing(false);
-  };
+  // const handleCancel = () => {
+  //   if (editorRef.current && jsonData) {
+  //     editorRef.current.setValue(JSON.stringify(jsonData, null, 2));
+  //   }
+  //   setIsEditing(false);
+  // };
 
   const handleSave = () => {
     if (editorRef.current) {
@@ -94,7 +97,7 @@ const JsonEditor: React.FC<JsonEditorProps> = ({ jsonData }) => {
           'fail',
         );
       } else {
-        setIsEditing(false);
+        // setIsEditing(false);
         console.log('저장된 JSON 값:', parsedJson);
       }
     }
@@ -102,7 +105,7 @@ const JsonEditor: React.FC<JsonEditorProps> = ({ jsonData }) => {
 
   return (
     <div>
-      {isEditing ? (
+      {/* {isEditing ? (
         <Flexbox
           flexDirections="row"
           style={{
@@ -120,38 +123,46 @@ const JsonEditor: React.FC<JsonEditorProps> = ({ jsonData }) => {
         <Button color="grey" rounded={0.3} onClick={handleEdit}>
           편집
         </Button>
-      )}
+      )} */}
 
-      <div className={responseContainer({ hasJsonData })}>
-        {hasJsonData ? (
-          <Editor
-            height="10rem"
-            defaultLanguage="json"
-            defaultValue={JSON.stringify(jsonData, null, 2)}
-            theme="dracula"
-            options={{
-              readOnly: !isEditing, // isEditing은 위에서 내려주는거 써야함
-              lineNumbers: 'on',
-              folding: true,
-              minimap: { enabled: false },
-              renderLineHighlightOnlyWhenFocus: true,
-            }}
-            onMount={handleEditorDidMount}
-            className={editorContainer}
-          />
-        ) : (
-          <AddIcon />
-        )}
+      <div
+        className={responseContainer({
+          hasJsonData: true,
+        })}
+      >
+        {/* {hasJsonData ? ( */}
+        <Editor
+          height="10rem"
+          defaultLanguage="json"
+          defaultValue={JSON.stringify(jsonData, null, 2)}
+          theme="dracula"
+          options={{
+            readOnly: !isEditing, // isEditing은 위에서 내려주는거 써야함
+            lineNumbers: 'on',
+            folding: true,
+            minimap: { enabled: false },
+            renderLineHighlightOnlyWhenFocus: true,
+          }}
+          onMount={handleEditorDidMount}
+          className={editorContainer}
+        />
+        {/* )
+          : (
+          <AddIcon onClick={onClickAddButton} />
+          )
+        } */}
       </div>
     </div>
   );
 };
 
-const AddIcon = () => {
-  return (
-    <Icon background="none" color="light" size={3.5}>
-      <HiPlusCircle />
-    </Icon>
-  );
-};
+// const AddIcon = ({ onClick }: { onClick: () => void }) => {
+//   return (
+//     <div onClick={onClick}>
+//       <Icon background="none" color="light" size={3.5}>
+//         <HiPlusCircle />
+//       </Icon>
+//     </div>
+//   );
+// };
 export default JsonEditor;

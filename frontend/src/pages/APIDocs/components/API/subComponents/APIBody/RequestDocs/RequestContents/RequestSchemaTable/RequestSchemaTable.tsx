@@ -2,7 +2,7 @@ import { useState } from 'react';
 import * as styles from './RequestSchemaTable.css';
 import CellTextField from './CellTextfield/CellTextfield';
 import DropdownMenu from './DropdownMenu/DropdownMenu';
-import Icon from '../../../../../../../../components/Icon';
+import Icon from '../../../../../../../../../components/Icon';
 import { FaPlus } from 'react-icons/fa';
 
 export interface ParamBase {

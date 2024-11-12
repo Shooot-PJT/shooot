@@ -3,9 +3,9 @@ import { APIDetailInfo } from '../../../../API.data.types';
 import colorPalette from '../../../../../../../../styles/colorPalette';
 
 import Typography from '../../../../../../../../components/Typography';
-import UrlTextfield from '../Table/CellTextfield/CellTextfield';
+import UrlTextField from './UrlTextField';
 import { useState } from 'react';
-import { cellViewStyle } from '../Table/RequestSchemaTable.css';
+import { cellViewStyle } from '../RequestContents/RequestSchemaTable/RequestSchemaTable.css';
 
 interface ExampleUrlProps {
   method?: APIDetailInfo['method'];
@@ -43,7 +43,7 @@ export const ExampleUrl = ({
       </Typography>
 
       {isEditMode ? (
-        <UrlTextfield value={exampleUrl} onChange={handleChangeUrl} />
+        <UrlTextField value={exampleUrl} onChange={handleChangeUrl} />
       ) : (
         <div className={cellViewStyle}>{exampleUrl}</div>
       )}

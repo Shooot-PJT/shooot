@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Flexbox from '../../../../../../../components/Flexbox';
-import { ParamBase, RequestSchemaTable } from './Table/RequestSchemaTable';
+import {
+  RequestSchemaTable,
+  ParamBase,
+} from './RequestContents/RequestSchemaTable/RequestSchemaTable';
 import {
   CustomTab,
   CustomTabs,
@@ -9,17 +12,34 @@ import Button from '../../../../../../../components/Button';
 import Typography from '../../../../../../../components/Typography';
 import { ExampleUrl } from './ExampleUrl/ExampleUrl';
 
+import {
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+} from '@mui/material';
+import { BodyNone } from './RequestContents/BodyNone/BodyNone';
+import JsonEditor from '../../APICommon/JsonEditor/JsonEditor';
+
+type ReqTabMenuTypes = 'params' | 'path variable' | 'headers' | 'req body';
+type ReqBodyTypes = 'none' | 'form-data' | 'row';
+
 interface TabValue {
   value: number;
-  type: 'params' | 'path variable' | 'headers' | 'req body';
+  type: ReqTabMenuTypes;
 }
 
-// data 6종류 :
-// type 6종류 : Params, Path variables, Header, ( Req Body-1: none ), ( Req Body-1: form-data ), ( Req Body-1: row )
-type TabValueTypes = 0 | 1 | 2 | 3; // Params, Path variables, headers, Req Body
-type ReqBodyTypes = 0 | 1 | 2; // none, form-data, row;
-
 export const RequestDocs = () => {
+  const [isEditMode, setEditMode] = useState(false);
+  const [tabValue, setTabValue] = useState<TabValue>({
+    value: 0,
+    type: 'params',
+  });
+  const [contentData, setContentData] = useState<ParamBase[]>(
+    REQUEST_CONTENT_LIST_DUMMIES.PARAMS_DATA_LIST_DUMMY,
+  );
+  const [reqBodyMenu, setReqBodyMenu] = useState<ReqBodyTypes>('none');
+
   const toggleEditMode = <T extends ParamBase>(
     isEditMode: boolean,
     setEditMode: React.Dispatch<React.SetStateAction<boolean>>,
@@ -32,21 +52,7 @@ export const RequestDocs = () => {
     setEditMode(!isEditMode);
   };
 
-  const [isEditMode, setEditMode] = useState(false);
-
-  const [tabValue, setTabValue] = useState<TabValue>({
-    value: 0,
-    type: 'params',
-  });
-
-  const [contentData, setContentData] = useState<ParamBase[]>(
-    REQUEST_CONTENT_LIST_DUMMIES.PARAMS_DATA_LIST_DUMMY,
-  );
-  const [reqBodyMode, setReqBodyMode] = useState<number>(0);
-
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    console.log(event);
-
+  const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     if (newValue === 0) {
       setTabValue({ type: 'params', value: newValue });
       setContentData(REQUEST_CONTENT_LIST_DUMMIES.PARAMS_DATA_LIST_DUMMY);
@@ -64,13 +70,16 @@ export const RequestDocs = () => {
     }
   };
 
+  const handleChangeReqBodyMenu = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    setReqBodyMenu(event.target.value as ReqBodyTypes);
+  };
+
   return (
     <Flexbox
       flexDirections="col"
-      style={{
-        width: '100%',
-        height: 'max-content',
-      }}
+      style={{ width: '100%', height: 'max-content' }}
     >
       <Flexbox flexDirections="row" justifyContents="between">
         <Typography
@@ -83,11 +92,7 @@ export const RequestDocs = () => {
         >
           API 요청 정의서
         </Typography>
-        <Flexbox
-          style={{
-            justifyContent: 'end',
-          }}
-        >
+        <Flexbox style={{ justifyContent: 'end' }}>
           <Button
             color="grey"
             rounded={0.4}
@@ -104,38 +109,61 @@ export const RequestDocs = () => {
           </Button>
         </Flexbox>
       </Flexbox>
-      <Flexbox
-        flexDirections="col"
-        style={{
-          gap: '3rem',
-        }}
-      >
-        {' '}
+      <Flexbox flexDirections="col" style={{ gap: '3rem' }}>
         <ExampleUrl method={DUMMY_METHOD} isEditMode={isEditMode} />
-        {/* 테이블 컨텐츠 */}
+
         <Flexbox flexDirections="col" style={{ gap: '0.7rem' }}>
-          <CustomTabs value={tabValue.value} onChange={handleChange}>
+          <CustomTabs value={tabValue.value} onChange={handleChangeTab}>
             <CustomTab label="Params" />
             <CustomTab label="Path variables" />
             <CustomTab label="Header" />
             <CustomTab label="Req Body" />
           </CustomTabs>
-          <RequestSchemaTable
-            data={contentData}
-            type={tabValue.type}
-            isEditMode={isEditMode}
-            onChange={(newData) => setContentData(newData)}
-          />
-        </Flexbox>
-        {/* --------------*/}
-      </Flexbox>
 
-      {/* ========================================== */}
+          {tabValue.value === 3 && (
+            <FormControl component="fieldset">
+              <RadioGroup
+                value={reqBodyMenu}
+                onChange={handleChangeReqBodyMenu}
+                row
+              >
+                <FormControlLabel
+                  value="none"
+                  control={<Radio />}
+                  label="None"
+                />
+                <FormControlLabel
+                  value="form-data"
+                  control={<Radio />}
+                  label="Form Data"
+                />
+                <FormControlLabel value="row" control={<Radio />} label="Row" />
+              </RadioGroup>
+            </FormControl>
+          )}
+
+          {tabValue.value === 3 && reqBodyMenu === 'none' ? (
+            <BodyNone />
+          ) : tabValue.value === 3 && reqBodyMenu === 'row' ? (
+            <JsonEditor
+              isEditing={isEditMode}
+              // jsonData={initial_json_dummy}
+            />
+          ) : (
+            <RequestSchemaTable
+              data={contentData}
+              type={tabValue.type}
+              isEditMode={isEditMode}
+              onChange={(newData) => setContentData(newData)}
+            />
+          )}
+        </Flexbox>
+      </Flexbox>
     </Flexbox>
   );
 };
 
-// 더미
+// 더미 데이터
 const PARAMS_DATA_LIST_DUMMY = [
   {
     key: 'category',
@@ -143,23 +171,12 @@ const PARAMS_DATA_LIST_DUMMY = [
     required: '선택',
   },
 ];
-
 const PATHVARIABLES_DATA_LIST_DUMMY = [
-  {
-    key: 'userId',
-    description: '조회할 유저의 ID 명시',
-    required: '필수',
-  },
+  { key: 'userId', description: '조회할 유저의 ID 명시', required: '필수' },
 ];
-
 const HEADERS_DATA_LIST_DUMMY = [
-  {
-    key: 'customHeader',
-    description: '커스텀 헤더',
-    required: '선택',
-  },
+  { key: 'customHeader', description: '커스텀 헤더', required: '선택' },
 ];
-
 const REQUESTBODY_DATA_LIST_DUMMY = [
   {
     key: 'username',
@@ -167,19 +184,26 @@ const REQUESTBODY_DATA_LIST_DUMMY = [
     required: '선택',
     type: 'Text',
   },
-  {
-    key: 'file',
-    description: '첨부 파일',
-    required: '필수',
-    type: 'File',
-  },
+  { key: 'file', description: '첨부 파일', required: '필수', type: 'File' },
 ];
-
 const REQUEST_CONTENT_LIST_DUMMIES = {
-  PARAMS_DATA_LIST_DUMMY: PARAMS_DATA_LIST_DUMMY,
-  PATHVARIABLES_DATA_LIST_DUMMY: PATHVARIABLES_DATA_LIST_DUMMY,
-  HEADERS_DATA_LIST_DUMMY: HEADERS_DATA_LIST_DUMMY,
-  REQUESTBODY_DATA_LIST_DUMMY: REQUESTBODY_DATA_LIST_DUMMY,
+  PARAMS_DATA_LIST_DUMMY,
+  PATHVARIABLES_DATA_LIST_DUMMY,
+  HEADERS_DATA_LIST_DUMMY,
+  REQUESTBODY_DATA_LIST_DUMMY,
 };
-
 const DUMMY_METHOD = 'get';
+
+const initial_json_dummy = {
+  status: 'success',
+  data: {
+    users: [
+      { id: 1, name: 'Alice' },
+      { id: 2, name: 'Bob' },
+    ],
+  },
+  meta: {
+    total: 2,
+    page: 1,
+  },
+};

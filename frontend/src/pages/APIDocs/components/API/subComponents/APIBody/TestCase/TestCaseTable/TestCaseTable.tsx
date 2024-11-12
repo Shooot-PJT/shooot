@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import * as styles from './TestCaseTable.css';
-import CellTextField from '../../RequestDocs/Table/CellTextfield/CellTextfield';
-import DropdownMenu from '../../RequestDocs/Table/DropdownMenu/DropdownMenu';
+import CellTextField from '../../RequestDocs/RequestContents/RequestSchemaTable/CellTextfield/CellTextfield';
+import DropdownMenu from '../../RequestDocs/RequestContents/RequestSchemaTable/DropdownMenu/DropdownMenu';
 import Icon from '../../../../../../../../components/Icon';
 import { FaPlus } from 'react-icons/fa';
 
