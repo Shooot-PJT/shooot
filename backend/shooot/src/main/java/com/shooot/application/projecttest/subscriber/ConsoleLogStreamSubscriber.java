@@ -97,7 +97,7 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
     }
 
     public SseEmitter addEmitter(Integer projectId, Integer projectParticipantId) {
-        SseEmitter emitter = new SseEmitter();
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         projectEmitters.computeIfAbsent(projectId, k -> {
             addSubscriptionForProject(projectId);
             return new ConcurrentHashMap<>();
