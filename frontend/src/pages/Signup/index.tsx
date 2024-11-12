@@ -79,7 +79,7 @@ export const Signup = () => {
       </Flexbox>
 
       {/* 회원가입 버튼 */}
-      {stepStore.step === 2 && (
+      {stepStore.step >= 2 && (
         <div style={{ width: '26rem', rowGap: '0.5rem' }}>
           <Button
             paddingY={0.75}
