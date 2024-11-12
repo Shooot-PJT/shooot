@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS project_file;
 DROP TABLE IF EXISTS project_build;
 DROP TABLE IF EXISTS api_subscribe;
 DROP TABLE IF EXISTS api_test_case_request;
+DROP TABLE IF EXISTS api_test_file;
 DROP TABLE IF EXISTS api_test_log;
 DROP TABLE IF EXISTS api_test_case;
 DROP TABLE IF EXISTS api;
@@ -100,7 +101,7 @@ CREATE TABLE api_test_case
 
 CREATE TABLE api_test_log
 (
-    api_test_log BINARY(16) PRIMARY KEY,
+    api_test_log_id BINARY(16) PRIMARY KEY,
     project_participant_id INTEGER NOT NULL,
     api_test_case_id INTEGER NOT NULL,
     is_success BOOL NOT NULL,
@@ -113,12 +114,21 @@ CREATE TABLE api_test_log
     FOREIGN KEY (api_test_case_id) REFERENCES api_test_case (api_test_case_id)
 );
 
+CREATE TABLE api_test_file
+(
+    api_file_id BINARY(16) PRIMARY KEY,
+    file_path TEXT NOT NULL,
+    file_extension VARCHAR(20) NOT NULL,
+    file_original_name NOT NULL,
+    file_size INTEGER NOT NULL
+);
+
 CREATE TABLE api_test_case_request(
-                                      api_test_request_id INTEGER AUTO_INCREMENT PRIMARY KEY,
-                                      api_test_case_id INTEGER NOT NULL,
-                                      type VARCHAR(10),
-                                      content JSON NOT NULL,
-                                      FOREIGN KEY (api_test_case_id) REFERENCES api_test_case(api_test_case_id)
+    api_test_request_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    api_test_case_id INTEGER NOT NULL,
+    type VARCHAR(10),
+    content TEXT NOT NULL,
+    FOREIGN KEY (api_test_case_id) REFERENCES api_test_case(api_test_case_id)
 );
 
 CREATE TABLE api_subscribe

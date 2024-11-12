@@ -83,6 +83,7 @@ public class ApiTestCaseController {
         data.put("content", contentMap);
         data.put("title", apiTestCaseModifyRequest.getTitle());
         data.put("expectHttpStatus", apiTestCaseModifyRequest.getExpectHttpStatus());
+        data.put("type", apiTestCaseModifyRequest.getType().equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART);
         log.info("asdf = {}", data);
         log.info("getcontent = {} ", data.get("content"));
 
@@ -138,7 +139,6 @@ public class ApiTestCaseController {
 
         return ResponseEntity.ok(testCaseLogsGetService.getFilterLogs(testLogSearchRequest, pageable));
     }
-
 
 
 }

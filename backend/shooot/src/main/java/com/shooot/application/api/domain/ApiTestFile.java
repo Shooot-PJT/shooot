@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,8 +16,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table(name = "api_test_file")
 @Entity
+@Builder
 public class ApiTestFile {
     @Id
+    @GeneratedValue
     @Column(name = "api_file_id")
     @UUIDv7
     private UUID id;
@@ -25,8 +28,8 @@ public class ApiTestFile {
     @JoinColumn(name = "api_test_case_id")
     private ApiTestCase testCaseId;
 
-    @Column(name = "s3_url")
-    private String s3Url;
+    @Column(name = "file_path")
+    private String location;
 
     @Column(name = "file_extension")
     private String extension;

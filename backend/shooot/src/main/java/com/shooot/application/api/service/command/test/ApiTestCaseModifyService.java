@@ -28,11 +28,13 @@ public class ApiTestCaseModifyService {
     private final ApiRepository apiRepository;
     private final ApiTestCaseRepository apiTestCaseRepository;
     private final ApiTestCaseRequestRepository apiTestCaseRequestRepository;
+    private final ApiTestCaseCreateService apiTestCaseCreateService;
 
     @Transactional
     public ApiTestCaseView modify(Integer testcaseId, Map<String, Object> request){
         ApiTestCase apiTestCase = modifyApiTestCase(testcaseId, request);
-        ApiTestCaseRequest apiTestCaseRequest = modifyApiTestCaseRequest(apiTestCase, request);
+//        ApiTestCaseRequest apiTestCaseRequest = modifyApiTestCaseRequest(apiTestCase, request);
+        ApiTestCaseRequest apiTestCaseRequest = apiTestCaseCreateService.createApiTestCaseRequest(apiTestCase, request);
 
         Api api = apiRepository.findById(apiTestCase.getApi().getId())
                 .orElseThrow(ApiNotFoundException::new);
