@@ -117,10 +117,12 @@ CREATE TABLE api_test_log
 CREATE TABLE api_test_file
 (
     api_file_id BINARY(16) PRIMARY KEY,
+    api_test_case_id INTEGER NOT NULL,
     file_path TEXT NOT NULL,
     file_extension VARCHAR(20) NOT NULL,
-    file_original_name NOT NULL,
-    file_size INTEGER NOT NULL
+    file_original_name TEXT NOT NULL,
+    file_size INTEGER NOT NULL,
+    FOREIGN KEY (api_test_case_id) REFERENCES api_test_case (api_test_case_id)
 );
 
 CREATE TABLE api_test_case_request(
