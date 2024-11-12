@@ -17,7 +17,6 @@ import java.util.Optional;
 @Service
 public class ProjectBuildFindService {
     private final ProjectBuildRepository projectBuildRepository;
-    private RestTemplate restTemplate = new RestTemplate();
 
     @Transactional(readOnly = true)
     public List<ProjectBuildView> findAllByProjectId(Integer projectId){
