@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css';
+import { style, keyframes } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 import theme from '../../styles/theme.css';
 
@@ -51,16 +51,28 @@ export const bar = style({
   marginBottom: '1rem',
 });
 
+const popupInKeyframes = keyframes({
+  from: {
+    transform: 'translateY(900px)',
+  },
+  to: {
+    transform: 'translateY(0)',
+  },
+});
+
+const popupOutKeyframes = keyframes({
+  from: {
+    transform: 'translateY(0)',
+  },
+  to: {
+    transform: 'translateY(900px)',
+  },
+});
+
 export const popupIn = style({
-  transform: 'translateY(0px)',
-  // opacity: 1,
-  transition:
-    'transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)',
+  animation: `${popupInKeyframes} 0.5s cubic-bezier(0.4, 0.0, 0.2, 1) forwards`,
 });
 
 export const popupOut = style({
-  transform: 'translateY(900px)',
-  // opacity: 0,
-  transition:
-    'transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)',
+  animation: `${popupOutKeyframes} 0.5s cubic-bezier(0.4, 0.0, 0.2, 1) forwards`,
 });

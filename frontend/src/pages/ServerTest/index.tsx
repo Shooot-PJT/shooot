@@ -107,7 +107,7 @@ export const ServerTest = () => {
           <Console data={consoleData} />
         </div>
       </div>
-      <div style={{}}>
+      <div>
         <RecentTest />
       </div>
     </Flexbox>

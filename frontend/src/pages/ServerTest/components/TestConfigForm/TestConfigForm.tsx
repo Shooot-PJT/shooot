@@ -3,9 +3,9 @@ import { HiCog6Tooth, HiMiniUser } from 'react-icons/hi2';
 import { LuTimer } from 'react-icons/lu';
 import Textfield from '../../../../components/Textfield';
 import Typography from '../../../../components/Typography';
-import * as s from './TestConfigForm.css';
 import { TestMethodType } from '../../types';
-import { SelectBox } from '../SelectBox/SelectBox';
+import { MethodSelectBox } from '../MethodSelectBox/MethodSelectBox';
+import * as s from './TestConfigForm.css';
 
 export interface TestConfigFormProps {
   vuser: number;
@@ -77,7 +77,7 @@ export const TestConfigForm = ({
       <div className={s.FormGrid}>
         <HiCog6Tooth size={32} />
         <Typography weight="600"> 테스트 매서드 종류</Typography>
-        <SelectBox
+        <MethodSelectBox
           value={testMethod}
           options={['FIXED', 'SPIKE', 'RAMP_UP']}
           onChange={(value) => onChange('method', value)}

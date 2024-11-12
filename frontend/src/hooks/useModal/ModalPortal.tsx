@@ -17,15 +17,17 @@ const ModalPortal = () => {
     <div className={darkTheme}>
       {modals.map((modal, index) => (
         <React.Fragment key={index}>
-          <Backdrop
-            isClosing={modal.isClosing}
-            opacity={modal.opacity}
-            blur={modal.blur}
-          >
-            <Modal onClose={modal.onClose} isClosing={modal.isClosing}>
-              {modal.children}
-            </Modal>
-          </Backdrop>
+          <Desktop>
+            <Backdrop
+              isClosing={modal.isClosing}
+              opacity={modal.opacity}
+              blur={modal.blur}
+            >
+              <Modal onClose={modal.onClose} isClosing={modal.isClosing}>
+                {modal.children}
+              </Modal>
+            </Backdrop>
+          </Desktop>
         </React.Fragment>
       ))}
     </div>,
