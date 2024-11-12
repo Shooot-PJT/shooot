@@ -8,6 +8,7 @@ import darkTheme from './styles/darkTheme.css';
 import { ServerTest } from './pages/ServerTest';
 import { Main } from './pages/Main';
 import { Layout } from './pages/Main/components/Layout';
+import './styles/globalStyle.css';
 
 function App() {
   return (

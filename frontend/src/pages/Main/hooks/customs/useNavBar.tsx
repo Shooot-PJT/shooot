@@ -1,6 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavBarStore } from '../../../../stores/navbarStore';
-import { useEffect } from 'react';
 import useModal from '../../../../hooks/useModal';
 import { NicknameChangePopup } from '../../popups/Banner/NicknameChangeModal';
 import { ProjectWriteModal } from '../../popups/Banner/ProjectWriteModal/ProjectWriteModal';
@@ -8,6 +7,8 @@ import { InviteMembersModal } from '../../popups/Banner/InviteMembersModal/Invit
 import { KickMemberModal } from '../../popups/Banner/KickMemberModal/KickMemberModal';
 import { ProjectRemoveModal } from '../../popups/Banner/ProjectRemoveModal';
 import { QUERY_KEYS } from '../../utils/KEYS';
+import { useEffect } from 'react';
+
 export const useNavBar = () => {
   const navbarStore = useNavBarStore();
   const modal = useModal();
@@ -66,16 +67,16 @@ export const useNavBar = () => {
     });
   };
 
-  // useEffect(() => {
-  //   if (navbarStore.menu !== 2) {
-  //     queryClient.invalidateQueries({
-  //       queryKey: [QUERY_KEYS.readProjectByProjectId, navbarStore.project],
-  //     });
-  //     queryClient.invalidateQueries({
-  //       queryKey: [QUERY_KEYS.readMembersByProjectId, navbarStore.project],
-  //     });
-  //   }
-  // }, [navbarStore.menu, navbarStore.project]);
+  useEffect(() => {
+    if (navbarStore.menu !== 2) {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.readProjectByProjectId, navbarStore.project],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.readMembersByProjectId, navbarStore.project],
+      });
+    }
+  }, [navbarStore.menu, navbarStore.project]);
 
   return {
     menu: navbarStore.menu,
