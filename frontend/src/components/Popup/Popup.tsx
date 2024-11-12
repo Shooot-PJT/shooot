@@ -1,11 +1,11 @@
 import { useRef } from 'react';
+import useModalStore from '../../stores/useModalStore';
 import usePopupStore from '../../stores/usePopupStore';
-import * as s from './Popup.css';
-import Typography from '../Typography';
 import Button from '../Button';
 import Flexbox from '../Flexbox';
+import Typography from '../Typography';
+import * as s from './Popup.css';
 import { PopupData } from './Popup.types';
-import useModalStore from '../../stores/useModalStore';
 
 type PopupProps = PopupData;
 
@@ -21,12 +21,6 @@ const Popup = ({
   const { popups, popPopup, updatePopup } = usePopupStore();
   const { modals } = useModalStore();
 
-  const handleOnClose = (e: React.AnimationEvent) => {
-    if (e.target === popupRef.current && isClosing && onClose) {
-      onClose();
-    }
-  };
-
   const handleAnimationEnd = (e: React.AnimationEvent) => {
     if (e.target === popupRef.current && isClosing) {
       if (popups.length === 1 && modals.length === 0) {
@@ -34,6 +28,12 @@ const Popup = ({
         document.body.style.touchAction = '';
       }
       popPopup();
+    }
+  };
+
+  const handleOnClose = (e: React.AnimationEvent) => {
+    if (e.target === popupRef.current && isClosing && onClose) {
+      onClose();
     }
   };
 
