@@ -76,7 +76,7 @@ public class ProjectBuildController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/api/projects/jarFile/{projectJarFileId}")
+    @DeleteMapping("/jarFile/{projectJarFileId}")
     public ResponseEntity<Void> deleteJarFile(@PathVariable(name = "projectJarFileId")Integer projectJarFileId, @AuthenticationPrincipal UserLoginContext userLoginContext) {
         projectBuildRemoveService.removeProjectBuild(projectJarFileId);
         return ResponseEntity.noContent().build();
