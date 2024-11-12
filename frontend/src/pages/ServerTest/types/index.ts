@@ -64,3 +64,7 @@ export interface jarFile {
 }
 
 export type GetJarFilesResponse = jarFile[];
+
+export interface ConnectProjectSSERequest {
+  projectId: number;
+}

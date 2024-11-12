@@ -59,7 +59,7 @@ export const Console = ({ state = 'distributing', data }: ConsoleProps) => {
   }, [displayedData]);
 
   return (
-    <div>
+    <div className={s.container}>
       <div style={{ marginBottom: '1.25rem' }}>
         <Typography size={1.5} weight="600">
           배포 프로젝트 로그 조회

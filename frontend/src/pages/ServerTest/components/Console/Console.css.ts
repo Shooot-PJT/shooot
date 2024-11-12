@@ -32,6 +32,8 @@ export const HeaderWrapper = style({
   justifyContent: 'space-between',
 });
 
+export const container = style({});
+
 export const Body = style({
   height: '330px',
   overflow: 'auto',
@@ -65,7 +67,7 @@ export const BodyContent = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'start',
-  fontSize: '12px',
+  fontSize: '14px',
   marginLeft: '0.5rem',
   marginRight: '0.5rem',
 });
@@ -151,4 +153,6 @@ export const IdleHeader = style({
   marginLeft: '1rem',
 });
 
-export const BodyContentItem = style({});
+export const BodyContentItem = style({
+  maxWidth: '',
+});
