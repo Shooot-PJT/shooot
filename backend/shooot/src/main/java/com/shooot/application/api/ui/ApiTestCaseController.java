@@ -113,11 +113,10 @@ public class ApiTestCaseController {
         return ResponseEntity.ok(testCaseView);
     }
 
-    @GetMapping("/{apiId}/testcases/logs")
-    @RequiresProjectParticipation(type = ProjectDomainType.API)
+    @GetMapping("/testcases/{testcaseId}/logs")
+    @RequiresProjectParticipation(type = ProjectDomainType.TESTCASE)
     public ResponseEntity<?> getTestLogs(
-            @PathVariable(name = "apiId") Integer apiId,
-            @RequestParam(required = false) Integer testcaseId,
+            @PathVariable(name = "testcaseId") Integer testcaseId,
             @RequestParam(required = false) Integer testerId,
             @RequestParam(required = false) Boolean isSuccess,
             @RequestParam(required = false) LocalDate startDate,
@@ -133,7 +132,6 @@ public class ApiTestCaseController {
                 .endDate(endDate)
                 .build();
 
-        log.info("apiId = {}" , apiId);
         log.info("testLogSearchRequest = {}", testLogSearchRequest);
         log.info("pageable = {}", pageable);
 

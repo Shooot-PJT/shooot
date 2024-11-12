@@ -58,6 +58,7 @@ public class ApiTestLog extends SoftDeleteEntity {
                 .httpStatus(apiTestLog.getHttpStatus())
                 .httpBody(apiTestLog.getHttpBody())
                 .httpHeader(apiTestLog.getHttpHeader())
+                .createdAt(apiTestLog.getCreatedAt())
                 .build();
     }
 }

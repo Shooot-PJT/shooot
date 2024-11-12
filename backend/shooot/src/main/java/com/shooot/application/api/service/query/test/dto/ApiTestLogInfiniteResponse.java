@@ -3,6 +3,7 @@ package com.shooot.application.api.service.query.test.dto;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Builder
@@ -19,5 +20,6 @@ public class ApiTestLogInfiniteResponse {
     private HttpStatus httpStatus;
     private String httpBody;
     private String httpHeader;
+    private LocalDateTime createdAt;
 
 }
