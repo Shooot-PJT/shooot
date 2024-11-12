@@ -8,6 +8,9 @@ import com.shooot.application.projecttest.domain.ProjectBuildStatus;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildLogRepository;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.stream.MapRecord;
@@ -140,7 +143,10 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
                 case DOCKER_CONSOLE_LOG:
                     message = objectMapper.convertValue(dtoMap.get("message"), DockerConsoleLogMessage.class);
                     emitterType = PROJECT_LOG;
-                    break;
+                    Message finalMessage = message;
+                    String finalEmitterType1 = emitterType;
+                    projectEmitters.getOrDefault(message.getProjectId(), Map.of()).forEach((userId, emitter) -> sendLog(emitter, finalMessage, finalEmitterType1));
+                    return;
                 case DOCKER_BUILD_ERROR:
                     message = objectMapper.convertValue(dtoMap.get("message"), DockerMessage.class);
                     status = ProjectBuildStatus.BUILD_ERROR;
@@ -163,11 +169,11 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
                     break;
             }
 
-            Message finalMessage = message;
+            ToStatusMessage toStatusMessage = new ToStatusMessage(message, status);
             String finalEmitterType = emitterType;
 
             if (emitterType.equals(PROJECT_STATUS)) {
-                Integer projectJarFileId = finalMessage.getProjectJarFileId();
+                Integer projectJarFileId = message.getProjectJarFileId();
                 ProjectBuild referenceById = projectBuildRepository.getReferenceById(projectJarFileId);
                 ProjectBuildStatus finalStatus = status;
                 ProjectBuildLog projectBuildLog = projectBuildLogRepository.findByProjectBuild_Id(projectJarFileId).orElseGet(() -> ProjectBuildLog.builder().projectBuild(referenceById).status(finalStatus).build());
@@ -175,7 +181,7 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
                 projectBuildLogRepository.save(projectBuildLog);
             }
 
-            projectEmitters.getOrDefault(finalMessage.getProjectId(), Map.of()).forEach((userId, emitter) -> sendLog(emitter, finalMessage, finalEmitterType));
+            projectEmitters.getOrDefault(message.getProjectId(), Map.of()).forEach((userId, emitter) -> sendLog(emitter, toStatusMessage, finalEmitterType));
         } catch (JsonProcessingException ignored) {
 
         }
@@ -183,6 +189,16 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
     }
 
     private void sendLog(SseEmitter emitter, Message message, String emitterName) {
+        try {
+            emitter.send(SseEmitter.event()
+                    .name(emitterName)
+                    .data(message));
+        } catch (IOException e) {
+            emitter.completeWithError(e);
+        }
+    }
+
+    private void sendLog(SseEmitter emitter, ToStatusMessage message, String emitterName) {
         try {
             emitter.send(SseEmitter.event()
                     .name(emitterName)
@@ -230,4 +246,17 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
         return MapRecord.create(Objects.requireNonNull(record.getStream()), value).withId(record.getId());
     }
 
+    @Getter
+    @NoArgsConstructor
+    private static class ToStatusMessage {
+        private Integer projectId;
+        private Integer projectJarFileId;
+        private ProjectBuildStatus status;
+
+       private  ToStatusMessage(Message message, ProjectBuildStatus status) {
+           this.projectId = message.getProjectId();
+           this.projectJarFileId = message.getProjectJarFileId();
+           this.status = status;
+       }
+    }
 }
