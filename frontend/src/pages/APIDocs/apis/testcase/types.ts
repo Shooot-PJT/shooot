@@ -1,10 +1,10 @@
-import { APIDetailInfo } from '../../components/API/API.data.types';
+import { APIRequestDocsInfo } from '../../components/API/API.data.types';
 import { TestCaseDetailInfo } from '../../components/API/subComponents/APIBody/TestCase/TestCase.data.types';
 
 //=== 테스트케이스 등록
 // /api/projects/domains/apis/{apiId}/testcases
 export interface AddTestCaseRequest {
-  apiId: APIDetailInfo['apiId'];
+  apiId: APIRequestDocsInfo['id'];
 }
 
 export interface AddTestCaseRequestBody {

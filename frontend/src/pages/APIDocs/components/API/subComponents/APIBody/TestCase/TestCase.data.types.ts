@@ -1,5 +1,5 @@
 import { HttpStatusCode } from '../../../../../types/httpStatus';
-import { APIDetailInfo, TestResult } from '../../../API.data.types';
+import { APIRequestDocsInfo, TestResult } from '../../../API.data.types';
 
 type TestCaseType = 'MULTIPART' | 'JSON' | 'NONE';
 
@@ -11,17 +11,17 @@ type IsRequired = boolean | null;
 type Type = 'Text' | 'File' | null;
 type JsonData = object;
 
-type TableValueFormat = [Value, Description, Type, IsRequired];
-type TableData = Record<Key, TableValueFormat>;
+export type TableValueFormat = [Value, Description, Type, IsRequired];
+export type TableData = Record<Key, TableValueFormat>;
 
 // Expected Response 타입 정의
-interface ExpectedResponse {
+export interface ExpectedResponse {
   schema: string | null;
   example: JsonData | null;
 }
 
 // Request Body 구성 정의
-interface FormData {
+export interface FormData {
   datas: TableData | null;
   files: Record<string, TableData> | null; // UUID: 단일 파일을 가진 TableValueFormat 형태
 }
@@ -47,11 +47,11 @@ export interface TestCaseContent {
 
 export interface TestCaseDetailInfo {
   id: number;
-  apiId: APIDetailInfo['apiId'];
+  apiId: APIRequestDocsInfo['id'];
   title: string;
   httpStatusCode: HttpStatusCode;
   type: TestCaseType;
-  apiTestCaseRequestId: number;
+  apiTestCaseRequestId: number; // 이건머임
   requestType: string;
   content: TestCaseContent;
   //
@@ -68,4 +68,6 @@ export interface TestCaseHeaderInfo {
   title: TestCaseDetailInfo['title'];
   httpStatusCode: TestCaseDetailInfo['httpStatusCode'];
   testStatus: TestCaseDetailInfo['testStatus'];
+  createdAt: TestCaseDetailInfo['createdAt'];
+  modifiedAt: TestCaseDetailInfo['modifiedAt'];
 }
