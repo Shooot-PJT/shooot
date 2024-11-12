@@ -13,6 +13,7 @@ import com.shooot.application.projecttest.handler.ApiInfoExtractor;
 import com.shooot.application.projecttest.handler.CustomClassLoader;
 import com.shooot.application.utils.FileHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 
 import static com.shooot.application.projecttest.handler.ApiInfoExtractor.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class ProjectBuildApiDocsGenerateHandler {
@@ -49,6 +51,10 @@ public class ProjectBuildApiDocsGenerateHandler {
         try {
             Map<String, List<Class<?>>> stringListMap = customClassLoader.loadAllClassesFromNestedJar(projectBuildUploadedEvent.getJarFile());
             List<ApiInfoDto> endPoints = extractApiInfo(stringListMap);
+            log.info("api length : {}", endPoints.size());
+            for(ApiInfoDto apiInfoDto : endPoints) {
+                log.info("api info : {}", apiInfoDto);
+            }
             List<Api> apis = apiRepository.findAllByDomain_Project_Id(projectBuild.getProject().getId());
             // TODO : API Repository 추가되었을 때 작성할 것.
             List<BuildFileApiDocs> list = endPoints.stream().map(endPoint ->{
