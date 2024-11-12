@@ -21,16 +21,26 @@ export const NicknameChangePopup = () => {
   /* 핸들러 */
   const handler = async (nickname: string) => {
     if (nickname.trim().length) {
-      const res = validateNickname(nickname);
-      setError(() => res);
-
-      if (!res.isError) {
-        await changeNickname(nickname);
-      } else {
+      if (nickname === user?.data.nickname) {
         setError(() => ({
           isError: true,
-          errMsg: '사용할 수 없는 닉네임입니다',
+          errMsg: '기존과 동일한 닉네임입니다',
         }));
+      } else {
+        const res = validateNickname(nickname);
+        setError(() => res);
+
+        if (!res.isError) {
+          try {
+            await changeNickname(nickname);
+          } catch (error) {
+            console.log(error);
+            setError({
+              isError: true,
+              errMsg: '사용할 수 없는 닉네임입니다',
+            });
+          }
+        }
       }
     } else {
       setError(() => ({
@@ -57,10 +67,16 @@ export const NicknameChangePopup = () => {
           </Flexbox>
           <Flexbox flexDirections="col" style={{ rowGap: '0.5rem' }}>
             <Typography color="disabled" size={0.875} weight="500">
-              기존 닉네임
+              새로운 닉네임
             </Typography>
             <Flexbox flexDirections="col" style={{ rowGap: '0.25rem' }}>
-              <Textfield ref={nickRef} ratio={5.5} size={2.5} fullWidth />
+              <Textfield
+                ref={nickRef}
+                ratio={5.5}
+                size={2.5}
+                fullWidth
+                placeholder="대소문자, 한글, 숫자를 혼합한 1~16자"
+              />
               {err.isError && (
                 <Typography color="delete" size={0.8125} weight="500">
                   {err.errMsg}
