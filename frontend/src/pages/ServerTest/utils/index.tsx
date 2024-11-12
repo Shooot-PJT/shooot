@@ -19,7 +19,10 @@ export const matchState = (status: ProjectStatus) => {
   }
 };
 
-export const convertDataTable = (data: GetJarFilesResponse) => {
+export const convertDataTable = (
+  data: GetJarFilesResponse,
+  onClick: (n: number) => void,
+) => {
   return data.map((item) => {
     const versionString =
       `${item.version.major}.${item.version.minor}.${item.version.patch}` +
@@ -35,7 +38,12 @@ export const convertDataTable = (data: GetJarFilesResponse) => {
       <DocsIcon
         active={item.status !== 'NONE' && item.status !== 'RUNTIME_ERROR'}
       />,
-      <DistributeIcon active={item.status !== 'RUN'} />,
+      <DistributeIcon
+        active={item.status !== 'RUN'}
+        onClick={() => {
+          onClick(item.projectJarFileId);
+        }}
+      />,
     ];
   });
 };
