@@ -2,12 +2,12 @@ import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import { APIDocs } from './pages/APIDocs';
 import { Signup } from './pages/Signup';
-import { Layout } from './components/Layout';
 import { Login } from './pages/Login';
 import { Tmp } from './pages/Tmp';
 import darkTheme from './styles/darkTheme.css';
 import { ServerTest } from './pages/ServerTest';
 import { Main } from './pages/Main';
+import { Layout } from './pages/Main/components/Layout';
 
 function App() {
   return (

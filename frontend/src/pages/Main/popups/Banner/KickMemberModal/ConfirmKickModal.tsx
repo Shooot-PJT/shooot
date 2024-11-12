@@ -2,24 +2,25 @@ import Flexbox from '../../../../../components/Flexbox';
 import Typography from '../../../../../components/Typography';
 import useModal from '../../../../../hooks/useModal';
 import { ProjectMember } from '../../../../MyProject/types';
-import { kickMember } from '../../../apis';
 import Button from '../../../../../components/Button';
 import { useEffect, useState } from 'react';
+import { useNavBarStore } from '../../../../../stores/navbarStore';
+import { removeMemberByProjectIdAndUserId } from '../../../apis/projectApis';
 
 interface ConfirmKickModalProps {
-  projectId: number;
   member: ProjectMember;
 }
 
-export const ConfirmKickModal = ({
-  projectId,
-  member,
-}: ConfirmKickModalProps) => {
+export const ConfirmKickModal = ({ member }: ConfirmKickModalProps) => {
   const modal = useModal();
+  const navbarStore = useNavBarStore();
   const [popState, setPopState] = useState<boolean>(false);
 
   const kickHandler = async () => {
-    await kickMember(projectId, member.userId).then(() => {
+    await removeMemberByProjectIdAndUserId(
+      navbarStore.project,
+      member.userId,
+    ).then(() => {
       setPopState(true);
       modal.pop();
     });
