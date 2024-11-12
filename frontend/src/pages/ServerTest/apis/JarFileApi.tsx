@@ -16,10 +16,6 @@ export const uploadJarFile = (request: UploadJarFileRequest) => {
     new Blob([projectIdDto], { type: 'application/json' }),
   );
 
-  // for (const [key, value] of formData.entries()) {
-  //   console.log(`${key}:`, value);
-  // }
-
   return multipart.post('/projects/jarFile', formData);
 };
 

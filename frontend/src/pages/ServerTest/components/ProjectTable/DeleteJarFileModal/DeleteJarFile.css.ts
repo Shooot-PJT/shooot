@@ -1,6 +1,4 @@
 import { style } from '@vanilla-extract/css';
-import themeCss from '../../../../styles/theme.css';
-import colorPalette from '../../../../styles/colorPalette';
 
 export const container = style({
   display: 'flex',

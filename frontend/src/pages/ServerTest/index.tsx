@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavBarStore } from '../../stores/navbarStore';
 import { Console } from './components/Console/Console';
 import { ProjectTable } from './components/ProjectTable/ProjectTable';
-import { getJarFiles } from './apis';
+import { getJarFiles } from './apis/JarFileApi';
 import { convertDataTable, convertJarFileIdList } from './utils';
 import { useState } from 'react';
 import { RecentTest } from './components/RecentTest/RecentTest';
@@ -75,6 +75,7 @@ export const ServerTest = () => {
       const response = await getJarFiles({ projectId: project });
       return response?.data ?? [];
     },
+    staleTime: 60 * 1000,
   });
 
   return (
