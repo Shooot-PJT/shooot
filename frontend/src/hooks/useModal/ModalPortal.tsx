@@ -3,7 +3,6 @@ import Backdrop from '../../components/Backdrop';
 import useModalStore from '../../stores/useModalStore';
 import Modal from '../../components/Modal/Modal';
 import darkTheme from '../../styles/darkTheme.css';
-import { Desktop } from '../../components/Layout/Desktop';
 import React from 'react';
 
 const ModalPortal = () => {
@@ -17,17 +16,15 @@ const ModalPortal = () => {
     <div className={darkTheme}>
       {modals.map((modal, index) => (
         <React.Fragment key={index}>
-          <Desktop>
-            <Backdrop
-              isClosing={modal.isClosing}
-              opacity={modal.opacity}
-              blur={modal.blur}
-            >
-              <Modal onClose={modal.onClose} isClosing={modal.isClosing}>
-                {modal.children}
-              </Modal>
-            </Backdrop>
-          </Desktop>
+          <Backdrop
+            isClosing={modal.isClosing}
+            opacity={modal.opacity}
+            blur={modal.blur}
+          >
+            <Modal onClose={modal.onClose} isClosing={modal.isClosing}>
+              {modal.children}
+            </Modal>
+          </Backdrop>
         </React.Fragment>
       ))}
     </div>,
