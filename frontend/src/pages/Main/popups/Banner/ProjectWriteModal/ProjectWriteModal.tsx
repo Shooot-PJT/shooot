@@ -112,7 +112,7 @@ export const ProjectWriteModal = ({ type = 'add' }: ProjectWriteModalProps) => {
 
   return (
     <>
-      {!isLoading ? (
+      {type === 'add' || !isLoading ? (
         <Flexbox flexDirections="col" style={{ width: '100%', rowGap: '1rem' }}>
           <Typography size={1.25} weight="600">
             {type === 'add' ? '프로젝트 생성' : '프로젝트 수정'}
