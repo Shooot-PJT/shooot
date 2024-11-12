@@ -1,24 +1,27 @@
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import Button from '../../../../components/Button';
 import Flexbox from '../../../../components/Flexbox';
+import Typography from '../../../../components/Typography';
 import useModal from '../../../../hooks/useModal';
+import usePopup from '../../../../hooks/usePopup';
+import { deployFile } from '../../apis/DistributeApi';
+import { deleteJarFile } from '../../apis/JarFileApi';
+import { useUploadStateStore } from '../../stores/useUploadStateStore';
+import { GetJarFilesResponse } from '../../types';
+import { convertDataTable } from '../../utils';
 import { AddProjectModal } from '../AddProjectModal/AddProjectModal';
 import { DataTable } from '../DataTable/DataTable';
 import { TestConfigModal } from '../TestConfigModal/TestConfigModal';
-import { deleteJarFile } from '../../apis/JarFileApi';
-import Typography from '../../../../components/Typography';
 import { DeleteJarFileModal } from './DeleteJarFileModal/DeleteJarFileModal';
-import { useUploadStateStore } from '../../stores/useUploadStateStore';
-import usePopup from '../../../../hooks/usePopup';
 
 interface ProjectProps {
-  tableData: ReactNode[][];
+  jarFiles: GetJarFilesResponse;
   idList: number[];
   handleRender: () => void;
 }
 
 export const ProjectTable = ({
-  tableData,
+  jarFiles,
   idList,
   handleRender,
 }: ProjectProps) => {
@@ -62,6 +65,31 @@ export const ProjectTable = ({
       type: 'fail',
       onClose: () => modal.pop(),
     });
+  };
+
+  const handleFailDeployPopup = (text: string) => {
+    popup.push({
+      title: '배포 실패',
+      children: text,
+      type: 'fail',
+      onClose: () => modal.pop(),
+    });
+  };
+
+  const handleDeploy = (projectJarFileId: number) => {
+    setState('Pending');
+    deployFile({ projectJarFileId: projectJarFileId })
+      .then(() => {
+        handleRender();
+      })
+      .catch((error) => {
+        if (error.response.data) {
+          handleFailDeployPopup(error.response.data.message);
+        } else {
+          handleFailDeployPopup(error.message);
+        }
+        setState('None');
+      });
   };
 
   const handleDeleteProjectJarFile = () => {
@@ -128,7 +156,7 @@ export const ProjectTable = ({
       <DataTable
         colWidths={colWidths}
         headers={headers}
-        data={tableData}
+        data={convertDataTable(jarFiles, handleDeploy)}
         selectable={true}
         selectedRowIndex={selectedRow}
         handleSelectRow={handleSelectRow}

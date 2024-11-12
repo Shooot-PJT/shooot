@@ -67,7 +67,7 @@ export const BodyContent = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'start',
-  fontSize: '14px',
+  fontSize: '16px',
   marginLeft: '0.5rem',
   marginRight: '0.5rem',
 });
