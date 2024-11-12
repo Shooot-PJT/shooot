@@ -50,7 +50,7 @@ public class ApiTestCaseModifyService {
         ApiTestCaseModifyRequest apiTestCaseModifyRequest = ApiTestCaseModifyRequest
                 .builder()
                 .title((String) request.get("title"))
-                .expectHttpStatus((Integer) request.get("expectHttpStatus"))
+                .httpStatusCode((Integer) request.get("httpStatusCode"))
                 .build();
 
         apiTestCase.update(apiTestCaseModifyRequest);

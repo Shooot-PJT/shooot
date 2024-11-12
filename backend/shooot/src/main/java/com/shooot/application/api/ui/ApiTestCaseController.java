@@ -53,7 +53,7 @@ public class ApiTestCaseController {
         data.put("content", contentMap);
         data.put("title", apiTestCaseCreateRequest.getTitle());
         data.put("type", apiTestCaseCreateRequest.getType().equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART);
-        data.put("expectHttpStatus", apiTestCaseCreateRequest.getExpectHttpStatus());
+        data.put("httpStatusCode", apiTestCaseCreateRequest.getHttpStatusCode());
         log.info("asdf = {}", data);
 
         ApiTestCaseView apiTestCaseView = apiTestCaseCreateService.create(apiId, data);
@@ -82,7 +82,7 @@ public class ApiTestCaseController {
 
         data.put("content", contentMap);
         data.put("title", apiTestCaseModifyRequest.getTitle());
-        data.put("expectHttpStatus", apiTestCaseModifyRequest.getExpectHttpStatus());
+        data.put("httpStatusCode", apiTestCaseModifyRequest.getHttpStatusCode());
         data.put("type", apiTestCaseModifyRequest.getType().equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART);
         log.info("asdf = {}", data);
         log.info("getcontent = {} ", data.get("content"));

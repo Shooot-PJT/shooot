@@ -47,7 +47,7 @@ public class ApiTestCaseCreateService {
         ApiTestCase apiTestCase = ApiTestCase.builder()
                 .api(api)
                 .title((String)request.get("title"))
-                .httpStatus(HttpStatus.valueOf((Integer) request.get("expectHttpStatus")))
+                .httpStatus(HttpStatus.valueOf((Integer) request.get("httpStatusCode")))
                 .build();
 
         return apiTestCaseRepository.save(apiTestCase);

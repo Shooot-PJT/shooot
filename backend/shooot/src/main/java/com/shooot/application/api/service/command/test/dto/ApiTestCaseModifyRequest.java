@@ -10,6 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 public class ApiTestCaseModifyRequest {
     private String title;
-    private Integer expectHttpStatus;
+    private Integer httpStatusCode;
     private ApiTestCaseRequestType type;
 }
