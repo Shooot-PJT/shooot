@@ -47,7 +47,13 @@ export interface DeleteJarFileRequest {
   projectJarFileId: number;
 }
 
-export type ProjectStatus = 'READY' | 'RUN' | 'RUNTIME_ERROR' | 'DONE' | 'NONE';
+export type ProjectStatus =
+  | 'BUILD_ERROR'
+  | 'RUN'
+  | 'RUNTIME_ERROR'
+  | 'DONE'
+  | 'NONE'
+  | 'DEPLOY';
 
 export interface ProjectVersion {
   major: number;
@@ -70,5 +76,9 @@ export interface ConnectProjectSSERequest {
 }
 
 export interface DeployFileRequest {
+  projectJarFileId: number;
+}
+
+export interface StopDeployFileRequest {
   projectJarFileId: number;
 }

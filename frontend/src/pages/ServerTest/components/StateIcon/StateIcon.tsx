@@ -7,20 +7,20 @@ import * as s from './StateIcon.css';
 import Flexbox from '../../../../components/Flexbox';
 
 export interface StateIconProps {
-  state: 'Approved' | 'Pending' | 'Disabled' | 'Error' | 'No-Build';
+  state: '정상종료' | '배포중' | '런타임에러' | '빌드에러' | '빌드기록없음';
 }
 
 const handleIcon = (state: string) => {
   switch (state) {
-    case 'Approved':
+    case '정상종료':
       return <HiCheck />;
-    case 'Pending':
+    case '배포중':
       return <IoIosPlay />;
-    case 'Disabled':
+    case '런타임에러':
       return <HiX />;
-    case 'Error':
+    case '빌드에러':
       return <BsExclamationLg />;
-    case 'No-Build':
+    case '빌드기록없음':
       return <HiMinusSm />;
     default:
       return <HiCheck />;
@@ -29,7 +29,7 @@ const handleIcon = (state: string) => {
 
 export const StateIcon = ({ state }: StateIconProps) => {
   return (
-    <Flexbox dir="row" style={{ width: '120px', gap: '0.5rem' }}>
+    <Flexbox dir="row" style={{ width: '140px', gap: '0.5rem' }}>
       <div className={s.Icon({ state })}>{handleIcon(state)}</div>
       <div className={s.text({ state })}>{state}</div>
     </Flexbox>

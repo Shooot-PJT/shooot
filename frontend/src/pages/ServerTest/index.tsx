@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Flexbox from '../../components/Flexbox';
 import { useNavBarStore } from '../../stores/navbarStore';
 import { getJarFiles } from './apis/JarFileApi';
@@ -8,18 +8,23 @@ import { ProjectTable } from './components/ProjectTable/ProjectTable';
 import { RecentTest } from './components/RecentTest/RecentTest';
 import { convertJarFileIdList } from './utils';
 import { GetJarFilesResponse } from './types';
+import { useProjectSSE } from './hooks/useProjectSSE';
 
 export const ServerTest = () => {
   const [renderKey, setRenderKey] = useState<number>(0);
-  const [logs, setlogs] = useState<string[]>([]);
   const { project } = useNavBarStore();
+
+  const { projectStatus, logs, deployedFileId, setLogs, setProjectStatus } =
+    useProjectSSE({
+      project,
+    });
 
   const handleRender = () => {
     setRenderKey(renderKey + 1);
   };
 
   const { data: jarFiles = [] } = useQuery({
-    queryKey: ['jarFiles', project, renderKey],
+    queryKey: ['jarFiles', project, renderKey, projectStatus],
     queryFn: async () => {
       const response = await getJarFiles({ projectId: project });
       return response?.data ?? [];
@@ -27,40 +32,16 @@ export const ServerTest = () => {
     staleTime: 60 * 1000,
   });
 
-  useEffect(() => {
-    setlogs([]);
+  const handleInitializeDeploy = () => {
+    setLogs([]);
+    handleRender();
+  };
 
-    const eventSource = new EventSource(
-      `https://shooot.co.kr/api/sse/project/${project}/connection`,
-      {
-        withCredentials: true,
-      },
-    );
-
-    eventSource.onmessage = (event) => {
-      console.log('Received data:', event.data);
-
-      try {
-        const parsedData = JSON.parse(event.data);
-        console.log('Parsed Data:', parsedData);
-      } catch (e) {
-        console.error('Failed to parse data:', e);
-      }
-    };
-
-    eventSource.addEventListener('project_log', (event) => {
-      try {
-        const parsedData = JSON.parse(event.data);
-        setlogs((prevLogs) => [...prevLogs, parsedData.log]);
-      } catch (e) {
-        console.error('Failed to parse project_log event data:', e);
-      }
-    });
-
-    return () => {
-      eventSource.close();
-    };
-  }, [project]);
+  const handleOnBuild = () => {
+    setLogs(['빌드 시도 중입니다...']);
+    setProjectStatus('RUN');
+    handleRender();
+  };
 
   return (
     <Flexbox
@@ -84,6 +65,7 @@ export const ServerTest = () => {
             jarFiles={jarFiles as GetJarFilesResponse}
             idList={convertJarFileIdList(jarFiles)}
             handleRender={handleRender}
+            handleOnBuild={handleOnBuild}
           />
         </div>
         <div
@@ -92,7 +74,12 @@ export const ServerTest = () => {
             paddingTop: '0.5rem',
           }}
         >
-          <Console data={logs} />
+          <Console
+            data={logs}
+            state={projectStatus}
+            deployedFileId={deployedFileId}
+            handleInitialDeploy={handleInitializeDeploy}
+          />
         </div>
       </div>
       <div>

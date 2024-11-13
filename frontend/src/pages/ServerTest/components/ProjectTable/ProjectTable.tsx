@@ -18,15 +18,17 @@ interface ProjectProps {
   jarFiles: GetJarFilesResponse;
   idList: number[];
   handleRender: () => void;
+  handleOnBuild: () => void;
 }
 
 export const ProjectTable = ({
   jarFiles,
   idList,
   handleRender,
+  handleOnBuild,
 }: ProjectProps) => {
   const [selectedRow, setSelectedRow] = useState<number>(-1);
-  const colWidths = [10, 35, 25, 15, 15];
+  const colWidths = [10, 30, 30, 15, 15];
   const headers = ['버전', '파일명', '최근 빌드', 'API 문서', '배포하기'];
   const modal = useModal();
   const popup = usePopup();
@@ -78,16 +80,19 @@ export const ProjectTable = ({
 
   const handleDeploy = (projectJarFileId: number) => {
     setState('Pending');
+    handleOnBuild();
     deployFile({ projectJarFileId: projectJarFileId })
       .then(() => {
         handleRender();
       })
       .catch((error) => {
-        if (error.response.data) {
+        if (error.response) {
           handleFailDeployPopup(error.response.data.message);
         } else {
           handleFailDeployPopup(error.message);
         }
+      })
+      .finally(() => {
         setState('None');
       });
   };
