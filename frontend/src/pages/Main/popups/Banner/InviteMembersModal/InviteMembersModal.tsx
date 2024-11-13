@@ -76,7 +76,7 @@ export const InviteMembersModal = () => {
       {/* 사용자 검색 */}
       <Flexbox flexDirections="col" style={{ rowGap: '0.5rem' }}>
         <Typography color="disabled" size={0.875} weight="500">
-          사용자 검색
+          이메일로 사용자 검색
         </Typography>
 
         <div style={{ width: '100%' }}>
@@ -87,6 +87,7 @@ export const InviteMembersModal = () => {
               const member = await searchMember(e.target.value);
               setResult(() => member);
             }}
+            placeholder="초대할 사람의 이메일을 입력해주세요"
           />
 
           {/* 검색 결과 */}
