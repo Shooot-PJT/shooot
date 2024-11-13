@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRecord<String, String, String>> {
+public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRecord<String, String, String>>, ConsoleLogStreamSubscriberInterface {
 
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
@@ -67,6 +67,7 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
 
     }
 
+    @Override
     @Async
     @Scheduled(cron = "*/10 * * * * *")
     public void executeSseConnectionCheck() {
