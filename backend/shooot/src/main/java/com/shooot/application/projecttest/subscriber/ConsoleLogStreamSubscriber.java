@@ -75,6 +75,7 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
             integerSseEmitterMap.forEach((userId, sseEmitter) -> {
                 try {
                     sseEmitter.send(SseEmitter.event().name("connection").data("connected"));
+                    log.info("projectId : {}, emit user : {}" ,projectId, userId);
                 } catch (IOException ignored) {
                     sseEmitter.completeWithError(ignored);
                 }
