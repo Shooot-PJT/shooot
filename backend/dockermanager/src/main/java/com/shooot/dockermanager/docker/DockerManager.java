@@ -48,6 +48,7 @@ public class DockerManager {
     private final ProjectDirectoryManager projectDirectoryManager;
     private final DockerComposeManager dockerComposeManager;
     private final ConcurrentMap<Integer, Thread> logFetcherThreads = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Integer, Thread> healthCheckThreads = new ConcurrentHashMap<>();
 
 
     @Autowired
@@ -184,42 +185,30 @@ public class DockerManager {
         logFetcherThreads.put(projectJarFileId, logThread);
         logThread.start();
     }
-    private void monitorHealthCheck(String target, String englishName, Integer projectId, Integer projectJarFileId) {
+    public void monitorHealthCheck(String target, String englishName, Integer projectId, Integer projectJarFileId) {
         String healthUrl = "http://" + HOSTS.get(target) + "/actuator/health";
-        new Thread(() -> {
+        Thread healthThread = new Thread(() -> {
 
             int failureCount = 0;
             boolean isRunning = true;
-            while (isRunning) {
+            while (isRunning && !Thread.currentThread().isInterrupted()) {
                 ResponseEntity<String> response = null;
                 try {
                     response = restTemplate.getForEntity(healthUrl, String.class);
-                } catch (Exception e) {
-                    log.error("Health check error on {}: {}", target, e.getMessage());
-                    try {
-                        if (++failureCount >= 30) {
-                            log.info("[{}] Service is down. Shutting down Docker Compose...", target);
-                            redisMessagePublisher.publishLog(MessageDto.builder()
-                                    .message(DockerMessage.builder()
-                                            .projectJarFileId(projectJarFileId)
-                                            .projectId(projectId)
-                                            .build())
-                                    .type(MessageDto.Type.DOCKER_RUNTIME_ERROR)
-                                    .build());
-                            stopDockerCompose(target, englishName, projectId, projectJarFileId);
-                            isRunning = false;
-                        }
-                        Thread.sleep(5000);
-                        continue;
-                    } catch (InterruptedException e2) {
-                        throw new RuntimeException(e2);
+                    if (response != null && response.getStatusCode().is2xxSuccessful() && response.getBody().contains("\"status\":\"UP\"")) {
+                        log.info("[{}] 서비스가 정상적으로 실행 중입니다.", target);
+                        failureCount = 0;
+                    } else {
+                        failureCount++;
+                        log.warn("[{}] 서비스 응답이 비정상적입니다.", target);
                     }
+                } catch (Exception e) {
+                    log.error("[{}] Health check 오류: {}", target, e.getMessage());
+                    failureCount++;
                 }
-                if (response != null && response.getStatusCode().is2xxSuccessful() && response.getBody().contains("\"status\":\"UP\"")) {
-                    log.info("[{}] Service is healthy.", target);
-                    failureCount = 0;
-                } else if (++failureCount >= 30) {
-                    log.info("[{}] Service is down. Shutting down Docker Compose...", target);
+
+                if (failureCount >= 30) {
+                    log.info("[{}] 서비스가 다운되었습니다. Docker Compose를 중지합니다...", target);
                     redisMessagePublisher.publishLog(MessageDto.builder()
                             .message(DockerMessage.builder()
                                     .projectJarFileId(projectJarFileId)
@@ -230,16 +219,20 @@ public class DockerManager {
                     stopDockerCompose(target, englishName, projectId, projectJarFileId);
                     isRunning = false;
                 }
+
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    Thread.currentThread().interrupt(); // 인터럽트 상태 유지
+                    isRunning = false;
                 }
-
             }
-
-        }).start();
+            healthCheckThreads.remove(projectJarFileId);
+        });
+        healthCheckThreads.put(projectJarFileId, healthThread);
+        healthThread.start();
     }
+
 
     public void stopDockerCompose(String target, String englishName, Integer projectId, Integer projectJarFileId) {
         executeStopProcess("docker", "stack", "rm", englishName);
@@ -247,12 +240,18 @@ public class DockerManager {
         projectDirectoryManager.rmDir(projectId, projectJarFileId);
         redisMessagePublisher.initStream(projectId);
 
+        // 로그 스레드 인터럽트
         Thread logThread = logFetcherThreads.get(projectJarFileId);
         if (logThread != null) {
             logThread.interrupt();
         }
-    }
 
+        // Health Check 스레드 인터럽트
+        Thread healthThread = healthCheckThreads.get(projectJarFileId);
+        if (healthThread != null) {
+            healthThread.interrupt();
+        }
+    }
     public void stopDockerCompose(ServiceStopDto serviceStopDto) {
         redisMessagePublisher.publishLog(MessageDto.builder()
                 .message(DockerConsoleLogMessage.builder()
