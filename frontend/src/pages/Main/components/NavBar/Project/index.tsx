@@ -28,7 +28,7 @@ export const Project = () => {
         sliderRef.current?.slickGoTo(idx);
       }
     });
-  }, [projectList]);
+  }, [navbarStore.project]);
 
   useEffect(() => {
     navbarStore.setProject(
@@ -88,7 +88,7 @@ export const Project = () => {
                   <div className="slider-container">
                     <Slider
                       ref={(slider) => (sliderRef.current = slider)}
-                      speed={500}
+                      speed={200}
                       slidesToShow={1}
                       slidesToScroll={1}
                       afterChange={(current) => {
@@ -110,7 +110,7 @@ export const Project = () => {
                             }}
                           >
                             <img
-                              src={info.logoImageUrl}
+                              src={`${info.logoImageUrl}?timestamp=${Date.now()}`}
                               className={style.logo}
                             />
                             <div>

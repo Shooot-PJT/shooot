@@ -1,5 +1,5 @@
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const nicknameRegex = /^[a-zA-Z가-힣ㄱ-ㅎㅏ-ㅣ0-9\s]{2,16}$/;
+const nicknameRegex = /^[a-zA-Z가-힣ㄱ-ㅎㅏ-ㅣ0-9\s]{1,16}$/;
 
 export const validateEmail = (email: string) => {
   if (!email) {
@@ -31,7 +31,10 @@ export const validateNickname = (nickname: string) => {
   if (!nickname) {
     return { isError: true, errMsg: '닉네임을 입력해주세요' };
   } else if (!nicknameRegex.test(nickname)) {
-    return { isError: true, errMsg: '올바른 닉네임 형식이 아닙니다' };
+    return {
+      isError: true,
+      errMsg: '영어, 한글, 숫자를 혼합하여 2~16자 로 입력해주세요',
+    };
   } else {
     return { isError: false, errMsg: '' };
   }
