@@ -176,7 +176,7 @@ public class ProjectController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{projectId}/participantId")
+    @GetMapping("/{projectId}/participant-id")
     public ResponseEntity<?> getProjectParticipantId(
         @PathVariable(name = "projectId") Integer projectId,
         @AuthenticationPrincipal UserLoginContext userLoginContext
