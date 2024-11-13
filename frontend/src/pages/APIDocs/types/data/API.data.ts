@@ -46,18 +46,20 @@ export interface APIDetailInfo {
   lastlog?: any; //미정, 정해지면 바꿀 예정
 }
 
-// export interface APIDetailInfo {
-//   apiId: number;
-//   apiTitle: string;
-//   apiDescription: string;
-//   method: Method;
-//   nominalUrl: NominalUrl;
-//   isRealServer: boolean;
-//   isSecure: boolean;
-//   modifiedAt: string;
-//   manager: Manager;
-//   testStatus: TestResult;
-// }
+export interface APIHeaderInfo {
+  id: APIRequestDocsInfo['id'];
+  title: APIRequestDocsInfo['title'];
+  description: APIRequestDocsInfo['description'];
+  method: APIRequestDocsInfo['method'];
+  managerId: Manager['id'] | null;
+  managerName: Manager['nickname'] | null;
+  url?: APIRequestDocsInfo['url'];
+  isDeveloped?: APIRequestDocsInfo['isDeveloped'];
+  isSecure?: APIRequestDocsInfo['isSecure'];
+  testStatus?: APIRequestDocsInfo['testStatus'];
+  createdAt?: APIRequestDocsInfo['createdAt'];
+  modifiedAt?: APIRequestDocsInfo['modifiedAt'];
+}
 
 // 등록 시 기본값
 export interface APIBasicInfo {
@@ -67,17 +69,6 @@ export interface APIBasicInfo {
   method: APIRequestDocsInfo['method'];
   manager?: Manager | null | undefined;
   url?: APIRequestDocsInfo['url'];
-}
-
-export interface APIHeaderInfo {
-  apiId: APIRequestDocsInfo['id'];
-  apiTitle: APIRequestDocsInfo['title'];
-  apiDescription: APIRequestDocsInfo['description'];
-  method: APIRequestDocsInfo['method'];
-  isSecure?: APIRequestDocsInfo['isSecure'];
-  manager?: Manager | null | undefined;
-  nominalUrl?: APIRequestDocsInfo['url'];
-  testStatus?: APIRequestDocsInfo['testStatus'];
 }
 
 // ===========================
@@ -95,6 +86,6 @@ export interface Participant extends User {
 }
 
 export interface Manager {
-  id: User['id'];
-  nickname: User['nickname'];
+  id: User['id'] | null;
+  nickname: User['nickname'] | null;
 }

@@ -15,6 +15,8 @@ export const Header = () => {
   const context = useAPIContext();
   const { isFocused, handleToggleIsFocused } = context.useIsFocusedHook;
 
+  const method = context.headerInfo.method || 'method';
+
   const onClickHeader = useCallback(
     throttle((e: React.MouseEvent) => {
       e.stopPropagation();
@@ -26,10 +28,10 @@ export const Header = () => {
   return (
     <div
       onClick={onClickHeader}
-      key={context.headerInfo.apiId}
+      key={context.headerInfo.id}
       className={s.apiHeaderBoxRecipe({ isOpen: isFocused })}
     >
-      <MethodHeader method={context.headerInfo.method} />
+      <MethodHeader method={method} />
       <Flexbox
         alignItems="center"
         flexDirections="row"
@@ -44,7 +46,7 @@ export const Header = () => {
         >
           <LockButton isSecure={context.headerInfo.isSecure!} />
           <Typography size={1} color="disabled">
-            {context.headerInfo.nominalUrl}
+            {context.headerInfo.url}
           </Typography>
           {/* 추후: realServer토글버튼 - 상태 추가 필요 */}
         </Flexbox>
@@ -56,7 +58,7 @@ export const Header = () => {
           style={s.apiHeaderRightContentStyle}
         >
           <Typography size={0.85} weight="300" color="disabled">
-            {context.headerInfo.apiTitle}
+            {context.headerInfo.title}
           </Typography>
           <Flexbox
             alignItems="center"
@@ -66,7 +68,12 @@ export const Header = () => {
               gap: '1rem',
             }}
           >
-            <ManagerAvatar manager={context.headerInfo.manager} />
+            <ManagerAvatar
+              manager={{
+                id: context.headerInfo?.managerId,
+                nickname: context.headerInfo?.managerName,
+              }}
+            />
             <TestButton.API />
             <CollapseIcon isOpen={isFocused} />
           </Flexbox>

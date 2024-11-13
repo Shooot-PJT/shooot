@@ -8,7 +8,7 @@ import Typography from '../../../../../../../components/Typography';
 import Flexbox from '../../../../../../../components/Flexbox';
 
 interface ManagerAvatarProps {
-  manager?: Manager | null;
+  manager?: Manager;
   rounded?: number;
   size?: number;
   withLabel?: boolean;
@@ -51,7 +51,7 @@ const ManagerAvatar = ({
             width: 'max-content',
           }}
         >
-          {manager?.nickname}
+          {tooltipTitle}
         </Typography>
       )}
     </Flexbox>

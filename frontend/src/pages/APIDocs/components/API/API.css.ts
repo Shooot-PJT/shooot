@@ -94,6 +94,12 @@ export const leftDividerRecipe = recipe({
   },
   variants: {
     method: {
+      null: {
+        backgroundColor: colorPalette.grey[800],
+      },
+      method: {
+        backgroundColor: colorPalette.light,
+      },
       post: {
         backgroundColor: themeCss.palette.post.main,
       },

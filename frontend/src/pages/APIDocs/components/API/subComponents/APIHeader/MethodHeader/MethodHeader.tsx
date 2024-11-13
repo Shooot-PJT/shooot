@@ -1,15 +1,21 @@
 import { Method } from './MethodHeader.types';
 import * as s from './MethodHeader.css';
 import Typography from '../../../../../../../components/Typography';
+import { METHODS } from '../../../../../types/methods';
 
 interface MethodHeaderProps {
   method: Method;
 }
+const getFontColorByMethod = (method: string) => {
+  return (typeof method) in METHODS ? 'light' : 'dark';
+};
 
 const MethodHeader = ({ method }: MethodHeaderProps) => {
+  const fontColor = getFontColorByMethod(method);
+
   return (
     <div className={s.methodHeader({ method })}>
-      <Typography weight="600" size={0.9}>
+      <Typography weight="600" size={0.9} color={fontColor}>
         {method?.toUpperCase()}
       </Typography>
     </div>

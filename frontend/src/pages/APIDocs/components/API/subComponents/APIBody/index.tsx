@@ -17,6 +17,8 @@ export const Body = () => {
   const context = useAPIContext();
   const { isFocused } = context.useIsFocusedHook;
 
+  const method = context.headerInfo.method || 'method';
+
   return (
     <div className={s.CollapseContainerRecipe({ isOpen: isFocused })}>
       <Flexbox flexDirections="col" style={s.apiBodyContainerStyle}>
@@ -39,15 +41,11 @@ export const Body = () => {
                   width: '12rem',
                 }}
               >
-                <Typography
-                  color={context.headerInfo.method}
-                  size={2.5}
-                  weight="700"
-                >
-                  {context.headerInfo.method.toUpperCase()}
+                <Typography color={method} size={2.5} weight="700">
+                  {method.toUpperCase()}
                 </Typography>
                 <Typography
-                  color={context.headerInfo.method}
+                  color={method}
                   size={0.85}
                   weight="600"
                   style={{
@@ -56,7 +54,7 @@ export const Body = () => {
                     wordBreak: 'keep-all',
                   }}
                 >
-                  {context.headerInfo.apiTitle}
+                  {context.headerInfo.title}
                 </Typography>
 
                 <Typography
@@ -68,13 +66,13 @@ export const Body = () => {
                     wordBreak: 'keep-all',
                   }}
                 >
-                  {context.headerInfo.apiDescription}
+                  {context.headerInfo.description}
                 </Typography>
               </Flexbox>
               <Flexbox flexDirections="col" style={{ gap: '1rem' }}>
                 <div
                   className={s.leftDividerRecipe({
-                    method: context.headerInfo.method,
+                    method: method,
                   })}
                 />
                 <Typography
@@ -85,9 +83,13 @@ export const Body = () => {
                 >
                   담당자
                 </Typography>
+
                 <ManagerAvatar
-                  manager={context.headerInfo.manager}
-                  size={2}
+                  manager={{
+                    id: context.headerInfo?.managerId,
+                    nickname: context.headerInfo?.managerName,
+                  }}
+                  size={1.5}
                   withLabel
                 />
               </Flexbox>
