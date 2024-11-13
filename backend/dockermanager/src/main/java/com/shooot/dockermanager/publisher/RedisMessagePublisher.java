@@ -24,7 +24,7 @@ public class RedisMessagePublisher {
     public void initializeLogStream(Integer projectId) {
         String streamKey = LOG_CHANNEL + projectId;
         // 기존 스트림 삭제
-        removeStream(projectId);
+        initStream(projectId);
         // 새로운 스트림 시작을 알리는 초기 메시지 추가 (선택사항)
         redisTemplate.opsForStream().trim(streamKey, 1000);
     }
