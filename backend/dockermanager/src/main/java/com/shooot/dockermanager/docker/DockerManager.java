@@ -146,7 +146,8 @@ public class DockerManager {
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            String logMessage = "[" + projectEnglishName + "] " + line;
+                            String[] parts = line.split("\\|", 2);
+                            String logMessage = "[" + projectEnglishName + "] " + parts[1];
                             log.info(logMessage);
                             redisMessagePublisher.publishLog(MessageDto.builder()
                                     .message(DockerConsoleLogMessage.builder()
@@ -222,6 +223,7 @@ public class DockerManager {
         executeStopProcess("docker", "stack", "rm", englishName);
         vagrantRepository.remove(target);
         projectDirectoryManager.rmDir(projectId, projectJarFileId);
+        redisMessagePublisher.removeStream(projectId);
     }
 
     public void stopDockerCompose(ServiceStopDto serviceStopDto) {
@@ -236,6 +238,7 @@ public class DockerManager {
                         .build())
                 .type(MessageDto.Type.DOCKER_RUN_DONE)
                 .build());
+        redisMessagePublisher.removeStream(serviceStopDto.getProjectId());
     }
 
     private void executeStopProcess(String... commands) {
