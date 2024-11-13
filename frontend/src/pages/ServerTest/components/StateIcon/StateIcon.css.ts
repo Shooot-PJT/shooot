@@ -13,13 +13,13 @@ export const Icon = recipe({
   },
   variants: {
     state: {
-      Approved: {
+      정상종료: {
         backgroundColor: themeCss.color.stateicon.approved,
       },
-      Pending: { backgroundColor: themeCss.color.stateicon.pending },
-      Disabled: { backgroundColor: themeCss.color.stateicon.disabled },
-      Error: { backgroundColor: themeCss.color.stateicon.error },
-      'No-Build': { backgroundColor: themeCss.color.stateicon.notbuilded },
+      배포중: { backgroundColor: themeCss.color.stateicon.pending },
+      런타임에러: { backgroundColor: themeCss.color.stateicon.disabled },
+      빌드에러: { backgroundColor: themeCss.color.stateicon.error },
+      빌드기록없음: { backgroundColor: themeCss.color.stateicon.notbuilded },
     },
   },
 });
@@ -30,13 +30,13 @@ export const text = recipe({
   },
   variants: {
     state: {
-      Approved: {
+      정상종료: {
         color: themeCss.color.stateicon.approved,
       },
-      Pending: { color: themeCss.color.stateicon.pending },
-      Disabled: { color: themeCss.color.stateicon.disabled },
-      Error: { color: themeCss.color.stateicon.error },
-      'No-Build': { color: themeCss.color.stateicon.notbuilded },
+      배포중: { color: themeCss.color.stateicon.pending },
+      런타임에러: { color: themeCss.color.stateicon.disabled },
+      빌드에러: { color: themeCss.color.stateicon.error },
+      빌드기록없음: { color: themeCss.color.stateicon.notbuilded },
     },
   },
 });
