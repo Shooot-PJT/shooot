@@ -18,8 +18,8 @@ import org.springframework.web.client.RestTemplate;
 public class ProjectDeployService {
     private final ProjectBuildRepository projectBuildRepository;
     private final RestTemplate restTemplate = new RestTemplate();
-    private static final String DOCKER_SERVER_DEPLOY_START_REQUEST_ENDPOINT = "https://khj745700.iptime.org:8080/project/start";
-    private static final String DOCKER_SERVER_DEPLOY_STOP_REQUEST_ENDPOINT = "https://khj745700.iptime.org:8080/project/stop";
+    private static final String DOCKER_SERVER_DEPLOY_START_REQUEST_ENDPOINT = "http://khj745700.iptime.org:8080/project/start";
+    private static final String DOCKER_SERVER_DEPLOY_STOP_REQUEST_ENDPOINT = "http://khj745700.iptime.org:8080/project/stop";
 
     public void projectDeployStartRequest(ProjectBuildIdDto dto) {
         ProjectBuild projectBuild = projectBuildRepository.findById(dto.getProjectJarFileId()).orElseThrow(ProjectBuildNotFoundException::new);
