@@ -23,7 +23,7 @@ export const Console = ({
 
   const handleStopDeploy = () => {
     console.log(deployedFileId);
-    if (deployedFileId !== -1) {
+    if (deployedFileId !== -1 && state === 'DEPLOY') {
       stopDeployFile({ projectJarFileId: deployedFileId })
         .then(() => {
           handleInitialDeploy();
@@ -68,18 +68,14 @@ export const Console = ({
           </div>
           <div
             className={
-              state === 'RUN' || state === 'DEPLOY'
-                ? s.stopButtonActive
-                : s.stopButtonDisabled
+              state === 'DEPLOY' ? s.stopButtonActive : s.stopButtonDisabled
             }
             onClick={handleStopDeploy}
           >
             배포 중단
             <div
               className={
-                state === 'RUN' || state === 'DEPLOY'
-                  ? s.stopSquareActive
-                  : s.stopSquareDisabled
+                state === 'DEPLOY' ? s.stopSquareActive : s.stopSquareDisabled
               }
             ></div>
           </div>
