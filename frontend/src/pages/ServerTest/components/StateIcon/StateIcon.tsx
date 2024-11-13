@@ -29,7 +29,12 @@ const handleIcon = (state: string) => {
 
 export const StateIcon = ({ state }: StateIconProps) => {
   return (
-    <Flexbox dir="row" style={{ width: '140px', gap: '0.5rem' }}>
+    <Flexbox
+      dir="row"
+      alignItems="center"
+      justifyContents="center"
+      style={{ width: '140px', gap: '0.5rem' }}
+    >
       <div className={s.Icon({ state })}>{handleIcon(state)}</div>
       <div className={s.text({ state })}>{state}</div>
     </Flexbox>

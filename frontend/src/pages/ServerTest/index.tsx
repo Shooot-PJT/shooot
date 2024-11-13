@@ -71,7 +71,6 @@ export const ServerTest = () => {
         <div
           style={{
             width: '50%',
-            paddingTop: '0.5rem',
           }}
         >
           <Console

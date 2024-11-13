@@ -56,7 +56,7 @@ export const Console = ({
 
   return (
     <div className={s.container}>
-      <div style={{ marginBottom: '1.25rem' }}>
+      <div style={{ marginBottom: '3rem' }}>
         <Typography size={1.5} weight="600">
           배포 프로젝트 로그 조회
         </Typography>

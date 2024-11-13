@@ -21,11 +21,12 @@ export const container = style({});
 
 export const Body = style({
   height: '330px',
-  overflow: 'auto',
+  overflowY: 'auto',
   selectors: {
     '&::-webkit-scrollbar': {
       display: 'block',
       width: '8px',
+      height: '8px',
     },
     '&::-webkit-scrollbar-track': {
       background: `${colorPalette.grey[500]}`,
