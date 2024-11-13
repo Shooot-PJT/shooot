@@ -98,6 +98,7 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
         log.info("Subscribed to project_logs_{}", projectId);
     }
 
+
     public SseEmitter addEmitter(Integer projectId, Integer projectParticipantId) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         projectEmitters.computeIfAbsent(projectId, k -> {
