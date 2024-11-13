@@ -19,6 +19,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamListener;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.Subscription;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -66,12 +67,13 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
 
     }
 
+    @Async
     @Scheduled(cron = "*/10 * * * * *")
     public void executeSseConnectionCheck() {
         projectEmitters.forEach((projectId, integerSseEmitterMap) -> {
             integerSseEmitterMap.forEach((userId, sseEmitter) -> {
                 try {
-                    sseEmitter.send(SseEmitter.event().name("connection").data("connected").build());
+                    sseEmitter.send(SseEmitter.event().name("connection").data("connected"));
                 } catch (IOException ignored) {
                     sseEmitter.completeWithError(ignored);
                 }
@@ -107,7 +109,7 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
 
         if (coldStreamLogs == null) {
             try {
-                emitter.send(SseEmitter.event().name("connection").data("connection success").build());
+                emitter.send(SseEmitter.event().name("connection").data("connection success"));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
