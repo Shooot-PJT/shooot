@@ -6,16 +6,16 @@ import { GetJarFilesResponse, ProjectStatus } from '../types';
 
 export const matchState = (status: ProjectStatus) => {
   switch (status) {
-    case 'READY':
-      return 'Pending';
+    case 'BUILD_ERROR':
+      return '빌드에러';
     case 'RUN':
-      return 'Pending';
+      return '배포중';
     case 'RUNTIME_ERROR':
-      return 'Error';
+      return '런타임에러';
     case 'DONE':
-      return 'Approved';
+      return '정상작동';
     case 'NONE':
-      return 'No-Build';
+      return '기록없음';
   }
 };
 

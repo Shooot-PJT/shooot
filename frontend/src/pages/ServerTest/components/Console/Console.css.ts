@@ -1,21 +1,6 @@
-import { keyframes, style } from '@vanilla-extract/css';
+import { style } from '@vanilla-extract/css';
 import colorPalette from '../../../../styles/colorPalette';
 import themeCss from '../../../../styles/theme.css';
-
-const blinkAnimation = keyframes({
-  '0%': {
-    opacity: '0',
-  },
-  '40%': {
-    opacity: '1',
-  },
-  '60%': {
-    opacity: '1',
-  },
-  '100%': {
-    opacity: '0',
-  },
-});
 
 export const Header = style({
   display: 'flex',
@@ -68,6 +53,8 @@ export const BodyContent = style({
   flexDirection: 'column',
   alignItems: 'start',
   fontSize: '16px',
+  fontFeatureSettings: 'tnum',
+  fontVariantNumeric: 'tabular-nums',
   marginLeft: '0.5rem',
   marginRight: '0.5rem',
 });
@@ -110,49 +97,11 @@ export const stopButtonDisabled = style({
   color: colorPalette.grey[500],
 });
 
-export const DistributingHeader = style({
-  fontWeight: '600',
-  marginLeft: '0.5rem',
-  color: colorPalette.green[500],
-});
-
-export const DistributingCircle = style({
-  width: '16px',
-  height: '16px',
-  backgroundColor: colorPalette.green[500],
-  animation: `${blinkAnimation} 4s ease-in-out`,
-  animationIterationCount: 'infinite',
-  borderRadius: '50%',
-  marginLeft: '0.75rem',
-});
-
-export const BuildingHeader = style({
-  color: colorPalette.amber[500],
-  marginLeft: '0.5rem',
-  fontWeight: '600',
-});
-
-export const BuildingCircle = style({
-  width: '16px',
-  height: '16px',
-  backgroundColor: colorPalette.amber[500],
-  animation: `${blinkAnimation} 4s ease-in-out`,
-  animationIterationCount: 'infinite',
-  borderRadius: '50%',
-  marginLeft: '0.75rem',
-});
-
-export const DisconnectingHeader = style({
-  color: colorPalette.deepOrange[500],
-  marginLeft: '1rem',
-  fontWeight: '600',
-});
-
-export const IdleHeader = style({
-  color: colorPalette.grey[500],
-  marginLeft: '1rem',
-});
-
 export const BodyContentItem = style({
-  maxWidth: '',
+  fontFamily: 'Consolas' /* Monospace font to align characters */,
+  whiteSpace: 'pre-line' /* Preserve whitespace and formatting */,
+  lineHeight: '1.6' /* Adjust as needed for proper spacing */,
+  fontSize: '12px' /* Adjust font size to fit the art */,
+  margin: 0,
+  padding: 0,
 });
