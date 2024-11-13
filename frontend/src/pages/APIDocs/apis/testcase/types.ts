@@ -37,5 +37,3 @@ export interface RemoveTestCaseRequest {
 export interface GetTestCaseDetailRequest {
   testcaseId: TestCaseDetailInfo['id'];
 }
-
-//=== 테스트케이스 리스트 조회는 API 상세조회를 통해 수행

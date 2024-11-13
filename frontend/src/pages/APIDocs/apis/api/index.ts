@@ -21,7 +21,7 @@ export const addAPI = async (
   body: AddAPIRequestBody,
 ) => {
   const response = await api.post<AddAPIResponse>(
-    `/${EP.domains}/${domainId}/${EP.apis}`,
+    `/${EP.projects}/${EP.domains}/${domainId}/${EP.apis}`,
     body,
   );
   return response.data;
@@ -30,7 +30,7 @@ export const addAPI = async (
 // API 리스트 조회
 export const getAPIList = async ({ domainId }: GetAPIListRequest) => {
   const response = await api.get<GetAPIListResponse>(
-    `/${EP.domains}/${domainId}/${EP.apis}`,
+    `/${EP.projects}/${EP.domains}/${domainId}/${EP.apis}`,
   );
   return response.data;
 };
@@ -38,7 +38,7 @@ export const getAPIList = async ({ domainId }: GetAPIListRequest) => {
 // API 상세 조회
 export const getAPIDetail = async ({ apiId }: GetAPIDetailRequest) => {
   const response = await api.get<GetAPIDetailResponse>(
-    `/${EP.domains}/${EP.apis}/${apiId}`,
+    `/${EP.projects}/${EP.domains}/${EP.apis}/${apiId}`,
   );
   return response.data;
 };
@@ -49,7 +49,7 @@ export const editAPI = async (
   body: EditAPIRequestBody,
 ) => {
   const response = await api.patch<AddAPIResponse>(
-    `/${EP.domains}/${EP.apis}/${apiId}`,
+    `/${EP.projects}/${EP.domains}/${EP.apis}/${apiId}`,
     body,
   );
   return response.data;
@@ -61,7 +61,7 @@ export const toggleAPIState = async (
   body: ToggleAPIStateRequestBody,
 ) => {
   const response = await api.patch<void>(
-    `/${EP.domains}/${EP.apis}/${apiId}/${EP.toggle}`,
+    `/${EP.projects}/${EP.domains}/${EP.apis}/${apiId}/${EP.toggle}`,
     body,
   );
   return response.data;

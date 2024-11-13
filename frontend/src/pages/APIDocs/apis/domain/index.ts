@@ -59,7 +59,7 @@ export const removeDomain = async ({ domainId }: RemoveDomainRequest) => {
 export const subscribeNotification = async ({
   domainId,
 }: SubscribeNotificationRequest) => {
-  const response = await api.delete<SubscribeNotificationResponse>(
+  const response = await api.post<SubscribeNotificationResponse>(
     `/${EP.projects}/${EP.domains}/${domainId}`,
   );
   return response.data;
