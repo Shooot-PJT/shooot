@@ -80,6 +80,7 @@ public class DockerManager {
             vagrantRepository.remove(target);
             projectDirectoryManager.rmDir(dto.getProjectId(), dto.getProjectJarFileId());
             redisMessagePublisher.removeStream(dto.getProjectId());
+            redisMessagePublisher.initializeLogStream(dto.getProjectId());
             redisMessagePublisher.publishLog(MessageDto.builder()
                     .message(DockerMessage.builder()
                             .projectId(dto.getProjectId())
@@ -233,6 +234,7 @@ public class DockerManager {
         vagrantRepository.remove(metaData.getInstanceName());
         projectDirectoryManager.rmDir(serviceStopDto.getProjectId(), serviceStopDto.getProjectJarFileId());
         redisMessagePublisher.removeStream(serviceStopDto.getProjectId());
+        redisMessagePublisher.initializeLogStream(serviceStopDto.getProjectId());
         redisMessagePublisher.publishLog(MessageDto.builder()
                 .message(DockerConsoleLogMessage.builder()
                         .projectId(serviceStopDto.getProjectId())
