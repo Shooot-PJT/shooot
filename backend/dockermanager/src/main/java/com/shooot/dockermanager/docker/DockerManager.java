@@ -79,6 +79,7 @@ public class DockerManager {
             e.printStackTrace();
             vagrantRepository.remove(target);
             projectDirectoryManager.rmDir(dto.getProjectId(), dto.getProjectJarFileId());
+            redisMessagePublisher.removeStream(dto.getProjectId());
             redisMessagePublisher.publishLog(MessageDto.builder()
                     .message(DockerMessage.builder()
                             .projectId(dto.getProjectId())
@@ -231,6 +232,7 @@ public class DockerManager {
         executeStopProcess("docker", "stack", "rm", metaData.getProjectName());
         vagrantRepository.remove(metaData.getInstanceName());
         projectDirectoryManager.rmDir(serviceStopDto.getProjectId(), serviceStopDto.getProjectJarFileId());
+        redisMessagePublisher.removeStream(serviceStopDto.getProjectId());
         redisMessagePublisher.publishLog(MessageDto.builder()
                 .message(DockerConsoleLogMessage.builder()
                         .projectId(serviceStopDto.getProjectId())
@@ -238,7 +240,7 @@ public class DockerManager {
                         .build())
                 .type(MessageDto.Type.DOCKER_RUN_DONE)
                 .build());
-        redisMessagePublisher.removeStream(serviceStopDto.getProjectId());
+
     }
 
     private void executeStopProcess(String... commands) {
