@@ -120,10 +120,9 @@ export const ProjectTable = ({
   return (
     <div style={{ width: '100%', minWidth: '100%' }}>
       <Flexbox
-        flexDirections="row"
+        flexDirections="col"
         justifyContents="between"
-        alignItems="center"
-        style={{ marginBottom: '0.5rem' }}
+        alignItems="start"
       >
         <Typography size={1.5} weight="600">
           프로젝트 빌드파일
@@ -131,8 +130,8 @@ export const ProjectTable = ({
 
         <Flexbox
           flexDirections="row"
-          justifyContents="between"
-          style={{ gap: '1.5rem', marginBottom: '1rem' }}
+          justifyContents="end"
+          style={{ width: '100%', gap: '1rem', marginBottom: '0.5rem' }}
         >
           <Button
             rounded={0.5}

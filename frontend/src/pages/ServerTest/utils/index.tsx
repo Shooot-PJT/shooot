@@ -13,9 +13,11 @@ export const matchState = (status: ProjectStatus) => {
     case 'RUNTIME_ERROR':
       return '런타임에러';
     case 'DONE':
-      return '정상작동';
+      return '정상종료';
     case 'NONE':
-      return '기록없음';
+      return '빌드기록없음';
+    default:
+      return '빌드기록없음';
   }
 };
 

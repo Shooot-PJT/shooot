@@ -36,7 +36,7 @@ export const text = recipe({
       배포중: { color: themeCss.color.stateicon.pending },
       런타임에러: { color: themeCss.color.stateicon.disabled },
       빌드에러: { color: themeCss.color.stateicon.error },
-      빌드긹없음: { color: themeCss.color.stateicon.notbuilded },
+      빌드기록없음: { color: themeCss.color.stateicon.notbuilded },
     },
   },
 });
