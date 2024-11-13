@@ -28,6 +28,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -45,6 +47,8 @@ public class DockerManager {
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private final ProjectDirectoryManager projectDirectoryManager;
     private final DockerComposeManager dockerComposeManager;
+    private final ConcurrentMap<Integer, Thread> logFetcherThreads = new ConcurrentHashMap<>();
+
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -138,15 +142,16 @@ public class DockerManager {
         }
     }
 
-    private void fetchDockerComposeLogs(String target, String projectEnglishName, Integer projectId, Integer projectJarFileId) {
-        new Thread(() -> {
+    public void fetchDockerComposeLogs(String target, String projectEnglishName, Integer projectId, Integer projectJarFileId) {
+        Thread logThread = new Thread(() -> {
             boolean keepRunning = true;
-            while (keepRunning) {
+            while (keepRunning && !Thread.currentThread().isInterrupted()) {
+                Process process = null;
                 try {
-                    Process process = new ProcessBuilder("docker", "service", "logs", "-f", projectEnglishName + "_" + projectEnglishName).start();
+                    process = new ProcessBuilder("docker", "service", "logs", "-f", projectEnglishName + "_" + projectEnglishName).start();
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                         String line;
-                        while ((line = reader.readLine()) != null) {
+                        while ((line = reader.readLine()) != null && !Thread.currentThread().isInterrupted()) {
                             String[] parts = line.split("\\|", 2);
                             String logMessage = "[" + projectEnglishName + "] " + parts[1];
                             log.info(logMessage);
@@ -162,14 +167,23 @@ public class DockerManager {
                     }
                     if (process.waitFor() != 0) keepRunning = false;
                     Thread.sleep(100);
-                } catch (Exception e) {
-                    log.error("Error fetching logs on {}: {}", target, e.getMessage());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // 인터럽트 상태를 유지
                     keepRunning = false;
+                } catch (Exception e) {
+                    log.error("{}에서 로그 가져오기 오류: {}", target, e.getMessage());
+                    keepRunning = false;
+                } finally {
+                    if (process != null) {
+                        process.destroyForcibly();
+                    }
                 }
             }
-        }).start();
+            logFetcherThreads.remove(projectJarFileId);
+        });
+        logFetcherThreads.put(projectJarFileId, logThread);
+        logThread.start();
     }
-
     private void monitorHealthCheck(String target, String englishName, Integer projectId, Integer projectJarFileId) {
         String healthUrl = "http://" + HOSTS.get(target) + "/actuator/health";
         new Thread(() -> {
@@ -232,6 +246,11 @@ public class DockerManager {
         vagrantRepository.remove(target);
         projectDirectoryManager.rmDir(projectId, projectJarFileId);
         redisMessagePublisher.initStream(projectId);
+
+        Thread logThread = logFetcherThreads.get(projectJarFileId);
+        if (logThread != null) {
+            logThread.interrupt();
+        }
     }
 
     public void stopDockerCompose(ServiceStopDto serviceStopDto) {
