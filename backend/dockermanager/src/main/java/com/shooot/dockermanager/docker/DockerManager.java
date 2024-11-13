@@ -79,7 +79,6 @@ public class DockerManager {
             e.printStackTrace();
             vagrantRepository.remove(target);
             projectDirectoryManager.rmDir(dto.getProjectId(), dto.getProjectJarFileId());
-            redisMessagePublisher.removeStream(dto.getProjectId());
             redisMessagePublisher.initializeLogStream(dto.getProjectId());
             redisMessagePublisher.publishLog(MessageDto.builder()
                     .message(DockerMessage.builder()
@@ -186,6 +185,13 @@ public class DockerManager {
                     try {
                         if (++failureCount >= 30) {
                             log.info("[{}] Service is down. Shutting down Docker Compose...", target);
+                            redisMessagePublisher.publishLog(MessageDto.builder()
+                                    .message(DockerMessage.builder()
+                                            .projectJarFileId(projectJarFileId)
+                                            .projectId(projectId)
+                                            .build())
+                                    .type(MessageDto.Type.DOCKER_RUNTIME_ERROR)
+                                    .build());
                             stopDockerCompose(target, englishName, projectId, projectJarFileId);
                             isRunning = false;
                         }
@@ -225,16 +231,10 @@ public class DockerManager {
         executeStopProcess("docker", "stack", "rm", englishName);
         vagrantRepository.remove(target);
         projectDirectoryManager.rmDir(projectId, projectJarFileId);
-        redisMessagePublisher.removeStream(projectId);
+        redisMessagePublisher.initStream(projectId);
     }
 
     public void stopDockerCompose(ServiceStopDto serviceStopDto) {
-        MetaData metaData = projectDirectoryManager.getMetaData(Path.of(projectDirectoryManager.file(serviceStopDto.getProjectId(), serviceStopDto.getProjectJarFileId()).getPath()));
-        executeStopProcess("docker", "stack", "rm", metaData.getProjectName());
-        vagrantRepository.remove(metaData.getInstanceName());
-        projectDirectoryManager.rmDir(serviceStopDto.getProjectId(), serviceStopDto.getProjectJarFileId());
-        redisMessagePublisher.removeStream(serviceStopDto.getProjectId());
-        redisMessagePublisher.initializeLogStream(serviceStopDto.getProjectId());
         redisMessagePublisher.publishLog(MessageDto.builder()
                 .message(DockerConsoleLogMessage.builder()
                         .projectId(serviceStopDto.getProjectId())
@@ -242,7 +242,8 @@ public class DockerManager {
                         .build())
                 .type(MessageDto.Type.DOCKER_RUN_DONE)
                 .build());
-
+        MetaData metaData = projectDirectoryManager.getMetaData(Path.of(projectDirectoryManager.file(serviceStopDto.getProjectId(), serviceStopDto.getProjectJarFileId()).getPath()));
+        stopDockerCompose(metaData.getInstanceName(), metaData.getProjectName(), metaData.getProjectId(), metaData.getProjectJarFileId());
     }
 
     private void executeStopProcess(String... commands) {

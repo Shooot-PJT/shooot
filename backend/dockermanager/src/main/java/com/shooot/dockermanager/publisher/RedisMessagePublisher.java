@@ -47,9 +47,10 @@ public class RedisMessagePublisher {
         }
     }
 
-    public void removeStream(Integer projectId) {
+    public void initStream(Integer projectId) {
         String streamKey = LOG_CHANNEL + projectId;
-        // 기존 스트림 삭제
-        redisTemplate.delete(streamKey);
+        // 기존 스트림 0으로 초기화 후 다시 1000으로 초기화
+        redisTemplate.opsForStream().trim(streamKey, 0);
+        redisTemplate.opsForStream().trim(streamKey, 1000);
     }
 }
