@@ -3,6 +3,7 @@ package com.shooot.application.sseemitter.controller;
 import com.shooot.application.security.service.UserLoginContext;
 import com.shooot.application.sseemitter.repository.SseNotificationRepository;
 import com.shooot.application.sseemitter.service.ProjectSseColdStreamService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -24,16 +25,18 @@ public class SseController {
 
 
     @GetMapping("/notification/connection")
-    public ResponseEntity<SseEmitter> connectionNotificationSse(@AuthenticationPrincipal UserLoginContext userLoginContext) {
+    public ResponseEntity<SseEmitter> connectionNotificationSse(@AuthenticationPrincipal UserLoginContext userLoginContext, HttpServletResponse response) {
         SseEmitter sseEmitter = sseNotificationRepository.putNewSseEmitter(userLoginContext.getUserId());
+        response.setHeader("X-Accel-Buffering", "no");
         return ResponseEntity.ok(sseEmitter);
     }
 
 
     @GetMapping(value = "/project/{projectId}/connection", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public ResponseEntity<SseEmitter> connectionProjectSse(@PathVariable Integer projectId, @AuthenticationPrincipal UserLoginContext userLoginContext) {
+    public ResponseEntity<SseEmitter> connectionProjectSse(@PathVariable Integer projectId, @AuthenticationPrincipal UserLoginContext userLoginContext, HttpServletResponse response) {
         SseEmitter subscribe = projectSseColdStreamService.subscribe(projectId, userLoginContext.getUserId());
         log.info("connection Return done ");
+        response.setHeader("X-Accel-Buffering", "no");
         return ResponseEntity.ok(subscribe);
     }
 }
