@@ -1,4 +1,4 @@
-package com.shooot.application.api.service.query.test.dto;
+package com.shooot.application.api.service.query.testcase.dto;
 
 import lombok.*;
 import org.springframework.http.HttpStatus;

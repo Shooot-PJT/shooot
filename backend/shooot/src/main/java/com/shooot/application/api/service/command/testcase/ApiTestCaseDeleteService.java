@@ -1,4 +1,4 @@
-package com.shooot.application.api.service.command.test;
+package com.shooot.application.api.service.command.testcase;
 
 import com.shooot.application.api.domain.ApiTestCase;
 import com.shooot.application.api.domain.repository.ApiTestCaseRepository;

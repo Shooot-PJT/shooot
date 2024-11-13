@@ -1,4 +1,4 @@
-package com.shooot.application.api.service.command.test;
+package com.shooot.application.api.service.command.testcase;
 
 import com.shooot.application.api.domain.Api;
 import com.shooot.application.api.domain.ApiTestCase;
@@ -9,15 +9,13 @@ import com.shooot.application.api.domain.repository.ApiTestCaseRepository;
 import com.shooot.application.api.domain.repository.ApiTestCaseRequestRepository;
 import com.shooot.application.api.exception.api.ApiNotFoundException;
 import com.shooot.application.api.exception.testcase.TestCaseNotFoundException;
-import com.shooot.application.api.service.command.test.dto.ApiTestCaseModifyRequest;
+import com.shooot.application.api.service.command.testcase.dto.ApiTestCaseModifyRequest;
 import com.shooot.application.api.ui.dto.ApiTestCaseView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Objects;
 
