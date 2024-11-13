@@ -21,7 +21,17 @@ public class StressTestController {
         @RequestParam Integer duration,
         @RequestParam String method
     ) {
-        stressTestService.spike(vuserNum, duration);
+        switch (method) {
+            case "FIXED":
+                stressTestService.fixed(vuserNum, duration);
+                break;
+            case "SPIKE":
+                stressTestService.spike(vuserNum, duration);
+                break;
+            case "RAMP_UP":
+                stressTestService.rampUp(vuserNum, duration);
+                break;
+        }
         return ResponseEntity.ok().build();
     }
 }
