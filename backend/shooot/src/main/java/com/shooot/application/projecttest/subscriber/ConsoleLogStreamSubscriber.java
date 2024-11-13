@@ -19,6 +19,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamListener;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.Subscription;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -63,26 +64,20 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
         listenerContainer.start();
         addSubscriptionForProject(2);
 
-        new Thread(() -> {
-            while (true) {
-                projectEmitters.forEach((projectId, integerSseEmitterMap) -> {
-                    integerSseEmitterMap.forEach((userId, sseEmitter) -> {
-                        try {
-                            sseEmitter.send(SseEmitter.event().name("connection").data("connected").build());
-                        } catch (IOException ignored) {
-                            sseEmitter.completeWithError(ignored);
-                        }
-                    });
-                });
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }).start();
     }
 
+    @Scheduled(cron = "*/10 * * * * *")
+    public void executeSseConnectionCheck() {
+        projectEmitters.forEach((projectId, integerSseEmitterMap) -> {
+            integerSseEmitterMap.forEach((userId, sseEmitter) -> {
+                try {
+                    sseEmitter.send(SseEmitter.event().name("connection").data("connected").build());
+                } catch (IOException ignored) {
+                    sseEmitter.completeWithError(ignored);
+                }
+            });
+        });
+    }
 
     public void addSubscriptionForProject(Integer projectId) {
         // 이미 구독 중이라면 새로 추가하지 않음
@@ -112,7 +107,7 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
 
         if (coldStreamLogs == null) {
             try {
-                emitter.send(SseEmitter.event().data("connection").data("connection success").build());
+                emitter.send(SseEmitter.event().name("connection").data("connection success").build());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
