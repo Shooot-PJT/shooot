@@ -93,8 +93,9 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
     }
 
     public void removeSubscriptionForProject(Integer projectId) {
-        redisTemplate.opsForStream().trim("project_logs_" + projectId, 0);
-        subscriptions.remove(projectId);
+        redisTemplate.delete("project_logs_" + projectId);
+        Subscription remove = subscriptions.remove(projectId);
+        listenerContainer.remove(remove);
     }
 
 
