@@ -1,4 +1,3 @@
-// frontend/src/pages/APIDocs/types/data/TestCase.data.ts
 import { HttpStatusCode } from '../httpStatus';
 import { APIRequestDocsInfo, TestResult } from './API.data';
 
@@ -6,11 +5,11 @@ type TestCaseType = 'MULTIPART' | 'JSON' | 'NONE';
 
 // 기본 타입 정의
 type Key = string;
-type Value = string | number | boolean | null;
-type Description = string | null;
-type IsRequired = boolean | null;
-type Type = 'Text' | 'File' | null;
-type JsonData = object;
+export type Value = string | number | boolean | null;
+export type Description = string | null;
+export type IsRequired = boolean | null;
+export type Type = 'Text' | 'File' | string | null;
+export type JsonData = object;
 
 export type TableValueFormat = [Value, Description, Type, IsRequired];
 export type TableData = Record<Key, TableValueFormat>;
@@ -52,9 +51,10 @@ export interface TestCaseDetailInfo {
   title: string;
   httpStatusCode: HttpStatusCode;
   type: TestCaseType;
-  apiTestCaseRequestId: number;
+  apiTestCaseRequestId: number; // 이건머임
   requestType: string;
   content: TestCaseContent;
+  //
   createdAt?: string;
   modifiedAt?: string;
   isSecure?: boolean;

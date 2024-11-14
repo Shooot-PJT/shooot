@@ -1,5 +1,6 @@
 // frontend/src/pages/APIDocs/components/API/subComponents/APIBody/RequestDocs/RequestDocs.tsx
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import Flexbox from '../../../../../../../components/Flexbox';
 import {
   RequestSchemaTable,
@@ -21,11 +22,14 @@ import {
 } from '@mui/material';
 import { BodyNone } from './RequestContents/BodyNone/BodyNone';
 import JsonEditor from '../../APICommon/JsonEditor/JsonEditor';
-import { APIRequestDocsContent } from '../../../API.data.types';
-import { TableValueFormat } from '../TestCase/TestCase.data.types';
+import {
+  TableValueFormat,
+  TableData,
+} from '../../../../../types/data/TestCase.data';
+import { APIRequestDocsContent } from '../../../../../types/data/API.data';
 
-type ReqTabMenuTypes = 'params' | 'path variable' | 'headers' | 'req body';
-type ReqBodyTypes = 'none' | 'form-data' | 'row';
+type ReqTabMenuTypes = 'params' | 'pathvariable' | 'headers' | 'req body';
+type ReqBodyTypes = 'none' | 'form-data' | 'raw';
 
 interface TabValue {
   value: number;
@@ -33,7 +37,7 @@ interface TabValue {
 }
 
 interface RequestDocsProps {
-  requestDocs: APIRequestDocsContent;
+  requestDocs: APIRequestDocsContent | null;
 }
 
 export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
@@ -43,32 +47,81 @@ export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
     type: 'params',
   });
 
-  const [reqBodyMenu, setReqBodyMenu] = useState<ReqBodyTypes>(
-    requestDocs.body
-      ? requestDocs.body.raw
-        ? 'row'
-        : requestDocs.body.formData
-          ? 'form-data'
-          : 'none'
-      : 'none',
-  );
+  const [reqBodyMenu, setReqBodyMenu] = useState<ReqBodyTypes>('none');
 
-  const [contentData, setContentData] = useState<ParamBase[]>(
-    convertTableDataToParamBase(
-      requestDocs.params || {},
-      tabValue.type,
-      isEditMode,
-    ),
-  );
+  useEffect(() => {
+    if (requestDocs?.body) {
+      if (requestDocs.body.raw) {
+        setReqBodyMenu('raw');
+      } else if (requestDocs.body.formData) {
+        setReqBodyMenu('form-data');
+      } else {
+        setReqBodyMenu('none');
+      }
+    } else {
+      setReqBodyMenu('none');
+    }
+  }, [requestDocs]);
 
-  const toggleEditMode = (
-    isEditMode: boolean,
-    setEditMode: React.Dispatch<React.SetStateAction<boolean>>,
-    setData: React.Dispatch<React.SetStateAction<ParamBase[]>>,
-    data: ParamBase[],
-  ) => {
+  // getDataByTabType 함수 수정
+  const getDataByTabType = (
+    type: ReqTabMenuTypes,
+  ): Record<string, TableValueFormat> => {
+    if (!requestDocs) return {};
+
+    switch (type) {
+      case 'params':
+        return requestDocs.params || {};
+      case 'pathvariable':
+        return requestDocs.pathvariable || {};
+      case 'headers':
+        return requestDocs.headers || {};
+      case 'req body':
+        if (requestDocs.body?.formData) {
+          const datas = requestDocs.body.formData.datas || {};
+          const files = requestDocs.body.formData.files;
+
+          const combinedData: Record<string, TableValueFormat> = { ...datas };
+
+          if (files) {
+            if (Array.isArray(files)) {
+              // files가 배열인 경우 (단일 파일)
+              combinedData['file'] = files as unknown as TableValueFormat;
+            } else if (typeof files === 'object' && !Array.isArray(files)) {
+              // files가 객체인 경우 (여러 파일)
+              Object.entries(files).forEach(([key, value]) => {
+                combinedData[key] = value as unknown as TableValueFormat;
+              });
+            } else {
+              // 예상치 못한 타입인 경우 처리하지 않음
+            }
+          }
+
+          return combinedData;
+        }
+        return {};
+      default:
+        return {};
+    }
+  };
+
+  const [contentData, setContentData] = useState<ParamBase[]>([]);
+
+  useEffect(() => {
+    const data = getDataByTabType(tabValue.type);
+    setContentData(convertTableDataToParamBase(data, tabValue.type));
+  }, [requestDocs, tabValue.type]);
+
+  if (!requestDocs) {
+    return <div>요청 정의서가 없습니다.</div>;
+  }
+
+  const toggleEditMode = () => {
     if (isEditMode) {
-      setData(data.filter((item) => item.key.trim() !== ''));
+      // 저장 시 키가 없는 행 제거
+      const filteredData = contentData.filter((item) => item.key.trim() !== '');
+      setContentData(filteredData);
+      // TODO: 저장 로직 추가 (API 호출 등)
     }
     setEditMode(!isEditMode);
   };
@@ -76,22 +129,14 @@ export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
     let newType: ReqTabMenuTypes = 'params';
     if (newValue === 0) newType = 'params';
-    else if (newValue === 1) newType = 'path variable';
+    else if (newValue === 1) newType = 'pathvariable';
     else if (newValue === 2) newType = 'headers';
     else if (newValue === 3) newType = 'req body';
 
     setTabValue({ type: newType, value: newValue });
 
-    const data =
-      newType === 'params'
-        ? requestDocs.params || {}
-        : newType === 'path variable'
-          ? requestDocs.pathvariable || {}
-          : newType === 'headers'
-            ? requestDocs.headers || {}
-            : requestDocs.body?.formData?.datas || {};
-
-    setContentData(convertTableDataToParamBase(data, newType, isEditMode));
+    const data = getDataByTabType(newType);
+    setContentData(convertTableDataToParamBase(data, newType));
   };
 
   const handleChangeReqBodyMenu = (
@@ -117,26 +162,15 @@ export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
           API 요청 정의서
         </Typography>
         <Flexbox style={{ justifyContent: 'end' }}>
-          <Button
-            color="grey"
-            rounded={0.4}
-            onClick={() =>
-              toggleEditMode(
-                isEditMode,
-                setEditMode,
-                setContentData,
-                contentData,
-              )
-            }
-          >
+          <Button color="grey" rounded={0.4} onClick={toggleEditMode}>
             <Typography>{isEditMode ? '저장' : '편집'}</Typography>
           </Button>
         </Flexbox>
       </Flexbox>
       <Flexbox flexDirections="col" style={{ gap: '3rem' }}>
         <ExampleUrl
-          method={requestDocs.method}
-          exampleUrl={requestDocs.example_url}
+          method={requestDocs.method || 'get'}
+          exampleUrl={requestDocs.example_url || ''}
           isEditMode={isEditMode}
         />
 
@@ -165,14 +199,14 @@ export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
                   control={<Radio />}
                   label="Form Data"
                 />
-                <FormControlLabel value="row" control={<Radio />} label="Row" />
+                <FormControlLabel value="raw" control={<Radio />} label="Raw" />
               </RadioGroup>
             </FormControl>
           )}
 
           {tabValue.value === 3 && reqBodyMenu === 'none' ? (
             <BodyNone />
-          ) : tabValue.value === 3 && reqBodyMenu === 'row' ? (
+          ) : tabValue.value === 3 && reqBodyMenu === 'raw' ? (
             <JsonEditor
               isEditing={isEditMode}
               jsonData={requestDocs.body?.raw?.datas || {}}
@@ -191,20 +225,25 @@ export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
   );
 };
 
-// 유틸리티 함수: TableData를 ParamBase 배열로 변환
+// Updated utility function
 function convertTableDataToParamBase(
   tableData: Record<string, TableValueFormat>,
   type: ReqTabMenuTypes,
-  isEditMode: boolean,
 ): ParamBase[] {
   return Object.entries(tableData).map(([key, value]) => {
     const [val, description, fieldType, isRequired] = value;
+    const requiredStr = isRequired === true ? '필수' : '선택';
+
     return {
       key,
-      value: val,
       description: description || '',
-      required: isRequired ? '필수' : '선택',
-      type: fieldType || '',
+      required: requiredStr,
+      type:
+        type === 'req body'
+          ? fieldType || 'Text'
+          : type === 'headers'
+            ? fieldType || 'String'
+            : undefined,
     };
   });
 }

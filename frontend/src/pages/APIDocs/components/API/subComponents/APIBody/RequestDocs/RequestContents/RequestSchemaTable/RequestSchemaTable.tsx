@@ -1,14 +1,17 @@
+// frontend/src/pages/APIDocs/components/API/subComponents/APIBody/RequestDocs/RequestContents/RequestSchemaTable/RequestSchemaTable.tsx
+
 import { useState } from 'react';
 import * as styles from './RequestSchemaTable.css';
 import CellTextField from './CellTextfield/CellTextfield';
 import DropdownMenu from './DropdownMenu/DropdownMenu';
 import Icon from '../../../../../../../../../components/Icon';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaTrash } from 'react-icons/fa';
 
 export interface ParamBase {
   key: string;
   description: string;
   required: string;
+  type?: string;
 }
 
 interface ReqBodyParam extends ParamBase {
@@ -19,7 +22,7 @@ type Param = ParamBase | ReqBodyParam;
 
 interface TableProps<T extends Param> {
   data: T[];
-  type: 'params' | 'path variable' | 'headers' | 'req body';
+  type: 'params' | 'pathvariable' | 'headers' | 'req body';
   isEditMode?: boolean;
   onChange: (newData: T[]) => void;
 }
@@ -79,6 +82,11 @@ export const RequestSchemaTable = <T extends Param>({
     onChange([...data, newRow]);
   };
 
+  const handleDeleteRow = (index: number) => {
+    const updatedData = data.filter((_, idx) => idx !== index);
+    onChange(updatedData);
+  };
+
   return (
     <div>
       <table className={styles.tableStyle}>
@@ -95,9 +103,14 @@ export const RequestSchemaTable = <T extends Param>({
             <th className={styles.headerCellStyle} style={{ width: '10%' }}>
               필수 여부
             </th>
-            <th className={styles.headerCellStyle} style={{ width: '60%' }}>
+            <th className={styles.headerCellStyle} style={{ width: '50%' }}>
               Description
             </th>
+            {isEditMode && (
+              <th className={styles.headerCellStyle} style={{ width: '10%' }}>
+                삭제
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -168,13 +181,23 @@ export const RequestSchemaTable = <T extends Param>({
                   </div>
                 )}
               </td>
+              {isEditMode && (
+                <td className={styles.deleteCellStyle}>
+                  <Icon
+                    background="none"
+                    color="light"
+                    onClick={() => handleDeleteRow(index)}
+                  >
+                    <FaTrash />
+                  </Icon>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
       </table>
       {isEditMode && (
         <div className={styles.addButtonContainer} onClick={handleAddRow}>
-          {/* <button className={styles.addButton} > */}
           <Icon background="none" color="light">
             <FaPlus />
           </Icon>

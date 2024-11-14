@@ -1,4 +1,3 @@
-// frontend/src/pages/APIDocs/components/API/subComponents/APIBody/index.tsx
 import { useAPIContext } from '../../API';
 import Flexbox from '../../../../../../components/Flexbox';
 import colorPalette from '../../../../../../styles/colorPalette';
@@ -11,7 +10,6 @@ import ManagerAvatar from '../APICommon/ManagerAvatar/ManagerAvatar';
 import Typography from '../../../../../../components/Typography';
 import Button from '../../../../../../components/Button';
 import { useGetAPIDetail } from '../../../../reactQueries/api';
-import { getFontColorByMethod } from '../APIHeader/MethodHeader/MethodHeader';
 
 export const Body = () => {
   const context = useAPIContext();
@@ -154,7 +152,7 @@ export const Body = () => {
               style={{ gap: '3rem', width: '100%' }}
             >
               {/* 1.2.1 RIGHT-TOP: API 요청 정의서 */}
-              <RequestDocs requestDocs={requestDocs} />
+              <RequestDocs requestDocs={requestDocs || null} />
 
               {/* HORIZONTAL DIVIDER */}
               <div
