@@ -5,16 +5,14 @@ import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.UUID;
 
 @Getter
 @ToString
 public class UserLoginContext extends User implements Serializable {
 
-    @Serial
-    private static final long serialVersionUID = 1123091893903829L;
     private final Integer userId;
 
 
