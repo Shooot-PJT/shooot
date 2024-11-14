@@ -5,7 +5,7 @@ import theme from '../../styles/theme.css';
 export const modal = recipe({
   base: {
     minWidth: '30rem',
-    maxHeight: '80vh',
+    maxHeight: '95vh',
     borderRadius: '1rem',
     padding: '1rem',
   },
@@ -32,7 +32,7 @@ export const contentContainer = style({
   overflowY: 'auto',
   flexGrow: 1,
   width: '100%',
-  maxHeight: 'calc(75vh - 2rem)',
+  maxHeight: 'calc(95vh - 2rem)',
   transition: 'max-height 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)',
 });
 

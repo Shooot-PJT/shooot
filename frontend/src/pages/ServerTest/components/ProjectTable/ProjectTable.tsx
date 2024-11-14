@@ -49,8 +49,16 @@ export const ProjectTable = ({
   };
 
   const handleTestConfigModal = () => {
+    if (jarFiles[selectedRow].status !== 'RUN') {
+      popup.push({
+        title: '테스트 불가',
+        children: '배포된 서버만 테스트가 가능합니다.',
+        type: 'fail',
+      });
+      return;
+    }
     modal.push({
-      children: <TestConfigModal />,
+      children: <TestConfigModal projectJarFileId={idList[selectedRow]} />,
     });
   };
 

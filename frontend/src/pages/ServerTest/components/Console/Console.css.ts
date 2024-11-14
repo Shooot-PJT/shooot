@@ -102,7 +102,7 @@ export const BodyContentItem = style({
   fontFamily: 'Consolas' /* Monospace font to align characters */,
   whiteSpace: 'pre-line' /* Preserve whitespace and formatting */,
   lineHeight: '1.6' /* Adjust as needed for proper spacing */,
-  fontSize: '12px' /* Adjust font size to fit the art */,
+  fontSize: '14px' /* Adjust font size to fit the art */,
   margin: 0,
   padding: 0,
 });
