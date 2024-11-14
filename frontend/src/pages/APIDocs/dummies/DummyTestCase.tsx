@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import Editor, { OnMount } from '@monaco-editor/react';
 import { BodyNone } from '../components/API/subComponents/APIBody/RequestDocs/RequestContents/BodyNone/BodyNone';
+import {
+  CustomTab,
+  CustomTabs,
+} from '../../../components/CustomTabs/CustomTabs';
 
 type Key = string;
 type Value = string | null;
@@ -99,11 +103,11 @@ const dummyTestCase: TestCase = {
 };
 
 export const DummyTestCase: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<
-    'params' | 'pathVariables' | 'header' | 'body'
-  >('params');
+  const [activeTab, setActiveTab] = useState<number>(0);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [testCase, setTestCase] = useState<TestCase>(dummyTestCase);
+
+  const tabLabels = ['Params', 'PathVariables', 'Header', 'Body'];
 
   // Body 타입에 따른 기본 선택
   const getDefaultBodyType = () => {
@@ -122,10 +126,8 @@ export const DummyTestCase: React.FC = () => {
     getDefaultBodyType(),
   );
 
-  const handleTabChange = (
-    tab: 'params' | 'pathVariables' | 'header' | 'body',
-  ) => {
-    setActiveTab(tab);
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
   };
 
   const handleBodyTypeChange = (type: 'none' | 'raw' | 'form-data') => {
@@ -170,16 +172,16 @@ export const DummyTestCase: React.FC = () => {
     <div>
       <h1>{testCase.title}</h1>
       <button onClick={toggleEditMode}>{isEditMode ? '저장' : '편집'}</button>
-      <nav>
-        <button onClick={() => handleTabChange('params')}>Params</button>
-        <button onClick={() => handleTabChange('pathVariables')}>
-          PathVariables
-        </button>
-        <button onClick={() => handleTabChange('header')}>Header</button>
-        <button onClick={() => handleTabChange('body')}>Body</button>
-      </nav>
 
-      {activeTab === 'params' && (
+      {/* CustomTabs로 탭 구성 */}
+      <CustomTabs value={activeTab} onChange={handleTabChange}>
+        {tabLabels.map((label, index) => (
+          <CustomTab key={index} label={label} />
+        ))}
+      </CustomTabs>
+
+      {/* 탭 콘텐츠 렌더링 */}
+      {activeTab === 0 && (
         <KeyValueTable
           data={testCase.content.params}
           isEditMode={isEditMode}
@@ -187,7 +189,7 @@ export const DummyTestCase: React.FC = () => {
           onDataChange={handleDataChange}
         />
       )}
-      {activeTab === 'pathVariables' && (
+      {activeTab === 1 && (
         <KeyValueTable
           data={testCase.content.pathvariable}
           isEditMode={isEditMode}
@@ -195,7 +197,7 @@ export const DummyTestCase: React.FC = () => {
           onDataChange={handleDataChange}
         />
       )}
-      {activeTab === 'header' && (
+      {activeTab === 2 && (
         <KeyValueTable
           data={testCase.content.headers}
           isEditMode={isEditMode}
@@ -203,8 +205,9 @@ export const DummyTestCase: React.FC = () => {
           onDataChange={handleDataChange}
         />
       )}
-      {activeTab === 'body' && (
+      {activeTab === 3 && (
         <div>
+          {/* Body 타입 선택 라디오 버튼 */}
           <div>
             <label>
               <input
@@ -238,6 +241,7 @@ export const DummyTestCase: React.FC = () => {
             </label>
           </div>
 
+          {/* Body 콘텐츠 렌더링 */}
           {bodyType === 'none' && <BodyNone />}
           {bodyType === 'raw' && (
             <BodyRaw
