@@ -34,9 +34,9 @@ shooot.axios.get = async function (url, config = {}, pathVariables = {}) {
     const domainState = checkDomain(to, shooot.projectName);
     const newConfig =
         swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log("[Axios-Get]==========");
-    console.log("[Axios-Get]: url", to);
-    console.log("[Axios-Get]: newConfig", newConfig);
+    // console.log("[Axios-Get]==========");
+    // console.log("[Axios-Get]: url", to);
+    // console.log("[Axios-Get]: newConfig", newConfig);
     return axios.get(to, newConfig);
 };
 
@@ -61,10 +61,10 @@ shooot.axios.post = async function (url, data = {}, config = {}, pathVariables =
     const domainState = checkDomain(to, shooot.projectName);
     const newConfig =
         swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log("[Axios-Post]==========");
-    console.log("[Axios-Post]: url", to);
-    console.log("[Axios-Post]: newConfig", newConfig);
-    console.log("[Axios-Post]: data");
+    // console.log("[Axios-Post]==========");
+    // console.log("[Axios-Post]: url", to);
+    // console.log("[Axios-Post]: newConfig", newConfig);
+    // console.log("[Axios-Post]: data");
     Object.keys(data).forEach((v) => console.log(`(${v} : ${data[v]})`));
     return axios.post(to, data, newConfig);
 };
@@ -90,10 +90,10 @@ shooot.axios.put = async function (url, data = {}, config = {}, pathVariables = 
     const domainState = checkDomain(to, shooot.projectName);
     const newConfig =
         swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log("[Axios-Put]==========");
-    console.log("[Axios-Put]: url", to);
-    console.log("[Axios-Put]: newConfig", newConfig);
-    console.log("[Axios-Put]: data");
+    // console.log("[Axios-Put]==========");
+    // console.log("[Axios-Put]: url", to);
+    // console.log("[Axios-Put]: newConfig", newConfig);
+    // console.log("[Axios-Put]: data");
     Object.keys(data).forEach((v) => console.log(`(${v} : ${data[v]})`));
     return axios.put(to, data, newConfig);
 };
@@ -118,10 +118,10 @@ shooot.axios.patch = async function (url, data = {}, config = {}, pathVariables 
     const domainState = checkDomain(to, shooot.projectName);
     const newConfig =
         swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log("[Axios-Patch]==========");
-    console.log("[Axios-Patch]: url", to);
-    console.log("[Axios-Patch]: newConfig", newConfig);
-    console.log("[Axios-Patch]: data");
+    // console.log("[Axios-Patch]==========");
+    // console.log("[Axios-Patch]: url", to);
+    // console.log("[Axios-Patch]: newConfig", newConfig);
+    // console.log("[Axios-Patch]: data");
     Object.keys(data).forEach((v) => console.log(`(${v} : ${data[v]})`));
     return axios.patch(to, data, newConfig);
 };
@@ -146,9 +146,9 @@ shooot.axios.delete = async function (url, config = {}, pathVariables = {}) {
     const domainState = checkDomain(to, shooot.projectName);
     const newConfig =
         swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log("[Axios-Delete]==========");
-    console.log("[Axios-Delete]: url", to);
-    console.log("[Axios-Delete]: newConfig", newConfig);
+    // console.log("[Axios-Delete]==========");
+    // console.log("[Axios-Delete]: url", to);
+    // console.log("[Axios-Delete]: newConfig", newConfig);
     return axios.delete(to, newConfig);
 };
 
