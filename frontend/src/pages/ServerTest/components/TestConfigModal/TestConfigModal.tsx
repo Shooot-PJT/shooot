@@ -20,6 +20,7 @@ import { DataTable } from '../DataTable/DataTable';
 import { MethodChip } from '../MethodChip/MethodChip';
 import { TestConfigForm } from '../TestConfigForm/TestConfigForm';
 import * as s from './TestConfigModal.css';
+import { ExcuteTestModal } from '../ExcuteTestModal/ExcuteTestModal';
 
 interface TestConfigModalProps {
   projectJarFileId: number;
@@ -39,6 +40,7 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
       });
       return response?.data ?? {};
     },
+    staleTime: 120 * 1000,
   });
 
   const handleCheckbox = (idx: number) => {
@@ -63,6 +65,10 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
       projectJarFileId: projectJarFileId,
       endPointSettings: testConfig,
     };
+    // modal.pop();
+    modal.push({
+      children: <ExcuteTestModal />,
+    });
     console.log(request);
   };
 
@@ -94,7 +100,7 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
       }),
     );
     setTestFormData(newTestFormData);
-  }, []);
+  }, [apiConfigs.includes]);
 
   const convertTableData = (data: APITestListResponse) => {
     if (!data?.includes?.length && !data?.excludes?.length) {
@@ -144,7 +150,13 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
             현재 API Docs에 정의되지 않은 API입니다.
           </div>,
           '-',
-          '-',
+          <CustomTooltip
+            title={'테스트 하기 위해서는 API Docs 등록이 필요합니다.'}
+            placement="bottom"
+            arrow={true}
+          >
+            <div>-</div>
+          </CustomTooltip>,
         ])
       : [];
 

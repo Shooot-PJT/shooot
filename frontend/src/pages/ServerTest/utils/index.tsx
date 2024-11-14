@@ -1,4 +1,5 @@
 import { CustomTooltip } from '../../../components/CustomToolTip';
+import { GraphColor } from '../../../components/Graph/Graph.type';
 import { DistributeIcon } from '../components/DistributeIcon/DistributeIcon';
 import { DocsIcon } from '../components/DocsIcon/DocsIcon';
 import { StateIcon } from '../components/StateIcon/StateIcon';
@@ -41,7 +42,7 @@ export const convertDataTable = (
         active={item.status !== 'NONE' && item.status !== 'RUNTIME_ERROR'}
       />,
       <DistributeIcon
-        active={item.status !== 'RUN'}
+        active={true}
         onClick={() => {
           onClick(item.projectJarFileId);
         }}
@@ -52,4 +53,18 @@ export const convertDataTable = (
 
 export const convertJarFileIdList = (data: GetJarFilesResponse) => {
   return data.map((item) => item.projectJarFileId);
+};
+
+export const getRandomThree = () => {
+  const options: GraphColor[] = [
+    'primary',
+    'secondary',
+    'tertiary',
+    'get',
+    'post',
+    'delete',
+    'put',
+  ];
+  const shuffled = options.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, 3);
 };

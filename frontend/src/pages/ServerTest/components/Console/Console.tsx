@@ -4,6 +4,7 @@ import { stopDeployFile } from '../../apis/DistributeApi';
 import { ProjectStatus } from '../../types';
 import * as s from './Console.css';
 import { StateHeader } from './StateHeader/StateHeader';
+import { useNavBarStore } from '../../../../stores/navbarStore';
 export interface ConsoleProps {
   state?: ProjectStatus;
   data: string[];
@@ -20,6 +21,11 @@ export const Console = ({
   const [displayedData, setDisplayedData] = useState<string[]>([]);
   const currentIndexRef = useRef(0);
   const bodyContentRef = useRef<HTMLDivElement>(null);
+  const { project } = useNavBarStore();
+
+  useEffect(() => {
+    setDisplayedData([]);
+  }, [project]);
 
   const handleStopDeploy = () => {
     console.log(deployedFileId);
