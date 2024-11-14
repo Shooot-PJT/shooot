@@ -40,7 +40,7 @@ public class ProjectApiDocsSettingService {
 
 
         buildFileApiDocsList.stream().forEach(buildFileApiDocs -> {
-            buildFileApiDocs.updateApi(allByDomainProjectId.stream().filter(api -> Objects.equals(api.getUrl(), buildFileApiDocs.getUrl()) && Objects.equals(api.getMethod(), buildFileApiDocs.getMethod())).findFirst().get());
+            buildFileApiDocs.updateApi(allByDomainProjectId.stream().filter(api -> Objects.equals(api.getUrl(), buildFileApiDocs.getUrl()) && Objects.equals(api.getMethod(), buildFileApiDocs.getMethod())).findFirst().orElseGet(()-> null));
             if (buildFileApiDocs.getApi() == null) {
                 view.putExclude(ProjectApiDocsForTestView.Exclude.builder().endPoint(buildFileApiDocs.getUrl()).method(buildFileApiDocs.getApi().getMethod()).build());
             } else {
