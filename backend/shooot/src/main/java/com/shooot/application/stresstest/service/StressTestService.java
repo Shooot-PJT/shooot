@@ -102,7 +102,8 @@ public class StressTestService {
                 Map.class);
             List<Map<String, Object>> measurements = (List<Map<String, Object>>) responseMap.get(
                 "measurements");
-            float value = (float) measurements.get(0).get("value");
+            double doubleValue = (double) measurements.get(0).get("value");
+            float value = (float) doubleValue;
             connection.disconnect();
             return value;
         } catch (IOException e) {
