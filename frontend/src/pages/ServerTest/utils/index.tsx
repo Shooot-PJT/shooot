@@ -6,20 +6,25 @@ import { GetJarFilesResponse, ProjectStatus } from '../types';
 
 export const matchState = (status: ProjectStatus) => {
   switch (status) {
-    case 'READY':
-      return 'Pending';
+    case 'BUILD_ERROR':
+      return '빌드에러';
     case 'RUN':
-      return 'Pending';
+      return '배포중';
     case 'RUNTIME_ERROR':
-      return 'Error';
+      return '런타임에러';
     case 'DONE':
-      return 'Approved';
+      return '정상종료';
     case 'NONE':
-      return 'No-Build';
+      return '빌드기록없음';
+    default:
+      return '빌드기록없음';
   }
 };
 
-export const convertDataTable = (data: GetJarFilesResponse) => {
+export const convertDataTable = (
+  data: GetJarFilesResponse,
+  onClick: (n: number) => void,
+) => {
   return data.map((item) => {
     const versionString =
       `${item.version.major}.${item.version.minor}.${item.version.patch}` +
@@ -35,7 +40,12 @@ export const convertDataTable = (data: GetJarFilesResponse) => {
       <DocsIcon
         active={item.status !== 'NONE' && item.status !== 'RUNTIME_ERROR'}
       />,
-      <DistributeIcon active={item.status !== 'RUN'} />,
+      <DistributeIcon
+        active={item.status !== 'RUN'}
+        onClick={() => {
+          onClick(item.projectJarFileId);
+        }}
+      />,
     ];
   });
 };
