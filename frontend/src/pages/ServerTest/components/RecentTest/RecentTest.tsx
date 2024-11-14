@@ -18,7 +18,7 @@ export const RecentTest = () => {
     [
       'myproject - 0.0.5',
       '2024-10-16 18:32:25',
-      <StateIcon state="Approved" />,
+      <StateIcon state="정상종료" />,
       <Typography color="primary">5</Typography>,
       <Typography color="primary">4분 17초</Typography>,
       <Button paddingY={0.3} onClick={handleTestDetail}>
@@ -28,7 +28,7 @@ export const RecentTest = () => {
     [
       'myproject - 0.0.5',
       '2024-10-16 18:32:25',
-      <StateIcon state="Approved" />,
+      <StateIcon state="정상종료" />,
       <Typography color="primary">5</Typography>,
       <Typography color="primary">4분 17초</Typography>,
       <Button paddingY={0.3} onClick={handleTestDetail}>
@@ -38,7 +38,7 @@ export const RecentTest = () => {
     [
       'myproject - 0.0.5',
       '2024-10-16 18:32:25',
-      <StateIcon state="Approved" />,
+      <StateIcon state="정상종료" />,
       <Typography color="primary">5</Typography>,
       <Typography color="primary">4분 17초</Typography>,
       <Button paddingY={0.3} onClick={handleTestDetail}>
@@ -48,7 +48,7 @@ export const RecentTest = () => {
     [
       'myproject - 0.0.5',
       '2024-10-16 18:32:25',
-      <StateIcon state="Disabled" />,
+      <StateIcon state="런타임에러" />,
       <Typography color="primary">5</Typography>,
       <Typography color="primary">4분 17초</Typography>,
       <Button paddingY={0.3} color="grey" disabled>
@@ -58,7 +58,7 @@ export const RecentTest = () => {
     [
       'myproject - 0.0.5',
       '2024-10-16 18:32:25',
-      <StateIcon state="Error" />,
+      <StateIcon state="정상종료" />,
       <Typography color="primary">5</Typography>,
       <Typography color="primary">4분 17초</Typography>,
       <Button paddingY={0.3} onClick={handleTestDetail}>
