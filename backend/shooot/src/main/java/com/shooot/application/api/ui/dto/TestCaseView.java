@@ -13,6 +13,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class TestCaseView {
     private Integer id;
+    private Integer testCaseRequestId;
     private String type;
     private Map<String, Object> content;
 

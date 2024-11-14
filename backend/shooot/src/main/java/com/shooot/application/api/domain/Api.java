@@ -116,7 +116,7 @@ public class Api extends SoftDeleteEntity {
         }
 
         if(apiModifyRequest.getMethod() != null){
-            this.method = apiModifyRequest.getMethod();
+            this.method = apiModifyRequest.getMethod().toUpperCase();
         }
 
         if(apiModifyRequest.getIsSecure() != null){

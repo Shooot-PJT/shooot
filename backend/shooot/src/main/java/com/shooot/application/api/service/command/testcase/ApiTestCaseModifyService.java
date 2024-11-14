@@ -58,9 +58,13 @@ public class ApiTestCaseModifyService {
 
     private ApiTestCaseRequest modifyApiTestCaseRequest(ApiTestCase apiTestCase, Map<String,Object> request){
         log.info("content get = {}", request.get("content"));
+
+        ApiTestCaseRequestType type = ApiTestCaseRequestType.valueOf(request.get("type").toString().toUpperCase());
+
         ApiTestCaseRequest apiTestCaseRequest = ApiTestCaseRequest.builder()
                 .apiTestCase(apiTestCase)
-                .type(Objects.equals(request.get("type"), "JSON") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART)
+//                .type(Objects.equals(request.get("type"), "JSON") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART)
+                .type(type)
                 .content((Map<String, Object>) request.get("content"))
                 .build();
         // TODO : s3저장하는 로직 작성

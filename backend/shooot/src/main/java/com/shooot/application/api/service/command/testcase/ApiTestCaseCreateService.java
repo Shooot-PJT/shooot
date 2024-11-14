@@ -88,9 +88,12 @@ public class ApiTestCaseCreateService {
 
         log.info("content = {}", request.get("content"));
 
+        ApiTestCaseRequestType type = ApiTestCaseRequestType.valueOf(request.get("type").toString().toUpperCase());
+
         ApiTestCaseRequest apiTestCaseRequest = ApiTestCaseRequest.builder()
                 .apiTestCase(apiTestCase)
-                .type(request.get("type").equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART)
+//                .type(request.get("type").equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART)
+                .type(type)
                 .content((Map<String, Object>) request.get("content"))
                 .build();
 
@@ -123,7 +126,5 @@ public class ApiTestCaseCreateService {
             throw new TestCaseFileExtensionNotAllowException();
         }
     }
-
-
 
 }

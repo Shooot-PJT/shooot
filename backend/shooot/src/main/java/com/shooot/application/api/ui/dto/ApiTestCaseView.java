@@ -13,9 +13,10 @@ import java.util.Map;
 @AllArgsConstructor
 public class ApiTestCaseView {
     private Integer id;
+//    private Integer testCaseRequestId;
     private Integer apiId;
     private String title;
-    private HttpStatus httpStatusCode;
+    private Integer httpStatusCode;
     private ApiTestStatusType type;
     private Integer apiTestCaseRequestId;
     private ApiTestCaseRequestType requestType;
@@ -25,9 +26,10 @@ public class ApiTestCaseView {
 
         return ApiTestCaseView.builder()
                 .id(apiTestCase.getId())
+//                .apiTestCaseRequestId(apiTestCaseRequest.getId())
                 .apiId(apiTestCase.getApi().getId())
                 .title(apiTestCase.getTitle())
-                .httpStatusCode(apiTestCase.getHttpStatus())
+                .httpStatusCode(apiTestCase.getHttpStatus().value())
                 .type(apiTestCase.getTestCaseStatus())
                 .apiTestCaseRequestId(apiTestCaseRequest.getId())
                 .requestType(apiTestCaseRequest.getType())

@@ -50,9 +50,12 @@ public class ApiTestCaseController {
         Map<String, Object> contentMap = objectMapper.readValue(content, new TypeReference<Map<String, Object>>() {});
         Map<String, Object> data = new HashMap<>();
 
+        ApiTestCaseRequestType type = ApiTestCaseRequestType.valueOf(apiTestCaseCreateRequest.getType().toString().toUpperCase());
+
         data.put("content", contentMap);
         data.put("title", apiTestCaseCreateRequest.getTitle());
-        data.put("type", apiTestCaseCreateRequest.getType().equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART);
+//        data.put("type", apiTestCaseCreateRequest.getType().equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART);
+        data.put("type", type);
         data.put("httpStatusCode", apiTestCaseCreateRequest.getHttpStatusCode());
         log.info("asdf = {}", data);
 
@@ -80,10 +83,13 @@ public class ApiTestCaseController {
         Map<String, Object> contentMap = objectMapper.readValue(content, new TypeReference<Map<String, Object>>() {});
         Map<String, Object> data = new HashMap<>();
 
+        ApiTestCaseRequestType type = ApiTestCaseRequestType.valueOf(apiTestCaseModifyRequest.getType().toString().toUpperCase());
+
         data.put("content", contentMap);
         data.put("title", apiTestCaseModifyRequest.getTitle());
         data.put("httpStatusCode", apiTestCaseModifyRequest.getHttpStatusCode());
-        data.put("type", apiTestCaseModifyRequest.getType().equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART);
+        data.put("type", type);
+//        data.put("type", apiTestCaseModifyRequest.getType().equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART);
         log.info("asdf = {}", data);
         log.info("getcontent = {} ", data.get("content"));
 

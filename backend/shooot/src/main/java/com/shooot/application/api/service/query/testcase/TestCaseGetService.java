@@ -37,7 +37,8 @@ public class TestCaseGetService {
             ApiTestCaseRequest latestApiTestCaseRequest = apiTestCaseRequests.get(0);
 
             return TestCaseView.builder()
-                    .id(latestApiTestCaseRequest.getId())
+                    .id(latestApiTestCaseRequest.getApiTestCase().getId())
+                    .testCaseRequestId(latestApiTestCaseRequest.getId())
                     .type(latestApiTestCaseRequest.getType().name())
                     .content(latestApiTestCaseRequest.getContent())
                     .build();
