@@ -23,11 +23,20 @@ public class ProjectBuildLog extends BaseEntity {
     @UUIDv7
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_build_id")
     private ProjectBuild projectBuild;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private ProjectBuildStatus status;
+
+    public void updateStatus(ProjectBuildStatus status) {
+        this.status = status;
+    }
+
+
+    public Boolean isDeploy() {
+        return status != null && status.equals(ProjectBuildStatus.RUN);
+    }
 }
