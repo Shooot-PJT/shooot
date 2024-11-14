@@ -152,8 +152,7 @@ export interface APIRequestDocsInfo {
   isSecure?: boolean;
   isDeleted?: boolean;
   testStatus?: TestResult;
-  //
-  example_url?: string | null; // 예시용 자유양식 url (ExampleUrl)
+  example_url?: string | null;
   example_content?: APIRequestDocsContent | null;
 }
 

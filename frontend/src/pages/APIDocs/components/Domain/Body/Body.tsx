@@ -1,4 +1,3 @@
-// frontend/src/pages/APIDocs/components/Domain/Body/Body.tsx
 import { useDomainContext } from '../Domain';
 import { useGetAPIList } from '../../../reactQueries/api';
 import Flexbox from '../../../../../components/Flexbox';

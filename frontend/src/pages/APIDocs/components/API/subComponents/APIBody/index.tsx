@@ -5,19 +5,20 @@ import Flexbox from '../../../../../../components/Flexbox';
 import colorPalette from '../../../../../../styles/colorPalette';
 import * as s from './index.css';
 import { RequestDocs } from './RequestDocs/RequestDocs';
-import { TestCase, TestCaseList } from './TestCase/TestCase';
-import { TestLogBox } from './TestLogBox/TestLogBox';
 import { Skeleton } from '@mui/material';
 import ManagerAvatar from '../APICommon/ManagerAvatar/ManagerAvatar';
 import Typography from '../../../../../../components/Typography';
 import Button from '../../../../../../components/Button';
 import { useGetAPIDetail } from '../../../../reactQueries/api';
 import { DummyTestCase } from '../../../../dummies/DummyTestCase';
+import { useAPI } from '../../../../hooks/useAPI'; // 수정된 부분
 
 export const Body = () => {
   const context = useAPIContext();
   const { isFocused } = context.useIsFocusedHook;
   const apiId = context.headerInfo.id;
+
+  const { editAPIModalHandler } = useAPI(); // 수정된 부분
 
   const {
     data: apiDetailData,
@@ -48,7 +49,7 @@ export const Body = () => {
     return <></>;
   }
 
-  const { requestDocs, testCases, lastlog } = apiDetailData;
+  const { requestDocs, testCases } = apiDetailData;
   const method = requestDocs.method || 'method';
   const fontColor = method === 'method' ? 'light' : method;
 
@@ -75,7 +76,7 @@ export const Body = () => {
                 }}
               >
                 <Typography color={'light'} size={2.5} weight="700">
-                  {method.toUpperCase()}
+                  {method ? method.toUpperCase() : 'METHOD'}
                 </Typography>
                 <Typography
                   color={fontColor}
@@ -136,7 +137,11 @@ export const Body = () => {
                 gap: '1rem',
               }}
             >
-              <Button color="grey" rounded={0.3}>
+              <Button
+                color="grey"
+                rounded={0.3}
+                onClick={() => editAPIModalHandler(requestDocs)} // 수정된 부분
+              >
                 편집
               </Button>
               <Button color="grey" rounded={0.3}>
@@ -176,19 +181,9 @@ export const Body = () => {
               ) : (
                 <div>테스트케이스가 없습니다.</div>
               )}
-              {/*  */}
-              {}
-              {/* <TestCaseList>
-                <TestCase.Header />
-                <TestCase.Body />
-              </TestCaseList> */}
-              {/*  */}
             </Flexbox>
           </Flexbox>
         </Flexbox>
-
-        {/* 2. BOTTOM 컨테이너 : 테스트로그 SUMMARY 섹션 */}
-        {/* <TestLogBox lastLog={lastlog} /> */}
       </Flexbox>
     </div>
   );
