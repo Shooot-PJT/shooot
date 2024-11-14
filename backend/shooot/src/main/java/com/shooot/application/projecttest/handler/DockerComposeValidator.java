@@ -95,8 +95,9 @@ public class DockerComposeValidator {
                     throw new DockerComposeCanNotUseVolumeException();
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException io) {
+            io.printStackTrace();
+            throw new DockerComposeCanNotUseImageException();
         }
     }
 }
