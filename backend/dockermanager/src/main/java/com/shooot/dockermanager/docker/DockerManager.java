@@ -238,7 +238,11 @@ public class DockerManager {
 
 
     public void stopDockerCompose(String target, String englishName, Integer projectId, Integer projectJarFileId) {
-        executeStopProcess("docker", "stack", "rm", englishName);
+        try {
+            executeStopProcess("docker", "stack", "rm", englishName);
+        }catch (Exception ignored) {
+
+        }
         vagrantRepository.remove(target);
         projectDirectoryManager.rmDir(projectId, projectJarFileId);
 

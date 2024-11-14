@@ -51,13 +51,12 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
     public void startListening() {
         StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> options =
                 StreamMessageListenerContainer.StreamMessageListenerContainerOptions.builder()
-                        .pollTimeout(Duration.ofMillis(10)) // 폴링 타임아웃 설정
+                        .pollTimeout(Duration.ofMillis(500)) // 폴링 타임아웃 조정
                         .build();
 
         listenerContainer = StreamMessageListenerContainer.create(Objects.requireNonNull(redisTemplate.getConnectionFactory()), options);
         listenerContainer.start();
         addSubscriptionForProject(2);
-
     }
 
     @Override
@@ -78,14 +77,13 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
     }
 
     public void addSubscriptionForProject(Integer projectId) {
-        // 이미 구독 중이라면 새로 추가하지 않음
         if (subscriptions.containsKey(projectId)) {
             return;
         }
         redisTemplate.opsForStream().trim("project_logs_" + projectId, 1000);
-        // 새로운 프로젝트 ID에 대한 구독 생성
+
         Subscription subscription = listenerContainer.receive(
-                StreamOffset.fromStart("project_logs_" + projectId),
+                StreamOffset.latest("project_logs_" + projectId), // 새로운 메시지만 가져오도록 설정
                 this);
 
         subscriptions.put(projectId, subscription);
@@ -132,69 +130,32 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
         try {
             String jsonMessage = record.getValue().get("message");
             Map<String, Object> dtoMap = objectMapper.readValue(jsonMessage, Map.class);
-            log.info("[] : {}", dtoMap);
-
             MessageDto.Type type = MessageDto.Type.valueOf((String) dtoMap.get("type"));
 
-            Message message = null;
-            String emitterType = null;
-            ProjectBuildStatus status = null;
-            switch (type) {
-                case DOCKER_CONSOLE_LOG:
-                    message = objectMapper.convertValue(dtoMap.get("message"), DockerConsoleLogMessage.class);
-                    emitterType = PROJECT_LOG;
-                    Message finalMessage = message;
-                    String finalEmitterType1 = emitterType;
-                    projectEmitters.getOrDefault(message.getProjectId(), Map.of()).forEach((userId, emitter) -> sendLog(emitter, finalMessage, finalEmitterType1));
-                    return;
-                case DOCKER_BUILD_ERROR:
-                    message = objectMapper.convertValue(dtoMap.get("message"), DockerMessage.class);
-                    status = ProjectBuildStatus.BUILD_ERROR;
-                    emitterType = PROJECT_STATUS;
-                    removeSubscriptionForProject(message.getProjectId());
-                    break;
-                case DOCKER_RUNTIME_ERROR:
-                    message = objectMapper.convertValue(dtoMap.get("message"), DockerMessage.class);
-                    status = ProjectBuildStatus.RUNTIME_ERROR;
-                    emitterType = PROJECT_STATUS;
-                    removeSubscriptionForProject(message.getProjectId());
-                    break;
-                case DOCKER_RUN:
-                    message = objectMapper.convertValue(dtoMap.get("message"), DockerMessage.class);
-                    status = ProjectBuildStatus.RUN;
-                    emitterType = PROJECT_STATUS;
-                    break;
-                case DOCKER_RUN_DONE:
-                    message = objectMapper.convertValue(dtoMap.get("message"), DockerMessage.class);
-                    status = ProjectBuildStatus.DONE;
-                    emitterType = PROJECT_STATUS;
-                    break;
-            }
+            Message message = type == MessageDto.Type.DOCKER_CONSOLE_LOG
+                    ? objectMapper.convertValue(dtoMap.get("message"), DockerConsoleLogMessage.class)
+                    : objectMapper.convertValue(dtoMap.get("message"), DockerMessage.class);
 
-            ToStatusMessage toStatusMessage = new ToStatusMessage(message, status);
-            String finalEmitterType = emitterType;
-            projectEmitters.getOrDefault(message.getProjectId(), Map.of()).forEach((userId, emitter) -> sendLog(emitter, toStatusMessage, finalEmitterType));
-        } catch (JsonProcessingException ignored) {
+            ProjectBuildStatus status = switch (type) {
+                case DOCKER_BUILD_ERROR -> ProjectBuildStatus.BUILD_ERROR;
+                case DOCKER_RUNTIME_ERROR -> ProjectBuildStatus.RUNTIME_ERROR;
+                case DOCKER_RUN -> ProjectBuildStatus.RUN;
+                case DOCKER_RUN_DONE -> ProjectBuildStatus.DONE;
+                default -> null;
+            };
 
-        }
+            projectEmitters.getOrDefault(message.getProjectId(), Map.of()).forEach((userId, emitter) ->
+                    sendLog(emitter, status == null ? message : new ToStatusMessage(message, status),
+                            type == MessageDto.Type.DOCKER_CONSOLE_LOG ? PROJECT_LOG : PROJECT_STATUS));
 
-    }
-
-    private void sendLog(SseEmitter emitter, Message message, String emitterName) {
-        try {
-            emitter.send(SseEmitter.event()
-                    .name(emitterName)
-                    .data(message));
-        } catch (IOException e) {
-            emitter.completeWithError(e);
+        } catch (JsonProcessingException e) {
+            log.error("Error processing JSON: {}", e.getMessage());
         }
     }
 
-    private void sendLog(SseEmitter emitter, ToStatusMessage message, String emitterName) {
+    private void sendLog(SseEmitter emitter, Object message, String emitterName) {
         try {
-            emitter.send(SseEmitter.event()
-                    .name(emitterName)
-                    .data(message));
+            emitter.send(SseEmitter.event().name(emitterName).data(message));
         } catch (IOException e) {
             emitter.completeWithError(e);
         }
