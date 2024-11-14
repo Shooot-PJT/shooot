@@ -52,7 +52,14 @@ export const DummyTestCase: React.FC<DummyTestCaseProps> = ({ testCaseId }) => {
 
   useEffect(() => {
     if (testCaseDetail) {
-      setEditedTestCase(testCaseDetail);
+      setEditedTestCase({
+        ...testCaseDetail,
+        content: {
+          ...testCaseDetail.content,
+          body: testCaseDetail.content.body || { raw: null, formData: null },
+        },
+      });
+
       switch (testCaseDetail.type) {
         case 'MULTIPART':
           setBodyType('form-data');
@@ -99,8 +106,8 @@ export const DummyTestCase: React.FC<DummyTestCaseProps> = ({ testCaseId }) => {
       content: {
         ...editedTestCase.content,
         body: {
-          formData: null,
           raw: null,
+          formData: null,
         },
       },
     });
@@ -114,13 +121,8 @@ export const DummyTestCase: React.FC<DummyTestCaseProps> = ({ testCaseId }) => {
 
         const formData = new FormData();
 
-        // formData.append('title', editedTestCase.title);
-        // formData.append(
-        //   'httpStatusCode',
-        //   String(editedTestCase.httpStatusCode),
-        // );
         formData.append('type', editedTestCase.type); // 수정된 부분
-
+        console.log('TYPE: ', editedTestCase.type);
         // content를 문자열로 변환하여 추가
         formData.append('content', JSON.stringify(editedTestCase.content));
 
@@ -148,23 +150,13 @@ export const DummyTestCase: React.FC<DummyTestCaseProps> = ({ testCaseId }) => {
 
   const handleDataChange = (section: string, data: any) => {
     if (!editedTestCase) return;
-    if (section === 'body') {
-      setEditedTestCase({
-        ...editedTestCase,
-        content: {
-          ...editedTestCase.content,
-          body: data,
-        },
-      });
-    } else {
-      setEditedTestCase({
-        ...editedTestCase,
-        content: {
-          ...editedTestCase.content,
-          [section]: data,
-        },
-      });
-    }
+    setEditedTestCase({
+      ...editedTestCase,
+      content: {
+        ...editedTestCase.content,
+        [section]: data,
+      },
+    });
   };
 
   return (
@@ -247,6 +239,7 @@ export const DummyTestCase: React.FC<DummyTestCaseProps> = ({ testCaseId }) => {
               raw={testCase.content.body.raw || {}}
               isEditMode={isEditMode}
               onDataChange={handleDataChange}
+              body={testCase.content.body} // 추가된 부분
             />
           )}
           {bodyType === 'form-data' && (
@@ -402,21 +395,27 @@ interface BodyRawProps {
   raw: object | null;
   isEditMode: boolean;
   onDataChange: (section: string, data: any) => void;
+  body: any; // 추가된 부분
 }
 
-const BodyRaw: React.FC<BodyRawProps> = ({ raw, isEditMode, onDataChange }) => {
-  const [jsonData, setJsonData] = useState<string>(
-    JSON.stringify(raw, null, 2) || '',
-  );
-  const [error, setError] = useState<string | null>(null);
+const BodyRaw: React.FC<BodyRawProps> = ({
+  raw,
+  isEditMode,
+  onDataChange,
+  body,
+}) => {
+  const [jsonData, setJsonData] = useState<string>('');
 
   useEffect(() => {
-    setJsonData(JSON.stringify(raw, null, 2) || '');
+    if (raw && raw.datas) {
+      setJsonData(JSON.stringify(raw.datas, null, 2));
+    } else {
+      setJsonData('');
+    }
   }, [raw]);
 
   const handleEditorChange = (value?: string) => {
     setJsonData(value || '');
-    setError(null); // 에러 메시지 초기화
   };
 
   const handleEditorDidMount: OnMount = (editor, monaco) => {
@@ -425,14 +424,17 @@ const BodyRaw: React.FC<BodyRawProps> = ({ raw, isEditMode, onDataChange }) => {
         try {
           const value = editor.getValue();
           const parsedData = JSON.parse(value);
+
+          // 'raw' 데이터를 원하는 포맷으로 감싸서 저장
           onDataChange('body', {
-            raw: parsedData,
-            formData: null,
+            ...body,
+            raw: {
+              datas: parsedData,
+              files: null,
+            },
           });
-          setError(null);
         } catch (e) {
           console.error('Invalid JSON:', e);
-          setError('유효한 JSON 형식이 아닙니다.');
         }
       });
     }
@@ -451,7 +453,6 @@ const BodyRaw: React.FC<BodyRawProps> = ({ raw, isEditMode, onDataChange }) => {
           minimap: { enabled: false },
         }}
       />
-      {error && <div style={{ color: 'red' }}>{error}</div>}
     </div>
   );
 };

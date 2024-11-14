@@ -1,5 +1,3 @@
-// frontend/src/pages/APIDocs/apis/testcase/index.ts
-
 import { api, multipart } from '../../../../apis/interceptors';
 import * as AT from './types';
 import { Endpoint as EP } from '../../constants/endpoint';
@@ -9,7 +7,7 @@ export const addTestCase = async (
   { apiId }: AT.AddTestCaseRequest,
   body: AT.AddTestCaseRequestBody,
 ) => {
-  const response = await api.post<AT.AddTestCaseResponse>(
+  const response = await multipart.post<AT.AddTestCaseResponse>(
     `/${EP.projects}/${EP.domains}/${EP.apis}/${apiId}/${EP.testcases}`,
     body,
   );

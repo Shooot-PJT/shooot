@@ -176,6 +176,13 @@ export const Body = () => {
               ) : (
                 <div>테스트케이스가 없습니다.</div>
               )}
+              {/*  */}
+              {}
+              {/* <TestCaseList>
+                <TestCase.Header />
+                <TestCase.Body />
+              </TestCaseList> */}
+              {/*  */}
             </Flexbox>
           </Flexbox>
         </Flexbox>
