@@ -21,7 +21,7 @@ import java.util.Objects;
 public class BuildFileApiDocs {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "build_file_api_docs_id")
+    @Column(name = "build_api_docs_id")
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
