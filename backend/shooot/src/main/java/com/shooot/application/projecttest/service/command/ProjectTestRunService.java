@@ -6,7 +6,6 @@ import com.shooot.application.projecttest.domain.ProjectBuild;
 import com.shooot.application.projecttest.domain.repository.ApiTestMethodRepository;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
 import com.shooot.application.projecttest.event.dto.ProjectTestRequestedEvent;
-import com.shooot.application.projecttest.exception.FileIsNotDeploymentException;
 import com.shooot.application.projecttest.exception.FileIsNotExistException;
 import com.shooot.application.projecttest.service.dto.ApiTestMethodRequest;
 import com.shooot.application.projecttest.service.dto.ProjectBuildTestRunRequest;
@@ -25,12 +24,11 @@ public class ProjectTestRunService {
 
     @Transactional
     public void testRunRequest(ProjectBuildTestRunRequest request) {
+
         ProjectBuild projectBuild = projectBuildRepository.findById(request.getProjectJarFileId())
             .orElseThrow(FileIsNotExistException::new);
 
-        if (!projectBuild.getIsDeployment()) {
-            throw new FileIsNotDeploymentException();
-        }
+        // TODO: 실제 배포 여부
 
         List<Integer> apiIds = request.getEndPointSettings().stream()
             .map(ApiTestMethodRequest::getApiId).toList();
@@ -44,10 +42,5 @@ public class ProjectTestRunService {
         });
 
         Events.raise(new ProjectTestRequestedEvent(apiIds, request.getProjectJarFileId()));
-    }
-
-    @Transactional
-    public void testRunRequest() {
-        Events.raise(new ProjectTestRequestedEvent());
     }
 }
