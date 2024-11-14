@@ -6,5 +6,5 @@ import lombok.Builder;
 public class StressTestDto {
 
     private Float cpuUtilization;
-    private Long ramUtilization;
+    private Float ramUtilization;
 }
