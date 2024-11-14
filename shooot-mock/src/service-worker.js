@@ -15,7 +15,7 @@ self.addEventListener("fetch", async function (event) {
     console.log("[Fetch Event]==========");
 
     if (projectName === undefined || !projectName.length) {
-        console.error("[Fetch Event]: projectName 을 등록해주세요");
+        // console.error("[Fetch Event]: projectName 을 등록해주세요");
     } else {
         const { request } = event;
         const url = new URL(request.url);
