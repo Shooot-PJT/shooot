@@ -95,15 +95,18 @@ public class DockerManager {
         projectDirectoryManager.mkDir(dto.getProjectId(), dto.getProjectJarFileId());
         projectDirectoryManager.setFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE, projectFile.getDockerComposeFile());
         projectDirectoryManager.setFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.JAR, projectFile.getProjectFile());
-        projectDirectoryManager.setMetaData(dto.getProjectId(), dto.getProjectJarFileId(), MetaData.builder()
+
+        MetaData metaData = MetaData.builder()
                 .projectJarFileId(dto.getProjectJarFileId())
                 .projectId(dto.getProjectId())
                 .projectName(project.getEnglishName())
                 .instanceName(target)
-                .build());
+                .build();
+        projectDirectoryManager.setMetaData(dto.getProjectId(), dto.getProjectJarFileId(), metaData);
 
         copyDockerfile(dto);
         dockerComposeManager.mergeDockerCompose(projectDirectoryManager.getFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE).orElseThrow(IllegalArgumentException::new), project.getEnglishName(), target, projectVersion);
+        vagrantRepository.put(target, metaData);
     }
 
     private void copyDockerfile(ServiceStartDto dto) throws IOException {
@@ -130,6 +133,7 @@ public class DockerManager {
                 .type(MessageDto.Type.DOCKER_RUN)
                 .build());
         projectBuildLogUpdateService.projectBuildLogUpdate(projectBuild.getId(), ProjectBuildStatus.RUN);
+
     }
 
     private void executeProcess(ProcessBuilder processBuilder, String taskDescription, String target) throws IOException, InterruptedException {
