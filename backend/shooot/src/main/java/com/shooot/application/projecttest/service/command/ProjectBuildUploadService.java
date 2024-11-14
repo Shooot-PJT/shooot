@@ -3,15 +3,20 @@ package com.shooot.application.projecttest.service.command;
 import com.shooot.application.common.events.Events;
 import com.shooot.application.project.domain.Project;
 import com.shooot.application.project.domain.repository.ProjectRepository;
+import com.shooot.application.project.exception.ProjectNotFoundException;
 import com.shooot.application.projecttest.domain.ProjectBuild;
-import com.shooot.application.projecttest.domain.ProjectBuildStatus;
+import com.shooot.application.projecttest.domain.ProjectBuildLog;
 import com.shooot.application.projecttest.domain.ProjectFile;
 import com.shooot.application.projecttest.domain.ProjectVersion;
+import com.shooot.application.projecttest.domain.repository.ProjectBuildLogRepository;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
 import com.shooot.application.projecttest.domain.repository.ProjectFileRepository;
 import com.shooot.application.projecttest.event.dto.ProjectBuildUploadedEvent;
+import com.shooot.application.projecttest.exception.FileIsDeploymentException;
 import com.shooot.application.projecttest.exception.FileIsExistException;
+import com.shooot.application.projecttest.exception.FileIsNotExistException;
 import com.shooot.application.projecttest.exception.FileIsNotJarFileException;
+import com.shooot.application.projecttest.handler.DockerComposeValidator;
 import com.shooot.application.projecttest.handler.ProjectFileHandler;
 import com.shooot.application.projecttest.service.query.ProjectBuildFindService;
 import com.shooot.application.utils.FileHandler;
@@ -27,13 +32,22 @@ import java.util.Map;
 @Service
 public class ProjectBuildUploadService {
 
+    private final ProjectFileRepository projectFileRepository;
     private final ProjectRepository projectRepository;
     private final ProjectBuildFindService projectBuildFindService;
     private final ProjectBuildRepository projectBuildRepository;
+    private final DockerComposeValidator dockerComposeValidator;
+    private final ProjectBuildLogRepository projectBuildLogRepository;
 
     public Integer buildFileApiExtractor(Integer projectId, MultipartFile uploadedProjectFile, MultipartFile uploadedDockerComposeFile) {
+        File dockerFile = null;
+        if(!uploadedProjectFile.isEmpty()){
+            dockerFile = convertToFile(uploadedDockerComposeFile, "docker-compose.yml");
+            dockerComposeValidator.validateComposeFile(dockerFile.getAbsolutePath());
+        }
 
         Project project = findProjectById(projectId);
+
         File jarFile = convertToFile(uploadedProjectFile, project.getName());
         String jarFileChecksum = FileHandler.getMD5Checksum(jarFile);
 
@@ -43,24 +57,39 @@ public class ProjectBuildUploadService {
 
         validateDuplicateFile(projectId, projectFileName, jarFileChecksum);
 
-        File dockerFile = convertToFile(uploadedDockerComposeFile, jarFile.getName());
+
         int temporaryVersion = getTemporaryVersion(projectId, projectFileName, projectVersion);
         projectVersion.setTemporary(temporaryVersion);
 
         ProjectBuild projectBuild = createProjectBuild(project, projectFileName, projectVersion, jarFileChecksum);
-        ProjectFile projectFile = createProjectFile(jarFile, dockerFile, projectBuild);
+        ProjectFile projectFile = createProjectFile(jarFile, projectFileName, dockerFile, projectBuild);
 
-        projectBuild.setProjectFile(projectFile);
+        projectFileRepository.save(projectFile);
 
         Integer id = projectBuildRepository.save(projectBuild).getId();
         Events.raise(new ProjectBuildUploadedEvent(id, jarFile));
         return id;
     }
 
+    public void dockerFileUpdate(Integer projectJarFileId, MultipartFile uploadedDockerComposeFile) {
+        ProjectBuild pb = projectBuildRepository.findById(projectJarFileId).orElseThrow(FileIsNotExistException::new);
+        ProjectFile pf = projectFileRepository.findById(pb.getId()).orElseThrow(FileIsNotExistException::new);
+        ProjectBuildLog projectBuildLog = projectBuildLogRepository.findByProjectBuild_Id(pb.getId()).orElseThrow(FileIsNotExistException::new);
+
+        if(projectBuildLog.isDeploy()) {
+            throw new FileIsDeploymentException();
+        }
+
+        File dockerComposeFile = convertToFile(uploadedDockerComposeFile, "docker-compose.yml");
+        dockerComposeValidator.validateComposeFile(dockerComposeFile.getAbsolutePath());
+
+        pf.updateDockerComposeFile(FileHandler.getAllBytes(dockerComposeFile));
+        projectFileRepository.save(pf);
+    }
+
     private Project findProjectById(Integer projectId) {
         return projectRepository.findById(projectId)
-                //TODO : Project ID Exception 작성할 것.
-                .orElseThrow(() -> new IllegalArgumentException("Project not found with ID: " + projectId));
+                .orElseThrow(ProjectNotFoundException::new);
     }
 
     private File convertToFile(MultipartFile multipartFile, String fileName) {
@@ -96,10 +125,10 @@ public class ProjectBuildUploadService {
                 .build();
     }
 
-    private ProjectFile createProjectFile(File jarFile, File dockerFile, ProjectBuild projectBuild) {
+    private ProjectFile createProjectFile(File jarFile, String projectFileName, File dockerFile, ProjectBuild projectBuild) {
         return ProjectFile.builder()
                 .projectFile(FileHandler.getAllBytes(jarFile))
-                .fileName(jarFile.getName())
+                .fileName(projectFileName)
                 .dockerComposeFile(FileHandler.getAllBytes(dockerFile))
                 .projectBuild(projectBuild)
                 .build();

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "project_build")
 @Entity
+@SQLRestriction("is_deleted = false")
 public class ProjectBuild extends SoftDeleteEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,10 +41,7 @@ public class ProjectBuild extends SoftDeleteEntity {
     @Column(name = "md5_check_sum")
     private String md5CheckSum;
 
-    @Setter
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "projectBuild", cascade = CascadeType.ALL)
-    private ProjectFile projectFile;
 
-    @OneToMany(mappedBy = "projectBuild", cascade = CascadeType.ALL)
-    private List<ProjectBuildLog> projectBuildLog;
+    @OneToOne(mappedBy = "projectBuild", cascade = CascadeType.ALL)
+    private ProjectBuildLog projectBuildLog;
 }

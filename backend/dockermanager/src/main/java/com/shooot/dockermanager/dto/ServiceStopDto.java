@@ -8,5 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServiceStopDto {
-    private String projectName;
+    private Integer projectJarFileId;
+    private Integer projectId;
 }

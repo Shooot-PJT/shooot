@@ -1,9 +1,11 @@
 package com.shooot.application.api.domain;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shooot.application.api.service.command.api.dto.ApiModifyRequest;
 import com.shooot.application.api.service.command.api.dto.ApiToggleModifyRequest;
 import com.shooot.application.common.jpa.BaseEntity;
 import com.shooot.application.common.jpa.SoftDeleteEntity;
+import com.shooot.application.common.jpa.map.MapToJsonConverter;
 import com.shooot.application.project.domain.ProjectParticipant;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @SuperBuilder
@@ -52,6 +55,13 @@ public class Api extends SoftDeleteEntity {
     @Column(name = "url")
     private String url;
 
+    @Column(name = "example_url")
+    private String exampleUrl;
+
+    @Convert(converter = MapToJsonConverter.class)
+    @Column(name = "example_content")
+    private Map<String, Object> exampleContent;
+
     @LastModifiedDate
     @Column(name = "modified_at")
     private LocalDateTime modifiedAt;
@@ -70,14 +80,18 @@ public class Api extends SoftDeleteEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "api")
     private List<ApiSubscribe> subscribers = new ArrayList<>();
 
-    @PrePersist
-    protected void setDefault() {
+    @Override
+    protected void prePersistAction() {
         if(isRealServer == null){
             this.isRealServer = false;
         }
 
         if(isSecure == null){
             this.isSecure = false;
+        }
+
+        if(testStatus == null){
+            this.testStatus = ApiTestStatusType.YET;
         }
     }
 
@@ -92,6 +106,15 @@ public class Api extends SoftDeleteEntity {
 
         if(apiModifyRequest.getUrl() != null){
             this.url = apiModifyRequest.getUrl();
+        }
+
+        if(apiModifyRequest.getExampleUrl() != null){
+            this.exampleUrl = apiModifyRequest.getExampleUrl();
+        }
+
+        if(apiModifyRequest.getExampleContent() != null){
+            ObjectMapper objectMapper = new ObjectMapper();
+            this.exampleContent = objectMapper.convertValue(apiModifyRequest.getExampleContent(), Map.class);
         }
 
         if(apiModifyRequest.getMethod() != null){
@@ -112,6 +135,10 @@ public class Api extends SoftDeleteEntity {
         if(apiToggleModifyRequest.getIsSecure() != null){
             this.isSecure = apiToggleModifyRequest.getIsSecure();
         }
+    }
+
+    public void testCaseUpdate(){
+        this.modifiedAt = LocalDateTime.now();
     }
 
 }

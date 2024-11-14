@@ -1,5 +1,7 @@
 package com.shooot.application.api.domain;
 
+import com.shooot.application.api.service.query.test.dto.ApiTestLogInfiniteResponse;
+import com.shooot.application.common.jpa.SoftDeleteEntity;
 import com.shooot.application.common.jpa.uuid.UUIDv7;
 import com.shooot.application.project.domain.ProjectParticipant;
 import jakarta.persistence.*;
@@ -17,10 +19,10 @@ import java.util.UUID;
 @AllArgsConstructor
 @Table(name = "api_test_log")
 @Entity
-public class ApiTestLog {
+public class ApiTestLog extends SoftDeleteEntity {
     @Id
     @GeneratedValue
-    @Column(name = "api_test_log")
+    @Column(name = "api_test_log_id")
     @UUIDv7
     private UUID id;
 
@@ -32,6 +34,9 @@ public class ApiTestLog {
     @JoinColumn(name = "api_test_case_id")
     private ApiTestCase apiTestCase;
 
+    @Column(name = "is_success")
+    private Boolean isSuccess;
+
     @Column(name = "http_status")
     private HttpStatus httpStatus;
 
@@ -42,4 +47,18 @@ public class ApiTestLog {
     @Column(name = "http_header")
     @Lob
     private String httpHeader;
+
+    public static ApiTestLogInfiniteResponse from(ApiTestLog apiTestLog){
+        return ApiTestLogInfiniteResponse.builder()
+                .id(apiTestLog.getId())
+                .projectId(apiTestLog.getProjectParticipant().getId())
+                .tester(apiTestLog.getProjectParticipant().getUser().getNickname())
+                .testCaseId(apiTestLog.getApiTestCase().getId())
+                .isSuccess(apiTestLog.getIsSuccess())
+                .httpStatus(apiTestLog.getHttpStatus())
+                .httpBody(apiTestLog.getHttpBody())
+                .httpHeader(apiTestLog.getHttpHeader())
+                .createdAt(apiTestLog.getCreatedAt())
+                .build();
+    }
 }
