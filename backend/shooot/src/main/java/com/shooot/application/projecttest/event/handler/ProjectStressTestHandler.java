@@ -4,7 +4,9 @@ import com.shooot.application.api.domain.Api;
 import com.shooot.application.api.domain.repository.ApiRepository;
 import com.shooot.application.api.exception.api.ApiNotFoundException;
 import com.shooot.application.projecttest.domain.ApiTestMethod;
+import com.shooot.application.projecttest.domain.ProjectBuild;
 import com.shooot.application.projecttest.domain.repository.ApiTestMethodRepository;
+import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
 import com.shooot.application.projecttest.event.dto.ProjectTestRequestedEvent;
 import com.shooot.application.sseemitter.service.StressTestSseService;
 import com.shooot.application.stresstest.controller.dto.StressTestDto;
@@ -24,21 +26,28 @@ public class ProjectStressTestHandler {
     private final StressTestService stressTestService;
     private final ApiTestMethodRepository apiTestMethodRepository;
     private final StressTestSseService stressTestSseService;
+    private final ProjectBuildRepository projectBuildRepository;
 
     @Async
     @EventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void stressTest(ProjectTestRequestedEvent event) {
+        ProjectBuild projectBuild = projectBuildRepository.findById(event.getProjectJarFileId())
+            .orElseThrow();
+
+        String baseUrl = "https://%s.shooot.shop".formatted(
+            projectBuild.getProject().getEnglishName());
+
         event.getApiId().forEach(apiId -> {
             Api api = apiRepository.findById(apiId).orElseThrow(ApiNotFoundException::new);
             ApiTestMethod apiTestMethod = apiTestMethodRepository.findByApi(api).orElseThrow();
 
             switch (apiTestMethod.getBuildFileTestMethod()) {
-                case FIXED -> stressTestService.fixed(api, apiTestMethod.getVUsers(),
+                case FIXED -> stressTestService.fixed(baseUrl, api, apiTestMethod.getVUsers(),
                     apiTestMethod.getTestDuration());
-                case SPIKE -> stressTestService.spike(api, apiTestMethod.getVUsers(),
+                case SPIKE -> stressTestService.spike(baseUrl, api, apiTestMethod.getVUsers(),
                     apiTestMethod.getTestDuration());
-                case RAMP_UP -> stressTestService.rampUp(api, apiTestMethod.getVUsers(),
+                case RAMP_UP -> stressTestService.rampUp(baseUrl, api, apiTestMethod.getVUsers(),
                     apiTestMethod.getTestDuration());
             }
 
