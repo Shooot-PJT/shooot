@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -42,14 +43,14 @@ public class EmailValidationService {
         return EmailIsValidView.builder().isValid(verifyEmail(request)).build();
     }
 
-    public void emailCanUseValidCheck() {
+    public void emailCanUseValidCheck(String email) {
         Optional<UserVerificationEmailDto> attribute = sessionFinder.getAttribute(UserSessionConstants.USER_VERIFICATION_EMAIL);
         if(attribute.isEmpty()) {
             throw new EmailVerificationRequestNotFoundException();
         }
 
         UserVerificationEmailDto dto = attribute.get();
-        if(dto.getIsValid() == null || !dto.getIsValid()) {
+        if(dto.getIsValid() == null || !dto.getIsValid() || !Objects.equals(email, dto.getEmail())) {
             throw new EmailVerificationNotFoundException();
         }
 
@@ -81,11 +82,12 @@ public class EmailValidationService {
     private boolean verifyEmail(EmailVerificationRequest dto) {
         Optional<UserVerificationEmailDto> attribute = sessionFinder.getAttribute(UserSessionConstants.USER_VERIFICATION_EMAIL);
 
-        if(attribute.isEmpty()) {
+        if(attribute.isEmpty() || !Objects.equals(dto.getEmail(), attribute.get().getEmail())) {
             throw new EmailVerificationRequestNotFoundException();
         }
 
         if(attribute.get().verify(dto)) {
+            emailValidCheckRemove();
             sessionAdder.setAttribute(UserSessionConstants.USER_VERIFICATION_EMAIL, attribute.get());
             return true;
         }
