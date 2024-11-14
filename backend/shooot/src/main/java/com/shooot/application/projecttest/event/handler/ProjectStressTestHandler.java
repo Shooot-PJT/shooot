@@ -56,6 +56,7 @@ public class ProjectStressTestHandler {
 
             while (System.currentTimeMillis() < endTime) {
                 StressTestDto data = stressTestService.getData(event.getProjectJarFileId());
+                System.out.println("test: " + data.getCpuUtilization());
                 stressTestSseService.send(event.getProjectJarFileId(), data);
                 try {
                     Thread.sleep(3000);
