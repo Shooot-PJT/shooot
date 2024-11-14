@@ -2,7 +2,17 @@ package com.shooot.application.projecttest.domain;
 
 import com.shooot.application.api.domain.Api;
 import com.shooot.application.projecttest.service.dto.ApiTestMethodRequest;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +25,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "api_test_method")
 @Entity
 public class ApiTestMethod {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "api_test_method_id")
@@ -33,7 +44,6 @@ public class ApiTestMethod {
 
     @Column(name = "test_duration")
     private Integer testDuration;
-
 
     public void update(ApiTestMethodRequest apiTestMethodRequest) {
         this.buildFileTestMethod = BuildFileTestMethod.valueOf(apiTestMethodRequest.getMethod());
