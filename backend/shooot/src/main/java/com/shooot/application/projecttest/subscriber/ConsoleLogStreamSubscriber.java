@@ -71,6 +71,7 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
                     log.info("projectId : {}, emit user : {}", projectId, userId);
                 } catch (IOException ignored) {
                     sseEmitter.completeWithError(ignored);
+                    projectEmitters.get(projectId).remove(userId);
                 }
             });
         });
@@ -178,6 +179,9 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
                     break;
             }
 
+            if(Objects.equals(ProjectBuildStatus.BUILD_ERROR, status) || Objects.equals(ProjectBuildStatus.RUNTIME_ERROR, status)) {
+                removeSubscriptionForProject(message.getProjectId());
+            }
             ToStatusMessage toStatusMessage = new ToStatusMessage(message, status);
             String finalEmitterType = emitterType;
 
