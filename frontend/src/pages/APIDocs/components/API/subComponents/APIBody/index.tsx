@@ -3,13 +3,15 @@ import Flexbox from '../../../../../../components/Flexbox';
 import colorPalette from '../../../../../../styles/colorPalette';
 import * as s from './index.css';
 import { RequestDocs } from './RequestDocs/RequestDocs';
-import { TestCaseList } from './TestCase/TestCase';
+import { TestCase, TestCaseList } from './TestCase/TestCase';
 import { TestLogBox } from './TestLogBox/TestLogBox';
 import { Skeleton } from '@mui/material';
 import ManagerAvatar from '../APICommon/ManagerAvatar/ManagerAvatar';
 import Typography from '../../../../../../components/Typography';
 import Button from '../../../../../../components/Button';
 import { useGetAPIDetail } from '../../../../reactQueries/api';
+import { testcaseDummyList } from '../../../../dummies/testcase_dummy_list';
+import { DummyTestCase } from '../../../../dummies/DummyTestCase';
 
 export const Body = () => {
   const context = useAPIContext();
@@ -166,7 +168,12 @@ export const Body = () => {
               />
 
               {/* 1.2.2 RIGHT-BOTTOM: 테스트케이스 리스트 섹션 */}
-              {/* <TestCaseList testCases={testCases} /> */}
+              <DummyTestCase />
+              {/* <TestCaseList>
+                {testcaseDummyList.map((item, index) => {
+                  <div>{item}</div>;
+                })}
+              </TestCaseList> */}
             </Flexbox>
           </Flexbox>
         </Flexbox>

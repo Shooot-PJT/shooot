@@ -245,7 +245,7 @@ TestCase.Body = function Body() {
         {/* 1.2 Tabs 컨텐츠: TestCaseTable */}
         {/* <TestCaseTable isEditing={isEditing}>
           <TestCaseTable.Section
-            headers={testcaseDummyList[tabValue].headers}
+            headers={testcaseDummyList[tabValue.value].headers}
             rows={testcaseDummyList[tabValue].rows}
             isEditing={isEditing}
           />
