@@ -1,29 +1,34 @@
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import Button from '../../../../components/Button';
 import Flexbox from '../../../../components/Flexbox';
+import Typography from '../../../../components/Typography';
 import useModal from '../../../../hooks/useModal';
+import usePopup from '../../../../hooks/usePopup';
+import { deployFile } from '../../apis/DistributeApi';
+import { deleteJarFile } from '../../apis/JarFileApi';
+import { useUploadStateStore } from '../../stores/useUploadStateStore';
+import { GetJarFilesResponse } from '../../types';
+import { convertDataTable } from '../../utils';
 import { AddProjectModal } from '../AddProjectModal/AddProjectModal';
 import { DataTable } from '../DataTable/DataTable';
 import { TestConfigModal } from '../TestConfigModal/TestConfigModal';
-import { deleteJarFile } from '../../apis/JarFileApi';
-import Typography from '../../../../components/Typography';
 import { DeleteJarFileModal } from './DeleteJarFileModal/DeleteJarFileModal';
-import { useUploadStateStore } from '../../stores/useUploadStateStore';
-import usePopup from '../../../../hooks/usePopup';
 
 interface ProjectProps {
-  tableData: ReactNode[][];
+  jarFiles: GetJarFilesResponse;
   idList: number[];
   handleRender: () => void;
+  handleOnBuild: () => void;
 }
 
 export const ProjectTable = ({
-  tableData,
+  jarFiles,
   idList,
   handleRender,
+  handleOnBuild,
 }: ProjectProps) => {
   const [selectedRow, setSelectedRow] = useState<number>(-1);
-  const colWidths = [10, 35, 25, 15, 15];
+  const colWidths = [10, 30, 30, 15, 15];
   const headers = ['버전', '파일명', '최근 빌드', 'API 문서', '배포하기'];
   const modal = useModal();
   const popup = usePopup();
@@ -64,6 +69,34 @@ export const ProjectTable = ({
     });
   };
 
+  const handleFailDeployPopup = (text: string) => {
+    popup.push({
+      title: '배포 실패',
+      children: text,
+      type: 'fail',
+      onClose: () => modal.pop(),
+    });
+  };
+
+  const handleDeploy = (projectJarFileId: number) => {
+    setState('Pending');
+    handleOnBuild();
+    deployFile({ projectJarFileId: projectJarFileId })
+      .then(() => {
+        handleRender();
+      })
+      .catch((error) => {
+        if (error.response) {
+          handleFailDeployPopup(error.response.data.message);
+        } else {
+          handleFailDeployPopup(error.message);
+        }
+      })
+      .finally(() => {
+        setState('None');
+      });
+  };
+
   const handleDeleteProjectJarFile = () => {
     if (selectedRow !== -1 && idList) {
       setState('Pending');
@@ -85,12 +118,11 @@ export const ProjectTable = ({
   };
 
   return (
-    <div style={{ width: '100%' }}>
+    <div style={{ width: '100%', minWidth: '100%' }}>
       <Flexbox
-        flexDirections="row"
+        flexDirections="col"
         justifyContents="between"
-        alignItems="center"
-        style={{ marginBottom: '0.5rem' }}
+        alignItems="start"
       >
         <Typography size={1.5} weight="600">
           프로젝트 빌드파일
@@ -98,8 +130,8 @@ export const ProjectTable = ({
 
         <Flexbox
           flexDirections="row"
-          justifyContents="between"
-          style={{ gap: '1.5rem', marginBottom: '1rem' }}
+          justifyContents="end"
+          style={{ width: '100%', gap: '1rem', marginBottom: '0.5rem' }}
         >
           <Button
             rounded={0.5}
@@ -128,7 +160,7 @@ export const ProjectTable = ({
       <DataTable
         colWidths={colWidths}
         headers={headers}
-        data={tableData}
+        data={convertDataTable(jarFiles, handleDeploy)}
         selectable={true}
         selectedRowIndex={selectedRow}
         handleSelectRow={handleSelectRow}
