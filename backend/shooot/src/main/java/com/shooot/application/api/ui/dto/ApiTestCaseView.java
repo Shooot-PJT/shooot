@@ -13,24 +13,26 @@ import java.util.Map;
 @AllArgsConstructor
 public class ApiTestCaseView {
     private Integer id;
+//    private Integer testCaseRequestId;
     private Integer apiId;
     private String title;
-    private HttpStatus httpStatusCode;
-    private ApiTestStatusType type;
+    private Integer httpStatusCode;
+    private ApiTestStatusType testStatus;
     private Integer apiTestCaseRequestId;
-    private ApiTestCaseRequestType requestType;
+    private ApiTestCaseRequestType type;
     private Map<String, Object> content;
 
     public static ApiTestCaseView from(ApiTestCase apiTestCase, ApiTestCaseRequest apiTestCaseRequest){
 
         return ApiTestCaseView.builder()
                 .id(apiTestCase.getId())
+//                .apiTestCaseRequestId(apiTestCaseRequest.getId())
                 .apiId(apiTestCase.getApi().getId())
                 .title(apiTestCase.getTitle())
-                .httpStatusCode(apiTestCase.getHttpStatus())
-                .type(apiTestCase.getTestCaseStatus())
+                .httpStatusCode(apiTestCase.getHttpStatus().value())
+                .testStatus(apiTestCase.getTestCaseStatus())
                 .apiTestCaseRequestId(apiTestCaseRequest.getId())
-                .requestType(apiTestCaseRequest.getType())
+                .type(apiTestCaseRequest.getType())
                 .content(apiTestCaseRequest.getContent())
                 .build();
     }

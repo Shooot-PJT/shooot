@@ -7,6 +7,7 @@ import com.shooot.application.sseemitter.service.StressTestSseService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -45,13 +46,15 @@ public class SseController {
         return ResponseEntity.ok(subscribe);
     }
 
-    @GetMapping(value = "/projects/jarFile/{projectJarFileId}/connection")
+    @GetMapping(value = "/projects/jarFile/{projectJarFileId}/connection", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> connectionStressTest(
         @PathVariable Integer projectJarFileId,
         HttpServletResponse response
     ) {
         SseEmitter emitter = stressTestSseService.add(projectJarFileId);
         response.setHeader("X-Accel-Buffering", "no");
-        return ResponseEntity.ok(emitter);
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noStore())
+            .body(emitter);
     }
 }

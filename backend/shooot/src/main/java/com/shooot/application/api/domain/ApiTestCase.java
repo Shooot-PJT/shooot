@@ -1,6 +1,6 @@
 package com.shooot.application.api.domain;
 
-import com.shooot.application.api.service.command.test.dto.ApiTestCaseModifyRequest;
+import com.shooot.application.api.service.command.testcase.dto.ApiTestCaseModifyRequest;
 import com.shooot.application.common.jpa.SoftDeleteEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

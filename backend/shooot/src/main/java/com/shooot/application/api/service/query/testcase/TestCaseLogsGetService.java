@@ -1,17 +1,12 @@
-package com.shooot.application.api.service.query.test;
+package com.shooot.application.api.service.query.testcase;
 
-import com.shooot.application.api.domain.ApiTestLog;
 import com.shooot.application.api.domain.repository.ApiTestLogQueryRepository;
-import com.shooot.application.api.domain.repository.ApiTestLogRepository;
-import com.shooot.application.api.service.command.test.dto.TestLogSearchRequest;
-import com.shooot.application.api.service.query.test.dto.ApiTestLogInfiniteResponse;
+import com.shooot.application.api.service.command.testcase.dto.TestLogSearchRequest;
+import com.shooot.application.api.service.query.testcase.dto.ApiTestLogInfiniteResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

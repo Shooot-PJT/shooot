@@ -1,4 +1,4 @@
-package com.shooot.application.api.service.command.test;
+package com.shooot.application.api.service.command.testcase;
 
 import com.shooot.application.api.domain.*;
 import com.shooot.application.api.domain.repository.ApiRepository;
@@ -7,7 +7,6 @@ import com.shooot.application.api.domain.repository.ApiTestCaseRequestRepository
 import com.shooot.application.api.domain.repository.ApiTestFileRepository;
 import com.shooot.application.api.exception.api.ApiNotFoundException;
 import com.shooot.application.api.exception.testcase.TestCaseFileExtensionNotAllowException;
-import com.shooot.application.api.exception.testcase.TestCaseFileNotValidException;
 import com.shooot.application.api.ui.dto.ApiTestCaseView;
 import com.shooot.application.common.infra.storage.service.FileStorageService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -90,9 +88,12 @@ public class ApiTestCaseCreateService {
 
         log.info("content = {}", request.get("content"));
 
+        ApiTestCaseRequestType type = ApiTestCaseRequestType.valueOf(request.get("type").toString().toUpperCase());
+
         ApiTestCaseRequest apiTestCaseRequest = ApiTestCaseRequest.builder()
                 .apiTestCase(apiTestCase)
-                .type(request.get("type").equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART)
+//                .type(request.get("type").equals("json") ? ApiTestCaseRequestType.JSON : ApiTestCaseRequestType.MULTIPART)
+                .type(type)
                 .content((Map<String, Object>) request.get("content"))
                 .build();
 
@@ -125,7 +126,5 @@ public class ApiTestCaseCreateService {
             throw new TestCaseFileExtensionNotAllowException();
         }
     }
-
-
 
 }

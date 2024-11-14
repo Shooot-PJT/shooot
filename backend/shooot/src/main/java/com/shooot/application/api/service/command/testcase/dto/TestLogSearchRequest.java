@@ -1,11 +1,8 @@
-package com.shooot.application.api.service.command.test.dto;
+package com.shooot.application.api.service.command.testcase.dto;
 
 import lombok.*;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Builder
 @Setter

@@ -1,8 +1,7 @@
-package com.shooot.application.api.service.command.test.dto;
+package com.shooot.application.api.service.command.testcase.dto;
 
 import com.shooot.application.api.domain.ApiTestCaseRequestType;
 import lombok.*;
-import org.springframework.http.HttpStatus;
 
 @Builder
 @Setter

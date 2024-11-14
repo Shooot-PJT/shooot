@@ -175,4 +175,14 @@ public class ProjectController {
         projectDeleteParticipantService.deleteParticipant(projectId, userId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{projectId}/participant-id")
+    public ResponseEntity<?> getProjectParticipantId(
+        @PathVariable(name = "projectId") Integer projectId,
+        @AuthenticationPrincipal UserLoginContext userLoginContext
+    ){
+        Integer userId = userLoginContext.getUserId();
+        return ResponseEntity.ok(findParticipantsService.findParticipantId(projectId, userId));
+    }
+
 }

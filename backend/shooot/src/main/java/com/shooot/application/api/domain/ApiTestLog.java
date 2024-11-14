@@ -1,6 +1,6 @@
 package com.shooot.application.api.domain;
 
-import com.shooot.application.api.service.query.test.dto.ApiTestLogInfiniteResponse;
+import com.shooot.application.api.service.query.testcase.dto.ApiTestLogInfiniteResponse;
 import com.shooot.application.common.jpa.SoftDeleteEntity;
 import com.shooot.application.common.jpa.uuid.UUIDv7;
 import com.shooot.application.project.domain.ProjectParticipant;
