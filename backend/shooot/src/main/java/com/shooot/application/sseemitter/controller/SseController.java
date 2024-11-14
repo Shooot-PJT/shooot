@@ -54,7 +54,7 @@ public class SseController {
         SseEmitter emitter = stressTestSseService.add(projectJarFileId);
         response.setHeader("X-Accel-Buffering", "no");
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(CacheControl.noStore())
             .body(emitter);
     }
 }
