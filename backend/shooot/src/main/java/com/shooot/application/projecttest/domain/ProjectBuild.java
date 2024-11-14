@@ -2,15 +2,23 @@ package com.shooot.application.projecttest.domain;
 
 import com.shooot.application.common.jpa.SoftDeleteEntity;
 import com.shooot.application.project.domain.Project;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.util.List;
 
 @SuperBuilder
 @Getter
@@ -20,6 +28,7 @@ import java.util.List;
 @Entity
 @SQLRestriction("is_deleted = false")
 public class ProjectBuild extends SoftDeleteEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_build_id")
@@ -40,7 +49,6 @@ public class ProjectBuild extends SoftDeleteEntity {
 
     @Column(name = "md5_check_sum")
     private String md5CheckSum;
-
 
     @OneToOne(mappedBy = "projectBuild", cascade = CascadeType.ALL)
     private ProjectBuildLog projectBuildLog;
