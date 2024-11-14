@@ -111,7 +111,7 @@ public class StressTestService {
         }
     }
 
-    private long getRamUtilization(String subDomain) {
+    private float getRamUtilization(String subDomain) {
         try {
             URL url = new URL(
                 "https://%s.shooot.shop/actuator/metrics/jvm.memory.used".formatted(subDomain));
@@ -133,7 +133,8 @@ public class StressTestService {
                 Map.class);
             List<Map<String, Object>> measurements = (List<Map<String, Object>>) responseMap.get(
                 "measurements");
-            long value = (long) measurements.get(0).get("value");
+            double doubleValue = (double) measurements.get(0).get("value");
+            float value = (float) doubleValue;
             connection.disconnect();
             return value;
         } catch (IOException e) {
