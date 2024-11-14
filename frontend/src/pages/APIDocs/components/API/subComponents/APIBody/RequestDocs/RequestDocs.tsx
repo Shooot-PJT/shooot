@@ -1,5 +1,3 @@
-// frontend/src/pages/APIDocs/components/API/subComponents/APIBody/RequestDocs/RequestDocs.tsx
-
 import React, { useState, useEffect } from 'react';
 import Flexbox from '../../../../../../../components/Flexbox';
 import {

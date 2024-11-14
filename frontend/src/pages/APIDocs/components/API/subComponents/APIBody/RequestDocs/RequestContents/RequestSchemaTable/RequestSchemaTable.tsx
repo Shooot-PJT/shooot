@@ -1,5 +1,3 @@
-// frontend/src/pages/APIDocs/components/API/subComponents/APIBody/RequestDocs/RequestContents/RequestSchemaTable/RequestSchemaTable.tsx
-
 import { useState } from 'react';
 import * as styles from './RequestSchemaTable.css';
 import CellTextField from './CellTextfield/CellTextfield';

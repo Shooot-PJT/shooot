@@ -5,6 +5,8 @@ import {
   CustomTab,
   CustomTabs,
 } from '../../../components/CustomTabs/CustomTabs';
+import * as styles from './KeyValueTable.css';
+import * as bodyFormDataStyles from './BodyFormData.css';
 
 type Key = string;
 type Value = string | null;
@@ -270,6 +272,7 @@ interface KeyValueTableProps {
   onDataChange: (section: string, data: any) => void;
 }
 
+// KeyValueTable 컴포넌트 수정
 const KeyValueTable: React.FC<KeyValueTableProps> = ({
   data,
   isEditMode,
@@ -317,61 +320,68 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
 
   return (
     <div>
-      <table>
+      <table className={styles.tableStyle}>
         <thead>
           <tr>
-            <th>Key</th>
-            <th>Value</th>
-            <th>Description</th>
-            {isEditMode && <th>Action</th>}
+            <th className={styles.headerCellStyle}>Key</th>
+            <th className={styles.headerCellStyle}>Value</th>
+            <th className={styles.headerCellStyle}>Description</th>
+            {isEditMode && <th className={styles.headerCellStyle}>Action</th>}
           </tr>
         </thead>
         <tbody>
-          {Object.entries(tableData).map(([key, [value, description]]) => (
-            <tr key={key}>
-              <td>
-                {isEditMode ? (
-                  <input
-                    value={key}
-                    onChange={(e) =>
-                      handleChange(key, 0, value || '', e.target.value)
-                    }
-                  />
-                ) : (
-                  key
-                )}
-              </td>
-              <td>
-                {isEditMode ? (
-                  <input
-                    value={value || ''}
-                    onChange={(e) => handleChange(key, 0, e.target.value)}
-                  />
-                ) : (
-                  value
-                )}
-              </td>
-              <td>
-                {isEditMode ? (
-                  <input
-                    value={description || ''}
-                    onChange={(e) => handleChange(key, 1, e.target.value)}
-                  />
-                ) : (
-                  description
-                )}
-              </td>
-              {isEditMode && (
-                <td>
-                  <button onClick={() => handleDeleteRow(key)}>삭제</button>
+          {Object.entries(tableData).map(
+            ([key, [value, description]], index) => (
+              <tr key={index} className={styles.rowStyle}>
+                <td className={styles.keyCellStyle}>
+                  {isEditMode ? (
+                    <input
+                      value={key}
+                      onChange={(e) =>
+                        handleChange(key, 0, value || '', e.target.value)
+                      }
+                    />
+                  ) : (
+                    <div className={styles.cellViewStyle}>{key}</div>
+                  )}
                 </td>
-              )}
-            </tr>
-          ))}
+                <td className={styles.valueCellStyle}>
+                  {isEditMode ? (
+                    <input
+                      value={value || ''}
+                      onChange={(e) => handleChange(key, 0, e.target.value)}
+                    />
+                  ) : (
+                    <div className={styles.cellViewStyle}>{value}</div>
+                  )}
+                </td>
+                <td className={styles.descriptionCellStyle}>
+                  {isEditMode ? (
+                    <input
+                      value={description || ''}
+                      onChange={(e) => handleChange(key, 1, e.target.value)}
+                    />
+                  ) : (
+                    <div className={styles.cellViewStyle}>{description}</div>
+                  )}
+                </td>
+                {isEditMode && (
+                  <td className={styles.actionCellStyle}>
+                    <button onClick={() => handleDeleteRow(key)}>삭제</button>
+                  </td>
+                )}
+              </tr>
+            ),
+          )}
           {isEditMode && (
             <tr>
-              <td colSpan={4}>
-                <button onClick={handleAddRow}>행 추가</button>
+              <td colSpan={isEditMode ? 4 : 3}>
+                <div
+                  className={styles.addButtonContainer}
+                  onClick={handleAddRow}
+                >
+                  <span>행 추가</span>
+                </div>
               </td>
             </tr>
           )}
@@ -380,7 +390,6 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
     </div>
   );
 };
-
 interface BodyRawProps {
   raw: object | null;
   isEditMode: boolean;
@@ -573,30 +582,34 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
 
   return (
     <div>
-      <table>
+      <table className={bodyFormDataStyles.tableStyle}>
         <thead>
           <tr>
-            <th>Key</th>
-            <th>Type</th>
-            <th>Value</th>
-            <th>Description</th>
-            {isEditMode && <th>Action</th>}
+            <th className={bodyFormDataStyles.headerCellStyle}>Key</th>
+            <th className={bodyFormDataStyles.headerCellStyle}>Type</th>
+            <th className={bodyFormDataStyles.headerCellStyle}>Value</th>
+            <th className={bodyFormDataStyles.headerCellStyle}>Description</th>
+            {isEditMode && (
+              <th className={bodyFormDataStyles.headerCellStyle}>Action</th>
+            )}
           </tr>
         </thead>
         <tbody>
           {formDataEntries.map((entry, index) => (
-            <tr key={index}>
-              <td>
+            <tr key={index} className={bodyFormDataStyles.rowStyle}>
+              <td className={bodyFormDataStyles.keyCellStyle}>
                 {isEditMode ? (
                   <input
                     value={entry.key}
                     onChange={(e) => handleChange(index, 'key', e.target.value)}
                   />
                 ) : (
-                  entry.key
+                  <div className={bodyFormDataStyles.cellViewStyle}>
+                    {entry.key}
+                  </div>
                 )}
               </td>
-              <td>
+              <td className={bodyFormDataStyles.typeCellStyle}>
                 {isEditMode ? (
                   <select
                     value={entry.type}
@@ -608,10 +621,12 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
                     <option value="File">File</option>
                   </select>
                 ) : (
-                  entry.type
+                  <div className={bodyFormDataStyles.cellViewStyle}>
+                    {entry.type}
+                  </div>
                 )}
               </td>
-              <td>
+              <td className={bodyFormDataStyles.valueCellStyle}>
                 {entry.type === 'Text' ? (
                   isEditMode ? (
                     <input
@@ -620,10 +635,10 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
                         handleChange(index, 'value', e.target.value)
                       }
                     />
-                  ) : typeof entry.value === 'string' ? (
-                    entry.value
                   ) : (
-                    ''
+                    <div className={bodyFormDataStyles.cellViewStyle}>
+                      {typeof entry.value === 'string' ? entry.value : ''}
+                    </div>
                   )
                 ) : isEditMode ? (
                   <input
@@ -633,20 +648,22 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
                     }
                   />
                 ) : (
-                  <a
-                    href={entry.s3Url || undefined}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {entry.value instanceof File
-                      ? entry.value.name
-                      : typeof entry.value === 'string'
-                        ? entry.value
-                        : ''}
-                  </a>
+                  <div className={bodyFormDataStyles.cellViewStyle}>
+                    <a
+                      href={entry.s3Url || undefined}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {entry.value instanceof File
+                        ? entry.value.name
+                        : typeof entry.value === 'string'
+                          ? entry.value
+                          : ''}
+                    </a>
+                  </div>
                 )}
               </td>
-              <td>
+              <td className={bodyFormDataStyles.descriptionCellStyle}>
                 {isEditMode ? (
                   <input
                     value={entry.description || ''}
@@ -655,11 +672,13 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
                     }
                   />
                 ) : (
-                  entry.description
+                  <div className={bodyFormDataStyles.cellViewStyle}>
+                    {entry.description}
+                  </div>
                 )}
               </td>
               {isEditMode && (
-                <td>
+                <td className={bodyFormDataStyles.actionCellStyle}>
                   <button onClick={() => handleDeleteEntry(index)}>삭제</button>
                 </td>
               )}
@@ -667,8 +686,13 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
           ))}
           {isEditMode && (
             <tr>
-              <td colSpan={5}>
-                <button onClick={handleAddEntry}>항목 추가</button>
+              <td colSpan={isEditMode ? 4 : 3}>
+                <div
+                  className={styles.addButtonContainer}
+                  onClick={handleAddEntry}
+                >
+                  <span>행 추가</span>
+                </div>
               </td>
             </tr>
           )}
