@@ -1,7 +1,8 @@
 import React from 'react';
+import { APIRequestDocsInfo } from '../../../../API.data.types';
 
 interface UrlTextfieldProps {
-  value: string;
+  value: APIRequestDocsInfo['example_url'];
   onChange: (newValue: string) => void;
 }
 
@@ -16,7 +17,7 @@ export const UrlTextField: React.FC<UrlTextfieldProps> = ({
   return (
     <input
       type="text"
-      value={value}
+      value={value || ''}
       onChange={handleChange}
       style={{
         width: '100%',

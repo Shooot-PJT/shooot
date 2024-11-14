@@ -1,3 +1,4 @@
+// frontend/src/pages/APIDocs/components/API/subComponents/APIBody/RequestDocs/RequestDocs.tsx
 import React, { useState } from 'react';
 import Flexbox from '../../../../../../../components/Flexbox';
 import {
@@ -20,6 +21,8 @@ import {
 } from '@mui/material';
 import { BodyNone } from './RequestContents/BodyNone/BodyNone';
 import JsonEditor from '../../APICommon/JsonEditor/JsonEditor';
+import { APIRequestDocsContent } from '../../../API.data.types';
+import { TableValueFormat } from '../TestCase/TestCase.data.types';
 
 type ReqTabMenuTypes = 'params' | 'path variable' | 'headers' | 'req body';
 type ReqBodyTypes = 'none' | 'form-data' | 'row';
@@ -29,45 +32,66 @@ interface TabValue {
   type: ReqTabMenuTypes;
 }
 
-export const RequestDocs = () => {
+interface RequestDocsProps {
+  requestDocs: APIRequestDocsContent;
+}
+
+export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
   const [isEditMode, setEditMode] = useState(false);
   const [tabValue, setTabValue] = useState<TabValue>({
     value: 0,
     type: 'params',
   });
-  const [contentData, setContentData] = useState<ParamBase[]>(
-    REQUEST_CONTENT_LIST_DUMMIES.PARAMS_DATA_LIST_DUMMY,
-  );
-  const [reqBodyMenu, setReqBodyMenu] = useState<ReqBodyTypes>('none');
 
-  const toggleEditMode = <T extends ParamBase>(
+  const [reqBodyMenu, setReqBodyMenu] = useState<ReqBodyTypes>(
+    requestDocs.body
+      ? requestDocs.body.raw
+        ? 'row'
+        : requestDocs.body.formData
+          ? 'form-data'
+          : 'none'
+      : 'none',
+  );
+
+  const [contentData, setContentData] = useState<ParamBase[]>(
+    convertTableDataToParamBase(
+      requestDocs.params || {},
+      tabValue.type,
+      isEditMode,
+    ),
+  );
+
+  const toggleEditMode = (
     isEditMode: boolean,
     setEditMode: React.Dispatch<React.SetStateAction<boolean>>,
-    setData: React.Dispatch<React.SetStateAction<T[]>>,
-    data: T[],
+    setData: React.Dispatch<React.SetStateAction<ParamBase[]>>,
+    data: ParamBase[],
   ) => {
     if (isEditMode) {
-      setData(data.filter((item) => item.key.trim() !== '') as T[]);
+      setData(data.filter((item) => item.key.trim() !== ''));
     }
     setEditMode(!isEditMode);
   };
 
   const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-    if (newValue === 0) {
-      setTabValue({ type: 'params', value: newValue });
-      setContentData(REQUEST_CONTENT_LIST_DUMMIES.PARAMS_DATA_LIST_DUMMY);
-    } else if (newValue === 1) {
-      setTabValue({ type: 'path variable', value: newValue });
-      setContentData(
-        REQUEST_CONTENT_LIST_DUMMIES.PATHVARIABLES_DATA_LIST_DUMMY,
-      );
-    } else if (newValue === 2) {
-      setTabValue({ type: 'headers', value: newValue });
-      setContentData(REQUEST_CONTENT_LIST_DUMMIES.HEADERS_DATA_LIST_DUMMY);
-    } else if (newValue === 3) {
-      setTabValue({ type: 'req body', value: newValue });
-      setContentData(REQUEST_CONTENT_LIST_DUMMIES.REQUESTBODY_DATA_LIST_DUMMY);
-    }
+    let newType: ReqTabMenuTypes = 'params';
+    if (newValue === 0) newType = 'params';
+    else if (newValue === 1) newType = 'path variable';
+    else if (newValue === 2) newType = 'headers';
+    else if (newValue === 3) newType = 'req body';
+
+    setTabValue({ type: newType, value: newValue });
+
+    const data =
+      newType === 'params'
+        ? requestDocs.params || {}
+        : newType === 'path variable'
+          ? requestDocs.pathvariable || {}
+          : newType === 'headers'
+            ? requestDocs.headers || {}
+            : requestDocs.body?.formData?.datas || {};
+
+    setContentData(convertTableDataToParamBase(data, newType, isEditMode));
   };
 
   const handleChangeReqBodyMenu = (
@@ -110,7 +134,11 @@ export const RequestDocs = () => {
         </Flexbox>
       </Flexbox>
       <Flexbox flexDirections="col" style={{ gap: '3rem' }}>
-        <ExampleUrl method={DUMMY_METHOD} isEditMode={isEditMode} />
+        <ExampleUrl
+          method={requestDocs.method}
+          exampleUrl={requestDocs.example_url}
+          isEditMode={isEditMode}
+        />
 
         <Flexbox flexDirections="col" style={{ gap: '0.7rem' }}>
           <CustomTabs value={tabValue.value} onChange={handleChangeTab}>
@@ -147,7 +175,7 @@ export const RequestDocs = () => {
           ) : tabValue.value === 3 && reqBodyMenu === 'row' ? (
             <JsonEditor
               isEditing={isEditMode}
-              // jsonData={initial_json_dummy}
+              jsonData={requestDocs.body?.raw?.datas || {}}
             />
           ) : (
             <RequestSchemaTable
@@ -163,47 +191,20 @@ export const RequestDocs = () => {
   );
 };
 
-// 더미 데이터
-const PARAMS_DATA_LIST_DUMMY = [
-  {
-    key: 'category',
-    description: '검색대상 카테고리 지정하는 용도',
-    required: '선택',
-  },
-];
-const PATHVARIABLES_DATA_LIST_DUMMY = [
-  { key: 'userId', description: '조회할 유저의 ID 명시', required: '필수' },
-];
-const HEADERS_DATA_LIST_DUMMY = [
-  { key: 'customHeader', description: '커스텀 헤더', required: '선택' },
-];
-const REQUESTBODY_DATA_LIST_DUMMY = [
-  {
-    key: 'username',
-    description: '단순 username입니다.',
-    required: '선택',
-    type: 'Text',
-  },
-  { key: 'file', description: '첨부 파일', required: '필수', type: 'File' },
-];
-const REQUEST_CONTENT_LIST_DUMMIES = {
-  PARAMS_DATA_LIST_DUMMY,
-  PATHVARIABLES_DATA_LIST_DUMMY,
-  HEADERS_DATA_LIST_DUMMY,
-  REQUESTBODY_DATA_LIST_DUMMY,
-};
-const DUMMY_METHOD = 'get';
-
-// const initial_json_dummy = {
-//   status: 'success',
-//   data: {
-//     users: [
-//       { id: 1, name: 'Alice' },
-//       { id: 2, name: 'Bob' },
-//     ],
-//   },
-//   meta: {
-//     total: 2,
-//     page: 1,
-//   },
-// };
+// 유틸리티 함수: TableData를 ParamBase 배열로 변환
+function convertTableDataToParamBase(
+  tableData: Record<string, TableValueFormat>,
+  type: ReqTabMenuTypes,
+  isEditMode: boolean,
+): ParamBase[] {
+  return Object.entries(tableData).map(([key, value]) => {
+    const [val, description, fieldType, isRequired] = value;
+    return {
+      key,
+      value: val,
+      description: description || '',
+      required: isRequired ? '필수' : '선택',
+      type: fieldType || '',
+    };
+  });
+}

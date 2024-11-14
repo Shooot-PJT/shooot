@@ -1,3 +1,4 @@
+// frontend/src/pages/APIDocs/reactQueries/api/index.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   addAPI,
@@ -18,7 +19,7 @@ import {
   ToggleAPIStateRequestBody,
   RemoveAPIRequest,
 } from '../../apis/api/types';
-import { APIRequestDocsInfo } from '../../components/API/API.data.types';
+import { APIRequestDocsInfo } from '../../types/data/API.data';
 
 // 1. API 목록 조회
 export const useGetAPIList = (
@@ -47,10 +48,14 @@ export const useAddAPI = () => {
 };
 
 // 3. API 상세 조회
-export const useGetAPIDetail = ({ apiId }: GetAPIDetailRequest) => {
+export const useGetAPIDetail = (
+  { apiId }: GetAPIDetailRequest,
+  options = {},
+) => {
   return useQuery({
     queryKey: ['apiDetail', apiId],
     queryFn: () => getAPIDetail({ apiId }),
+    ...options,
   });
 };
 

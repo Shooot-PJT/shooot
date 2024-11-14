@@ -1,3 +1,4 @@
+// frontend/src/pages/APIDocs/apis/api/index.ts
 import { api } from '../../../../apis/interceptors';
 import { Endpoint as EP } from '../../constants/endpoint';
 import {
@@ -55,7 +56,7 @@ export const editAPI = async (
   return response.data;
 };
 
-// API 상태 토글 (isSecure, isDeveloped)
+// API 상태 토글 (isSecure, isRealServer)
 export const toggleAPIState = async (
   { apiId }: ToggleAPIStateRequest,
   body: ToggleAPIStateRequestBody,
@@ -69,6 +70,8 @@ export const toggleAPIState = async (
 
 // API 삭제
 export const removeAPI = async ({ apiId }: RemoveAPIRequest) => {
-  const response = await api.delete<void>(`/${EP.domains}/${EP.apis}/${apiId}`);
+  const response = await api.delete<void>(
+    `/${EP.projects}/${EP.domains}/${EP.apis}/${apiId}`,
+  );
   return response.data;
 };

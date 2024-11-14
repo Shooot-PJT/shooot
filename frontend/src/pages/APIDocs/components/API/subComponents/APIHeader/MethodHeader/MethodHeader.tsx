@@ -6,7 +6,7 @@ import { METHODS } from '../../../../../types/methods';
 interface MethodHeaderProps {
   method: Method;
 }
-const getFontColorByMethod = (method: string) => {
+export const getFontColorByMethod = (method: string | null) => {
   return (typeof method) in METHODS ? 'light' : 'dark';
 };
 

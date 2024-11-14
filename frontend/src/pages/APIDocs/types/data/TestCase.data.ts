@@ -1,3 +1,4 @@
+// frontend/src/pages/APIDocs/types/data/TestCase.data.ts
 import { HttpStatusCode } from '../httpStatus';
 import { APIRequestDocsInfo, TestResult } from './API.data';
 
@@ -51,10 +52,9 @@ export interface TestCaseDetailInfo {
   title: string;
   httpStatusCode: HttpStatusCode;
   type: TestCaseType;
-  apiTestCaseRequestId: number; // 이건머임
+  apiTestCaseRequestId: number;
   requestType: string;
   content: TestCaseContent;
-  //
   createdAt?: string;
   modifiedAt?: string;
   isSecure?: boolean;

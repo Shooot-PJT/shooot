@@ -1,27 +1,29 @@
+// frontend/src/pages/APIDocs/components/API/subComponents/APIBody/RequestDocs/ExampleUrl/ExampleUrl.tsx
 import Flexbox from '../../../../../../../../components/Flexbox';
-import { APIRequestDocsInfo } from '../../../../API.data.types';
 import colorPalette from '../../../../../../../../styles/colorPalette';
 
 import Typography from '../../../../../../../../components/Typography';
 import UrlTextField from './UrlTextField';
 import { useState } from 'react';
 import { cellViewStyle } from '../RequestContents/RequestSchemaTable/RequestSchemaTable.css';
+import { getFontColorByMethod } from '../../../APIHeader/MethodHeader/MethodHeader';
+import { APIRequestDocsInfo } from '../../../../API.data.types';
 
 interface ExampleUrlProps {
   method?: APIRequestDocsInfo['method'];
+  exampleUrl: string;
   isEditMode: boolean;
 }
 
-const DUMMY_EXAMPLE_URL = 'https:/www.example.com/users/12345';
-
 export const ExampleUrl = ({
-  method = 'get',
+  method = null,
+  exampleUrl,
   isEditMode = false,
 }: ExampleUrlProps) => {
-  const [exampleUrl, setExampleUrl] = useState<string>(DUMMY_EXAMPLE_URL);
+  const [url, setUrl] = useState<APIRequestDocsInfo['example_url']>(exampleUrl);
 
   const handleChangeUrl = (newValue: string) => {
-    setExampleUrl(newValue);
+    setUrl(newValue);
   };
 
   return (
@@ -38,14 +40,14 @@ export const ExampleUrl = ({
         border: `0.1rem solid ${colorPalette.grey['700']}`,
       }}
     >
-      <Typography weight="600" color={method}>
-        {method.toUpperCase()}
+      <Typography weight="600" color={method || 'disabled'}>
+        {method?.toUpperCase() || 'METHOD'}
       </Typography>
 
       {isEditMode ? (
-        <UrlTextField value={exampleUrl} onChange={handleChangeUrl} />
+        <UrlTextField value={url} onChange={handleChangeUrl} />
       ) : (
-        <div className={cellViewStyle}>{exampleUrl}</div>
+        <div className={cellViewStyle}>{url || '예시 URL이 없습니다.'}</div>
       )}
     </Flexbox>
   );

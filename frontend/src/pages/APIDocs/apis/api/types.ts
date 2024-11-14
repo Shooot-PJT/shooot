@@ -1,9 +1,10 @@
+// frontend/src/pages/APIDocs/apis/api/types.ts
 import {
   APIDetailInfo,
   APIRequestDocsInfo,
   Manager,
-} from '../../components/API/API.data.types';
-import { DomainInfo } from '../../components/Domain/Domain.data.types';
+} from '../../types/data/API.data';
+import { DomainInfo } from '../../types/data/Domain.data';
 
 // API 등록
 export interface AddAPIRequest {

@@ -1,30 +1,62 @@
-import Button from '../../../../../../components/Button';
-import Flexbox from '../../../../../../components/Flexbox';
-import Typography from '../../../../../../components/Typography';
-import colorPalette from '../../../../../../styles/colorPalette';
-import {
-  TestCaseHeaderInfo,
-  testCaseSummaryList,
-} from '../../../../dummies/testcase_dummy_list';
+// frontend/src/pages/APIDocs/components/API/subComponents/APIBody/index.tsx
 import { useAPIContext } from '../../API';
-import ManagerAvatar from '../APICommon/ManagerAvatar/ManagerAvatar';
+import Flexbox from '../../../../../../components/Flexbox';
+import colorPalette from '../../../../../../styles/colorPalette';
 import * as s from './index.css';
 import { RequestDocs } from './RequestDocs/RequestDocs';
-import { TestCase, TestCaseList } from './TestCase/TestCase';
+import { TestCaseList } from './TestCase/TestCase';
 import { TestLogBox } from './TestLogBox/TestLogBox';
+import { Skeleton } from '@mui/material';
+import ManagerAvatar from '../APICommon/ManagerAvatar/ManagerAvatar';
+import Typography from '../../../../../../components/Typography';
+import Button from '../../../../../../components/Button';
+import { useGetAPIDetail } from '../../../../reactQueries/api';
+import { getFontColorByMethod } from '../APIHeader/MethodHeader/MethodHeader';
 
 export const Body = () => {
   const context = useAPIContext();
   const { isFocused } = context.useIsFocusedHook;
+  const apiId = context.headerInfo.id;
 
-  const method = context.headerInfo.method || 'method';
+  const {
+    data: apiDetailData,
+    isLoading,
+    isError,
+  } = useGetAPIDetail({ apiId }, { enabled: isFocused });
+
+  if (isLoading) {
+    return (
+      <div style={{ width: '100%' }}>
+        {[...Array(3)].map((_, index) => (
+          <Skeleton
+            key={index}
+            variant="rectangular"
+            height={200}
+            style={{ marginBottom: '1rem', borderRadius: '0.5rem' }}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <>데이터 로드 중 오류가 발생했습니다.</>;
+  }
+
+  if (!apiDetailData) {
+    return <></>;
+  }
+
+  const { requestDocs, testCases, lastlog } = apiDetailData;
+  const method = requestDocs.method || 'method';
+  const fontColor = method === 'method' ? 'light' : method;
 
   return (
     <div className={s.CollapseContainerRecipe({ isOpen: isFocused })}>
       <Flexbox flexDirections="col" style={s.apiBodyContainerStyle}>
         {/* 1. TOP 컨테이너 */}
         <Flexbox flexDirections="row" style={s.apiBodyTopContainerStyle}>
-          {/* 1.1 LEFT: API 기본정보 섹션( 메서드타입, title, description, manager )*/}
+          {/* 1.1 LEFT: API 기본정보 섹션 */}
           <Flexbox justifyContents="between" flexDirections="col">
             {/* 1.1.1 TOP : API 기본정보 박스*/}
             <Flexbox
@@ -41,11 +73,11 @@ export const Body = () => {
                   width: '12rem',
                 }}
               >
-                <Typography color={method} size={2.5} weight="700">
+                <Typography color={'light'} size={2.5} weight="700">
                   {method.toUpperCase()}
                 </Typography>
                 <Typography
-                  color={method}
+                  color={fontColor}
                   size={0.85}
                   weight="600"
                   style={{
@@ -54,7 +86,7 @@ export const Body = () => {
                     wordBreak: 'keep-all',
                   }}
                 >
-                  {context.headerInfo.title}
+                  {requestDocs.title}
                 </Typography>
 
                 <Typography
@@ -66,7 +98,7 @@ export const Body = () => {
                     wordBreak: 'keep-all',
                   }}
                 >
-                  {context.headerInfo.description}
+                  {requestDocs.description}
                 </Typography>
               </Flexbox>
               <Flexbox flexDirections="col" style={{ gap: '1rem' }}>
@@ -86,8 +118,8 @@ export const Body = () => {
 
                 <ManagerAvatar
                   manager={{
-                    id: context.headerInfo?.managerId,
-                    nickname: context.headerInfo?.managerName,
+                    id: requestDocs.managerId,
+                    nickname: requestDocs.managerName,
                   }}
                   size={1.5}
                   withLabel
@@ -111,8 +143,7 @@ export const Body = () => {
               </Button>
             </Flexbox>
           </Flexbox>
-          {/* 1.2 RIGHT: API 요청 정의서 & 테스트케이스 리스트 섹션*/}
-
+          {/* 1.2 RIGHT: API 요청 정의서 & 테스트케이스 리스트 섹션 */}
           <Flexbox
             style={{
               flexGrow: 1,
@@ -122,12 +153,9 @@ export const Body = () => {
               flexDirections="col"
               style={{ gap: '3rem', width: '100%' }}
             >
-              {/* 1.2.1 RIGHT-TOP: API 요청 정의서  */}
-              {/* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ */}
+              {/* 1.2.1 RIGHT-TOP: API 요청 정의서 */}
+              <RequestDocs requestDocs={requestDocs} />
 
-              {/* Request Docs 컴포넌트 */}
-              {/* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ */}
-              <RequestDocs />
               {/* HORIZONTAL DIVIDER */}
               <div
                 style={{
@@ -138,24 +166,15 @@ export const Body = () => {
                   margin: '2rem 0rem',
                 }}
               />
-              {/* 1.2.2 RIGHT-BOTTOM: 테스트케이스 리스트 섹션*/}
 
-              <TestCaseList>
-                {testCaseSummaryList.map((item: TestCaseHeaderInfo) => (
-                  <TestCase key={item.id} testCaseHeaderInfo={item}>
-                    <TestCase.Header />
-                    <TestCase.Body />
-                  </TestCase>
-                ))}
-              </TestCaseList>
+              {/* 1.2.2 RIGHT-BOTTOM: 테스트케이스 리스트 섹션 */}
+              {/* <TestCaseList testCases={testCases} /> */}
             </Flexbox>
-
-            {/*  */}
           </Flexbox>
         </Flexbox>
 
-        {/* 2. BOTTOM 컨테이너 : 테스트로그 SUMMARY 섹션*/}
-        <TestLogBox />
+        {/* 2. BOTTOM 컨테이너 : 테스트로그 SUMMARY 섹션 */}
+        {/* <TestLogBox lastLog={lastlog} /> */}
       </Flexbox>
     </div>
   );

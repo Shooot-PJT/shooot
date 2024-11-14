@@ -1,3 +1,4 @@
+// frontend/src/pages/APIDocs/components/API/subComponents/APIHeader/index.tsx
 import { useCallback } from 'react';
 import { useAPIContext } from '../../API';
 import { throttle } from 'lodash';
@@ -15,7 +16,7 @@ export const Header = () => {
   const context = useAPIContext();
   const { isFocused, handleToggleIsFocused } = context.useIsFocusedHook;
 
-  const method = context.headerInfo.method || 'method';
+  const method = context.headerInfo.method || 'METHOD';
 
   const onClickHeader = useCallback(
     throttle((e: React.MouseEvent) => {
@@ -70,8 +71,8 @@ export const Header = () => {
           >
             <ManagerAvatar
               manager={{
-                id: context.headerInfo?.managerId,
-                nickname: context.headerInfo?.managerName,
+                id: context.headerInfo.managerId,
+                nickname: context.headerInfo.managerName,
               }}
             />
             <TestButton.API />
