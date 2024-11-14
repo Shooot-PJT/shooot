@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shooot.application.api.domain.Api;
 import com.shooot.application.projecttest.domain.ProjectBuild;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
-import com.shooot.application.projecttest.exception.ProjectBuildNotFoundException;
 import com.shooot.application.sseemitter.service.StressTestSseService;
 import com.shooot.application.stresstest.controller.dto.StressTestDto;
 import java.io.BufferedReader;
@@ -72,8 +71,7 @@ public class StressTestService {
 
     @Transactional
     public StressTestDto getData(Integer projectJarFileId) {
-        ProjectBuild projectBuild = projectBuildRepository.findById(projectJarFileId).orElseThrow(
-            ProjectBuildNotFoundException::new);
+        ProjectBuild projectBuild = projectBuildRepository.findById(projectJarFileId).orElseThrow();
 
         return StressTestDto.builder()
             .cpuUtilization(getCpuUtilization(projectBuild.getProject().getEnglishName()))
