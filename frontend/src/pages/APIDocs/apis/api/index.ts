@@ -1,4 +1,3 @@
-// frontend/src/pages/APIDocs/apis/api/index.ts
 import { api } from '../../../../apis/interceptors';
 import { Endpoint as EP } from '../../constants/endpoint';
 import {
