@@ -48,8 +48,8 @@ public class ProjectDeployService {
     @Transactional(readOnly = true)
     public void projectDeployStopRequest(ProjectBuildIdDto dto) {
         ProjectBuild projectBuild = projectBuildRepository.findById(dto.getProjectJarFileId()).orElseThrow(FileIsNotExistException::new);
-        consoleLogStreamSubscriber.removeSubscriptionForProject(projectBuild.getProject().getId());
         restTemplate.postForObject(DOCKER_SERVER_DEPLOY_STOP_REQUEST_ENDPOINT, new RequestBody(projectBuild.getProject().getId(), dto.getProjectJarFileId()), Void.class);
+        consoleLogStreamSubscriber.removeSubscriptionForProject(projectBuild.getProject().getId());
     }
 
     @Getter

@@ -2,13 +2,10 @@ package com.shooot.application.projecttest.subscriber;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shooot.application.projecttest.domain.ProjectBuild;
-import com.shooot.application.projecttest.domain.ProjectBuildLog;
 import com.shooot.application.projecttest.domain.ProjectBuildStatus;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildLogRepository;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
 import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +51,7 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
     public void startListening() {
         StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> options =
                 StreamMessageListenerContainer.StreamMessageListenerContainerOptions.builder()
-                        .pollTimeout(Duration.ofMillis(100)) // 폴링 타임아웃 설정
+                        .pollTimeout(Duration.ofMillis(10)) // 폴링 타임아웃 설정
                         .build();
 
         listenerContainer = StreamMessageListenerContainer.create(Objects.requireNonNull(redisTemplate.getConnectionFactory()), options);
@@ -71,7 +68,7 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
             integerSseEmitterMap.forEach((userId, sseEmitter) -> {
                 try {
                     sseEmitter.send(SseEmitter.event().name("connection").data("connected"));
-                    log.info("projectId : {}, emit user : {}" ,projectId, userId);
+                    log.info("projectId : {}, emit user : {}", projectId, userId);
                 } catch (IOException ignored) {
                     sseEmitter.completeWithError(ignored);
                 }
@@ -245,10 +242,10 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
         private Integer projectJarFileId;
         private ProjectBuildStatus status;
 
-       private  ToStatusMessage(Message message, ProjectBuildStatus status) {
-           this.projectId = message.getProjectId();
-           this.projectJarFileId = message.getProjectJarFileId();
-           this.status = status;
-       }
+        private ToStatusMessage(Message message, ProjectBuildStatus status) {
+            this.projectId = message.getProjectId();
+            this.projectJarFileId = message.getProjectJarFileId();
+            this.status = status;
+        }
     }
 }
