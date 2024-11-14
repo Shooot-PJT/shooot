@@ -11,7 +11,7 @@ export interface AddTestCaseRequest {
 export interface AddTestCaseRequestBody {
   title: TestCaseDetailInfo['title'];
   httpStatusCode: TestCaseDetailInfo['httpStatusCode'];
-  requestType: TestCaseDetailInfo['requestType'];
+  type: TestCaseDetailInfo['type'];
   content: TestCaseDetailInfo['content'];
   // id와 apiId는 요청 본문에 포함되지 않음
 }
@@ -32,13 +32,8 @@ export interface EditTestCaseRequest {
   testcaseId: number; // 경로 파라미터
 }
 
-export interface EditTestCaseRequestBody {
-  title?: TestCaseDetailInfo['title'];
-  httpStatusCode?: TestCaseDetailInfo['httpStatusCode'];
-  requestType?: TestCaseDetailInfo['requestType'];
-  content?: TestCaseDetailInfo['content'];
-}
-
+// 수정된 부분: 파일 전송을 위해 FormData를 사용할 수 있도록 any 타입으로 변경
+export type EditTestCaseRequestBody = FormData;
 //=== 테스트케이스 삭제
 export interface RemoveTestCaseRequest {
   testcaseId: number; // 경로 파라미터

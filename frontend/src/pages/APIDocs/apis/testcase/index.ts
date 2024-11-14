@@ -1,6 +1,6 @@
 // frontend/src/pages/APIDocs/apis/testcase/index.ts
 
-import { api } from '../../../../apis/interceptors';
+import { api, multipart } from '../../../../apis/interceptors';
 import * as AT from './types';
 import { Endpoint as EP } from '../../constants/endpoint';
 
@@ -29,11 +29,11 @@ export const getTestCaseDetail = async ({
 // 테스트케이스 수정
 export const editTestCase = async (
   { testcaseId }: AT.EditTestCaseRequest,
-  body: AT.EditTestCaseRequestBody,
+  formData: FormData,
 ) => {
-  const response = await api.patch<AT.AddTestCaseResponse>(
+  const response = await multipart.patch<AT.AddTestCaseResponse>(
     `/${EP.projects}/${EP.domains}/${EP.apis}/${EP.testcases}/${testcaseId}`,
-    body,
+    formData,
   );
   return response.data;
 };

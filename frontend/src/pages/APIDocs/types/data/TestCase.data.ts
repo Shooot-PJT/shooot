@@ -22,15 +22,21 @@ export interface ExpectedResponse {
   example: JsonData | null;
 }
 
+// FileMeta 타입 정의
+export interface FileMeta {
+  parameterVar: string;
+  description: string | null;
+}
+
 // Request Body 구성 정의
-export interface FormData {
+export interface CustomFormData {
   datas: TableData | null;
-  files: Record<string, TableData> | null; // UUID: 단일 파일을 가진 TableValueFormat 형태
+  files: Record<string, Record<string, [string, FileMeta, Type, null]>> | null; // UUID: 단일 파일을 가진 TableValueFormat 형태
 }
 
 // Body 타입 정의 (formData와 raw가 상호 배타적으로 존재)
 export interface Body {
-  formData: FormData | null;
+  formData: CustomFormData | null;
   raw: JsonData | null;
 }
 
@@ -47,7 +53,7 @@ export interface TestCaseDetailInfo {
   apiId: number; // 응답에서만 받음
   title: string;
   httpStatusCode: number;
-  requestType: TestCaseRequestType;
+  type: TestCaseRequestType;
   content: TestCaseContent;
   testStatus: 'YET' | 'SUCCESS' | 'FAILURE'; // 응답에서 받는 테스트 상태
   //

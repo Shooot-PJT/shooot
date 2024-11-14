@@ -1,7 +1,6 @@
-// frontend/src/pages/APIDocs/dummies/DummyTestCase.tsx
-
 import { useEffect, useRef, useState } from 'react';
 import { useGetTestCaseDetail } from '../reactQueries';
+import { editTestCase } from '../apis'; // editTestCase 함수 임포트
 import Editor, { OnMount } from '@monaco-editor/react';
 import { BodyNone } from '../components/API/subComponents/APIBody/RequestDocs/RequestContents/BodyNone/BodyNone';
 import {
@@ -14,7 +13,10 @@ import {
   TableData,
   TestCaseDetailInfo,
   TableValueFormat,
+  CustomFormData,
+  FileMeta,
 } from '../types/data/TestCase.data';
+import { useQueryClient } from '@tanstack/react-query';
 
 // 타입 정의 수정
 type Key = string;
@@ -23,7 +25,6 @@ type Description = string | null;
 type IsRequired = boolean | null;
 type Type = 'Text' | 'File' | null;
 type FileName = string;
-type FileMeta = { parameterVar: Key; description: Description };
 type UUID = string;
 
 interface DummyTestCaseProps {
@@ -40,14 +41,19 @@ export const DummyTestCase: React.FC<DummyTestCaseProps> = ({ testCaseId }) => {
     isError,
   } = useGetTestCaseDetail({ testcaseId: testCaseId });
 
-  // Hook은 조건문 이전에 호출되어야 합니다.
   const [bodyType, setBodyType] = useState<'none' | 'raw' | 'form-data'>(
     'none',
   );
 
+  const [editedTestCase, setEditedTestCase] =
+    useState<TestCaseDetailInfo | null>(null);
+
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     if (testCaseDetail) {
-      switch (testCaseDetail.requestType) {
+      setEditedTestCase(testCaseDetail);
+      switch (testCaseDetail.type) {
         case 'MULTIPART':
           setBodyType('form-data');
           break;
@@ -70,7 +76,7 @@ export const DummyTestCase: React.FC<DummyTestCaseProps> = ({ testCaseId }) => {
     return <div>테스트케이스를 불러오는 중 오류가 발생했습니다.</div>;
   }
 
-  const testCase = testCaseDetail;
+  const testCase = editedTestCase || testCaseDetail;
 
   const tabLabels = ['Params', 'PathVariables', 'Header', 'Body'];
 
@@ -81,36 +87,84 @@ export const DummyTestCase: React.FC<DummyTestCaseProps> = ({ testCaseId }) => {
   const handleBodyTypeChange = (type: 'none' | 'raw' | 'form-data') => {
     setBodyType(type);
 
-    // TestCase의 requestType 필드 업데이트
     let newRequestType: 'MULTIPART' | 'JSON' | 'NONE' = 'NONE';
     if (type === 'form-data') newRequestType = 'MULTIPART';
     else if (type === 'raw') newRequestType = 'JSON';
     else if (type === 'none') newRequestType = 'NONE';
 
-    // 상태 업데이트 로직 (필요 시)
-    console.log('Updated TestCase:', {
-      ...testCase,
-      requestType: newRequestType,
+    if (!editedTestCase) return;
+    setEditedTestCase({
+      ...editedTestCase,
+      type: newRequestType,
+      content: {
+        ...editedTestCase.content,
+        body: {
+          formData: null,
+          raw: null,
+        },
+      },
     });
   };
 
-  const toggleEditMode = () => {
-    setIsEditMode(!isEditMode);
-    if (isEditMode) {
+  const toggleEditMode = async () => {
+    if (isEditMode && editedTestCase) {
       // 저장 버튼을 눌렀을 때
-      console.log('Final TestCase Data:', testCase);
+      try {
+        console.log('Editing TestCase with ID:', testCaseId);
+
+        const formData = new FormData();
+
+        // formData.append('title', editedTestCase.title);
+        // formData.append(
+        //   'httpStatusCode',
+        //   String(editedTestCase.httpStatusCode),
+        // );
+        formData.append('type', editedTestCase.type); // 수정된 부분
+
+        // content를 문자열로 변환하여 추가
+        formData.append('content', JSON.stringify(editedTestCase.content));
+
+        // FormData 내용 확인
+        console.log('FormData entries:');
+        for (let pair of formData.entries()) {
+          console.log(pair[0] + ', ' + pair[1]);
+        }
+
+        await editTestCase(
+          { testcaseId: testCaseId }, // testCaseId를 직접 사용
+          formData,
+        );
+        // 업데이트 후, 테스트케이스 상세 정보를 다시 가져옵니다.
+        await queryClient.invalidateQueries({
+          queryKey: ['testCaseDetail', testCaseId],
+        });
+        console.log('TestCase updated successfully');
+      } catch (error) {
+        console.error('Failed to update TestCase:', error);
+      }
     }
+    setIsEditMode(!isEditMode);
   };
 
   const handleDataChange = (section: string, data: any) => {
-    // 상태 업데이트 로직 추가 필요
-    console.log('Updated TestCase:', {
-      ...testCase,
-      content: {
-        ...testCase.content,
-        [section]: data,
-      },
-    });
+    if (!editedTestCase) return;
+    if (section === 'body') {
+      setEditedTestCase({
+        ...editedTestCase,
+        content: {
+          ...editedTestCase.content,
+          body: data,
+        },
+      });
+    } else {
+      setEditedTestCase({
+        ...editedTestCase,
+        content: {
+          ...editedTestCase.content,
+          [section]: data,
+        },
+      });
+    }
   };
 
   return (
@@ -222,9 +276,13 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   onDataChange,
 }) => {
   const [tableData, setTableData] = useState<TableData>(data || {});
+  const isInitialMount = useRef(true);
 
   useEffect(() => {
-    setTableData(data || {});
+    if (isInitialMount.current) {
+      setTableData(data || {});
+      isInitialMount.current = false;
+    }
   }, [data]);
 
   const handleAddRow = () => {
@@ -237,6 +295,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   const handleDeleteRow = (keyToDelete: string) => {
     const { [keyToDelete]: _, ...rest } = tableData;
     setTableData(rest);
+    onDataChange(section, rest);
   };
 
   const handleChange = (
@@ -397,14 +456,8 @@ const BodyRaw: React.FC<BodyRawProps> = ({ raw, isEditMode, onDataChange }) => {
   );
 };
 
-// FormData 타입 이름 변경: FormDataContent로 변경
-interface FormDataContent {
-  datas: TestCaseDetailInfo['content']['body']['formData']['datas'];
-  files: TestCaseDetailInfo['content']['body']['formData']['files'];
-}
-
 interface BodyFormDataProps {
-  formData: FormDataContent | null;
+  formData: CustomFormData | null;
   isEditMode: boolean;
   onDataChange: (section: string, data: any) => void;
 }
@@ -423,62 +476,66 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
       s3Url?: string | null;
     }>
   >([]);
-
   const isInitialMount = useRef(true);
 
   useEffect(() => {
-    const entries: Array<{
-      key: string;
-      type: 'Text' | 'File';
-      value: string | File | null;
-      description: string | null;
-      s3Url?: string | null;
-    }> = [];
+    if (isInitialMount.current) {
+      const entries: Array<{
+        key: string;
+        type: 'Text' | 'File';
+        value: string | File | null;
+        description: string | null;
+        s3Url?: string | null;
+      }> = [];
 
-    if (formData?.datas) {
-      for (const [key, [value, description, type]] of Object.entries(
-        formData.datas,
-      )) {
-        entries.push({
-          key,
-          type: type as 'Text',
-          value: value !== null && value !== undefined ? String(value) : '',
-          description,
-        });
+      if (formData && formData.datas) {
+        for (const [key, [value, description, type]] of Object.entries(
+          formData.datas,
+        )) {
+          entries.push({
+            key,
+            type: type as 'Text',
+            value: value !== null && value !== undefined ? String(value) : '',
+            description,
+          });
+        }
       }
-    }
 
-    if (formData?.files) {
-      for (const uuidObj of Object.values(formData.files)) {
-        for (const [fileName, [s3Url, fileMeta]] of Object.entries(uuidObj)) {
-          // fileMeta가 존재하고 객체인지 확인
-          if (fileMeta && typeof fileMeta === 'object') {
-            entries.push({
-              key: fileMeta.parameterVar,
-              type: 'File',
-              value: fileName,
-              description: fileMeta.description,
-              s3Url: s3Url !== null && s3Url !== undefined ? String(s3Url) : '',
-            });
+      if (formData && formData.files) {
+        for (const uuidObj of Object.values(formData.files)) {
+          for (const [fileName, fileDataArray] of Object.entries(uuidObj)) {
+            const [s3Url, fileMeta, type, nullValue] = fileDataArray as [
+              string,
+              FileMeta,
+              string,
+              any,
+            ];
+
+            // fileMeta가 존재하고 객체인지 확인
+            if (fileMeta && typeof fileMeta === 'object') {
+              entries.push({
+                key: fileMeta.parameterVar,
+                type: 'File',
+                value: fileName,
+                description: fileMeta.description,
+                s3Url:
+                  s3Url !== null && s3Url !== undefined ? String(s3Url) : '',
+              });
+            }
           }
         }
       }
-    }
 
-    setFormDataEntries(entries);
+      setFormDataEntries(entries);
+      isInitialMount.current = false;
+    }
   }, [formData]);
 
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
+  const processEntries = async () => {
+    const datas: CustomFormData['datas'] = {};
+    const files: CustomFormData['files'] = {};
 
-    // 데이터 변경 시 호출
-    const datas: FormDataContent['datas'] = {};
-    const files: FormDataContent['files'] = {};
-
-    formDataEntries.forEach((entry) => {
+    for (const entry of formDataEntries) {
       if (entry.type === 'Text') {
         datas![entry.key] = [
           entry.value as string,
@@ -486,28 +543,49 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
           'Text',
           null,
         ];
-      } else if (entry.type === 'File') {
+      } else if (entry.type === 'File' && entry.value) {
         const uuid = 'UUID' + Math.random().toString(36).substr(2, 9);
+        let base64: string | null = null;
+        let fileName: string;
+
+        if (entry.value instanceof File) {
+          base64 = await fileToBase64(entry.value);
+          fileName = entry.value.name;
+        } else {
+          // entry.value가 null이 아닌 string임을 확인
+          base64 = entry.s3Url || '';
+          fileName = entry.value as string;
+        }
+
         files![uuid] = {
-          [(entry.value instanceof File
-            ? entry.value.name
-            : entry.value) as string]: [
-            entry.s3Url || '',
+          [fileName]: [
+            base64 || '',
             { parameterVar: entry.key, description: entry.description },
             'File',
             null,
           ],
         };
       }
-    });
+    }
+
+    const formDataResult =
+      (datas && Object.keys(datas).length > 0) ||
+      (files && Object.keys(files).length > 0)
+        ? {
+            datas: Object.keys(datas!).length > 0 ? datas : null,
+            files: Object.keys(files!).length > 0 ? files : null,
+          }
+        : null;
 
     onDataChange('body', {
-      formData: {
-        datas: Object.keys(datas!).length > 0 ? datas : null,
-        files: Object.keys(files!).length > 0 ? files : null,
-      },
+      formData: formDataResult,
       raw: null,
     });
+  };
+
+  useEffect(() => {
+    processEntries();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formDataEntries]);
 
   const handleAddEntry = () => {
@@ -521,6 +599,20 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
     const newEntries = [...formDataEntries];
     newEntries.splice(index, 1);
     setFormDataEntries(newEntries);
+  };
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        resolve(result);
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
   const handleChange = (
@@ -567,7 +659,11 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
                   <select
                     value={entry.type}
                     onChange={(e) =>
-                      handleChange(index, 'type', e.target.value)
+                      handleChange(
+                        index,
+                        'type',
+                        e.target.value as 'Text' | 'File',
+                      )
                     }
                   >
                     <option value="Text">Text</option>
@@ -602,9 +698,10 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
                 ) : isEditMode ? (
                   <input
                     type="file"
-                    onChange={(e) =>
-                      handleChange(index, 'value', e.target.files?.[0] || null)
-                    }
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null;
+                      handleChange(index, 'value', file);
+                    }}
                   />
                 ) : (
                   <div className={bodyFormDataStyles.cellViewStyle}>
