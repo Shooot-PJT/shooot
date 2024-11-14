@@ -50,7 +50,7 @@ export const ProjectTable = ({
 
   const handleTestConfigModal = () => {
     modal.push({
-      children: <TestConfigModal />,
+      children: <TestConfigModal projectJarFileId={idList[selectedRow]} />,
     });
   };
 

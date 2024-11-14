@@ -12,7 +12,10 @@ export const DistributeIcon = ({ active, onClick }: DistributeIconProps) => {
       className={
         s.Container + ' ' + (active ? s.ActiveContainer : s.DeactiveContainer)
       }
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (active) onClick();
+      }}
     >
       <HiRocketLaunch
         className={active ? s.ActiveIcon : s.DeactiveIcon}

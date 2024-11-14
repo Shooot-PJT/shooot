@@ -34,14 +34,6 @@ export const DataTable = ({
     setColWidths(initialColWidths);
   }, []);
 
-  const handleExpandedOverflow = () => {
-    if (expandedRef.current) {
-      if (expandedRef.current.offsetHeight === 200) {
-        expandedRef.current.style.overflow = 'visible';
-      }
-    }
-  };
-
   const handleClickRow = (rowIndex: number) => {
     if (!selectable) return;
     if (handleSelectRow) handleSelectRow(rowIndex, selectedRowIndex);
@@ -139,7 +131,6 @@ export const DataTable = ({
             {ExpandedRow && (
               <div
                 ref={expandedRef}
-                onTransitionEnd={handleExpandedOverflow}
                 className={`${s.expandedRowContainer} ${expandedRowIndex === rowIndex ? 'expanded' : ''}`}
               >
                 {ExpandedRow}
