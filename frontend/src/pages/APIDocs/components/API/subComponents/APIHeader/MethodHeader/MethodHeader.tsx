@@ -4,7 +4,7 @@ import Typography from '../../../../../../../components/Typography';
 import { METHODS } from '../../../../../types/methods';
 
 interface MethodHeaderProps {
-  method: Method;
+  method: Method | 'method';
 }
 export const getFontColorByMethod = (method: string | null) => {
   return (typeof method) in METHODS ? 'light' : 'dark';

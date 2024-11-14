@@ -156,6 +156,9 @@ export interface APIRequestDocsInfo {
   example_content?: APIRequestDocsContent | null;
 }
 
+// APIHeaderInfo 타입 정의 추가
+export type APIHeaderInfo = APIRequestDocsInfo;
+
 export interface APIDetailInfo {
   requestDocs: APIRequestDocsContent & APIRequestDocsInfo;
   testCases?: Array<TestCaseHeaderInfo>;

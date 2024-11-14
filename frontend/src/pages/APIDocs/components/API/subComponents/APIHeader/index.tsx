@@ -16,7 +16,7 @@ export const Header = () => {
   const context = useAPIContext();
   const { isFocused, handleToggleIsFocused } = context.useIsFocusedHook;
 
-  const method = context.headerInfo.method || 'METHOD';
+  const method = context.headerInfo.method || 'method';
 
   const onClickHeader = useCallback(
     throttle((e: React.MouseEvent) => {
