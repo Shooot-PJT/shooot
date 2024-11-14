@@ -59,7 +59,7 @@ export interface ToggleAPIStateRequest {
 
 export interface ToggleAPIStateRequestBody {
   isSecure: APIRequestDocsInfo['isSecure'];
-  isDeveloped: APIRequestDocsInfo['isDeveloped'];
+  isRealServer: APIRequestDocsInfo['isRealServer'];
 }
 
 // API 삭제
