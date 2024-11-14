@@ -1,14 +1,13 @@
 package com.shooot.dockermanager.docker;
 
-import com.shooot.dockermanager.domain.projecttest.Project;
-import com.shooot.dockermanager.domain.projecttest.ProjectBuild;
-import com.shooot.dockermanager.domain.projecttest.ProjectFile;
-import com.shooot.dockermanager.domain.projecttest.ProjectVersion;
+import com.shooot.dockermanager.domain.projecttest.*;
+import com.shooot.dockermanager.domain.projecttest.repository.ProjectBuildLogRepository;
 import com.shooot.dockermanager.domain.projecttest.repository.ProjectBuildRepository;
 import com.shooot.dockermanager.domain.projecttest.repository.ProjectFileRepository;
 import com.shooot.dockermanager.domain.projecttest.repository.ProjectRepository;
 import com.shooot.dockermanager.dto.ServiceStartDto;
 import com.shooot.dockermanager.dto.ServiceStopDto;
+import com.shooot.dockermanager.exception.definition.InstanceIsFullException;
 import com.shooot.dockermanager.handler.DockerComposeManager;
 import com.shooot.dockermanager.handler.MetaData;
 import com.shooot.dockermanager.handler.ProjectDirectoryManager;
@@ -16,6 +15,7 @@ import com.shooot.dockermanager.publisher.DockerConsoleLogMessage;
 import com.shooot.dockermanager.publisher.DockerMessage;
 import com.shooot.dockermanager.publisher.MessageDto;
 import com.shooot.dockermanager.publisher.RedisMessagePublisher;
+import com.shooot.dockermanager.service.ProjectBuildLogUpdateService;
 import com.shooot.dockermanager.vagrant.VagrantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +28,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -45,6 +47,9 @@ public class DockerManager {
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private final ProjectDirectoryManager projectDirectoryManager;
     private final DockerComposeManager dockerComposeManager;
+    private final ConcurrentMap<Integer, Thread> logFetcherThreads = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Integer, Thread> healthCheckThreads = new ConcurrentHashMap<>();
+    private final ProjectBuildLogUpdateService projectBuildLogUpdateService;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -52,10 +57,8 @@ public class DockerManager {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public boolean startDockerCompose(ServiceStartDto dto) {
-        if (vagrantRepository.isFull()) return false;
-
         String target = vagrantRepository.getFirstEmptyInstance();
-        if (target == null) throw new IllegalArgumentException("No available instance");
+        if (target == null) throw new InstanceIsFullException();
 
         executorService.submit(() -> startDockerComposeProcess(dto, target));
         return true;
@@ -66,8 +69,6 @@ public class DockerManager {
             ProjectFile projectFile = projectFileRepository.findById(dto.getProjectJarFileId()).orElseThrow(IllegalArgumentException::new);
             Project project = projectRepository.findByProjectJarFileId(dto.getProjectJarFileId()).orElseThrow(IllegalArgumentException::new);
             ProjectBuild projectBuild = projectBuildRepository.findById(dto.getProjectJarFileId()).orElseThrow(IllegalArgumentException::new);
-
-            redisMessagePublisher.initializeLogStream(dto.getProjectId());
 
             setupProjectDirectory(dto, projectFile, project, target, projectBuild.getVersion());
             buildAndDeployDockerImage(project, projectBuild, target);
@@ -86,6 +87,7 @@ public class DockerManager {
                             .build())
                     .type(MessageDto.Type.DOCKER_BUILD_ERROR)
                     .build());
+            projectBuildLogUpdateService.projectBuildLogUpdate(dto.getProjectJarFileId(), ProjectBuildStatus.BUILD_ERROR);
         }
     }
 
@@ -93,15 +95,18 @@ public class DockerManager {
         projectDirectoryManager.mkDir(dto.getProjectId(), dto.getProjectJarFileId());
         projectDirectoryManager.setFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE, projectFile.getDockerComposeFile());
         projectDirectoryManager.setFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.JAR, projectFile.getProjectFile());
-        projectDirectoryManager.setMetaData(dto.getProjectId(), dto.getProjectJarFileId(), MetaData.builder()
+
+        MetaData metaData = MetaData.builder()
                 .projectJarFileId(dto.getProjectJarFileId())
                 .projectId(dto.getProjectId())
                 .projectName(project.getEnglishName())
                 .instanceName(target)
-                .build());
+                .build();
+        projectDirectoryManager.setMetaData(dto.getProjectId(), dto.getProjectJarFileId(), metaData);
 
         copyDockerfile(dto);
         dockerComposeManager.mergeDockerCompose(projectDirectoryManager.getFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE).orElseThrow(IllegalArgumentException::new), project.getEnglishName(), target, projectVersion);
+        vagrantRepository.put(target, metaData);
     }
 
     private void copyDockerfile(ServiceStartDto dto) throws IOException {
@@ -127,6 +132,8 @@ public class DockerManager {
                         .build())
                 .type(MessageDto.Type.DOCKER_RUN)
                 .build());
+        projectBuildLogUpdateService.projectBuildLogUpdate(projectBuild.getId(), ProjectBuildStatus.RUN);
+
     }
 
     private void executeProcess(ProcessBuilder processBuilder, String taskDescription, String target) throws IOException, InterruptedException {
@@ -137,16 +144,18 @@ public class DockerManager {
         }
     }
 
-    private void fetchDockerComposeLogs(String target, String projectEnglishName, Integer projectId, Integer projectJarFileId) {
-        new Thread(() -> {
+    public void fetchDockerComposeLogs(String target, String projectEnglishName, Integer projectId, Integer projectJarFileId) {
+        Thread logThread = new Thread(() -> {
             boolean keepRunning = true;
-            while (keepRunning) {
+            while (keepRunning && !Thread.currentThread().isInterrupted()) {
+                Process process = null;
                 try {
-                    Process process = new ProcessBuilder("docker", "service", "logs", "-f", projectEnglishName + "_" + projectEnglishName).start();
+                    process = new ProcessBuilder("docker", "service", "logs", "-f", projectEnglishName + "_" + projectEnglishName).start();
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                         String line;
-                        while ((line = reader.readLine()) != null) {
-                            String logMessage = "[" + projectEnglishName + "] " + line;
+                        while ((line = reader.readLine()) != null && !Thread.currentThread().isInterrupted()) {
+                            String[] parts = line.split("\\|", 2);
+                            String logMessage = "[" + projectEnglishName + "] " + parts[1];
                             log.info(logMessage);
                             redisMessagePublisher.publishLog(MessageDto.builder()
                                     .message(DockerConsoleLogMessage.builder()
@@ -156,47 +165,52 @@ public class DockerManager {
                                             .build())
                                     .type(MessageDto.Type.DOCKER_CONSOLE_LOG)
                                     .build());
+
                         }
                     }
                     if (process.waitFor() != 0) keepRunning = false;
                     Thread.sleep(100);
-                } catch (Exception e) {
-                    log.error("Error fetching logs on {}: {}", target, e.getMessage());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // 인터럽트 상태를 유지
                     keepRunning = false;
+                } catch (Exception e) {
+                    log.error("{}에서 로그 가져오기 오류: {}", projectEnglishName, e.getMessage());
+                    keepRunning = false;
+                } finally {
+                    if (process != null) {
+                        process.destroyForcibly();
+                    }
                 }
             }
-        }).start();
+            logFetcherThreads.remove(projectJarFileId);
+        });
+        logFetcherThreads.put(projectJarFileId, logThread);
+        logThread.start();
     }
-
-    private void monitorHealthCheck(String target, String englishName, Integer projectId, Integer projectJarFileId) {
+    public void monitorHealthCheck(String target, String englishName, Integer projectId, Integer projectJarFileId) {
         String healthUrl = "http://" + HOSTS.get(target) + "/actuator/health";
-        new Thread(() -> {
+        Thread healthThread = new Thread(() -> {
 
             int failureCount = 0;
             boolean isRunning = true;
-            while (isRunning) {
+            while (isRunning && !Thread.currentThread().isInterrupted()) {
                 ResponseEntity<String> response = null;
                 try {
                     response = restTemplate.getForEntity(healthUrl, String.class);
-                } catch (Exception e) {
-                    log.error("Health check error on {}: {}", target, e.getMessage());
-                    try {
-                        if (++failureCount >= 30) {
-                            log.info("[{}] Service is down. Shutting down Docker Compose...", target);
-                            stopDockerCompose(target, englishName, projectId, projectJarFileId);
-                            isRunning = false;
-                        }
-                        Thread.sleep(5000);
-                        continue;
-                    } catch (InterruptedException e2) {
-                        throw new RuntimeException(e2);
+                    if (response != null && response.getStatusCode().is2xxSuccessful() && response.getBody().contains("\"status\":\"UP\"")) {
+                        log.info("[{}] 서비스가 정상적으로 실행 중입니다.", englishName);
+                        failureCount = 0;
+                    } else {
+                        failureCount++;
+                        log.warn("[{}] 서비스 응답이 비정상적입니다.", englishName);
                     }
+                } catch (Exception e) {
+                    log.error("[{}] Health check 오류: {}", englishName, e.getMessage());
+                    failureCount++;
                 }
-                if (response != null && response.getStatusCode().is2xxSuccessful() && response.getBody().contains("\"status\":\"UP\"")) {
-                    log.info("[{}] Service is healthy.", target);
-                    failureCount = 0;
-                } else if (++failureCount >= 30) {
-                    log.info("[{}] Service is down. Shutting down Docker Compose...", target);
+
+                if (failureCount >= 30) {
+                    log.info("[{}] 서비스가 다운되었습니다. Docker Compose를 중지합니다...", englishName);
                     redisMessagePublisher.publishLog(MessageDto.builder()
                             .message(DockerMessage.builder()
                                     .projectJarFileId(projectJarFileId)
@@ -204,31 +218,51 @@ public class DockerManager {
                                     .build())
                             .type(MessageDto.Type.DOCKER_RUNTIME_ERROR)
                             .build());
+                    projectBuildLogUpdateService.projectBuildLogUpdate(projectJarFileId, ProjectBuildStatus.RUNTIME_ERROR);
                     stopDockerCompose(target, englishName, projectId, projectJarFileId);
                     isRunning = false;
                 }
+
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    Thread.currentThread().interrupt(); // 인터럽트 상태 유지
+                    isRunning = false;
                 }
-
             }
-
-        }).start();
+            healthCheckThreads.remove(projectJarFileId);
+        });
+        healthCheckThreads.put(projectJarFileId, healthThread);
+        healthThread.start();
     }
+
 
     public void stopDockerCompose(String target, String englishName, Integer projectId, Integer projectJarFileId) {
-        executeStopProcess("docker", "stack", "rm", englishName);
+        try {
+            executeStopProcess("docker", "stack", "rm", englishName);
+        }catch (Exception ignored) {
+
+        }
         vagrantRepository.remove(target);
         projectDirectoryManager.rmDir(projectId, projectJarFileId);
-    }
 
+        // 로그 스레드 인터럽트
+        Thread logThread = logFetcherThreads.get(projectJarFileId);
+        if (logThread != null) {
+            logThread.interrupt();
+        }
+
+        // Health Check 스레드 인터럽트
+        Thread healthThread = healthCheckThreads.get(projectJarFileId);
+        if (healthThread != null) {
+            healthThread.interrupt();
+        }
+    }
     public void stopDockerCompose(ServiceStopDto serviceStopDto) {
         MetaData metaData = projectDirectoryManager.getMetaData(Path.of(projectDirectoryManager.file(serviceStopDto.getProjectId(), serviceStopDto.getProjectJarFileId()).getPath()));
-        executeStopProcess("docker", "stack", "rm", metaData.getProjectName());
-        vagrantRepository.remove(metaData.getInstanceName());
-        projectDirectoryManager.rmDir(serviceStopDto.getProjectId(), serviceStopDto.getProjectJarFileId());
+        if(metaData == null) {
+            return;
+        }
         redisMessagePublisher.publishLog(MessageDto.builder()
                 .message(DockerConsoleLogMessage.builder()
                         .projectId(serviceStopDto.getProjectId())
@@ -236,6 +270,8 @@ public class DockerManager {
                         .build())
                 .type(MessageDto.Type.DOCKER_RUN_DONE)
                 .build());
+        projectBuildLogUpdateService.projectBuildLogUpdate(serviceStopDto.getProjectJarFileId(), ProjectBuildStatus.DONE);
+        stopDockerCompose(metaData.getInstanceName(), metaData.getProjectName(), metaData.getProjectId(), metaData.getProjectJarFileId());
     }
 
     private void executeStopProcess(String... commands) {

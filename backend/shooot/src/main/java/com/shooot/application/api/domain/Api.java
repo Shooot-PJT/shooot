@@ -12,7 +12,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.repository.EntityGraph;
 
@@ -27,7 +29,10 @@ import java.util.Map;
 @AllArgsConstructor
 @Table(name = "api")
 @Entity
+@ToString
+@SQLRestriction("is_deleted = false")
 public class Api extends SoftDeleteEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "api_id")
@@ -71,7 +76,7 @@ public class Api extends SoftDeleteEntity {
     private Boolean isSecure;
 
     @Enumerated(EnumType.STRING)
-    @Column(name ="test_status")
+    @Column(name = "test_status")
     private ApiTestStatusType testStatus;
 
     @Builder.Default
@@ -80,62 +85,63 @@ public class Api extends SoftDeleteEntity {
 
     @Override
     protected void prePersistAction() {
-        if(isRealServer == null){
+        if (isRealServer == null) {
             this.isRealServer = false;
         }
 
-        if(isSecure == null){
+        if (isSecure == null) {
             this.isSecure = false;
         }
 
-        if(testStatus == null){
+        if (testStatus == null) {
             this.testStatus = ApiTestStatusType.YET;
         }
     }
 
-    public void update(ApiModifyRequest apiModifyRequest){
-        if(apiModifyRequest.getTitle() != null){
+    public void update(ApiModifyRequest apiModifyRequest) {
+        if (apiModifyRequest.getTitle() != null) {
             this.title = apiModifyRequest.getTitle();
         }
 
-        if(apiModifyRequest.getDescription() != null){
+        if (apiModifyRequest.getDescription() != null) {
             this.description = apiModifyRequest.getDescription();
         }
 
-        if(apiModifyRequest.getUrl() != null){
+        if (apiModifyRequest.getUrl() != null) {
             this.url = apiModifyRequest.getUrl();
         }
 
-        if(apiModifyRequest.getExampleUrl() != null){
+        if (apiModifyRequest.getExampleUrl() != null) {
             this.exampleUrl = apiModifyRequest.getExampleUrl();
         }
 
-        if(apiModifyRequest.getExampleContent() != null){
+        if (apiModifyRequest.getExampleContent() != null) {
             ObjectMapper objectMapper = new ObjectMapper();
-            this.exampleContent = objectMapper.convertValue(apiModifyRequest.getExampleContent(), Map.class);
+            this.exampleContent = objectMapper.convertValue(apiModifyRequest.getExampleContent(),
+                Map.class);
         }
 
         if(apiModifyRequest.getMethod() != null){
             this.method = apiModifyRequest.getMethod().toUpperCase();
         }
 
-        if(apiModifyRequest.getIsSecure() != null){
+        if (apiModifyRequest.getIsSecure() != null) {
             this.isSecure = apiModifyRequest.getIsSecure();
         }
 
     }
 
-    public void update(ApiToggleModifyRequest apiToggleModifyRequest){
-        if(apiToggleModifyRequest.getIsRealServer() != null){
+    public void update(ApiToggleModifyRequest apiToggleModifyRequest) {
+        if (apiToggleModifyRequest.getIsRealServer() != null) {
             this.isRealServer = apiToggleModifyRequest.getIsRealServer();
         }
 
-        if(apiToggleModifyRequest.getIsSecure() != null){
+        if (apiToggleModifyRequest.getIsSecure() != null) {
             this.isSecure = apiToggleModifyRequest.getIsSecure();
         }
     }
 
-    public void testCaseUpdate(){
+    public void testCaseUpdate() {
         this.modifiedAt = LocalDateTime.now();
     }
 

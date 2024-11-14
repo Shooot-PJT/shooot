@@ -97,17 +97,13 @@ ProjectDirectoryManager {
     public MetaData getMetaData(Path path) {
         File target = new File(path.toString() + "/metadata");
         if (!target.exists()) {
-            try {
-                target.createNewFile();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            return null;
         }
         try (FileInputStream fis = new FileInputStream(target);
              ObjectInputStream inputStream = new ObjectInputStream(fis)) {
             return (MetaData) inputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            throw new ClassCastException(e.getMessage());
+            return null;
         }
     }
 
