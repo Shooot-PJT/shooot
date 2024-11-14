@@ -42,6 +42,6 @@ public class ProjectBuild extends SoftDeleteEntity {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "projectBuild", cascade = CascadeType.ALL)
     private ProjectFile projectFile;
 
-    @OneToMany(mappedBy = "projectBuild", cascade = CascadeType.ALL)
-    private List<ProjectBuildLog> projectBuildLog;
+    @OneToOne(mappedBy = "projectBuild", cascade = CascadeType.ALL)
+    private ProjectBuildLog projectBuildLog;
 }

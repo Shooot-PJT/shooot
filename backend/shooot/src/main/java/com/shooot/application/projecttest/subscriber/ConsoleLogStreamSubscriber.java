@@ -41,8 +41,6 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
     private final Map<Integer, Map<Integer, SseEmitter>> projectEmitters = new ConcurrentHashMap<>();
     private final Map<Integer, Subscription> subscriptions = new ConcurrentHashMap<>();
     private StreamMessageListenerContainer<String, MapRecord<String, String, String>> listenerContainer;
-    private final ProjectBuildLogRepository projectBuildLogRepository;
-    private final ProjectBuildRepository projectBuildRepository;
     private static final String PROJECT_LOG = "project_log";
     private static final String PROJECT_STATUS = "project_status";
 
@@ -50,8 +48,6 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
     public ConsoleLogStreamSubscriber(StringRedisTemplate redisTemplate, ObjectMapper objectMapper, ProjectBuildLogRepository projectBuildLogRepository, ProjectBuildRepository projectBuildRepository) {
         this.redisTemplate = redisTemplate;
         this.objectMapper = objectMapper;
-        this.projectBuildLogRepository = projectBuildLogRepository;
-        this.projectBuildRepository = projectBuildRepository;
     }
 
     @PostConstruct
@@ -88,7 +84,7 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
         if (subscriptions.containsKey(projectId)) {
             return;
         }
-
+        redisTemplate.opsForStream().trim("project_logs_" + projectId, 1000);
         // 새로운 프로젝트 ID에 대한 구독 생성
         Subscription subscription = listenerContainer.receive(
                 StreamOffset.fromStart("project_logs_" + projectId),
@@ -96,6 +92,11 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
 
         subscriptions.put(projectId, subscription);
         log.info("Subscribed to project_logs_{}", projectId);
+    }
+
+    public void removeSubscriptionForProject(Integer projectId) {
+        redisTemplate.opsForStream().trim("project_logs_" + projectId, 0);
+        subscriptions.remove(projectId);
     }
 
 
@@ -171,15 +172,6 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
 
             ToStatusMessage toStatusMessage = new ToStatusMessage(message, status);
             String finalEmitterType = emitterType;
-
-            if (emitterType.equals(PROJECT_STATUS)) {
-                Integer projectJarFileId = message.getProjectJarFileId();
-                ProjectBuild referenceById = projectBuildRepository.getReferenceById(projectJarFileId);
-                ProjectBuildStatus finalStatus = status;
-                ProjectBuildLog projectBuildLog = projectBuildLogRepository.findByProjectBuild_Id(projectJarFileId).orElseGet(() -> ProjectBuildLog.builder().projectBuild(referenceById).status(finalStatus).build());
-                projectBuildLog.updateStatus(finalStatus);
-                projectBuildLogRepository.save(projectBuildLog);
-            }
 
             projectEmitters.getOrDefault(message.getProjectId(), Map.of()).forEach((userId, emitter) -> sendLog(emitter, toStatusMessage, finalEmitterType));
         } catch (JsonProcessingException ignored) {
