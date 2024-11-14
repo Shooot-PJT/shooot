@@ -99,10 +99,11 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
 
 
     public SseEmitter addEmitter(Integer projectId, Integer projectParticipantId) {
-        SseEmitter emitter = projectEmitters.computeIfAbsent(projectId, k -> {
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+        projectEmitters.computeIfAbsent(projectId, k -> {
             addSubscriptionForProject(projectId);
             return new ConcurrentHashMap<>();
-        }).put(projectParticipantId, new SseEmitter(Long.MAX_VALUE));
+        }).put(projectParticipantId, emitter);
 
         // 콜드 스트림 - 구독 시 이전 로그 데이터 전송
         List<MapRecord<String, Object, Object>> coldStreamLogs = redisTemplate.opsForStream()
