@@ -100,8 +100,13 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
     public SseEmitter addEmitter(Integer projectId, Integer projectParticipantId) {
         SseEmitter emitter = null;
         if (projectEmitters.containsKey(projectId)) {
-            if(projectEmitters.get(projectId).containsKey(projectParticipantId)){
+            if (projectEmitters.get(projectId).containsKey(projectParticipantId)) {
                 emitter = projectEmitters.get(projectId).get(projectParticipantId);
+            } else {
+                emitter = projectEmitters.computeIfAbsent(projectId, k -> {
+                    addSubscriptionForProject(projectId);
+                    return new ConcurrentHashMap<>();
+                }).put(projectParticipantId, new SseEmitter(Long.MAX_VALUE));
             }
         } else {
             emitter = projectEmitters.computeIfAbsent(projectId, k -> {
