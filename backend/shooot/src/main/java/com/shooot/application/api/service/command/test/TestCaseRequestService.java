@@ -17,6 +17,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
 import java.io.File;
@@ -27,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,15 +76,15 @@ public class TestCaseRequestService {
         log.info("formData = {}", formData);
 
 
-        Map<String, Object> requestData = new HashMap<>();
-        String method = apiTestCase.getApi().getMethod().toUpperCase();
-        requestData.put("method", method);
-        requestData.put("url", url);
-        requestData.put("headers", headers);
-        requestData.put("requestBody", requestBody);
-        requestData.put("formData", formData);
+//        Map<String, Object> requestData = new HashMap<>();
+//        String method = apiTestCase.getApi().getMethod().toUpperCase();
+//        requestData.put("method", method);
+//        requestData.put("url", url);
+//        requestData.put("headers", headers);
+//        requestData.put("requestBody", requestBody);
+//        requestData.put("formData", formData);
         // TODO : 사용자의 spring에 rest보내기
-        restToUserServer(requestData);
+        restToUserServer(requestMethod, url, headers, requestBody, formData);
 
 
         // TODO : response를 api_test_log 테이블에 데이터 저장하기
@@ -181,7 +184,7 @@ public class TestCaseRequestService {
             formData.put("data", datas);
         }
 
-        if(files == null){
+        if(files != null){
             formData.put("files", files);
         }
 
@@ -259,24 +262,69 @@ public class TestCaseRequestService {
         return filesData;
     }
 
-    private void restToUserServer(Map<String, Object> requestData){
+    //restToUserServer(method, url, headers, requestBody, formData);
+    private void restToUserServer(
+            String method,
+            String url,
+            Map<String, String> headers,
+            Map<String, Object> requestBody,
+            Map<String, Object> formData
+    ){
         /*
                 requestData.put("method", method);
                 requestData.put("url", url);
                 requestData.put("headers", headers);
                 requestData.put("requestBody", requestBody);
-                requestData.put("formData", formData);
+                requestData.put("formData", formData); map안에 key = data, files 2개 있음
          */
-        String method = ((String) requestData.get("method")).toUpperCase();
-        String url = (String) requestData.get("url");
-        Map<String, String> headers = (Map<String, String>)requestData.get("headers");
+        Optional<String> contentType = Optional.ofNullable(headers.get("Content-type"));
 
-        restClient.method(HttpMethod.valueOf(method))
-                .uri(url)
-                .headers(httpHeaders -> httpHeaders.setAll(headers));
+        contentType.ifPresentOrElse(
+                type -> {
+                    if ("multipart/form-data".equals(type)) {
+                        // multipart/form-data 처리 로직
+                        log.info("multipart 타입으로 유저 서버에 전송");
+                        sendFormDataToServer(method, url, headers, formData);
+                    } else if ("application/json".equals(type)) {
+                        // application/json 처리 로직
+                        log.info("json 타입으로 유저 서버에 전송");
+//                        sendRequestBodyToServer(requestData);
+                    } else {
+                        log.info("Content-type이 이상한거 들어왔는데요?");
+                        throw new RuntimeException("이거 보내면 안됩니다.");
+                    }
+                },
+                () -> {
+                    log.info("Content-type이 null 즉 none인걸로 유저 서버에 전송");
+//                    sendNoneDataToServer(requestData);
+                }
+        );
 
 
+    }
 
+    private String sendFormDataToServer(
+            String method,
+            String url,
+            Map<String, String> headers,
+            Map<String, Object> requestFormData
+    ){
+
+
+        MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
+//        formData.add();
+//        return restClient.method(HttpMethod.valueOf(method))
+//                .
+
+        return null;
+    }
+
+    private String sendRequestBodyToServer(Map<String, Object> requestData){
+        return null;
+    }
+
+    private String sendNoneDataToServer(Map<String, Object> requestData){
+        return null;
     }
 
 }

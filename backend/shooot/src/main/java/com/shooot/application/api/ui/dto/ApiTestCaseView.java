@@ -17,9 +17,9 @@ public class ApiTestCaseView {
     private Integer apiId;
     private String title;
     private Integer httpStatusCode;
-    private ApiTestStatusType type;
+    private ApiTestStatusType testStatus;
     private Integer apiTestCaseRequestId;
-    private ApiTestCaseRequestType requestType;
+    private ApiTestCaseRequestType type;
     private Map<String, Object> content;
 
     public static ApiTestCaseView from(ApiTestCase apiTestCase, ApiTestCaseRequest apiTestCaseRequest){
@@ -30,9 +30,9 @@ public class ApiTestCaseView {
                 .apiId(apiTestCase.getApi().getId())
                 .title(apiTestCase.getTitle())
                 .httpStatusCode(apiTestCase.getHttpStatus().value())
-                .type(apiTestCase.getTestCaseStatus())
+                .testStatus(apiTestCase.getTestCaseStatus())
                 .apiTestCaseRequestId(apiTestCaseRequest.getId())
-                .requestType(apiTestCaseRequest.getType())
+                .type(apiTestCaseRequest.getType())
                 .content(apiTestCaseRequest.getContent())
                 .build();
     }
