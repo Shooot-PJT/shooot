@@ -4,6 +4,7 @@ import com.shooot.application.project.domain.Project;
 import com.shooot.application.project.domain.ProjectParticipant;
 import com.shooot.application.project.domain.repository.ProjectParticipantRepository;
 import com.shooot.application.project.domain.repository.ProjectRepository;
+import com.shooot.application.project.exception.ProjectNotParticipantException;
 import com.shooot.application.project.ui.dto.FindParticipantsResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,5 +25,14 @@ public class FindParticipantsService {
             project);
         return projectParticipants.stream().map(ProjectParticipant::getUser).map(
             FindParticipantsResponse::from).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Integer findParticipantId(Integer projectId, Integer userId){
+        ProjectParticipant projectParticipant = projectParticipantRepository.findByProjectIdAndUserId(projectId, userId);
+
+        if(projectParticipant == null) throw new ProjectNotParticipantException();
+
+        return projectParticipant.getId();
     }
 }
