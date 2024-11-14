@@ -1,3 +1,5 @@
+// frontend/src/pages/APIDocs/apis/testcase/index.ts
+
 import { api } from '../../../../apis/interceptors';
 import * as AT from './types';
 import { Endpoint as EP } from '../../constants/endpoint';
@@ -14,13 +16,11 @@ export const addTestCase = async (
   return response.data;
 };
 
-// 테스트케이스 리스트 조회를 위한 데이터는 API 상세조회를 통해 조회됨
-
 // 테스트케이스 상세 조회
 export const getTestCaseDetail = async ({
   testcaseId,
 }: AT.GetTestCaseDetailRequest) => {
-  const response = await api.get<AT.AddTestCaseResponse>(
+  const response = await api.get<AT.GetTestCaseDetailResponse>(
     `/${EP.projects}/${EP.domains}/${EP.apis}/${EP.testcases}/${testcaseId}`,
   );
   return response.data;

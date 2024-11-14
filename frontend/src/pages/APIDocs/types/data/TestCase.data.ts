@@ -1,10 +1,12 @@
+// frontend/src/pages/APIDocs/types/data/TestCase.data.ts
+
 import { HttpStatusCode } from '../httpStatus';
 import { APIRequestDocsInfo, TestResult } from './API.data';
 
-type TestCaseType = 'MULTIPART' | 'JSON' | 'NONE';
+export type TestCaseRequestType = 'MULTIPART' | 'JSON' | 'NONE';
 
 // 기본 타입 정의
-type Key = string;
+export type Key = string;
 export type Value = string | number | boolean | null;
 export type Description = string | null;
 export type IsRequired = boolean | null;
@@ -26,15 +28,10 @@ export interface FormData {
   files: Record<string, TableData> | null; // UUID: 단일 파일을 가진 TableValueFormat 형태
 }
 
-export interface RawData {
-  datas: JsonData | null;
-  files: null;
-}
-
 // Body 타입 정의 (formData와 raw가 상호 배타적으로 존재)
 export interface Body {
   formData: FormData | null;
-  raw: RawData | null;
+  raw: JsonData | null;
 }
 
 export interface TestCaseContent {
@@ -46,28 +43,16 @@ export interface TestCaseContent {
 }
 
 export interface TestCaseDetailInfo {
-  id: number;
-  apiId: APIRequestDocsInfo['id'];
+  id: number; // 응답에서만 받음
+  apiId: number; // 응답에서만 받음
   title: string;
-  httpStatusCode: HttpStatusCode;
-  type: TestCaseType;
-  apiTestCaseRequestId: number; // 이건머임
-  requestType: string;
+  httpStatusCode: number;
+  requestType: TestCaseRequestType;
   content: TestCaseContent;
+  testStatus: 'YET' | 'SUCCESS' | 'FAILURE'; // 응답에서 받는 테스트 상태
   //
   createdAt?: string;
   modifiedAt?: string;
   isSecure?: boolean;
   isDeleted?: boolean;
-  testStatus?: TestResult;
-}
-
-export interface TestCaseHeaderInfo {
-  id: TestCaseDetailInfo['id'];
-  apiId: TestCaseDetailInfo['apiId'];
-  title: TestCaseDetailInfo['title'];
-  httpStatusCode: TestCaseDetailInfo['httpStatusCode'];
-  testStatus: TestCaseDetailInfo['testStatus'];
-  createdAt: TestCaseDetailInfo['createdAt'];
-  modifiedAt: TestCaseDetailInfo['modifiedAt'];
 }

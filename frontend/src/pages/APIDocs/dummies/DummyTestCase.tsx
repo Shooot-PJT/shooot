@@ -1,4 +1,7 @@
+// frontend/src/pages/APIDocs/dummies/DummyTestCase.tsx
+
 import { useEffect, useRef, useState } from 'react';
+import { useGetTestCaseDetail } from '../reactQueries';
 import Editor, { OnMount } from '@monaco-editor/react';
 import { BodyNone } from '../components/API/subComponents/APIBody/RequestDocs/RequestContents/BodyNone/BodyNone';
 import {
@@ -7,9 +10,15 @@ import {
 } from '../../../components/CustomTabs/CustomTabs';
 import * as styles from './KeyValueTable.css';
 import * as bodyFormDataStyles from './BodyFormData.css';
+import {
+  TableData,
+  TestCaseDetailInfo,
+  TableValueFormat,
+} from '../types/data/TestCase.data';
 
+// 타입 정의 수정
 type Key = string;
-type Value = string | null;
+type Value = string | number | boolean | null;
 type Description = string | null;
 type IsRequired = boolean | null;
 type Type = 'Text' | 'File' | null;
@@ -17,116 +26,53 @@ type FileName = string;
 type FileMeta = { parameterVar: Key; description: Description };
 type UUID = string;
 
-type TableValueFormatParams = [Value, Description, null, null];
-type TableValueFormatPathVariable = [Value, Description, null, null];
-type TableValueFormatHeader = [Value, Description, null, null];
-type TableValueFormatBody_FormData_datas = [Value, Description, Type, null];
-type TableValueFormatBody_FormData_files = [Value, FileMeta, Type, null];
-
-type TableData_Params = Record<Key, TableValueFormatParams> | null;
-type TableData_PathVariable = Record<Key, TableValueFormatPathVariable> | null;
-type TableData_Header = Record<Key, TableValueFormatHeader> | null;
-type TableData_Body_FormData_datas = Record<
-  Key,
-  TableValueFormatBody_FormData_datas
-> | null;
-type TableData_Body_FormData_files = Record<
-  UUID,
-  Record<FileName, TableValueFormatBody_FormData_files>
-> | null;
-
-interface TestCase {
-  title: string;
-  httpStatusCode: number;
-  type: 'MULTIPART' | 'JSON' | 'NONE';
-  content: {
-    params: TableData_Params;
-    pathvariable: TableData_PathVariable;
-    headers: TableData_Header;
-    body: {
-      formData: {
-        datas: TableData_Body_FormData_datas;
-        files: TableData_Body_FormData_files;
-      } | null;
-      raw: object | null;
-    };
-    expectedResponse: null | {
-      schema: string | null;
-      example: object | null;
-    };
-  };
+interface DummyTestCaseProps {
+  testCaseId: number;
 }
 
-const dummyTestCase: TestCase = {
-  title: '회원가입 응답',
-  httpStatusCode: 200,
-  type: 'MULTIPART',
-  content: {
-    params: {
-      locale: ['ko_KR', '사용자 언어 설정', null, null],
-    },
-    pathvariable: null,
-    headers: {
-      ContentType: ['multipart/form-data', null, null, null],
-    },
-    body: {
-      formData: {
-        datas: {
-          username: ['홍길동', '사용자 이름', 'Text', null],
-          email: ['gildong@example.com', '사용자 이메일', 'Text', null],
-          password: ['securepassword123', '비밀번호', 'Text', null],
-          phoneNumber: ['010-1234-5678', '휴대전화 번호', 'Text', null],
-        },
-        files: {
-          UUID1: {
-            'profile.jpg': [
-              's3주소.com',
-              { parameterVar: 'profile_image', description: '프로필 이미지' },
-              'File',
-              null,
-            ],
-          },
-        },
-      },
-      raw: null,
-    },
-    expectedResponse: {
-      schema:
-        "[{\n  'userId': number,\n  'userName': string,\n  'email': string\n }...]\n",
-      example: [
-        {
-          userId: 123,
-          userName: '홍길동',
-          email: 'gildong@example.com',
-        },
-      ],
-    },
-  },
-};
-
-export const DummyTestCase: React.FC = () => {
+export const DummyTestCase: React.FC<DummyTestCaseProps> = ({ testCaseId }) => {
   const [activeTab, setActiveTab] = useState<number>(0);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
-  const [testCase, setTestCase] = useState<TestCase>(dummyTestCase);
+
+  const {
+    data: testCaseDetail,
+    isLoading,
+    isError,
+  } = useGetTestCaseDetail({ testcaseId: testCaseId });
+
+  // Hook은 조건문 이전에 호출되어야 합니다.
+  const [bodyType, setBodyType] = useState<'none' | 'raw' | 'form-data'>(
+    'none',
+  );
+
+  useEffect(() => {
+    if (testCaseDetail) {
+      switch (testCaseDetail.requestType) {
+        case 'MULTIPART':
+          setBodyType('form-data');
+          break;
+        case 'JSON':
+          setBodyType('raw');
+          break;
+        case 'NONE':
+        default:
+          setBodyType('none');
+          break;
+      }
+    }
+  }, [testCaseDetail]);
+
+  if (isLoading) {
+    return <div>테스트케이스 로딩 중...</div>;
+  }
+
+  if (isError || !testCaseDetail) {
+    return <div>테스트케이스를 불러오는 중 오류가 발생했습니다.</div>;
+  }
+
+  const testCase = testCaseDetail;
 
   const tabLabels = ['Params', 'PathVariables', 'Header', 'Body'];
-
-  // Body 타입에 따른 기본 선택
-  const getDefaultBodyType = () => {
-    switch (testCase.type) {
-      case 'MULTIPART':
-        return 'form-data';
-      case 'JSON':
-        return 'raw';
-      case 'NONE':
-      default:
-        return 'none';
-    }
-  };
-
-  const [bodyType, setBodyType] = useState<'none' | 'raw' | 'form-data'>(
-    getDefaultBodyType(),
-  );
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -135,14 +81,17 @@ export const DummyTestCase: React.FC = () => {
   const handleBodyTypeChange = (type: 'none' | 'raw' | 'form-data') => {
     setBodyType(type);
 
-    // TestCase의 type 필드 업데이트
-    let newType: 'MULTIPART' | 'JSON' | 'NONE' = 'NONE';
-    if (type === 'form-data') newType = 'MULTIPART';
-    else if (type === 'raw') newType = 'JSON';
-    else if (type === 'none') newType = 'NONE';
+    // TestCase의 requestType 필드 업데이트
+    let newRequestType: 'MULTIPART' | 'JSON' | 'NONE' = 'NONE';
+    if (type === 'form-data') newRequestType = 'MULTIPART';
+    else if (type === 'raw') newRequestType = 'JSON';
+    else if (type === 'none') newRequestType = 'NONE';
 
-    setTestCase({ ...testCase, type: newType });
-    console.log('Updated TestCase:', { ...testCase, type: newType });
+    // 상태 업데이트 로직 (필요 시)
+    console.log('Updated TestCase:', {
+      ...testCase,
+      requestType: newRequestType,
+    });
   };
 
   const toggleEditMode = () => {
@@ -154,13 +103,7 @@ export const DummyTestCase: React.FC = () => {
   };
 
   const handleDataChange = (section: string, data: any) => {
-    setTestCase({
-      ...testCase,
-      content: {
-        ...testCase.content,
-        [section]: data,
-      },
-    });
+    // 상태 업데이트 로직 추가 필요
     console.log('Updated TestCase:', {
       ...testCase,
       content: {
@@ -266,22 +209,19 @@ export const DummyTestCase: React.FC = () => {
 };
 
 interface KeyValueTableProps {
-  data: Record<string, [Value, Description, null, null]> | null;
+  data: TableData | null;
   isEditMode: boolean;
   section: string;
   onDataChange: (section: string, data: any) => void;
 }
 
-// KeyValueTable 컴포넌트 수정
 const KeyValueTable: React.FC<KeyValueTableProps> = ({
   data,
   isEditMode,
   section,
   onDataChange,
 }) => {
-  const [tableData, setTableData] = useState<
-    Record<string, [Value, Description, null, null]>
-  >(data || {});
+  const [tableData, setTableData] = useState<TableData>(data || {});
 
   useEffect(() => {
     setTableData(data || {});
@@ -302,13 +242,13 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   const handleChange = (
     key: string,
     fieldIndex: number,
-    value: string,
+    value: any,
     newKey?: string,
   ) => {
     const newData = { ...tableData };
 
     if (newKey && newKey !== key) {
-      newData[newKey] = [...newData[key]];
+      newData[newKey] = [...newData[key]] as TableValueFormat;
       delete newData[key];
       key = newKey;
     }
@@ -348,11 +288,19 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                 <td className={styles.valueCellStyle}>
                   {isEditMode ? (
                     <input
-                      value={value || ''}
+                      value={
+                        value !== null && value !== undefined
+                          ? String(value)
+                          : ''
+                      }
                       onChange={(e) => handleChange(key, 0, e.target.value)}
                     />
                   ) : (
-                    <div className={styles.cellViewStyle}>{value}</div>
+                    <div className={styles.cellViewStyle}>
+                      {value !== null && value !== undefined
+                        ? String(value)
+                        : ''}
+                    </div>
                   )}
                 </td>
                 <td className={styles.descriptionCellStyle}>
@@ -390,6 +338,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
     </div>
   );
 };
+
 interface BodyRawProps {
   raw: object | null;
   isEditMode: boolean;
@@ -418,7 +367,6 @@ const BodyRaw: React.FC<BodyRawProps> = ({ raw, isEditMode, onDataChange }) => {
           const value = editor.getValue();
           const parsedData = JSON.parse(value);
           onDataChange('body', {
-            ...dummyTestCase.content.body,
             raw: parsedData,
             formData: null,
           });
@@ -449,11 +397,14 @@ const BodyRaw: React.FC<BodyRawProps> = ({ raw, isEditMode, onDataChange }) => {
   );
 };
 
+// FormData 타입 이름 변경: FormDataContent로 변경
+interface FormDataContent {
+  datas: TestCaseDetailInfo['content']['body']['formData']['datas'];
+  files: TestCaseDetailInfo['content']['body']['formData']['files'];
+}
+
 interface BodyFormDataProps {
-  formData: {
-    datas: TableData_Body_FormData_datas;
-    files: TableData_Body_FormData_files;
-  } | null;
+  formData: FormDataContent | null;
   isEditMode: boolean;
   onDataChange: (section: string, data: any) => void;
 }
@@ -491,7 +442,7 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
         entries.push({
           key,
           type: type as 'Text',
-          value,
+          value: value !== null && value !== undefined ? String(value) : '',
           description,
         });
       }
@@ -500,19 +451,22 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
     if (formData?.files) {
       for (const uuidObj of Object.values(formData.files)) {
         for (const [fileName, [s3Url, fileMeta]] of Object.entries(uuidObj)) {
-          entries.push({
-            key: fileMeta.parameterVar,
-            type: 'File',
-            value: fileName,
-            description: fileMeta.description,
-            s3Url,
-          });
+          // fileMeta가 존재하고 객체인지 확인
+          if (fileMeta && typeof fileMeta === 'object') {
+            entries.push({
+              key: fileMeta.parameterVar,
+              type: 'File',
+              value: fileName,
+              description: fileMeta.description,
+              s3Url: s3Url !== null && s3Url !== undefined ? String(s3Url) : '',
+            });
+          }
         }
       }
     }
 
     setFormDataEntries(entries);
-  }, []);
+  }, [formData]);
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -521,12 +475,12 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
     }
 
     // 데이터 변경 시 호출
-    const datas: TableData_Body_FormData_datas = {};
-    const files: TableData_Body_FormData_files = {};
+    const datas: FormDataContent['datas'] = {};
+    const files: FormDataContent['files'] = {};
 
     formDataEntries.forEach((entry) => {
       if (entry.type === 'Text') {
-        datas[entry.key] = [
+        datas![entry.key] = [
           entry.value as string,
           entry.description,
           'Text',
@@ -534,7 +488,7 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
         ];
       } else if (entry.type === 'File') {
         const uuid = 'UUID' + Math.random().toString(36).substr(2, 9);
-        files[uuid] = {
+        files![uuid] = {
           [(entry.value instanceof File
             ? entry.value.name
             : entry.value) as string]: [
@@ -548,10 +502,9 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
     });
 
     onDataChange('body', {
-      ...dummyTestCase.content.body,
       formData: {
-        datas: Object.keys(datas).length > 0 ? datas : null,
-        files: Object.keys(files).length > 0 ? files : null,
+        datas: Object.keys(datas!).length > 0 ? datas : null,
+        files: Object.keys(files!).length > 0 ? files : null,
       },
       raw: null,
     });
@@ -630,14 +583,20 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
                 {entry.type === 'Text' ? (
                   isEditMode ? (
                     <input
-                      value={typeof entry.value === 'string' ? entry.value : ''}
+                      value={
+                        entry.value !== null && entry.value !== undefined
+                          ? String(entry.value)
+                          : ''
+                      }
                       onChange={(e) =>
                         handleChange(index, 'value', e.target.value)
                       }
                     />
                   ) : (
                     <div className={bodyFormDataStyles.cellViewStyle}>
-                      {typeof entry.value === 'string' ? entry.value : ''}
+                      {entry.value !== null && entry.value !== undefined
+                        ? String(entry.value)
+                        : ''}
                     </div>
                   )
                 ) : isEditMode ? (
@@ -656,8 +615,8 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
                     >
                       {entry.value instanceof File
                         ? entry.value.name
-                        : typeof entry.value === 'string'
-                          ? entry.value
+                        : entry.value !== null && entry.value !== undefined
+                          ? String(entry.value)
                           : ''}
                     </a>
                   </div>
@@ -686,7 +645,7 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
           ))}
           {isEditMode && (
             <tr>
-              <td colSpan={isEditMode ? 4 : 3}>
+              <td colSpan={isEditMode ? 5 : 4}>
                 <div
                   className={styles.addButtonContainer}
                   onClick={handleAddEntry}

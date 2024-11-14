@@ -1,3 +1,5 @@
+// frontend/src/pages/APIDocs/components/API/subComponents/APIBody/index.tsx
+
 import { useAPIContext } from '../../API';
 import Flexbox from '../../../../../../components/Flexbox';
 import colorPalette from '../../../../../../styles/colorPalette';
@@ -10,7 +12,6 @@ import ManagerAvatar from '../APICommon/ManagerAvatar/ManagerAvatar';
 import Typography from '../../../../../../components/Typography';
 import Button from '../../../../../../components/Button';
 import { useGetAPIDetail } from '../../../../reactQueries/api';
-import { testcaseDummyList } from '../../../../dummies/testcase_dummy_list';
 import { DummyTestCase } from '../../../../dummies/DummyTestCase';
 
 export const Body = () => {
@@ -168,12 +169,13 @@ export const Body = () => {
               />
 
               {/* 1.2.2 RIGHT-BOTTOM: 테스트케이스 리스트 섹션 */}
-              <DummyTestCase />
-              {/* <TestCaseList>
-                {testcaseDummyList.map((item, index) => {
-                  <div>{item}</div>;
-                })}
-              </TestCaseList> */}
+              {testCases && testCases.length > 0 ? (
+                testCases.map((testCase) => (
+                  <DummyTestCase key={testCase.id} testCaseId={testCase.id} />
+                ))
+              ) : (
+                <div>테스트케이스가 없습니다.</div>
+              )}
             </Flexbox>
           </Flexbox>
         </Flexbox>

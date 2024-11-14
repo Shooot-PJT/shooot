@@ -1,4 +1,17 @@
-export * from './domain';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { getTestCaseDetail } from '../apis';
+import {
+  GetTestCaseDetailRequest,
+  GetTestCaseDetailResponse,
+} from '../apis/testcase/types';
 
-// export * from './api';
-// export * from './testcase';
+export const useGetTestCaseDetail = (
+  { testcaseId }: GetTestCaseDetailRequest,
+  options?: UseQueryOptions<GetTestCaseDetailResponse, Error>,
+) => {
+  return useQuery<GetTestCaseDetailResponse, Error>({
+    queryKey: ['testCaseDetail', testcaseId],
+    queryFn: () => getTestCaseDetail({ testcaseId }),
+    ...options,
+  });
+};
