@@ -1,11 +1,9 @@
-package com.shooot.application.api.service.query.test;
+package com.shooot.application.api.service.query.testcase;
 
 import com.shooot.application.api.domain.ApiTestCaseRequest;
 import com.shooot.application.api.domain.repository.ApiTestCaseRepository;
 import com.shooot.application.api.domain.repository.ApiTestCaseRequestRepository;
 import com.shooot.application.api.domain.repository.ApiTestLogRepository;
-import com.shooot.application.api.exception.api.ApiNotFoundException;
-import com.shooot.application.api.exception.testcase.TestCaseNotFoundException;
 import com.shooot.application.api.ui.dto.ApiTestCaseListView;
 import com.shooot.application.api.ui.dto.TestCaseView;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +37,8 @@ public class TestCaseGetService {
             ApiTestCaseRequest latestApiTestCaseRequest = apiTestCaseRequests.get(0);
 
             return TestCaseView.builder()
-                    .id(latestApiTestCaseRequest.getId())
+                    .id(latestApiTestCaseRequest.getApiTestCase().getId())
+                    .testCaseRequestId(latestApiTestCaseRequest.getId())
                     .type(latestApiTestCaseRequest.getType().name())
                     .content(latestApiTestCaseRequest.getContent())
                     .build();

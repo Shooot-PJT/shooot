@@ -1,5 +1,5 @@
 package com.shooot.application.api.domain;
 
 public enum ApiTestCaseRequestType {
-    MULTIPART, JSON
+    MULTIPART, JSON, NONE
 }
