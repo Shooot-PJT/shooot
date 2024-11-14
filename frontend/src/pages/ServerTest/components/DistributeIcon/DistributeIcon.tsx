@@ -3,14 +3,16 @@ import * as s from './DistributeIcon.css';
 
 interface DistributeIconProps {
   active: boolean;
+  onClick: () => void;
 }
 
-export const DistributeIcon = ({ active }: DistributeIconProps) => {
+export const DistributeIcon = ({ active, onClick }: DistributeIconProps) => {
   return (
     <div
       className={
         s.Container + ' ' + (active ? s.ActiveContainer : s.DeactiveContainer)
       }
+      onClick={onClick}
     >
       <HiRocketLaunch
         className={active ? s.ActiveIcon : s.DeactiveIcon}
