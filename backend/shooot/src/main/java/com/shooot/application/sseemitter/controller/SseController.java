@@ -45,7 +45,7 @@ public class SseController {
         return ResponseEntity.ok(subscribe);
     }
 
-    @GetMapping(value = "/projects/jarFile/{projectJarFileId}/connection")
+    @GetMapping(value = "/projects/jarFile/{projectJarFileId}/connection", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> connectionStressTest(
         @PathVariable Integer projectJarFileId,
         HttpServletResponse response
