@@ -99,22 +99,10 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
 
 
     public SseEmitter addEmitter(Integer projectId, Integer projectParticipantId) {
-        SseEmitter emitter = null;
-        if (projectEmitters.containsKey(projectId)) {
-            if (projectEmitters.get(projectId).containsKey(projectParticipantId)) {
-                emitter = projectEmitters.get(projectId).get(projectParticipantId);
-            } else {
-                emitter = projectEmitters.computeIfAbsent(projectId, k -> {
-                    addSubscriptionForProject(projectId);
-                    return new ConcurrentHashMap<>();
-                }).put(projectParticipantId, new SseEmitter(Long.MAX_VALUE));
-            }
-        } else {
-            emitter = projectEmitters.computeIfAbsent(projectId, k -> {
-                addSubscriptionForProject(projectId);
-                return new ConcurrentHashMap<>();
-            }).put(projectParticipantId, new SseEmitter(Long.MAX_VALUE));
-        }
+        SseEmitter emitter = projectEmitters.computeIfAbsent(projectId, k -> {
+            addSubscriptionForProject(projectId);
+            return new ConcurrentHashMap<>();
+        }).put(projectParticipantId, new SseEmitter(Long.MAX_VALUE));
 
         // 콜드 스트림 - 구독 시 이전 로그 데이터 전송
         List<MapRecord<String, Object, Object>> coldStreamLogs = redisTemplate.opsForStream()
@@ -161,11 +149,13 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
                     message = objectMapper.convertValue(dtoMap.get("message"), DockerMessage.class);
                     status = ProjectBuildStatus.BUILD_ERROR;
                     emitterType = PROJECT_STATUS;
+                    removeSubscriptionForProject(message.getProjectId());
                     break;
                 case DOCKER_RUNTIME_ERROR:
                     message = objectMapper.convertValue(dtoMap.get("message"), DockerMessage.class);
                     status = ProjectBuildStatus.RUNTIME_ERROR;
                     emitterType = PROJECT_STATUS;
+                    removeSubscriptionForProject(message.getProjectId());
                     break;
                 case DOCKER_RUN:
                     message = objectMapper.convertValue(dtoMap.get("message"), DockerMessage.class);
@@ -179,12 +169,8 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
                     break;
             }
 
-            if(Objects.equals(ProjectBuildStatus.BUILD_ERROR, status) || Objects.equals(ProjectBuildStatus.RUNTIME_ERROR, status)) {
-                removeSubscriptionForProject(message.getProjectId());
-            }
             ToStatusMessage toStatusMessage = new ToStatusMessage(message, status);
             String finalEmitterType = emitterType;
-
             projectEmitters.getOrDefault(message.getProjectId(), Map.of()).forEach((userId, emitter) -> sendLog(emitter, toStatusMessage, finalEmitterType));
         } catch (JsonProcessingException ignored) {
 
