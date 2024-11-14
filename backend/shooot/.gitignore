@@ -37,5 +37,3 @@ out/
 src/main/resources/application-*.yml
 ### VS Code ###
 .vscode/
-
-/src/main/generated/

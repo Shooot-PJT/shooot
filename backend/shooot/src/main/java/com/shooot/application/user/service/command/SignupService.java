@@ -27,7 +27,7 @@ public class SignupService {
             throw new UserExistException();
         }
 
-        emailValidationService.emailCanUseValidCheck(request.getEmail());
+        emailValidationService.emailCanUseValidCheck();
         emailValidationService.emailValidCheckRemove();
 
         User user = toUser(request);
