@@ -39,7 +39,7 @@ public class ApiView {
                 .managerName(api.getProjectParticipant().getUser().getNickname())
                 .title(api.getTitle())
                 .description(api.getDescription())
-                .method(api.getMethod().toLowerCase())
+                .method(api.getMethod() == null ? null : api.getMethod().toLowerCase())
                 .url(api.getUrl())
                 .example_url(api.getExampleUrl())
                 .example_content(api.getExampleContent())
