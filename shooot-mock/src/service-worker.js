@@ -1,8 +1,15 @@
 let projectName;
 let delay = 0;
 
+self.addEventListener("install", (event) => {
+    self.skipWaiting();
+});
+
+self.addEventListener("activate", (event) => {
+    event.waitUntil(self.clients.claim());
+});
+
 self.addEventListener("message", async function (event) {
-    console.log("[프로젝트 설정]==========");
     if (event.data && event.data.type === "SET_CONFIGS") {
         projectName = event.data.projectName;
         delay = event.data.delay;
@@ -12,22 +19,17 @@ self.addEventListener("message", async function (event) {
 });
 
 self.addEventListener("fetch", async function (event) {
-    console.log("[Fetch Event]==========");
-
-    if (projectName === undefined || !projectName.length) {
-        console.error("[Fetch Event]: projectName 을 등록해주세요");
-    } else {
+    if (projectName !== undefined && projectName.length) {
         const { request } = event;
         const url = new URL(request.url);
 
-        if (!url.origin.split(/[/.]/).includes(projectName)) {
-            console.error("[Fetch Event]: 서비스에서 제공되는 도메인으로의 요청만 mocking 됩니다");
-        } else {
+        if (url.origin.split(/[/.]/).includes(projectName)) {
             event.respondWith(
                 (async () => {
-                    const origin = url.origin;
+                    const contentType = request.headers.get("content-type");
+                    let endpoint = url.pathname;
                     const method = request.method;
-                    const headers = [...request.headers.entries()];
+                    const headers = Object.fromEntries(request.headers.entries());
                     const params = Object.fromEntries(url.searchParams.entries());
                     const requestParameters = {};
                     const pathVariables = {};
@@ -35,39 +37,62 @@ self.addEventListener("fetch", async function (event) {
                         const val = JSON.parse(params[key]);
                         Object.keys(val).forEach((v) => {
                             if (key === "requestParameters") requestParameters[v] = val[v];
-                            else pathVariables[v] = val[v];
+                            else {
+                                pathVariables[v] = val[v];
+                                endpoint += `/{${v}}`;
+                            }
                         });
                     });
-                    let body = {};
+                    const body = {
+                        formData: {
+                            datas: null,
+                            files: null,
+                        },
+                        raw: {
+                            datas: null,
+                            files: null,
+                        },
+                    };
                     if (["POST", "PUT", "PATCH"].includes(method)) {
-                        try {
-                            body = await request.clone().text();
-                        } catch (error) {
-                            console.log("[Fetch Event]: Body 가 비어있거나 파싱할 수 없습니다");
+                        if (contentType.includes("application/json")) {
+                            try {
+                                const datas = await request.clone().json();
+                                body["raw"].datas = datas;
+                            } catch (error) {
+                                console.log("[Fetch Event]: body 없음");
+                            }
+                        } else if (contentType.includes("text/plain")) {
+                            try {
+                                const datas = await request.clone().text();
+                                body["raw"].datas = datas;
+                            } catch (error) {
+                                console.log("[Fetch Event]: body 없음");
+                            }
+                        } else if (contentType.includes("multipart/form-data")) {
+                            try {
+                                const formData = await request.clone().formData();
+                                formData.forEach((val, key) => {
+                                    if (val instanceof File) {
+                                        if (!body["formData"].files) body["formData"].files = {};
+                                        body["formData"].files[key] = val;
+                                    } else {
+                                        if (!body["formData"].datas) body["formData"].datas = {};
+                                        body["formData"].datas[key] = val;
+                                    }
+                                });
+                            } catch (error) {
+                                console.log("[Fetch Event]: body 없음");
+                            }
                         }
+
+                        if (!body["formData"].datas && !body["formData"].files) body["formData"] = null;
+                        if (!body["raw"].datas && !body["raw"].files) body["raw"] = null;
                     }
 
-                    console.log(`[Fetch Event]: url ${url}`);
-                    console.log(`[Fetch Event]: origin ${origin}`);
-                    console.log(`[Fetch Event]: method ${method}`);
-                    console.log(`[Fetch Event]: headers ${headers}`);
-                    console.log("[Fetch Event]: request parameter {\n");
-                    Object.keys(requestParameters).forEach((v) => {
-                        console.log(`\t${v} : ${requestParameters[v]}`);
-                    });
-                    console.log("}");
-                    console.log("[Fetch Event]: path variables {\n");
-                    Object.keys(pathVariables).forEach((v) => {
-                        console.log(`\t${v} : ${pathVariables[v]}`);
-                    });
-                    console.log("}");
-                    console.log(`[Fetch Event]: body ${body}`);
                     console.log("[Fetch Event]: mocking 성공");
 
                     const postData = {
-                        projectName: projectName,
-                        url: url,
-                        origin: origin,
+                        endpoint: endpoint,
                         method: method,
                         headers: headers,
                         requestParameters: requestParameters,
@@ -75,7 +100,6 @@ self.addEventListener("fetch", async function (event) {
                         body: body,
                     };
 
-                    let result;
                     try {
                         const response = await fetch("https://shooot.co.kr/express/mock/data", {
                             method: "POST",
@@ -84,11 +108,10 @@ self.addEventListener("fetch", async function (event) {
                             },
                             body: JSON.stringify(postData),
                         });
-                        console.log(`[Fetch Event]: from express ${result}`);
-                        return new Response(JSON.stringify(await response.json()), { status: 200 });
+                        const result = await response.json();
+                        return new Response(JSON.stringify(result), { status: 200 });
                     } catch (error) {
-                        console.error(`[Fetch Event]: from express error`, error);
-                        return new Response(JSON.stringify({ error: "[Fetch Event]: server internal error" }), {
+                        return new Response(JSON.stringify({ result: "[Fetch Event]: express error" + error }), {
                             status: 500,
                         });
                     }
