@@ -185,4 +185,11 @@ public class ProjectController {
         return ResponseEntity.ok(findParticipantsService.findParticipantId(projectId, userId));
     }
 
+    @GetMapping("/{projectId}/participant-list")
+    public ResponseEntity<?> getProjectParticipantList(
+        @PathVariable(name = "projectId") Integer projectId
+    ){
+        return ResponseEntity.ok(findParticipantsService.findParticipantList(projectId));
+    }
+
 }

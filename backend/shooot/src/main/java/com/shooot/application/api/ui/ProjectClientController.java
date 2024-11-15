@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/projectClient")
@@ -26,8 +28,9 @@ public class ProjectClientController {
 
 
     @PostMapping("/postman")
-    public void logHeaders(@RequestHeader HttpHeaders headers) {
+    public void logHeaders(@RequestHeader HttpHeaders headers, @RequestBody Map<String, Object> requestBody) {
         // 헤더 정보 출력
         System.out.println("Received Headers: " + headers);
+        System.out.println("requestBody = " + requestBody);
     }
 }

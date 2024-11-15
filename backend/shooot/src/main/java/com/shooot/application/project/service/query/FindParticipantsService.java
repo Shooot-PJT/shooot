@@ -7,6 +7,8 @@ import com.shooot.application.project.domain.repository.ProjectRepository;
 import com.shooot.application.project.exception.ProjectNotParticipantException;
 import com.shooot.application.project.ui.dto.FindParticipantsResponse;
 import java.util.List;
+
+import com.shooot.application.project.ui.dto.ProjectParticipantMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,5 +36,15 @@ public class FindParticipantsService {
         if(projectParticipant == null) throw new ProjectNotParticipantException();
 
         return projectParticipant.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProjectParticipantMember> findParticipantList(Integer projectId){
+        List<ProjectParticipant> projectParticipantList = projectParticipantRepository.findByProjectIdMembers(projectId);
+
+        return projectParticipantList
+                .stream()
+                .map(ProjectParticipantMember::from)
+                .toList();
     }
 }
