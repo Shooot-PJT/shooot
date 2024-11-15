@@ -4,6 +4,14 @@ export type TestMethodType = 'FIXED' | 'SPIKE' | 'RAMP_UP';
 
 export type UploadState = 'Pending' | 'End' | 'Error' | 'None';
 
+export type ProjectStatus =
+  | 'BUILD_ERROR'
+  | 'RUN'
+  | 'RUNTIME_ERROR'
+  | 'DONE'
+  | 'NONE'
+  | 'DEPLOY';
+
 export interface APITestFormData {
   apiId: number;
   method: TestMethodType;
@@ -12,7 +20,7 @@ export interface APITestFormData {
   checked: boolean;
 }
 
-export interface APITestResponse {
+export interface APITestListResponse {
   includes: APIIncludeTestData[];
   excludes: APIExcludeTestData[];
 }
@@ -47,14 +55,6 @@ export interface DeleteJarFileRequest {
   projectJarFileId: number;
 }
 
-export type ProjectStatus =
-  | 'BUILD_ERROR'
-  | 'RUN'
-  | 'RUNTIME_ERROR'
-  | 'DONE'
-  | 'NONE'
-  | 'DEPLOY';
-
 export interface ProjectVersion {
   major: number;
   minor: number;
@@ -81,4 +81,20 @@ export interface DeployFileRequest {
 
 export interface StopDeployFileRequest {
   projectJarFileId: number;
+}
+
+export interface GetAPIConfigsRequest {
+  projectJarFileId: number;
+}
+
+export interface ExecuteApiTestRequest {
+  projectJarFileId: number;
+  endPointSettings: EndPointSetting[];
+}
+
+export interface EndPointSetting {
+  apiId: number;
+  method: TestMethodType;
+  vuserNum: number;
+  duration: number;
 }

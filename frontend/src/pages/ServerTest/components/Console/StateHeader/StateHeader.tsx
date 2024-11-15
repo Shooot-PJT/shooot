@@ -19,10 +19,10 @@ export const StateHeader = ({ state }: StateHeaderProps) => {
       );
     case 'DEPLOY':
       return (
-        <>
+        <div className={s.headerContainer}>
           <div className={s.DistributingCircle}></div>
           <div className={s.DistributingHeader}>프로젝트를 배포중입니다</div>
-        </>
+        </div>
       );
     case 'DONE':
       return (

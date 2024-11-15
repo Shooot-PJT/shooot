@@ -34,6 +34,7 @@ export const ServerTest = () => {
 
   const handleInitializeDeploy = () => {
     setLogs([]);
+    setProjectStatus('DONE');
     handleRender();
   };
 
