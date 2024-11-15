@@ -35,7 +35,7 @@ export const TestConfigForm = ({
           <Textfield
             ratio={2}
             ref={userInputRef}
-            value={vuser || 10}
+            value={vuser || ''}
             type="number"
             onChange={(e) => onChange('vuserNum', Number(e.target.value))}
           />
@@ -58,7 +58,7 @@ export const TestConfigForm = ({
           <Textfield
             ratio={2}
             ref={testTimeRef}
-            value={duration || 1}
+            value={duration || ''}
             type="number"
             onChange={(e) => onChange('duration', Number(e.target.value))}
           />
@@ -78,7 +78,7 @@ export const TestConfigForm = ({
         <HiCog6Tooth size={32} />
         <Typography weight="600"> 테스트 매서드 종류</Typography>
         <MethodSelectBox
-          value={testMethod}
+          value={testMethod || ''}
           options={['FIXED', 'SPIKE', 'RAMP_UP']}
           onChange={(value) => onChange('method', value)}
         />

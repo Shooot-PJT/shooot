@@ -7,7 +7,7 @@ import Flexbox from '../../../../components/Flexbox';
 import Typography from '../../../../components/Typography';
 import useModal from '../../../../hooks/useModal';
 import { Method } from '../../../APIDocs/types/methods';
-import { getAPIConfigs } from '../../apis/TestApi';
+import { excuteApiTest, getAPIConfigs } from '../../apis/TestApi';
 import {
   APIIncludeTestData,
   APITestFormData,
@@ -21,6 +21,7 @@ import { MethodChip } from '../MethodChip/MethodChip';
 import { TestConfigForm } from '../TestConfigForm/TestConfigForm';
 import * as s from './TestConfigModal.css';
 import { ExcuteTestModal } from '../ExcuteTestModal/ExcuteTestModal';
+import usePopup from '../../../../hooks/usePopup';
 
 interface TestConfigModalProps {
   projectJarFileId: number;
@@ -30,6 +31,7 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
   const [testFormData, setTestFormData] = useState<APITestFormData[]>([]);
   const [expandedRowIndex, setExpandedRowIndex] = useState<number>(-1);
   const modal = useModal();
+  const popup = usePopup();
   const colWidths = [15, 10, 25, 30, 10, 10];
 
   const { data: apiConfigs = {} as APITestListResponse } = useQuery({
@@ -61,14 +63,34 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
       .filter((item) => item.checked)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .map(({ checked, ...rest }) => rest);
+
     const request: ExecuteApiTestRequest = {
-      projectJarFileId: projectJarFileId,
-      endPointSettings: testConfig,
+      // projectJarFileId: projectJarFileId,
+      // endPointSettings: testConfig,
+      projectJarFileId: 49,
+      endPointSettings: [
+        {
+          apiId: 25,
+          method: 'FIXED',
+          vuserNum: 100,
+          duration: 10,
+        },
+      ],
     };
-    // modal.pop();
-    modal.push({
-      children: <ExcuteTestModal />,
-    });
+    excuteApiTest(request)
+      .then(() => {
+        modal.push({
+          children: <ExcuteTestModal projectJarFileId={49} />,
+        });
+      })
+      .catch(() => {
+        popup.push({
+          title: '테스트 시도 실패',
+          children: <></>,
+          type: 'fail',
+        });
+      });
+
     console.log(request);
   };
 
