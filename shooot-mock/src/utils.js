@@ -14,10 +14,9 @@ export const checkServiceWorker = async (keyword) => {
         try {
             const registration = await navigator.serviceWorker.getRegistration();
             if (registration.active.state === "activated") {
-                console.log(`[${keyword}]: service worker 확인되었습니다`);
                 return registration;
             } else {
-                console.log(`[${keyword}]: service worker controller 가 확인되지 않습니다`);
+                console.error(`[${keyword}]: service worker controller 가 확인되지 않습니다`);
                 return false;
             }
         } catch (error) {
