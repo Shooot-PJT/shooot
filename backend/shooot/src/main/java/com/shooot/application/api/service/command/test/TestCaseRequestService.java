@@ -14,14 +14,13 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -46,7 +45,7 @@ public class TestCaseRequestService {
     private final ApiTestCaseRequestRepository testCaseRequestRepository;
     private final ApiTestCaseRepository testCaseRepository;
 
-    private final String serverURL = "localhost:8081/";
+    private final String serverURL = "http://localhost:8081/";
 
     @Transactional
     public void testCaseResponse(Integer testcaseId){
@@ -299,31 +298,8 @@ public class TestCaseRequestService {
             sendRequestBodyToServer(method, url, headers, requestBody);
         } else{
             log.info("Content-type이 null 즉 none인걸로 유저 서버에 전송");
-//            sendNoneDataToServer(requestData);
+            sendNoneDataToServer(method, url, headers);
         }
-
-//        Optional<String> contentType = Optional.ofNullable(headers.get("Content-type"));
-//
-//        contentType.ifPresentOrElse(
-//                type -> {
-//                    if ("multipart/form-data".equals(type)) {
-//                        // multipart/form-data 처리 로직
-//                        log.info("multipart 타입으로 유저 서버에 전송");
-//                        sendFormDataToServer(method, url, headers, formData);
-//                    } else if ("application/json".equals(type)) {
-//                        // application/json 처리 로직
-//                        log.info("json 타입으로 유저 서버에 전송");
-//                        sendRequestBodyToServer(method, url, headers, requestBody);
-//                    } else {
-//                        log.info("Content-type이 이상한거 들어왔는데요?");
-//                        throw new RuntimeException("이거 보내면 안됩니다.");
-//                    }
-//                },
-//                () -> {
-//                    log.info("Content-type이 null 즉 none인걸로 유저 서버에 전송");
-////                    sendNoneDataToServer(requestData);
-//                }
-//        );
 
         return null;
 
@@ -367,28 +343,14 @@ public class TestCaseRequestService {
                     headers.forEach(httpHeaders::set);
                     httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
                 })
-//                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .body(BodyInserters.fromMultipartData(formData))
+                .body(formData)
                 .retrieve()
                 .toEntity(String.class);
-
-//        WebClient webClient = WebClient.create();
-//        ResponseEntity<?> response = webClient
-//                .method(HttpMethod.valueOf(method))
-//                .uri(url)
-//                .headers(httpHeaders -> headers.forEach(httpHeaders::set))
-//                .bodyValue(BodyInserters.fromMultipartData(formData))
-//                .exchangeToMono(responseEntity -> Mono.just(responseEntity));
-
 
 
         log.info("sendFromDataToServer = {}", response);
 
         return response;
-
-//        formData.add();
-//        return restClient.method(HttpMethod.valueOf(method))
-//                .
 
     }
 
@@ -401,9 +363,12 @@ public class TestCaseRequestService {
         ResponseEntity<String> response = restClient
                 .method(HttpMethod.valueOf(method))
                 .uri(url)
-                .headers(httpHeaders -> headers.forEach(httpHeaders::set))
+                .headers(httpHeaders -> {
+                    headers.forEach(httpHeaders::set);
+                    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+                })
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(requestBody))
+                .body(requestBody)
                 .retrieve()
                 .toEntity(String.class);
 
