@@ -36,6 +36,9 @@ public class ProjectDeployService {
         if (pb != null && pb.isDeploy()) {
             throw new FileIsDeploymentException();
         }
+        if (pb == null) {
+            pb = ProjectBuildLog.builder().projectBuild(projectBuild).build();
+        }
         pb.updateStatus(ProjectBuildStatus.RUN);
         projectBuildLogRepository.save(pb);
         try {
