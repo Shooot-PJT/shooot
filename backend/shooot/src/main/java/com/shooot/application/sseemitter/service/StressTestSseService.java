@@ -15,13 +15,17 @@ public class StressTestSseService {
     private final ConcurrentHashMap<Integer, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
 
     public SseEmitter add(Integer projectJarFileId) {
-        SseEmitter sseEmitter = new SseEmitter();
+        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
         try {
             sseEmitter.send(SseEmitter.event().name("connect").data("connected!"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return sseEmitters.put(projectJarFileId, sseEmitter);
+
+        sseEmitter.onTimeout(() -> sseEmitters.remove(projectJarFileId));
+        sseEmitter.onCompletion(() -> sseEmitters.remove(projectJarFileId));
+        sseEmitters.put(projectJarFileId, sseEmitter);
+        return sseEmitter;
     }
 
     public void send(Integer projectJarFileId, StressTestDto dto) {
@@ -30,7 +34,7 @@ public class StressTestSseService {
             sseEmitter.send(
                 SseEmitter.event().name("test_data").data(dto, MediaType.APPLICATION_JSON));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            sseEmitter.complete();
         }
     }
 }
