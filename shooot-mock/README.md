@@ -25,8 +25,6 @@ npx create-react-app my-project --template typescript
 cd my-project
 ```
 
----
-
 ## 1. 라이브러리 설치
 
 `shooot` 라이브러리를 본인의 프로젝트에 설치해보세요.
@@ -45,8 +43,6 @@ npx shooot init <DIR>
 
 -   React 혹은 Vue 라면 public 폴더의 경로를 입력해주세요.
 -   Vanilla 환경이라면 원하는 경로를 입력해주세요.
-
----
 
 ## 2. 사용
 
