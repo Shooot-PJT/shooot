@@ -24,4 +24,7 @@ public interface ProjectParticipantRepository extends JpaRepository<ProjectParti
     );
 
     List<ProjectParticipant> findByUser(User user);
+
+    @Query("SELECT pp FROM ProjectParticipant pp WHERE pp.project.id = :projectId")
+    List<ProjectParticipant> findByProjectIdMembers(@Param("projectId") Integer projectId);
 }

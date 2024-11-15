@@ -10,16 +10,21 @@ import com.shooot.application.common.infra.storage.exception.FileNotFoundExcepti
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.BodyInserter;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +45,7 @@ public class TestCaseRequestService {
     private final ApiTestCaseRequestRepository testCaseRequestRepository;
     private final ApiTestCaseRepository testCaseRepository;
 
-    private final String serverURL = "localhost:8081/";
+    private final String serverURL = "http://localhost:8081/";
 
     @Transactional
     public void testCaseResponse(Integer testcaseId){
@@ -64,7 +69,7 @@ public class TestCaseRequestService {
         String parameters = extractParameters(content);
         log.info("parameters = {}", parameters);
 
-        String url = requestURL + parameters;
+        String url = serverURL + requestURL + parameters;
         log.info("complete URL = {}", url);
 
         Map<String, Object> body = (Map<String, Object>) content.get("body");
@@ -84,7 +89,7 @@ public class TestCaseRequestService {
 //        requestData.put("requestBody", requestBody);
 //        requestData.put("formData", formData);
         // TODO : 사용자의 spring에 rest보내기
-        restToUserServer(requestMethod, url, headers, requestBody, formData);
+        ResponseEntity<?> response = restToUserServer(requestMethod, url, headers, requestBody, formData, latestRequest.getType());
 
 
         // TODO : response를 api_test_log 테이블에 데이터 저장하기
@@ -107,7 +112,9 @@ public class TestCaseRequestService {
         if(pathVariableMap == null) return url;
 
         for(String key : pathVariableMap.keySet()){
-            String value = (String) pathVariableMap.get(key);
+//            String value = (String) pathVariableMap.get(key);
+            List<Object> list = (List<Object>) pathVariableMap.get(key);
+            String value = (String) list.get(0);
 
             url = url.replace("{" + key + "}", value);
         }
@@ -129,11 +136,11 @@ public class TestCaseRequestService {
             newHeadersMap.put(key, (String) headerDetail.get(0));
         }
 
-        if(contentType.toString().toUpperCase().equals("MULTIPART")){
-            newHeadersMap.put("Content-type", "multipart/form-data");
-        } else if(contentType.toString().toUpperCase().equals("JSON")){
-            newHeadersMap.put("Content-type", "application/json");
-        }
+//        if(contentType.toString().toUpperCase().equals("MULTIPART")){
+//            newHeadersMap.put("Content-type", "multipart/form-data");
+//        } else if(contentType.toString().toUpperCase().equals("JSON")){
+//            newHeadersMap.put("Content-type", "application/json");
+//        }
 
         return newHeadersMap;
     }
@@ -250,7 +257,9 @@ public class TestCaseRequestService {
                 log.info("fileSize = {}", file.length());
                 log.info("fileSize = {}", Files.readAllBytes(path).length);
 
-                filesData.put(key, Files.readAllBytes(path));
+//                filesData.put(key, Files.readAllBytes(path));
+//                filesData.put(key, new FileSystemResource(path));
+                filesData.put(key, fileLocation);
             } catch(IOException e){
                 e.printStackTrace();
                 log.info("File에서 업로드하는데 문제가 생김");
@@ -263,12 +272,13 @@ public class TestCaseRequestService {
     }
 
     //restToUserServer(method, url, headers, requestBody, formData);
-    private void restToUserServer(
+    private ResponseEntity<?> restToUserServer(
             String method,
             String url,
             Map<String, String> headers,
             Map<String, Object> requestBody,
-            Map<String, Object> formData
+            Map<String, Object> formData,
+            ApiTestCaseRequestType contentType
     ){
         /*
                 requestData.put("method", method);
@@ -277,33 +287,25 @@ public class TestCaseRequestService {
                 requestData.put("requestBody", requestBody);
                 requestData.put("formData", formData); map안에 key = data, files 2개 있음
          */
-        Optional<String> contentType = Optional.ofNullable(headers.get("Content-type"));
 
-        contentType.ifPresentOrElse(
-                type -> {
-                    if ("multipart/form-data".equals(type)) {
-                        // multipart/form-data 처리 로직
-                        log.info("multipart 타입으로 유저 서버에 전송");
-                        sendFormDataToServer(method, url, headers, formData);
-                    } else if ("application/json".equals(type)) {
-                        // application/json 처리 로직
-                        log.info("json 타입으로 유저 서버에 전송");
-//                        sendRequestBodyToServer(requestData);
-                    } else {
-                        log.info("Content-type이 이상한거 들어왔는데요?");
-                        throw new RuntimeException("이거 보내면 안됩니다.");
-                    }
-                },
-                () -> {
-                    log.info("Content-type이 null 즉 none인걸로 유저 서버에 전송");
-//                    sendNoneDataToServer(requestData);
-                }
-        );
+        log.info("Test to Server, method = {}, url = {}, headers = {}, requestBody = {}, formData = {}, content-type={}", method, url, headers, requestBody, formData, contentType);
 
+        if(contentType == ApiTestCaseRequestType.MULTIPART){
+            log.info("multipart 타입으로 유저 서버에 전송");
+            sendFormDataToServer(method, url, headers, formData);
+        } else if(contentType == ApiTestCaseRequestType.JSON){
+            log.info("json 타입으로 유저 서버에 전송");
+            sendRequestBodyToServer(method, url, headers, requestBody);
+        } else{
+            log.info("Content-type이 null 즉 none인걸로 유저 서버에 전송");
+            sendNoneDataToServer(method, url, headers);
+        }
+
+        return null;
 
     }
 
-    private String sendFormDataToServer(
+    private ResponseEntity<?> sendFormDataToServer(
             String method,
             String url,
             Map<String, String> headers,
@@ -312,19 +314,80 @@ public class TestCaseRequestService {
 
 
         MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
-//        formData.add();
-//        return restClient.method(HttpMethod.valueOf(method))
-//                .
+        Map<String, String> requestFiles = (Map<String, String>) requestFormData.get("files");
+        Map<String, Object> requestDatas = (Map<String, Object>) requestFormData.get("data");
+        log.info("files = {}", requestFiles);
+        log.info("datas = {}", requestDatas);
 
-        return null;
+//        log.info("file Data = {}", requestFiles.get("file1"));
+        if(requestFiles != null){
+            for(String key : requestFiles.keySet()){
+                formData.add(key, new FileSystemResource(requestFiles.get(key)));
+            }
+//            requestFiles.forEach(formData::add);
+        }
+
+        if(requestDatas != null){
+            for(String key : requestDatas.keySet()){
+                formData.add(key, requestDatas.get(key));
+            }
+//            requestDatas.forEach(formData::add);
+        }
+        log.info("다른 서ㅏ버로 보낼 데이터 = {}", requestDatas);
+
+
+        ResponseEntity<?> response = restClient
+                .method(HttpMethod.valueOf(method))
+                .uri(url)
+                .headers(httpHeaders -> {
+                    headers.forEach(httpHeaders::set);
+                    httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+                })
+                .body(formData)
+                .retrieve()
+                .toEntity(String.class);
+
+
+        log.info("sendFromDataToServer = {}", response);
+
+        return response;
+
     }
 
-    private String sendRequestBodyToServer(Map<String, Object> requestData){
-        return null;
+    private ResponseEntity<?> sendRequestBodyToServer(
+            String method,
+            String url,
+            Map<String, String> headers,
+            Map<String, Object> requestBody
+    ){
+        ResponseEntity<String> response = restClient
+                .method(HttpMethod.valueOf(method))
+                .uri(url)
+                .headers(httpHeaders -> {
+                    headers.forEach(httpHeaders::set);
+                    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+                })
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(requestBody)
+                .retrieve()
+                .toEntity(String.class);
+
+        return response;
     }
 
-    private String sendNoneDataToServer(Map<String, Object> requestData){
-        return null;
+    private ResponseEntity<String> sendNoneDataToServer(
+            String method,
+            String url,
+            Map<String, String> headers
+    ){
+        ResponseEntity<String> response = restClient
+                .method(HttpMethod.valueOf(method))
+                .uri(url)
+                .headers(httpHeaders -> headers.forEach(httpHeaders::set))
+                .retrieve()
+                .toEntity(String.class);
+
+        return response;
     }
 
 }
