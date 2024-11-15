@@ -16,8 +16,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamListener;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.Subscription;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -31,7 +29,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRecord<String, String, String>>, ConsoleLogStreamSubscriberInterface {
+public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRecord<String, String, String>> {
 
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
@@ -56,25 +54,24 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
 
         listenerContainer = StreamMessageListenerContainer.create(Objects.requireNonNull(redisTemplate.getConnectionFactory()), options);
         listenerContainer.start();
-        addSubscriptionForProject(2);
     }
 
-    @Override
-    @Async
-    @Scheduled(cron = "*/10 * * * * *")
-    public void executeSseConnectionCheck() {
-        projectEmitters.forEach((projectId, integerSseEmitterMap) -> {
-            integerSseEmitterMap.forEach((userId, sseEmitter) -> {
-                try {
-                    sseEmitter.send(SseEmitter.event().name("connection").data("connected"));
-                    log.info("projectId : {}, emit user : {}", projectId, userId);
-                } catch (IOException ignored) {
-                    sseEmitter.completeWithError(ignored);
-                    projectEmitters.get(projectId).remove(userId);
-                }
-            });
-        });
-    }
+//    @Override
+//    @Async
+//    @Scheduled(cron = "*/10 * * * * *")
+//    public void executeSseConnectionCheck() {
+//        projectEmitters.forEach((projectId, integerSseEmitterMap) -> {
+//            integerSseEmitterMap.forEach((userId, sseEmitter) -> {
+//                try {
+//                    sseEmitter.send(SseEmitter.event().name("connection").data("connected"));
+//                    log.info("projectId : {}, emit user : {}", projectId, userId);
+//                } catch (IOException ignored) {
+//                    sseEmitter.completeWithError(ignored);
+//                    projectEmitters.get(projectId).remove(userId);
+//                }
+//            });
+//        });
+//    }
 
     public void addSubscriptionForProject(Integer projectId) {
         if (subscriptions.containsKey(projectId)) {
@@ -83,7 +80,7 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
         redisTemplate.opsForStream().trim("project_logs_" + projectId, 1000);
 
         Subscription subscription = listenerContainer.receive(
-                StreamOffset.latest("project_logs_" + projectId), // 새로운 메시지만 가져오도록 설정
+                StreamOffset.fromStart("project_logs_" + projectId), // 새로운 메시지만 가져오도록 설정
                 this);
 
         subscriptions.put(projectId, subscription);
@@ -99,10 +96,8 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
 
     public SseEmitter addEmitter(Integer projectId, Integer projectParticipantId) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        projectEmitters.computeIfAbsent(projectId, k -> {
-            addSubscriptionForProject(projectId);
-            return new ConcurrentHashMap<>();
-        }).put(projectParticipantId, emitter);
+        projectEmitters.computeIfAbsent(projectId, k -> new ConcurrentHashMap<>()
+        ).put(projectParticipantId, emitter);
 
         // 콜드 스트림 - 구독 시 이전 로그 데이터 전송
         List<MapRecord<String, Object, Object>> coldStreamLogs = redisTemplate.opsForStream()
@@ -155,6 +150,7 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
 
     private void sendLog(SseEmitter emitter, Object message, String emitterName) {
         try {
+//            log.info("[emitter Name] : {}, [emitter data] : {}", emitterName, message);
             emitter.send(SseEmitter.event().name(emitterName).data(message));
         } catch (IOException e) {
             emitter.completeWithError(e);
@@ -165,7 +161,6 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
         try {
             String jsonMessage = record.getValue().get("message");
             Map<String, Object> dtoMap = objectMapper.readValue(jsonMessage, Map.class);
-            log.info("[] : {}", dtoMap.get("message"));
 
             MessageDto.Type type = MessageDto.Type.valueOf((String) dtoMap.get("type"));
 
@@ -180,9 +175,11 @@ public class ConsoleLogStreamSubscriber implements StreamListener<String, MapRec
             }
 
             Message finalMessage = message;
+
             emitter.send(SseEmitter.event()
                     .name(emitterType)
                     .data(finalMessage));
+//            log.info("[emitter Name] : {}, [emitter data] : {}", emitterType, finalMessage);
 
         } catch (IOException e) {
             emitter.completeWithError(e);
