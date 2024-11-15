@@ -16,6 +16,11 @@ const blinkAnimation = keyframes({
   },
 });
 
+export const headerContainer = style({
+  display: 'flex',
+  alignItems: 'center',
+});
+
 export const DistributingHeader = style({
   fontWeight: '600',
   marginLeft: '0.5rem',

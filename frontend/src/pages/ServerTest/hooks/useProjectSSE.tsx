@@ -18,7 +18,10 @@ export const useProjectSSE = ({
   const eventSourceRef = useRef<EventSource | null>(null);
 
   useEffect(() => {
+    setLogs([]);
+    setProjectStatus('NONE');
     if (!eventSourceRef.current) {
+      console.log('커넥션 연결');
       const eventSource = new EventSource(
         `https://shooot.co.kr/api/sse/project/${project}/connection`,
         { withCredentials: true },
@@ -36,10 +39,6 @@ export const useProjectSSE = ({
           console.error('Failed to parse data:', e);
         }
       };
-
-      // eventSourceRef.current.onopen = (event) => {
-      //   console.log('열림');
-      // };
 
       eventSourceRef.current.addEventListener('project_log', (event) => {
         try {
@@ -68,11 +67,12 @@ export const useProjectSSE = ({
 
     return () => {
       if (eventSourceRef.current) {
+        console.log('커넥션 종료');
         eventSourceRef.current.close();
         eventSourceRef.current = null;
       }
     };
-  }, [eventSourceRef]);
+  }, [onLogReceived, onStatusReceived, project]);
 
   return {
     projectStatus,

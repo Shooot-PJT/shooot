@@ -151,7 +151,7 @@ export const Graph = ({ frameColor, lineColor }: GraphProps) => {
       const xPos = i === 5 ? 4 : i === 0 ? 11 : 6;
       context.fillText(`${value}`, xPos, 155 - value * 1.45);
     }
-  }, [texts, points, hoveredPoint]);
+  }, [texts, points]);
 
   const animate = useCallback(() => {
     setTexts((prevTexts) =>
@@ -205,7 +205,6 @@ export const Graph = ({ frameColor, lineColor }: GraphProps) => {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <h3>실시간 그래프</h3>
       <canvas
         ref={canvasRef}
         style={
