@@ -34,10 +34,8 @@ shooot.axios.get = async function (url, config = {}, pathVariables = {}) {
     const domainState = checkDomain(to, shooot.projectName);
     const newConfig =
         swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log("[Axios-Get]==========");
-    console.log("[Axios-Get]: url", to);
-    console.log("[Axios-Get]: newConfig", newConfig);
-    return axios.get(to, newConfig);
+
+    return axios.get(swState && domainState ? url : to, newConfig);
 };
 
 /**
@@ -61,12 +59,8 @@ shooot.axios.post = async function (url, data = {}, config = {}, pathVariables =
     const domainState = checkDomain(to, shooot.projectName);
     const newConfig =
         swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log("[Axios-Post]==========");
-    console.log("[Axios-Post]: url", to);
-    console.log("[Axios-Post]: newConfig", newConfig);
-    console.log("[Axios-Post]: data");
-    Object.keys(data).forEach((v) => console.log(`(${v} : ${data[v]})`));
-    return axios.post(to, data, newConfig);
+
+    return axios.post(swState && domainState ? url : to, data, newConfig);
 };
 
 /**
@@ -90,12 +84,8 @@ shooot.axios.put = async function (url, data = {}, config = {}, pathVariables = 
     const domainState = checkDomain(to, shooot.projectName);
     const newConfig =
         swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log("[Axios-Put]==========");
-    console.log("[Axios-Put]: url", to);
-    console.log("[Axios-Put]: newConfig", newConfig);
-    console.log("[Axios-Put]: data");
-    Object.keys(data).forEach((v) => console.log(`(${v} : ${data[v]})`));
-    return axios.put(to, data, newConfig);
+
+    return axios.put(swState && domainState ? url : to, data, newConfig);
 };
 /**
  * Custom PATCH request
@@ -118,12 +108,8 @@ shooot.axios.patch = async function (url, data = {}, config = {}, pathVariables 
     const domainState = checkDomain(to, shooot.projectName);
     const newConfig =
         swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log("[Axios-Patch]==========");
-    console.log("[Axios-Patch]: url", to);
-    console.log("[Axios-Patch]: newConfig", newConfig);
-    console.log("[Axios-Patch]: data");
-    Object.keys(data).forEach((v) => console.log(`(${v} : ${data[v]})`));
-    return axios.patch(to, data, newConfig);
+
+    return axios.patch(swState && domainState ? url : to, data, newConfig);
 };
 
 /**
@@ -146,10 +132,8 @@ shooot.axios.delete = async function (url, config = {}, pathVariables = {}) {
     const domainState = checkDomain(to, shooot.projectName);
     const newConfig =
         swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-    console.log("[Axios-Delete]==========");
-    console.log("[Axios-Delete]: url", to);
-    console.log("[Axios-Delete]: newConfig", newConfig);
-    return axios.delete(to, newConfig);
+
+    return axios.delete(swState && domainState ? url : to, newConfig);
 };
 
 shooot.register = async function () {
@@ -196,7 +180,6 @@ shooot.controller = async function (mode) {
 shooot.setConfigs = async function (projectName, delay) {
     const projectNameRegex = /^[a-z0-9-]{1,20}$/;
 
-    console.log("[Set-Config]==========");
     if (!projectName) {
         console.error("[Set-Config]: projectName 을 입력해주세요");
     } else if (!projectName.trim().length || !projectNameRegex.test(projectName.trim())) {
@@ -220,7 +203,6 @@ shooot.setConfigs = async function (projectName, delay) {
                 };
 
                 checkServiceWorkerResult.active.postMessage(message);
-                console.log(`[Set-Config]: message 를 전달했습니다`);
             }
         } else if (canUse === "UNAVAILABLE") {
             // 등록되지 않은 프로젝트
