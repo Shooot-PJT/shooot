@@ -60,6 +60,13 @@ export default createTheme(themeContract, {
       disabled: colorPalette.deepOrange['50'],
       contrastText: '#ffffff',
     },
+    grey: {
+      main: colorPalette.grey['800'],
+      hover: colorPalette.grey['700'],
+      active: colorPalette.grey['500'],
+      disabled: colorPalette.grey['900'],
+      contrastText: '#ffffff',
+    },
   },
   color: {
     typography: {
@@ -77,6 +84,88 @@ export default createTheme(themeContract, {
       originalGreen: '#00ff00',
       originalBlue: '#0000ff',
       disabled: colorPalette.grey['500'],
+    },
+    icon: {
+      primary: colorPalette.purple['500'],
+      secondary: colorPalette.brown['500'],
+      tertiary: colorPalette.pink['500'],
+      get: colorPalette.green['500'],
+      post: colorPalette.amber['500'],
+      put: colorPalette.blue['500'],
+      patch: colorPalette.purple['500'],
+      delete: colorPalette.deepOrange['500'],
+      dark: '#000',
+      light: '#fff',
+      disabled: colorPalette.grey['500'],
+    },
+    iconbackground: {
+      primary: colorPalette.purple['50'],
+      secondary: colorPalette.brown['50'],
+      tertiary: colorPalette.pink['50'],
+      get: colorPalette.green['50'],
+      post: colorPalette.amber['50'],
+      put: colorPalette.blue['50'],
+      patch: colorPalette.purple['50'],
+      delete: colorPalette.deepOrange['50'],
+      dark: colorPalette.grey['50'],
+      light: colorPalette.grey['50'],
+      disabled: colorPalette.grey['50'],
+    },
+    textfield: {
+      background: colorPalette.util['300'],
+      placeholder: colorPalette.grey['500'],
+      border: '#8C8CB6',
+      primary: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.purple['300'],
+      },
+      secondary: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.brown['300'],
+      },
+      tertiary: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.pink['300'],
+      },
+      grey: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.grey['300'],
+      },
+      get: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.green['300'],
+      },
+      post: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.amber['300'],
+      },
+      put: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.blue['300'],
+      },
+      delete: {
+        fontColor: colorPalette.grey['200'],
+        borderActive: colorPalette.deepOrange['500'],
+      },
+      none: {
+        fontColor: colorPalette.light,
+        border: colorPalette.grey[800],
+        borderRadius: '0.2rem',
+        background: colorPalette.grey[800],
+        backgroundActive: colorPalette.util[400],
+      },
+    },
+    stateicon: {
+      approved: colorPalette.green[500],
+      pending: colorPalette.blue[500],
+      disabled: colorPalette.deepOrange[500],
+      error: colorPalette.amber[500],
+      notbuilded: colorPalette.grey[500],
+    },
+    background: {
+      100: colorPalette.util['100'],
+      200: colorPalette.util['200'],
+      300: colorPalette.util['300'],
     },
   },
 });

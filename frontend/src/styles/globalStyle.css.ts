@@ -12,3 +12,7 @@ globalStyle('*', {
   fontFamily: 'Pretendard',
   WebkitTapHighlightColor: 'transparent',
 });
+
+globalStyle('::-webkit-scrollbar', {
+  display: 'none',
+});
