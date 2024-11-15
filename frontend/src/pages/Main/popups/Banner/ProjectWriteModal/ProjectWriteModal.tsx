@@ -44,14 +44,17 @@ export const ProjectWriteModal = ({ type = 'add' }: ProjectWriteModalProps) => {
   /* 핸들러 */
   const imgHandler = () => {
     const logo = logoImg.current!.files![0];
+    console.log(logo.type);
 
     if (logo) {
-      if (logo.type !== 'image/*' && logo.type !== '.gif') {
+      if (!logo.type.startsWith('image/')) {
         popup.push({
           title: '이미지',
           children: <Typography>사진 혹은 gif 파일만 가능합니다</Typography>,
           type: 'fail',
         });
+
+        if (!imgSrc) logoImg.current!.value = '';
       } else {
         const url = URL.createObjectURL(logo);
         setImgSrc(url);
