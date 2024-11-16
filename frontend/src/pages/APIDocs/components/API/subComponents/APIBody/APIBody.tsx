@@ -150,13 +150,6 @@ export const APIBody = () => {
               <Button color="grey" rounded={0.3}>
                 삭제
               </Button>
-              <Button
-                color="primary"
-                rounded={0.3}
-                onClick={handleAddTestCaseClick}
-              >
-                테스트케이스 추가
-              </Button>
             </Flexbox>
           </Flexbox>
           {/* 1.2 RIGHT: API 요청 정의서 & 테스트케이스 리스트 섹션 */}
@@ -179,32 +172,39 @@ export const APIBody = () => {
                   height: '0.25rem',
                   backgroundColor: colorPalette.util['300'],
                   borderRadius: '999rem',
-                  margin: '2rem 0rem',
+                  margin: '0.5rem 0rem',
                 }}
               />
-
-              {/* 1.2.2 RIGHT-BOTTOM: 테스트케이스 리스트 섹션 */}
-              {apiDetail.testCases && apiDetail.testCases.length > 0 ? (
-                apiDetail.testCases.map((testCase) => (
+              <Button
+                color="primary"
+                rounded={0.3}
+                onClick={handleAddTestCaseClick}
+              >
+                테스트케이스 추가
+              </Button>
+              <Flexbox flexDirections="col">
+                {/* 추가: 새로운 테스트케이스를 추가할 수 있는 TestCaseTable 추가 */}
+                {isAdding && (
                   <TestCaseTable
-                    key={testCase.id}
-                    testCaseId={testCase.id}
+                    isAddMode
                     apiId={apiId}
+                    onAddSuccess={() => setIsAdding(false)}
+                    onCancel={() => setIsAdding(false)}
                   />
-                ))
-              ) : (
-                <div>테스트케이스가 없습니다.</div>
-              )}
-
-              {/* 추가: 새로운 테스트케이스를 추가할 수 있는 TestCaseTable 추가 */}
-              {isAdding && (
-                <TestCaseTable
-                  isAddMode
-                  apiId={apiId}
-                  onAddSuccess={() => setIsAdding(false)}
-                  onCancel={() => setIsAdding(false)}
-                />
-              )}
+                )}
+                {/* 1.2.2 RIGHT-BOTTOM: 테스트케이스 리스트 섹션 */}
+                {apiDetail.testCases && apiDetail.testCases.length > 0 ? (
+                  apiDetail.testCases.map((testCase) => (
+                    <TestCaseTable
+                      key={testCase.id}
+                      testCaseId={testCase.id}
+                      apiId={apiId}
+                    />
+                  ))
+                ) : (
+                  <div>테스트케이스가 없습니다.</div>
+                )}
+              </Flexbox>
             </Flexbox>
           </Flexbox>
         </Flexbox>
