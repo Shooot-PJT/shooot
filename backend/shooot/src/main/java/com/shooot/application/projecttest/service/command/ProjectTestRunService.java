@@ -7,10 +7,12 @@ import com.shooot.application.projecttest.domain.repository.ApiTestMethodReposit
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
 import com.shooot.application.projecttest.event.dto.ProjectTestRequestedEvent;
 import com.shooot.application.projecttest.exception.FileIsNotExistException;
+import com.shooot.application.projecttest.exception.TestAlreadyRunningException;
 import com.shooot.application.projecttest.service.dto.ApiTestMethodRequest;
 import com.shooot.application.projecttest.service.dto.ProjectBuildTestRunRequest;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +23,14 @@ public class ProjectTestRunService {
 
     private final ApiTestMethodRepository apiTestMethodRepository;
     private final ProjectBuildRepository projectBuildRepository;
+    private final ConcurrentHashMap<Integer, String> running = new ConcurrentHashMap<>();
 
     @Transactional
     public void testRunRequest(ProjectBuildTestRunRequest request) {
+
+        if (running.containsKey(request.getProjectJarFileId())) {
+            throw new TestAlreadyRunningException();
+        }
 
         ProjectBuild projectBuild = projectBuildRepository.findById(request.getProjectJarFileId())
             .orElseThrow(FileIsNotExistException::new);
@@ -42,5 +49,9 @@ public class ProjectTestRunService {
         });
 
         Events.raise(new ProjectTestRequestedEvent(apiIds, request.getProjectJarFileId()));
+    }
+
+    public void finish(Integer projectJarFileId) {
+        running.remove(projectJarFileId);
     }
 }

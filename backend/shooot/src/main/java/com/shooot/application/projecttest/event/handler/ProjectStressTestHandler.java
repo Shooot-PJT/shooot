@@ -8,6 +8,7 @@ import com.shooot.application.projecttest.domain.ProjectBuild;
 import com.shooot.application.projecttest.domain.repository.ApiTestMethodRepository;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
 import com.shooot.application.projecttest.event.dto.ProjectTestRequestedEvent;
+import com.shooot.application.projecttest.service.command.ProjectTestRunService;
 import com.shooot.application.projecttest.subscriber.ProjectMonitorStreamSubscriber;
 import com.shooot.application.sseemitter.service.StressTestSseService;
 import com.shooot.application.stresstest.service.StressTestService;
@@ -30,6 +31,7 @@ public class ProjectStressTestHandler {
     private final ProjectMonitorStreamSubscriber projectMonitorStreamSubscriber;
     private final RestTemplate restTemplate = new RestTemplate();
     private final StressTestSseService stressTestSseService;
+    private final ProjectTestRunService projectTestRunService;
 
     private String requestUrl = "http://khj745700.iptime.org:8080/stress-test/start";
 
@@ -74,5 +76,7 @@ public class ProjectStressTestHandler {
 
         projectMonitorStreamSubscriber.removeSubscriptionForProject(
             projectBuild.getProject().getId());
+
+        projectTestRunService.finish(event.getProjectJarFileId());
     }
 }
