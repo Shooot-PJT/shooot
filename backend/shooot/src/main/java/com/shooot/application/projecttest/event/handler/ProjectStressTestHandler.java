@@ -8,8 +8,7 @@ import com.shooot.application.projecttest.domain.ProjectBuild;
 import com.shooot.application.projecttest.domain.repository.ApiTestMethodRepository;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
 import com.shooot.application.projecttest.event.dto.ProjectTestRequestedEvent;
-import com.shooot.application.sseemitter.service.StressTestSseService;
-import com.shooot.application.stresstest.controller.dto.StressTestDto;
+import com.shooot.application.projecttest.subscriber.ProjectMonitorStreamSubscriber;
 import com.shooot.application.stresstest.service.StressTestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -25,8 +24,8 @@ public class ProjectStressTestHandler {
     private final ApiRepository apiRepository;
     private final StressTestService stressTestService;
     private final ApiTestMethodRepository apiTestMethodRepository;
-    private final StressTestSseService stressTestSseService;
     private final ProjectBuildRepository projectBuildRepository;
+    private final ProjectMonitorStreamSubscriber projectMonitorStreamSubscriber;
 
     @Async
     @EventListener
@@ -37,6 +36,9 @@ public class ProjectStressTestHandler {
 
         String baseUrl = "https://%s.shooot.shop".formatted(
             projectBuild.getProject().getEnglishName());
+
+        projectMonitorStreamSubscriber.addSubscriptionForProject(
+            projectBuild.getProject().getId());
 
         event.getApiId().forEach(apiId -> {
             Api api = apiRepository.findById(apiId).orElseThrow(ApiNotFoundException::new);
@@ -51,19 +53,14 @@ public class ProjectStressTestHandler {
                     apiTestMethod.getTestDuration());
             }
 
-            long currentTime = System.currentTimeMillis();
-            long endTime = currentTime + apiTestMethod.getTestDuration() * 1000;
-
-            while (System.currentTimeMillis() < endTime) {
-                StressTestDto data = stressTestService.getData(event.getProjectJarFileId());
-                System.out.println("test: " + data.getCpuUtilization());
-                stressTestSseService.send(event.getProjectJarFileId(), data);
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+            try {
+                Thread.sleep(apiTestMethod.getTestDuration());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         });
+
+        projectMonitorStreamSubscriber.removeSubscriptionForProject(
+            projectBuild.getProject().getId());
     }
 }
