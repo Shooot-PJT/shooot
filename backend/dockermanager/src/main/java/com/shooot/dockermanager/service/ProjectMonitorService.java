@@ -65,10 +65,11 @@ public class ProjectMonitorService {
 
             try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(process.getInputStream()))) {
-                String line;
                 while (System.currentTimeMillis() < endTime) {
                     Double cpu = getCpu(reader);
                     System.out.println(cpu);
+                    Double ram = getRam(reader);
+                    System.out.println(ram);
                     projectMonitorMessagePublisher.publish(
                         ProjectMonitorMessage.builder()
                             .projectId(projectId)
@@ -98,6 +99,25 @@ public class ProjectMonitorService {
                     if (columns.length > 5) {
                         String idleValue = columns[7];
                         Double value = Double.parseDouble(idleValue);
+                        return value;
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    private double getRam(BufferedReader br) throws IOException {
+        String line;
+        while ((line = br.readLine()) != null) {
+            System.out.println(line);
+            if (line.contains("%memused")) {
+                String nextLine = br.readLine();
+                if (nextLine != null) {
+                    String[] columns = nextLine.trim().split("\\s+");
+                    if (columns.length > 4) {
+                        String ramValue = columns[4];
+                        Double value = Double.parseDouble(ramValue);
                         return value;
                     }
                 }
