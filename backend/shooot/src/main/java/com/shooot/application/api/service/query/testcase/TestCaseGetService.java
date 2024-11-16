@@ -1,5 +1,6 @@
 package com.shooot.application.api.service.query.testcase;
 
+import com.shooot.application.api.domain.ApiTestCase;
 import com.shooot.application.api.domain.ApiTestCaseRequest;
 import com.shooot.application.api.domain.repository.ApiTestCaseRepository;
 import com.shooot.application.api.domain.repository.ApiTestCaseRequestRepository;
@@ -35,10 +36,17 @@ public class TestCaseGetService {
 
         if (!apiTestCaseRequests.isEmpty()) {
             ApiTestCaseRequest latestApiTestCaseRequest = apiTestCaseRequests.get(0);
+            ApiTestCase apiTestCase = apiTestCaseRepository.findById(latestApiTestCaseRequest.getId())
+                    .orElseThrow();
 
             return TestCaseView.builder()
                     .id(latestApiTestCaseRequest.getApiTestCase().getId())
                     .testCaseRequestId(latestApiTestCaseRequest.getId())
+                    .title(apiTestCase.getTitle())
+                    .testStatus(apiTestCase.getTestCaseStatus().toString())
+                    .httpStatusCode(apiTestCase.getHttpStatus().value())
+                    .createdAt(apiTestCase.getCreatedAt())
+                    .modifiedAt(apiTestCase.getModifiedAt())
                     .type(latestApiTestCaseRequest.getType().name())
                     .content(latestApiTestCaseRequest.getContent())
                     .build();
