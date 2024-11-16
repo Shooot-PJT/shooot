@@ -6,6 +6,7 @@ import com.shooot.application.project.domain.ProjectParticipant;
 import com.shooot.application.project.domain.repository.ProjectInvitationRepository;
 import com.shooot.application.project.domain.repository.ProjectParticipantRepository;
 import com.shooot.application.project.domain.repository.ProjectRepository;
+import com.shooot.application.project.exception.DuplicateProjectParticipantException;
 import com.shooot.application.project.exception.ProjectInvitationNotFoundException;
 import com.shooot.application.project.exception.ProjectNotFoundException;
 import com.shooot.application.user.domain.User;
@@ -39,6 +40,10 @@ public class ProjectAcceptInvitationService {
         User user = userRepository
             .findById(projectInvitation.getUserId())
             .orElseThrow(UserNotFoundException::new);
+
+        if (projectParticipantRepository.findByProjectAndUser(project, user).isPresent()) {
+            throw new DuplicateProjectParticipantException();
+        }
 
         ProjectParticipant projectParticipant = ProjectParticipant.builder()
             .project(project)
