@@ -41,7 +41,7 @@ public class ProjectMonitorService {
         "instance5",
         2203
     );
-    private final String command = "sar -u -r 1";
+    private final String command = "sar -u -r -n DEV 1";
 
     public void getStatus(Integer projectId, Integer projectJarFileId, Integer duration) {
         MetaData metaData = projectDirectoryManager.getMetaData(
@@ -70,6 +70,8 @@ public class ProjectMonitorService {
                     System.out.println(cpu);
                     Double ram = getRam(reader);
                     System.out.println(ram);
+                    Double network = getNetwork(reader);
+                    System.out.println(network);
                     projectMonitorMessagePublisher.publish(
                         ProjectMonitorMessage.builder()
                             .projectId(projectId)
@@ -100,7 +102,7 @@ public class ProjectMonitorService {
                     if (columns.length > 5) {
                         String idleValue = columns[7];
                         Double value = Double.parseDouble(idleValue);
-                        return value;
+                        return 100 - value;
                     }
                 }
             }
@@ -120,6 +122,26 @@ public class ProjectMonitorService {
                     if (columns.length > 4) {
                         String ramValue = columns[4];
                         Double value = Double.parseDouble(ramValue);
+                        return value;
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    private double getNetwork(BufferedReader br) throws IOException {
+        String line;
+        while ((line = br.readLine()) != null) {
+            System.out.println(line);
+            if (line.contains("enp0s8")) {
+                String nextLine = br.readLine();
+                System.out.println(nextLine);
+                if (nextLine != null) {
+                    String[] columns = nextLine.trim().split("\\s+");
+                    if (columns.length > 9) {
+                        String network = columns[9];
+                        Double value = Double.parseDouble(network);
                         return value;
                     }
                 }
