@@ -33,7 +33,7 @@ export const contentContainer = style({
   flexGrow: 1,
   width: '100%',
   maxHeight: 'calc(95vh - 2rem)',
-  transition: 'max-height 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)',
+  // transition: 'max-height 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)',
 });
 
 export const content = style({

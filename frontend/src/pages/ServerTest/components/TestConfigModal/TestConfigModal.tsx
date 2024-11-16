@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { HiCog6Tooth, HiRocketLaunch } from 'react-icons/hi2';
 import Button from '../../../../components/Button';
 import { CustomTooltip } from '../../../../components/CustomToolTip';
@@ -7,7 +7,7 @@ import Flexbox from '../../../../components/Flexbox';
 import Typography from '../../../../components/Typography';
 import useModal from '../../../../hooks/useModal';
 import { Method } from '../../../APIDocs/types/methods';
-import { getAPIConfigs } from '../../apis/TestApi';
+import { excuteApiTest, getAPIConfigs } from '../../apis/TestApi';
 import {
   APIIncludeTestData,
   APITestFormData,
@@ -21,6 +21,8 @@ import { MethodChip } from '../MethodChip/MethodChip';
 import { TestConfigForm } from '../TestConfigForm/TestConfigForm';
 import * as s from './TestConfigModal.css';
 import { ExcuteTestModal } from '../ExcuteTestModal/ExcuteTestModal';
+import usePopup from '../../../../hooks/usePopup';
+import { useUploadStateStore } from '../../stores/useUploadStateStore';
 
 interface TestConfigModalProps {
   projectJarFileId: number;
@@ -29,8 +31,12 @@ interface TestConfigModalProps {
 export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
   const [testFormData, setTestFormData] = useState<APITestFormData[]>([]);
   const [expandedRowIndex, setExpandedRowIndex] = useState<number>(-1);
+  const [validationState, setValidationState] = useState<boolean>(false);
   const modal = useModal();
+  const popup = usePopup();
+  const { state, setState } = useUploadStateStore();
   const colWidths = [15, 10, 25, 30, 10, 10];
+  const checkedApisNum = useRef<number>(0);
 
   const { data: apiConfigs = {} as APITestListResponse } = useQuery({
     queryKey: ['apiConfigs', projectJarFileId],
@@ -43,12 +49,26 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
     staleTime: 120 * 1000,
   });
 
+  useEffect(() => {
+    return () => {
+      if (state === 'End') {
+        modal.pop();
+        setState('None');
+      }
+    };
+  }, [state]);
+
   const handleCheckbox = (idx: number) => {
-    setTestFormData((prevData) =>
-      prevData.map((item, index) =>
+    setTestFormData((prevData) => {
+      const updatedData = prevData.map((item, index) =>
         index === idx ? { ...item, checked: !item.checked } : item,
-      ),
-    );
+      );
+      const checkedCount = updatedData.filter((item) => item.checked).length;
+      checkedApisNum.current = checkedCount;
+      setValidationState(checkedCount > 0);
+
+      return updatedData;
+    });
   };
 
   const handleExpanedRowIdx = (idx: number) => {
@@ -57,18 +77,40 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
   };
 
   const handleSubmitTestConfig = () => {
+    // todo: api 연결되는대로 수정
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const testConfig = testFormData
       .filter((item) => item.checked)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .map(({ checked, ...rest }) => rest);
+
     const request: ExecuteApiTestRequest = {
-      projectJarFileId: projectJarFileId,
-      endPointSettings: testConfig,
+      // projectJarFileId: projectJarFileId,
+      // endPointSettings: testConfig,
+      projectJarFileId: 49,
+      endPointSettings: [
+        {
+          apiId: 25,
+          method: 'FIXED',
+          vuserNum: 100,
+          duration: 100,
+        },
+      ],
     };
-    // modal.pop();
-    modal.push({
-      children: <ExcuteTestModal />,
-    });
+    excuteApiTest(request)
+      .then(() => {
+        modal.push({
+          children: <ExcuteTestModal projectJarFileId={49} />,
+        });
+      })
+      .catch((error) => {
+        popup.push({
+          title: '테스트 시도 실패',
+          children: <>{error.message}</>,
+          type: 'fail',
+        });
+      });
+
     console.log(request);
   };
 
@@ -209,6 +251,7 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
           paddingY={1}
           color="primary"
           onClick={handleSubmitTestConfig}
+          disabled={!validationState}
         >
           Shooot! <HiRocketLaunch />
         </Button>
