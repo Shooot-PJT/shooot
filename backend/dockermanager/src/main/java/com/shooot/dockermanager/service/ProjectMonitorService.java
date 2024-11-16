@@ -93,10 +93,8 @@ public class ProjectMonitorService {
     private double getCpu(BufferedReader br) throws IOException {
         String line;
         while ((line = br.readLine()) != null) {
-            System.out.println(line);
             if (line.contains("%idle")) {
                 String nextLine = br.readLine();
-                System.out.println(nextLine);
                 if (nextLine != null) {
                     String[] columns = nextLine.trim().split("\\s+");
                     if (columns.length > 5) {
@@ -113,10 +111,8 @@ public class ProjectMonitorService {
     private double getRam(BufferedReader br) throws IOException {
         String line;
         while ((line = br.readLine()) != null) {
-            System.out.println(line);
             if (line.contains("%memused")) {
                 String nextLine = br.readLine();
-                System.out.println(nextLine);
                 if (nextLine != null) {
                     String[] columns = nextLine.trim().split("\\s+");
                     if (columns.length > 4) {
@@ -133,15 +129,13 @@ public class ProjectMonitorService {
     private double getNetwork(BufferedReader br) throws IOException {
         String line;
         while ((line = br.readLine()) != null) {
-            System.out.println(line);
             if (line.contains("enp0s8")) {
-                System.out.println(line);
                 if (line != null) {
                     String[] columns = line.trim().split("\\s+");
                     if (columns.length > 9) {
                         String network = columns[9];
                         Double value = Double.parseDouble(network);
-                        return value;
+                        return value * 100;
                     }
                 }
             }
