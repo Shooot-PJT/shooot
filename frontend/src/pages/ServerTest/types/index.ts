@@ -98,3 +98,8 @@ export interface EndPointSetting {
   vuserNum: number;
   duration: number;
 }
+
+export interface TestSSEData {
+  cpuUtilization: number;
+  ramUtilization: number;
+}
