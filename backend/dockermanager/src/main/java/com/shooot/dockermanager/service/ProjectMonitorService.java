@@ -36,13 +36,17 @@ public class ProjectMonitorService {
                 String line;
                 while (System.currentTimeMillis() < endTime) {
                     line = reader.readLine();
+                    System.out.println(line);
                     projectMonitorMessagePublisher.publish(
                         ProjectMonitorMessage.builder()
                             .projectId(projectId)
                             .projectJarFileId(projectJarFileId)
                             .message(line)
                             .build());
+                    Thread.sleep(1000);
                 }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
 
             process.destroy();
