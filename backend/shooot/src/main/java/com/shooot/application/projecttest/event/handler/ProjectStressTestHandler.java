@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @RequiredArgsConstructor
 @Component
@@ -26,6 +27,9 @@ public class ProjectStressTestHandler {
     private final ApiTestMethodRepository apiTestMethodRepository;
     private final ProjectBuildRepository projectBuildRepository;
     private final ProjectMonitorStreamSubscriber projectMonitorStreamSubscriber;
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    private String requestUrl = "http://khj745700.iptime.org:8080/stress-test/start";
 
     @Async
     @EventListener
@@ -52,6 +56,13 @@ public class ProjectStressTestHandler {
                 case RAMP_UP -> stressTestService.rampUp(baseUrl, api, apiTestMethod.getVUsers(),
                     apiTestMethod.getTestDuration());
             }
+
+            StressTestRequest request = StressTestRequest.builder()
+                .projectId(projectBuild.getProject().getId())
+                .projectJarFileId(event.getProjectJarFileId())
+                .duration(apiTestMethod.getTestDuration())
+                .build();
+            restTemplate.postForObject(requestUrl, request, Void.class);
 
             try {
                 Thread.sleep(apiTestMethod.getTestDuration() * 1000);

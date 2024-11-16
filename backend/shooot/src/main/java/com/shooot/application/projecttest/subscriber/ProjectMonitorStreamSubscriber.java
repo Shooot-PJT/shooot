@@ -69,6 +69,8 @@ public class ProjectMonitorStreamSubscriber implements
             System.out.println(System.currentTimeMillis());
 
             Integer projectJarFileId = (Integer) map.get("projectJarFileId");
+            System.out.println(projectJarFileId);
+
             Double cpu = (Double) map.get("cpu");
             Double memory = (Double) map.get("memory");
             Double disk = (Double) map.get("disk");
