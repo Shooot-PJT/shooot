@@ -41,7 +41,7 @@ public class ProjectMonitorService {
         "instance5",
         2203
     );
-    private final String command = "sar -t 1";
+    private final String command = "sar -u -r 1";
 
     public void getStatus(Integer projectId, Integer projectJarFileId, Integer duration) {
         MetaData metaData = projectDirectoryManager.getMetaData(
