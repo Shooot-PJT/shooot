@@ -90,6 +90,7 @@ public class ProjectMonitorService {
     private double getCpu(BufferedReader br) throws IOException {
         String line;
         while ((line = br.readLine()) != null) {
+            System.out.println(line);
             if (line.contains("%idle")) {
                 String nextLine = br.readLine();
                 if (nextLine != null) {
