@@ -48,29 +48,31 @@ export const ProjectContents = () => {
             </>
           )}
         </Flexbox>
-        <Flexbox style={{ columnGap: '0.5rem' }}>
-          {members.members?.data.length ? (
-            <>
-              {members.members?.data.map((member, idx: number) => (
-                <CustomTooltip key={idx} title={member.nickname}>
-                  <div>
-                    <Icon
-                      size={1}
-                      rounded={999}
-                      color={colors[Math.floor(Math.random() * 8)]}
-                    >
-                      <HiUser />
-                    </Icon>
-                  </div>
-                </CustomTooltip>
-              ))}
-            </>
-          ) : (
-            <Typography size={0.875} weight="600">
-              팀원을 초대해보세요!
-            </Typography>
-          )}
-        </Flexbox>
+        {!members.isLoading && (
+          <Flexbox style={{ columnGap: '0.5rem' }}>
+            {members.members?.data.length ? (
+              <>
+                {members.members?.data.map((member, idx: number) => (
+                  <CustomTooltip key={idx} title={member.nickname}>
+                    <div>
+                      <Icon
+                        size={1}
+                        rounded={999}
+                        color={colors[Math.floor(Math.random() * 8)]}
+                      >
+                        <HiUser />
+                      </Icon>
+                    </div>
+                  </CustomTooltip>
+                ))}
+              </>
+            ) : (
+              <Typography size={0.875} weight="600">
+                팀원을 초대해보세요!
+              </Typography>
+            )}
+          </Flexbox>
+        )}
       </Flexbox>
       {project.project?.data.isOwner && (
         <Flexbox style={{ columnGap: '0.5rem' }}>
