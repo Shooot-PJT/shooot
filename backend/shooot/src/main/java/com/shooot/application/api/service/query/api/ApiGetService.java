@@ -8,6 +8,8 @@ import com.shooot.application.api.ui.ApiTestCaseController;
 import com.shooot.application.api.ui.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,14 +63,21 @@ public class ApiGetService {
     }
 
     private ApiTestLastLogView getLastLog(Api api){
-        ApiTestLog apiTestLog = apiTestLogRepository.findLatestTestLogByApiId(api.getId())
-                .orElse(null);
+//        List<ApiTestLog> apiTestLog = apiTestLogRepository.findLatestTestLogByApiId(api.getId());
+//
+//        if(apiTestLog.isEmpty()){
+//            return null;
+//        } else{
+//            Pageable pageable = PageRequest.of(0, 1);
+//            apiTestLog
+//        }
 
-        if(apiTestLog == null){
-            return null;
-        }
+        Pageable pageable = PageRequest.of(0, 1); // 첫 번째 페이지, 1개의 데이터만 가져오기
+        List<ApiTestLog> logs = apiTestLogRepository.findLatestTestLogByApiId(api.getId(), pageable);
 
-        return ApiTestLastLogView.from(apiTestLog);
+        return logs.isEmpty() ? null : ApiTestLastLogView.from(logs.get(0)); // 결과가 없으면 null 반환
+
+//        return ApiTestLastLogView.from(apiTestLog);
     }
 
 }

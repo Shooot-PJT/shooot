@@ -26,7 +26,8 @@ CREATE TABLE user
     password   BINARY(60) NOT NULL,
     email      VARCHAR(40) NOT NULL,
     is_deleted BOOL        NOT NULL,
-    created_at DATETIME    NOT NULL
+    created_at DATETIME    NOT NULL,
+    color VARCHAR(10) DEFAULT 'DISABLED'
 );
 
 
@@ -111,6 +112,8 @@ CREATE TABLE api_test_log
     http_header            JSON,
     created_at             DATETIME NOT NULL,
     is_deleted             BOOL     NOT NULL,
+    response_message       TEXT,
+    response_code          INTEGER,
     FOREIGN KEY (project_participant_id) REFERENCES project_participant (project_participant_id),
     FOREIGN KEY (api_test_case_id) REFERENCES api_test_case (api_test_case_id)
 );
@@ -210,6 +213,7 @@ CREATE TABLE notification
     user_id         INTEGER  NOT NULL,
     content         JSON     NOT NULL,
     created_at      DATETIME NOT NULL,
+    is_read         BOOL NOT NULL,
     foreign key (user_id) REFERENCES user (user_id)
 );
 
