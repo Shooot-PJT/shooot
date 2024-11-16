@@ -13,6 +13,8 @@ import {
   ToggleAPIStateRequest,
   ToggleAPIStateRequestBody,
   RemoveAPIRequest,
+  GetParticipantListRequest,
+  GetParticipantListResponse,
 } from './types';
 
 export const addAPI = async (
@@ -65,6 +67,15 @@ export const toggleAPIState = async (
 export const removeAPI = async ({ apiId }: RemoveAPIRequest) => {
   const response = await api.delete<void>(
     `/${EP.projects}/${EP.domains}/${EP.apis}/${apiId}`,
+  );
+  return response.data;
+};
+
+export const getParticipantList = async ({
+  projectId,
+}: GetParticipantListRequest) => {
+  const response = await api.get<GetParticipantListResponse>(
+    `/${EP.projects}/${projectId}/participant-list`,
   );
   return response.data;
 };

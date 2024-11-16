@@ -1,11 +1,15 @@
-import { useRef } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useRef, useState, useEffect } from 'react';
 import usePopup from '../../../../../../hooks/usePopup';
-import { AddAPIRequestBody } from '../../../../apis/api/types';
+import { AddAPIRequestBody, Participant } from '../../../../apis/api/types';
 import { validateStringInput } from '../../../../utils/validators';
 import Flexbox from '../../../../../../components/Flexbox';
 import Typography from '../../../../../../components/Typography';
 import Textfield from '../../../../../../components/Textfield';
 import Button from '../../../../../../components/Button';
+import { useNavBarStore } from '../../../../../../stores/navbarStore';
+import { useGetParticipantList } from '../../../../reactQueries/api';
+import { Select, MenuItem, FormControl } from '@mui/material';
 
 interface AddAPIModalProps {
   domainId: number;
@@ -18,7 +22,32 @@ export const AddAPIModal = ({ popHandler, addHandler }: AddAPIModalProps) => {
   const title = useRef<HTMLInputElement>(null);
   const description = useRef<HTMLInputElement>(null);
   const url = useRef<HTMLInputElement>(null);
-  const managerId = useRef<HTMLInputElement>(null);
+
+  const [managerId, setManagerId] = useState<string>('');
+  const [participants, setParticipants] = useState<Participant[]>([]);
+
+  const currentProjectId = useNavBarStore((state) => state.project);
+
+  const {
+    data: participantList,
+    isLoading,
+    isError,
+  } = useGetParticipantList({
+    projectId: currentProjectId,
+  });
+
+  useEffect(() => {
+    if (participantList && Array.isArray(participantList)) {
+      const formattedParticipants = participantList.map((p: any) => ({
+        id: p.participantId,
+        nickname: p.nickname,
+      }));
+      setParticipants(formattedParticipants);
+    } else {
+      //
+    }
+    console.log('Participants:', participantList);
+  }, [participantList]);
 
   const addAPI = () => {
     const validationTitleResult = validateStringInput(
@@ -64,13 +93,19 @@ export const AddAPIModal = ({ popHandler, addHandler }: AddAPIModalProps) => {
         title: title.current!.value.trim(),
         description: description.current!.value.trim(),
         url: url.current!.value.trim(),
-        managerId: managerId.current
-          ? Number(managerId.current.value.trim())
-          : null,
+        managerId: managerId !== '' ? Number(managerId) : null,
       };
       addHandler(apiData);
     }
   };
+
+  if (isLoading) {
+    return <Typography>참여자 목록을 불러오는 중입니다...</Typography>;
+  }
+
+  if (isError) {
+    return <Typography>참여자 목록을 불러오는 데 실패했습니다.</Typography>;
+  }
 
   return (
     <Flexbox flexDirections="col" style={{ width: '100%', rowGap: '1rem' }}>
@@ -78,9 +113,7 @@ export const AddAPIModal = ({ popHandler, addHandler }: AddAPIModalProps) => {
         API 생성
       </Typography>
 
-      {/* Input Fields */}
       <Flexbox flexDirections="col" style={{ width: '100%', rowGap: '1rem' }}>
-        {/* Title */}
         <Flexbox flexDirections="col" style={{ rowGap: '0.25rem' }}>
           <Typography weight="600" size={0.875} color="disabled">
             API 이름
@@ -94,7 +127,7 @@ export const AddAPIModal = ({ popHandler, addHandler }: AddAPIModalProps) => {
             defaultValue=""
           />
         </Flexbox>
-        {/* Description */}
+
         <Flexbox flexDirections="col" style={{ rowGap: '0.25rem' }}>
           <Typography weight="600" size={0.875} color="disabled">
             API 설명
@@ -108,36 +141,63 @@ export const AddAPIModal = ({ popHandler, addHandler }: AddAPIModalProps) => {
             defaultValue=""
           />
         </Flexbox>
-        {/* URL */}
         <Flexbox flexDirections="col" style={{ rowGap: '0.25rem' }}>
           <Typography weight="600" size={0.875} color="disabled">
-            URL
+            엔드포인트
           </Typography>
           <Textfield
             ref={url}
             ratio={5.5}
             size={2.5}
             fullWidth
-            placeholder="API URL을 입력해주세요."
+            placeholder="/posts/{postId} 형태로 엔드포인트를 입력해주세요."
             defaultValue=""
           />
         </Flexbox>
-        {/* Manager ID */}
+
         <Flexbox flexDirections="col" style={{ rowGap: '0.25rem' }}>
           <Typography weight="600" size={0.875} color="disabled">
-            담당자 ID
+            담당자 선택
           </Typography>
-          <Textfield
-            ref={managerId}
-            ratio={5.5}
-            size={2.5}
-            fullWidth
-            placeholder="담당자 ID를 입력해주세요."
-            defaultValue=""
-          />
+          <FormControl fullWidth size="small" variant="outlined">
+            <Select
+              labelId="manager-select-label"
+              value={managerId}
+              onChange={(event) => setManagerId(event.target.value)}
+              color="secondary"
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 200,
+                    backgroundColor: '#f7f7f7',
+                  },
+                },
+                anchorOrigin: {
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                },
+                transformOrigin: {
+                  vertical: 'top',
+                  horizontal: 'left',
+                },
+              }}
+            >
+              <MenuItem value="">
+                <em>선택 안 함</em>
+              </MenuItem>
+              {participants.map((participant) => (
+                <MenuItem
+                  key={participant.id}
+                  value={participant.id.toString()}
+                >
+                  {participant.nickname}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Flexbox>
       </Flexbox>
-      {/* Buttons */}
+
       <Flexbox justifyContents="end" style={{ columnGap: '1rem' }}>
         <Button color="grey" onClick={popHandler}>
           취소

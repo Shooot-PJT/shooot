@@ -4,12 +4,13 @@ import { throttle } from 'lodash';
 import * as s from './APIHeader.css';
 import MethodHeader from './MethodHeader/MethodHeader';
 import Flexbox from '../../../../../../components/Flexbox';
-import LockButton from './LockButton/LockButton';
 import Typography from '../../../../../../components/Typography';
 import ManagerAvatar from '../APICommon/ManagerAvatar/ManagerAvatar';
 import { CollapseIcon } from '../APICommon/CollapseIcon/CollapseIcon';
 import TestResultTail from './TestResultTail/TestResultTail';
 import TestButton from '../../../TestButton/TestButton';
+import LockButton from './LockButton/LockButton';
+import RealServerToggle from './RealServerToggle/RealServerToggle';
 
 export const APIHeader = () => {
   const context = useAPIContext();
@@ -45,10 +46,10 @@ export const APIHeader = () => {
           style={s.apiHeaderLeftContentStyle}
         >
           <LockButton isSecure={context.requestDocs.isSecure!} />
+          <RealServerToggle isRealServer={context.requestDocs.isRealServer!} />
           <Typography size={1} color="disabled">
             {context.requestDocs.url}
           </Typography>
-          {/* 추후: realServer토글버튼 - 상태 추가 필요 */}
         </Flexbox>
 
         <Flexbox
