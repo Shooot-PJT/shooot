@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as s from './Graph.css';
 import { GraphColor } from './Graph.type';
 import { graphColorPalette } from './GraphColor';
+import { TestSSEData } from '../../pages/ServerTest/types';
 
 export interface BottomText {
   text: string;
@@ -13,6 +14,8 @@ export interface BottomText {
 export interface GraphProps {
   frameColor: GraphColor;
   lineColor: GraphColor;
+  SSEData: TestSSEData[];
+  dataName: string;
 }
 
 const formatTime = (seconds: number) => {
@@ -23,9 +26,9 @@ const formatTime = (seconds: number) => {
 
 const convertToPercentage = (value: number) => {
   if (value <= 0) return 100;
-  if (value >= 150) return 0;
+  if (value >= 120) return 0;
 
-  return Math.round(((150 - value) / 150) * 100);
+  return Math.round(((120 - value) / 120) * 100);
 };
 
 const drawSpline = (
@@ -37,7 +40,7 @@ const drawSpline = (
 
   context.beginPath();
   context.strokeStyle = `${graphColorPalette[lineColor].stroke}`;
-  context.lineWidth = 4;
+  context.lineWidth = 3;
 
   context.moveTo(points[0].x + 17, points[0].pointY);
 
@@ -61,37 +64,52 @@ const drawSpline = (
           (-p0.pointY + p2.pointY) * t +
           2 * p1.pointY);
 
-      context.lineTo(x + 17, Math.min(y, 150));
+      context.lineTo(x + 17, Math.min(y, 120));
     }
   }
   context.stroke();
 
-  context.lineTo(points[points.length - 1].x + 17, 150);
-  context.lineTo(points[0].x + 17, 150);
+  context.lineTo(points[points.length - 1].x + 17, 120);
+  context.lineTo(points[0].x + 17, 120);
   context.closePath();
   context.fillStyle = `${graphColorPalette[lineColor].stroke}` + '80';
   context.fill();
 };
 
-export const Graph = ({ frameColor, lineColor }: GraphProps) => {
+export const Graph = ({
+  frameColor,
+  lineColor,
+  SSEData,
+  dataName,
+}: GraphProps) => {
   const [texts, setTexts] = useState<BottomText[]>([]);
   const [points, setPoints] = useState<BottomText[]>([]);
-  const [time, setTime] = useState<number>(0);
-  const [hoveredPoint, setHoveredPoint] = useState<BottomText | null>(null);
+  const [time, setTime] = useState<number>(-180);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const timeRef = useRef(time);
+  const dataIndexRef = useRef(0);
 
-  const addTimeText = useCallback((time: number) => {
-    const randomY = 150 - Math.floor(Math.random() * 150);
-    const timeText = {
-      text: formatTime(time / 60),
-      x: 1350,
-      y: 170,
-      pointY: randomY,
-    };
-    setPoints((prevPoints) => [timeText, ...prevPoints]);
-    setTexts((prevTexts) => [timeText, ...prevTexts]);
-  }, []);
+  const addTimeText = useCallback(
+    (time: number) => {
+      if (SSEData.length - 1 > dataIndexRef.current) {
+        dataIndexRef.current += 1;
+      }
+      const pointY =
+        120 -
+        Math.floor(
+          SSEData[dataIndexRef.current][dataName as keyof TestSSEData] * 120,
+        );
+      const timeText = {
+        text: formatTime(time / 60),
+        x: 1170,
+        y: 134,
+        pointY: pointY,
+      };
+      setPoints((prevPoints) => [timeText, ...prevPoints]);
+      setTexts((prevTexts) => [timeText, ...prevTexts]);
+    },
+    [SSEData, dataName],
+  );
 
   const renderCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -100,56 +118,74 @@ export const Graph = ({ frameColor, lineColor }: GraphProps) => {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    context.rect(0, 0, 500, 30);
+    context.rect(0, 140, 500, 30);
     context.fillStyle = `${graphColorPalette[frameColor].rowFrame}`;
-    context.fillRect(0, 150, 1000, 50);
+    context.fillRect(0, 120, 1000, 50);
 
     texts.forEach(({ text, x, y }) => {
-      context.font = '12px Pretendard';
+      context.font = '13px Pretendard';
       context.fillStyle = 'white';
       context.fillText(text, x, y);
-
-      context.beginPath();
-      context.setLineDash([2, 5]);
-      context.moveTo(x + 17, 0);
-      context.lineTo(x + 17, 150);
-      context.strokeStyle = `${graphColorPalette[lineColor].dashLine}`;
-      context.lineWidth = 3;
-      context.stroke();
-      context.setLineDash([]);
     });
 
     drawSpline(context, points, lineColor);
 
     points.forEach(({ x, pointY }) => {
       context.beginPath();
-      context.arc(x + 17, pointY, 5, 0, 2 * Math.PI);
+      context.arc(x + 17, pointY, 4, 0, 2 * Math.PI);
       context.fillStyle = `${graphColorPalette[lineColor].point}`;
       context.fill();
+
+      if (pointY <= 20) {
+        context.beginPath();
+        context.setLineDash([2, 5]);
+        context.moveTo(x + 17, 0);
+        context.lineTo(x + 17, pointY);
+        context.stroke();
+
+        context.moveTo(x + 17, pointY + 25);
+        context.lineTo(x + 17, 120);
+        context.strokeStyle = `${graphColorPalette[lineColor].dashLine}`;
+        context.lineWidth = 3;
+        context.stroke();
+        context.setLineDash([]);
+      } else {
+        context.beginPath();
+        context.setLineDash([2, 5]);
+        context.moveTo(x + 17, 0);
+        context.lineTo(x + 17, pointY - 25);
+        context.stroke();
+
+        context.moveTo(x + 17, pointY);
+        context.lineTo(x + 17, 120);
+        context.strokeStyle = `${graphColorPalette[lineColor].dashLine}`;
+        context.lineWidth = 3;
+        context.stroke();
+        context.setLineDash([]);
+      }
     });
 
-    if (hoveredPoint) {
-      context.font = '16px Pretendard';
+    points.forEach(({ x, pointY }) => {
+      context.font = 'semibold 12px Pretendard';
       context.fillStyle = 'white';
+
       context.fillText(
-        `Value: ${convertToPercentage(hoveredPoint.pointY)}%`,
-        hoveredPoint.x + 25,
-        hoveredPoint.pointY < 50
-          ? hoveredPoint.pointY + 20
-          : hoveredPoint.pointY - 10,
+        `${convertToPercentage(Number(pointY))}%`,
+        x + 6,
+        pointY <= 20 ? pointY + 20 : pointY - 10,
       );
-    }
+    });
 
     context.rect(20, 20, 200, 200);
     context.fillStyle = `${graphColorPalette[frameColor].columnFrame}`;
     context.fillRect(0, 0, 28, 320);
 
-    context.font = '10px Pretendard';
+    context.font = '11px Pretendard';
     for (let i = 0; i <= 5; i++) {
       const value = i * 20;
       context.fillStyle = 'white';
       const xPos = i === 5 ? 4 : i === 0 ? 11 : 6;
-      context.fillText(`${value}`, xPos, 155 - value * 1.45);
+      context.fillText(`${value}`, xPos, 120 - value * 1.12);
     }
   }, [texts, points]);
 
@@ -157,12 +193,12 @@ export const Graph = ({ frameColor, lineColor }: GraphProps) => {
     setTexts((prevTexts) =>
       prevTexts
         .map(({ text, x, y, pointY }) => ({ text, x: x - 1, y, pointY }))
-        .filter(({ x }) => x > -5000),
+        .filter(({ x }) => x > -1000),
     );
     setPoints((prevPoints) =>
       prevPoints
         .map(({ text, x, y, pointY }) => ({ text, x: x - 1, y, pointY }))
-        .filter(({ x }) => x > -5000),
+        .filter(({ x }) => x > -1000),
     );
     timeRef.current += 1;
     setTime(timeRef.current);
@@ -177,31 +213,10 @@ export const Graph = ({ frameColor, lineColor }: GraphProps) => {
     const canvas = canvasRef.current;
     if (canvas) {
       canvas.width = 960;
-      canvas.height = 180;
+      canvas.height = 140;
     }
     requestAnimationFrame(animate);
   }, [renderCanvas, addTimeText, time, animate]);
-
-  const handleMouseMove = useCallback(
-    (event: React.MouseEvent) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-
-      const rect = canvas.getBoundingClientRect();
-      const mouseX = event.clientX - rect.left;
-      const mouseY = event.clientY - rect.top;
-
-      const hovered = points.find(
-        ({ x, pointY }) =>
-          mouseX >= x + 17 - 30 &&
-          mouseX <= x + 17 + 30 &&
-          mouseY >= pointY - 30 &&
-          mouseY <= pointY + 30,
-      );
-      setHoveredPoint(hovered || null);
-    },
-    [points],
-  );
 
   return (
     <div style={{ textAlign: 'center' }}>
@@ -213,7 +228,6 @@ export const Graph = ({ frameColor, lineColor }: GraphProps) => {
           } as React.CSSProperties
         }
         className={s.canvas}
-        onMouseMove={handleMouseMove}
       />
     </div>
   );

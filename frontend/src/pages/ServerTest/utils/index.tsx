@@ -42,7 +42,7 @@ export const convertDataTable = (
         active={item.status !== 'NONE' && item.status !== 'RUNTIME_ERROR'}
       />,
       <DistributeIcon
-        active={true}
+        active={item.status !== 'RUN'}
         onClick={() => {
           onClick(item.projectJarFileId);
         }}

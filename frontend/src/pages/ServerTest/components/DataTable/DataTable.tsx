@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, ReactNode } from 'react';
 import * as s from './DataTable.css';
 import React from 'react';
+import { useNavBarStore } from '../../../../stores/navbarStore';
 
 interface DataTableProps {
   colWidths: number[];
@@ -29,6 +30,8 @@ export const DataTable = ({
   const startWidth = useRef<number | null>(null);
   const currentIndex = useRef<number | null>(null);
   const expandedRef = useRef<HTMLDivElement>(null);
+
+  const { project } = useNavBarStore();
 
   useEffect(() => {
     setColWidths(initialColWidths);
@@ -117,7 +120,7 @@ export const DataTable = ({
               {row.map((item, colIndex) => (
                 <div
                   className={s.rowItem}
-                  key={`${data.length - rowIndex}-${colIndex}-${item}`}
+                  key={`${data.length - rowIndex}-${project}-${colIndex}-${item}`}
                   style={
                     {
                       '--width': `${colWidths[colIndex]}%`,
