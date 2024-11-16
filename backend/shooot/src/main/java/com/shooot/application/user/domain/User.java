@@ -8,6 +8,8 @@ import com.shooot.application.user.service.dto.UserInfoModifyRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.EnumSet;
+
 @Builder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,12 +32,19 @@ public class User extends SoftDeleteEntity {
     @Column(name = "nickname")
     private String nickname;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "color")
+    private ProfileColor color;
+
 
     public static User create(SignupRequest request) {
+        ProfileColor[] profileColors = ProfileColor.values();
+
         return User.builder()
                 .nickname(request.getNickname())
                 .password(Password.of(request.getPassword(), false))
                 .username(request.getEmail())
+                .color(profileColors[request.getNickname().hashCode() % profileColors.length])
                 .build();
     }
 
