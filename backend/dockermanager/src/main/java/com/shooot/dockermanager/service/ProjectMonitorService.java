@@ -22,7 +22,7 @@ public class ProjectMonitorService {
     public void getStatus(Integer projectId, Integer projectJarFileId, Integer duration) {
         File metaDataFile = projectDirectoryManager.getFile(projectId, projectJarFileId,
             DirStructure.METADATA).orElseThrow();
-        System.out.println(metaDataFile.exists());
+        System.out.println(metaDataFile.toPath());
         MetaData metaData = projectDirectoryManager.getMetaData(metaDataFile.toPath());
 
         try {
