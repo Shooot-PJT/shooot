@@ -94,6 +94,7 @@ public class ProjectMonitorService {
             System.out.println(line);
             if (line.contains("%idle")) {
                 String nextLine = br.readLine();
+                System.out.println(nextLine);
                 if (nextLine != null) {
                     String[] columns = nextLine.trim().split("\\s+");
                     if (columns.length > 5) {
@@ -113,6 +114,7 @@ public class ProjectMonitorService {
             System.out.println(line);
             if (line.contains("%memused")) {
                 String nextLine = br.readLine();
+                System.out.println(nextLine);
                 if (nextLine != null) {
                     String[] columns = nextLine.trim().split("\\s+");
                     if (columns.length > 4) {
