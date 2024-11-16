@@ -10,7 +10,6 @@ import Flexbox from '../../../../components/Flexbox';
 import Typography from '../../../../components/Typography';
 import { CustomTooltip } from '../../../../components/CustomToolTip';
 import Icon from '../../../../components/Icon';
-import { useEffect } from 'react';
 const colors: IconColor[] = [
   'primary',
   'secondary',
@@ -34,10 +33,6 @@ export const ProjectContents = () => {
     removeProjectModalHandler,
   } = useNavBar();
 
-  useEffect(() => {
-    console.log(project.project);
-  }, [project.isLoading]);
-
   return (
     <>
       <Flexbox flexDirections="col" style={{ rowGap: '0.5rem' }}>
@@ -53,30 +48,31 @@ export const ProjectContents = () => {
             </>
           )}
         </Flexbox>
-        <Flexbox style={{ columnGap: '0.5rem' }}>
-          {members.members?.data.length ? (
-            <>
-              {members.members?.data.map((member) => (
-                <CustomTooltip key={member.email} title={member.nickname}>
-                  <div>
-                    <Icon
-                      key={member.email}
-                      size={1}
-                      rounded={999}
-                      color={colors[Math.floor(Math.random() * 8)]}
-                    >
-                      <HiUser />
-                    </Icon>
-                  </div>
-                </CustomTooltip>
-              ))}
-            </>
-          ) : (
-            <Typography size={0.875} weight="600">
-              팀원을 초대해보세요!
-            </Typography>
-          )}
-        </Flexbox>
+        {!members.isLoading && (
+          <Flexbox style={{ columnGap: '0.5rem' }}>
+            {members.members?.data.length ? (
+              <>
+                {members.members?.data.map((member, idx: number) => (
+                  <CustomTooltip key={idx} title={member.nickname}>
+                    <div>
+                      <Icon
+                        size={1}
+                        rounded={999}
+                        color={colors[Math.floor(Math.random() * 8)]}
+                      >
+                        <HiUser />
+                      </Icon>
+                    </div>
+                  </CustomTooltip>
+                ))}
+              </>
+            ) : (
+              <Typography size={0.875} weight="600">
+                팀원을 초대해보세요!
+              </Typography>
+            )}
+          </Flexbox>
+        )}
       </Flexbox>
       {project.project?.data.isOwner && (
         <Flexbox style={{ columnGap: '0.5rem' }}>
