@@ -21,6 +21,7 @@ public class ProjectMonitorService {
     public void getStatus(Integer projectId, Integer projectJarFileId, Integer duration) {
         MetaData metaData = projectDirectoryManager.getMetaData(
             projectDirectoryManager.file(projectId, projectJarFileId).toPath());
+        System.out.println(metaData.getInstanceName());
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("vagrant", "ssh",
