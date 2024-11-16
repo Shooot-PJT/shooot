@@ -1,7 +1,7 @@
-import { TestResult } from './TestResultTail.types';
+import { TestResult } from '../../../../../types/data/API.data';
 import * as s from './TestResultTail.css';
 import { CustomTooltip } from '../../../../../../../components/CustomToolTip';
-import { TEST_RESULTS } from '../../../API.data.types';
+import { TEST_RESULTS } from '../../../../../types/data/API.data';
 
 interface TestResultTailProps {
   testStatus: TestResult;

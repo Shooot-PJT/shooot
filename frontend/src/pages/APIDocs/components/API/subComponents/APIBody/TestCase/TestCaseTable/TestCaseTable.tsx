@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { useGetTestCaseDetail } from '../../../../../../reactQueries/testcase';
-import { editTestCase } from '../../../../../../apis'; // editTestCase 함수 임포트
+import {
+  useGetTestCaseDetail,
+  useAddTestCase,
+} from '../../../../../../reactQueries/testcase';
+import { editTestCase } from '../../../../../../apis/testcase';
 import Editor, { OnMount } from '@monaco-editor/react';
 import { BodyNone } from '../../RequestDocs/RequestContents/BodyNone/BodyNone';
 import {
@@ -14,27 +17,42 @@ import {
   TableData,
   CustomFormData,
   FileMeta,
-  TestCaseContent,
+  Raw,
 } from './TestCaseTable.types';
 
 import * as styles from './KeyValueTable.css';
 import * as bodyFormDataStyles from './BodyFormData.css';
 
-import { v4 as uuidv4 } from 'uuid'; // UUID 생성용 라이브러리 추가
+import { v4 as uuidv4 } from 'uuid';
 
 interface TestCaseTableProps {
-  testCaseId: number;
+  testCaseId?: number;
+  isAddMode?: boolean;
+  apiId: number;
+  onAddSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export const TestCaseTable: React.FC<TestCaseTableProps> = ({ testCaseId }) => {
+export const TestCaseTable: React.FC<TestCaseTableProps> = ({
+  testCaseId,
+  isAddMode = false,
+  apiId,
+  onAddSuccess,
+  onCancel,
+}) => {
   const [activeTab, setActiveTab] = useState<number>(0);
-  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [isEditMode, setIsEditMode] = useState<boolean>(isAddMode);
 
   const {
     data: testCaseDetail,
     isLoading,
     isError,
-  } = useGetTestCaseDetail({ testcaseId: testCaseId });
+  } = useGetTestCaseDetail(
+    { testcaseId: testCaseId! },
+    {
+      enabled: !!testCaseId && !isAddMode, // 추가 모드가 아닐 때만 가져오기
+    },
+  );
 
   const [bodyType, setBodyType] = useState<'none' | 'raw' | 'form-data'>(
     'none',
@@ -44,14 +62,38 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({ testCaseId }) => {
     useState<TestCaseDetailInfo | null>(null);
 
   const queryClient = useQueryClient();
+  const addTestCaseMutation = useAddTestCase();
 
   useEffect(() => {
-    if (testCaseDetail) {
+    if (isAddMode) {
+      // 빈 테스트케이스 데이터로 초기화
+      setEditedTestCase({
+        id: 0,
+        apiId: apiId,
+        title: '',
+        httpStatusCode: 200,
+        type: 'NONE',
+        content: {
+          params: {},
+          pathvariable: {},
+          headers: {},
+          body: {
+            raw: null,
+            formData: null,
+          },
+          expectedResponse: {
+            schema: null,
+            example: null,
+          }, // expectedResponse 추가
+        },
+        testStatus: 'YET',
+      });
+      setBodyType('none');
+    } else if (testCaseDetail) {
       setEditedTestCase({
         ...testCaseDetail,
         content: {
           ...testCaseDetail.content,
-          // params, pathvariable, headers는 여전히 객체 형태로 유지
         },
       });
 
@@ -68,13 +110,13 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({ testCaseId }) => {
           break;
       }
     }
-  }, [testCaseDetail]);
+  }, [testCaseDetail, isAddMode, apiId]);
 
-  if (isLoading) {
+  if (!isAddMode && isLoading) {
     return <div>테스트케이스 로딩 중...</div>;
   }
 
-  if (isError || !testCaseDetail) {
+  if (!isAddMode && (isError || !testCaseDetail)) {
     return <div>테스트케이스를 불러오는 중 오류가 발생했습니다.</div>;
   }
 
@@ -110,42 +152,71 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({ testCaseId }) => {
 
   const toggleEditMode = async () => {
     if (isEditMode && editedTestCase) {
-      // 저장 버튼을 눌렀을 때
+      // 저장 버튼 클릭 시
       try {
-        console.log('Editing TestCase with ID:', testCaseId);
+        if (isAddMode) {
+          // 테스트케이스 추가 처리
+          const formData = new FormData();
 
-        const formData = new FormData();
+          formData.append('title', editedTestCase.title);
+          formData.append(
+            'httpStatusCode',
+            String(editedTestCase.httpStatusCode),
+          );
+          formData.append('type', editedTestCase.type);
 
-        formData.append('type', editedTestCase.type);
-        console.log('TYPE: ', editedTestCase.type);
+          // content를 JSON 문자열로 직렬화
+          const contentToSave = {
+            ...editedTestCase.content,
+          };
 
-        // Serialize content as JSON
-        const contentToSave: TestCaseContent = {
-          ...editedTestCase.content,
-          // params, pathvariable, headers는 이미 객체 형태로 유지
-        };
+          formData.append('content', JSON.stringify(contentToSave));
 
-        formData.append('content', JSON.stringify(contentToSave));
+          await addTestCaseMutation.mutateAsync(
+            { apiId: apiId, formData },
+            {
+              onSuccess: () => {
+                queryClient.invalidateQueries({
+                  queryKey: ['apiDetail', apiId],
+                });
+                if (onAddSuccess) onAddSuccess();
+              },
+            },
+          );
+        } else {
+          // 테스트케이스 수정 처리
+          const formData = new FormData();
 
-        console.log('FormData entries:');
-        for (let pair of formData.entries()) {
-          console.log(pair[0] + ', ' + pair[1]);
+          formData.append('title', editedTestCase.title);
+          formData.append(
+            'httpStatusCode',
+            String(editedTestCase.httpStatusCode),
+          );
+          formData.append('type', editedTestCase.type);
+
+          // content를 JSON 문자열로 직렬화
+          const contentToSave = {
+            ...editedTestCase.content,
+          };
+
+          formData.append('content', JSON.stringify(contentToSave));
+
+          await editTestCase({ testcaseId: testCaseId! }, formData);
+
+          queryClient.invalidateQueries({
+            queryKey: ['testCaseDetail', testCaseId],
+          });
         }
-
-        await editTestCase(
-          { testcaseId: testCaseId }, // testCaseId를 직접 사용
-          formData,
-        );
-
-        await queryClient.invalidateQueries({
-          queryKey: ['testCaseDetail', testCaseId],
-        });
-        console.log('TestCase updated successfully');
+        setIsEditMode(false);
       } catch (error) {
-        console.error('Failed to update TestCase:', error);
+        console.error('테스트케이스 저장 실패:', error);
       }
     }
-    setIsEditMode(!isEditMode);
+    if (isAddMode && !isEditMode && onCancel) {
+      onCancel();
+    } else {
+      setIsEditMode(!isEditMode);
+    }
   };
 
   const handleDataChange = (section: string, data: TableData) => {
@@ -154,15 +225,82 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({ testCaseId }) => {
       ...editedTestCase,
       content: {
         ...editedTestCase.content,
-        [section]: data, // data는 객체 형태로 전달
+        [section]: data,
       },
+    });
+  };
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!editedTestCase) return;
+    const value = e.target.value;
+    setEditedTestCase({ ...editedTestCase, title: value });
+  };
+
+  const handleStatusCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!editedTestCase) return;
+    const value = e.target.value;
+    setEditedTestCase({
+      ...editedTestCase,
+      httpStatusCode: parseInt(value, 10),
     });
   };
 
   return (
     <div>
-      <h1>{testCase.title}</h1>
-      <button onClick={toggleEditMode}>{isEditMode ? '저장' : '편집'}</button>
+      <h1>
+        {isAddMode
+          ? isEditMode
+            ? '새 테스트케이스 추가'
+            : '새 테스트케이스 미리보기'
+          : testCase?.title}
+      </h1>
+      {isAddMode ? (
+        <div>
+          <button onClick={toggleEditMode}>
+            {isEditMode ? '저장' : '편집'}
+          </button>
+          {isEditMode && (
+            <button
+              onClick={() => {
+                if (onCancel) onCancel();
+              }}
+            >
+              취소
+            </button>
+          )}
+        </div>
+      ) : (
+        <button onClick={toggleEditMode}>{isEditMode ? '저장' : '편집'}</button>
+      )}
+
+      {/* 제목과 HTTP Status Code 입력 필드 */}
+      <div>
+        {isEditMode ? (
+          <div>
+            <label>
+              제목:
+              <input
+                type="text"
+                value={editedTestCase?.title || ''}
+                onChange={handleTitleChange}
+              />
+            </label>
+            <label>
+              HTTP Status Code:
+              <input
+                type="number"
+                value={editedTestCase?.httpStatusCode || 200}
+                onChange={handleStatusCodeChange}
+              />
+            </label>
+          </div>
+        ) : (
+          <div>
+            <p>제목: {testCase?.title}</p>
+            <p>HTTP Status Code: {testCase?.httpStatusCode}</p>
+          </div>
+        )}
+      </div>
 
       {/* CustomTabs로 탭 구성 */}
       <CustomTabs value={activeTab} onChange={handleTabChange}>
@@ -174,7 +312,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({ testCaseId }) => {
       {/* 탭 콘텐츠 렌더링 */}
       <div style={{ display: activeTab === 0 ? 'block' : 'none' }}>
         <KeyValueTable
-          data={testCase.content.params}
+          data={testCase?.content?.params ?? null}
           isEditMode={isEditMode}
           section="params"
           onDataChange={handleDataChange}
@@ -182,7 +320,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({ testCaseId }) => {
       </div>
       <div style={{ display: activeTab === 1 ? 'block' : 'none' }}>
         <KeyValueTable
-          data={testCase.content.pathvariable}
+          data={testCase?.content?.pathvariable ?? null}
           isEditMode={isEditMode}
           section="pathvariable"
           onDataChange={handleDataChange}
@@ -190,7 +328,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({ testCaseId }) => {
       </div>
       <div style={{ display: activeTab === 2 ? 'block' : 'none' }}>
         <KeyValueTable
-          data={testCase.content.headers}
+          data={testCase?.content?.headers ?? null}
           isEditMode={isEditMode}
           section="headers"
           onDataChange={handleDataChange}
@@ -236,15 +374,15 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({ testCaseId }) => {
           {bodyType === 'none' && <BodyNone />}
           {bodyType === 'raw' && (
             <BodyRaw
-              raw={testCase.content.body.raw || {}}
+              raw={testCase?.content.body?.raw ?? null}
               isEditMode={isEditMode}
               onDataChange={handleDataChange}
-              body={testCase.content.body} // 추가된 부분
+              body={testCase?.content?.body || {}}
             />
           )}
           {bodyType === 'form-data' && (
             <BodyFormData
-              formData={testCase.content.body.formData}
+              formData={testCase?.content.body?.formData ?? null}
               isEditMode={isEditMode}
               onDataChange={handleDataChange}
             />
@@ -265,6 +403,9 @@ interface KeyValueTableProps {
 interface TableRowWithId extends TableRow {
   id: string;
 }
+interface TableRowWithId extends TableRow {
+  id: string;
+}
 
 const KeyValueTable: React.FC<KeyValueTableProps> = ({
   data,
@@ -273,16 +414,23 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   onDataChange,
 }) => {
   const [tableData, setTableData] = useState<TableRowWithId[]>([]);
-  const idMapRef = useRef<Record<string, string>>({}); // key to id mapping
-  const emptyRowIdRef = useRef<string[]>([]); // IDs for rows with empty keys
+  const idMapRef = useRef<Record<string, string>>({}); // key to id 매핑
+  const emptyRowIdRef = useRef<string[]>([]); // 키가 비어있는 행의 ID
   const isInitialMount = useRef(true);
 
   useEffect(() => {
     if (isInitialMount.current) {
       if (data && typeof data === 'object') {
         const rows: TableRowWithId[] = Object.entries(data).map(
-          ([key, [value, description, type, isRequired]]) => {
-            // Check if the key already has an ID
+          ([
+            key,
+            [
+              value,
+              description,
+              // type, isRequired
+            ],
+          ]) => {
+            // 이미 ID가 있는지 확인
             let id = '';
             if (key in idMapRef.current) {
               id = idMapRef.current[key];
@@ -319,10 +467,10 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
     };
     setTableData((prevRows) => [...prevRows, newRow]);
 
-    // Update emptyRowIdRef
+    // emptyRowIdRef 업데이트
     emptyRowIdRef.current.push(newId);
 
-    // Convert array back to Record (exclude empty keys)
+    // 배열을 다시 Record 형태로 변환 (빈 키는 제외)
     const updatedRecord: TableData = {};
     [...tableData, newRow].forEach((row) => {
       if (row.key.trim() !== '') {
@@ -335,18 +483,18 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   const handleDeleteRow = (id: string) => {
     setTableData((prevRows) => prevRows.filter((row) => row.id !== id));
 
-    // Remove from idMapRef if key is present
+    // 키가 있을 경우 idMapRef에서 제거
     const rowToDelete = tableData.find((row) => row.id === id);
     if (rowToDelete && rowToDelete.key.trim() !== '') {
       delete idMapRef.current[rowToDelete.key];
     }
 
-    // Remove from emptyRowIdRef if present
+    // emptyRowIdRef에서 제거
     emptyRowIdRef.current = emptyRowIdRef.current.filter(
       (rowId) => rowId !== id,
     );
 
-    // Convert array back to Record (exclude empty keys)
+    // 배열을 다시 Record 형태로 변환 (빈 키는 제외)
     const updatedRecord: TableData = {};
     tableData
       .filter((row) => row.id !== id)
@@ -358,7 +506,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
     onDataChange(section, updatedRecord);
   };
 
-  const handleChange = (id: string, field: keyof TableRow, value: any) => {
+  const handleChange = (id: string, field: keyof TableRow, value: string) => {
     setTableData((prevRows) =>
       prevRows.map((row) => {
         if (row.id === id) {
@@ -368,25 +516,25 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
       }),
     );
 
-    // Find the row being updated
+    // 업데이트된 행 찾기
     const updatedRow = tableData.find((row) => row.id === id);
     if (!updatedRow) return;
 
-    // Handle key changes to maintain idMapRef
+    // 키 변경 시 idMapRef 유지
     if (field === 'key') {
       const oldKey = updatedRow.key;
       const newKey = value.trim();
 
       if (oldKey !== newKey) {
-        // Remove old key from idMapRef
+        // 이전 키를 idMapRef에서 제거
         if (oldKey in idMapRef.current) {
           delete idMapRef.current[oldKey];
         }
 
-        // Assign ID for new key
+        // 새 키에 ID 할당
         if (newKey !== '') {
           if (newKey in idMapRef.current) {
-            // 키 중복 방지를 위한 로직 추가 가능
+            // 키 중복 방지를 위한 추가 로직 가능
           } else {
             idMapRef.current[newKey] = id;
           }
@@ -394,7 +542,7 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
       }
     }
 
-    // Convert array back to Record (exclude empty keys)
+    // 배열을 다시 Record 형태로 변환 (빈 키는 제외)
     const updatedRecord: TableData = {};
     tableData.forEach((row) => {
       if (row.id === id) {
@@ -497,12 +645,14 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   );
 };
 
-// BodyRaw 및 BodyFormData 컴포넌트는 이전과 동일하게 유지합니다.
+// BodyRaw 및 BodyFormData 컴포넌트는 이전과 동일합니다.
 
 interface BodyRawProps {
-  raw: object | null;
+  raw: Raw | null;
   isEditMode: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onDataChange: (section: string, data: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body: any;
 }
 
@@ -515,8 +665,8 @@ const BodyRaw: React.FC<BodyRawProps> = ({
   const [jsonData, setJsonData] = useState<string>('');
 
   useEffect(() => {
-    if (raw && (raw as any).datas) {
-      setJsonData(JSON.stringify((raw as any).datas, null, 2));
+    if (raw && raw.datas) {
+      setJsonData(JSON.stringify(raw.datas, null, 2));
     } else {
       setJsonData('');
     }
@@ -526,7 +676,10 @@ const BodyRaw: React.FC<BodyRawProps> = ({
     setJsonData(value || '');
   };
 
-  const handleEditorDidMount: OnMount = (editor, monaco) => {
+  const handleEditorDidMount: OnMount = (
+    editor,
+    // monaco
+  ) => {
     if (isEditMode) {
       editor.onDidBlurEditorWidget(() => {
         try {
@@ -568,6 +721,7 @@ const BodyRaw: React.FC<BodyRawProps> = ({
 interface BodyFormDataProps {
   formData: CustomFormData | null;
   isEditMode: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onDataChange: (section: string, data: any) => void;
 }
 
@@ -613,12 +767,12 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
       if (formData && formData.files) {
         for (const uuidObj of Object.values(formData.files)) {
           for (const [fileName, fileDataArray] of Object.entries(uuidObj)) {
-            const [s3Url, fileMeta, type, nullValue] = fileDataArray as [
-              string,
-              FileMeta,
-              string,
-              any,
-            ];
+            const [
+              s3Url,
+              fileMeta,
+              // type, nullValue
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ] = fileDataArray as [string, FileMeta, string, any];
 
             // fileMeta가 존재하고 객체인지 확인
             if (fileMeta && typeof fileMeta === 'object') {
@@ -727,6 +881,7 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
   const handleChange = (
     index: number,
     field: keyof (typeof formDataEntries)[0],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
   ) => {
     const newEntries = [...formDataEntries];

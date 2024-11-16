@@ -3,10 +3,10 @@ import Icon from '../../../../../../../components/Icon';
 
 import { HiLockClosed, HiLockOpen } from 'react-icons/hi2';
 import { CustomTooltip } from '../../../../../../../components/CustomToolTip';
-import { APIRequestDocsInfo } from '../../../API.data.types';
+import { APIDetailInfo } from '../../../../../types/data/API.data';
 
 interface LockButtonProps {
-  isSecure: APIRequestDocsInfo['isSecure'];
+  isSecure: APIDetailInfo['requestDocs']['isSecure'];
   onClick?: () => void;
 }
 

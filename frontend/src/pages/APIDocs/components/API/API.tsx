@@ -5,7 +5,7 @@ import useIsFocusedHook, {
 } from '../../hooks/useIsFocusedHook';
 import { APIBody } from './subComponents/APIBody/APIBody';
 import { APIHeader } from './subComponents/APIHeader/APIHeader';
-import { APIDetailInfo } from './API.data.types';
+import { APIDetailInfo } from '../../types/data/API.data';
 
 export interface APIProps {
   children: ReactNode;

@@ -2,19 +2,17 @@ import { api, multipart } from '../../../../apis/interceptors';
 import * as AT from './types';
 import { Endpoint as EP } from '../../constants/endpoint';
 
-// 테스트케이스 등록
 export const addTestCase = async (
   { apiId }: AT.AddTestCaseRequest,
-  body: AT.AddTestCaseRequestBody,
+  formData: AT.AddTestCaseRequestBody,
 ) => {
   const response = await multipart.post<AT.AddTestCaseResponse>(
     `/${EP.projects}/${EP.domains}/${EP.apis}/${apiId}/${EP.testcases}`,
-    body,
+    formData,
   );
   return response.data;
 };
 
-// 테스트케이스 상세 조회
 export const getTestCaseDetail = async ({
   testcaseId,
 }: AT.GetTestCaseDetailRequest) => {
@@ -24,7 +22,6 @@ export const getTestCaseDetail = async ({
   return response.data;
 };
 
-// 테스트케이스 수정
 export const editTestCase = async (
   { testcaseId }: AT.EditTestCaseRequest,
   formData: FormData,
@@ -36,7 +33,6 @@ export const editTestCase = async (
   return response.data;
 };
 
-// 테스트케이스 삭제
 export const removeTestCase = async ({
   testcaseId,
 }: AT.RemoveTestCaseRequest) => {

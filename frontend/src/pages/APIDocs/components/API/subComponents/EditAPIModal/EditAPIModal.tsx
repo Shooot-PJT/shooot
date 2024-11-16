@@ -11,11 +11,11 @@ import {
 import { Method } from '../../../../types/methods';
 import Flexbox from '../../../../../../components/Flexbox';
 import { EditAPIRequestBody } from '../../../../apis/api/types';
-import { APIRequestDocsInfo } from '../../API.data.types';
+import { APIDetailInfo } from '../../../../types/data/API.data';
 
 interface EditAPIModalProps {
   apiId: number;
-  initialData: APIRequestDocsInfo;
+  initialData: APIDetailInfo['requestDocs'];
   popHandler: () => void;
   editHandler: (info: EditAPIRequestBody) => void;
 }
@@ -25,7 +25,9 @@ export const EditAPIModal: React.FC<EditAPIModalProps> = ({
   popHandler,
   editHandler,
 }) => {
-  const [method, setMethod] = useState<Method | null>(initialData.method);
+  const [method, setMethod] = useState<APIDetailInfo['requestDocs']['method']>(
+    initialData.method,
+  );
   const [title, setTitle] = useState(initialData.title);
   const [description, setDescription] = useState(initialData.description);
   const [url, setUrl] = useState(initialData.url);

@@ -5,7 +5,7 @@ import Typography from '../../../../../../../../components/Typography';
 import UrlTextField from './UrlTextField';
 import { useState } from 'react';
 import { cellViewStyle } from '../RequestContents/RequestSchemaTable/RequestSchemaTable.css';
-import { APIDetailInfo } from '../../../../API.data.types';
+import { APIDetailInfo } from '../../../../../../types/data/API.data';
 
 interface ExampleUrlProps {
   method?: APIDetailInfo['requestDocs']['method'];

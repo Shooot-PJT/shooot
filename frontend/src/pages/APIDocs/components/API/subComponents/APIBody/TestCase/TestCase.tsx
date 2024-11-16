@@ -24,7 +24,7 @@ import useIsFocusedHook, {
 } from '../../../../../hooks/useIsFocusedHook';
 import { throttle } from 'lodash';
 import { HTTP_STATUS_CODES } from '../../../../../types/httpStatus';
-import { TEST_RESULTS } from '../../../API.data.types';
+import { TEST_RESULTS } from '../../../../../types/data/API.data';
 
 export interface TestCaseHeaderInfo {
   id: number;

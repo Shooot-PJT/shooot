@@ -15,7 +15,6 @@ import {
   RemoveAPIRequest,
 } from './types';
 
-// API 추가
 export const addAPI = async (
   { domainId }: AddAPIRequest,
   body: AddAPIRequestBody,
@@ -27,7 +26,6 @@ export const addAPI = async (
   return response.data;
 };
 
-// API 리스트 조회
 export const getAPIList = async ({ domainId }: GetAPIListRequest) => {
   const response = await api.get<GetAPIListResponse>(
     `/${EP.projects}/${EP.domains}/${domainId}/${EP.apis}`,
@@ -35,7 +33,6 @@ export const getAPIList = async ({ domainId }: GetAPIListRequest) => {
   return response.data;
 };
 
-// API 상세 조회
 export const getAPIDetail = async ({ apiId }: GetAPIDetailRequest) => {
   const response = await api.get<GetAPIDetailResponse>(
     `/${EP.projects}/${EP.domains}/${EP.apis}/${apiId}`,
@@ -43,7 +40,6 @@ export const getAPIDetail = async ({ apiId }: GetAPIDetailRequest) => {
   return response.data;
 };
 
-// API 수정
 export const editAPI = async (
   { apiId }: EditAPIRequest,
   body: EditAPIRequestBody,
@@ -55,7 +51,6 @@ export const editAPI = async (
   return response.data;
 };
 
-// API 상태 토글 (isSecure, isRealServer)
 export const toggleAPIState = async (
   { apiId }: ToggleAPIStateRequest,
   body: ToggleAPIStateRequestBody,
@@ -67,7 +62,6 @@ export const toggleAPIState = async (
   return response.data;
 };
 
-// API 삭제
 export const removeAPI = async ({ apiId }: RemoveAPIRequest) => {
   const response = await api.delete<void>(
     `/${EP.projects}/${EP.domains}/${EP.apis}/${apiId}`,

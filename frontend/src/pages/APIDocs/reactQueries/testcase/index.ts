@@ -1,5 +1,3 @@
-// frontend/src/pages/APIDocs/reactQueries/testcase/index.ts
-
 import {
   useQuery,
   useMutation,
@@ -13,25 +11,18 @@ import {
   removeTestCase,
 } from '../../apis/testcase';
 import {
-  AddTestCaseRequest,
   AddTestCaseRequestBody,
-  AddTestCaseResponse,
   GetTestCaseDetailRequest,
-  GetTestCaseDetailResponse,
-  EditTestCaseRequest,
-  EditTestCaseRequestBody,
-  RemoveTestCaseRequest,
 } from '../../apis/testcase/types';
-import {
-  TestCaseDetailInfo,
-  APIDetailInfo,
-  TestCaseHeaderInfo,
-} from '../../types/data/API.data';
+import { TestCaseDetailInfo } from '../../types/data/TestCase.data';
 
 // useGetTestCaseDetail 훅
 export const useGetTestCaseDetail = (
   { testcaseId }: GetTestCaseDetailRequest,
-  options?: UseQueryOptions<TestCaseDetailInfo, Error>,
+  options?: Omit<
+    UseQueryOptions<TestCaseDetailInfo, Error>,
+    'queryKey' | 'queryFn'
+  >,
 ) => {
   return useQuery<TestCaseDetailInfo, Error>({
     queryKey: ['testCaseDetail', testcaseId],
@@ -44,30 +35,15 @@ export const useGetTestCaseDetail = (
 export const useAddTestCase = () => {
   const queryClient = useQueryClient();
   return useMutation<
-    TestCaseHeaderInfo, // AddTestCaseResponse가 아니라 TestCaseHeaderInfo로 변경
+    TestCaseDetailInfo,
     Error,
-    AddTestCaseRequestBody & { apiId: number }
+    { apiId: number; formData: AddTestCaseRequestBody }
   >({
-    mutationFn: (data) => addTestCase({ apiId: data.apiId }, data),
-    onSuccess: (newTestCase, variables) => {
-      // API 상세 정보 쿼리 무효화하여 데이터 새로 고침
+    mutationFn: ({ apiId, formData }) => addTestCase({ apiId }, formData),
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['apiDetail', variables.apiId],
       });
-
-      // 캐시 데이터 업데이트 (옵션)
-      queryClient.setQueryData<APIDetailInfo | undefined>(
-        ['apiDetail', variables.apiId],
-        (oldData: APIDetailInfo | undefined) => {
-          if (!oldData) return oldData;
-          return {
-            ...oldData,
-            testCases: oldData.testCases
-              ? [...oldData.testCases, newTestCase]
-              : [newTestCase],
-          };
-        },
-      );
     },
   });
 };
@@ -78,26 +54,27 @@ export const useRemoveTestCase = () => {
   return useMutation<void, Error, { apiId: number; testcaseId: number }>({
     mutationFn: ({ testcaseId }) => removeTestCase({ testcaseId }),
     onSuccess: (_, variables) => {
-      // API 상세 정보 쿼리 무효화하여 데이터 새로 고침
       queryClient.invalidateQueries({
         queryKey: ['apiDetail', variables.apiId],
       });
+    },
+  });
+};
 
-      // 캐시 데이터 업데이트 (옵션)
-      queryClient.setQueryData<APIDetailInfo | undefined>(
-        ['apiDetail', variables.apiId],
-        (oldData: APIDetailInfo | undefined) => {
-          if (!oldData) return oldData;
-          return {
-            ...oldData,
-            testCases: oldData.testCases
-              ? oldData.testCases.filter(
-                  (testCase) => testCase.id !== variables.testcaseId,
-                )
-              : [],
-          };
-        },
-      );
+// useEditTestCase 훅 추가 (필요 시)
+export const useEditTestCase = () => {
+  const queryClient = useQueryClient();
+  return useMutation<
+    TestCaseDetailInfo,
+    Error,
+    { testcaseId: number; formData: FormData }
+  >({
+    mutationFn: ({ testcaseId, formData }) =>
+      editTestCase({ testcaseId }, formData),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['testCaseDetail', variables.testcaseId],
+      });
     },
   });
 };

@@ -1,7 +1,9 @@
 // frontend/src/pages/APIDocs/types/data/API.data.ts
 
+import { TestCaseContent } from '../../components/API/subComponents/APIBody/TestCase/TestCaseTable/TestCaseTable.types';
 import { Method } from '../../types/methods';
 import { DomainInfo } from './Domain.data';
+import { TestCaseRequestType } from './TestCase.data';
 
 export interface User {
   id: number;

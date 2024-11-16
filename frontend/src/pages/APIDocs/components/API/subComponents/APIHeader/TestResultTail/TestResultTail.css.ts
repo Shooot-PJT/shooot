@@ -1,6 +1,6 @@
 import { recipe } from '@vanilla-extract/recipes';
 import colorPalette from '../../../../../../../styles/colorPalette';
-import { TEST_RESULTS } from '../../../API.data.types';
+import { TEST_RESULTS } from '../../../../../types/data/API.data';
 
 export const testResultTailRecipe = recipe({
   base: {

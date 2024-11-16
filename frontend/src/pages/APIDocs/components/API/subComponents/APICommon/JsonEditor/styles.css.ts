@@ -26,11 +26,9 @@ export const responseContainer = recipe({
   },
   variants: {
     hasJsonData: {
-      // editor
       true: {
         height: '13rem',
       },
-      // addButton
       false: {
         display: 'flex',
         justifyContent: 'center',

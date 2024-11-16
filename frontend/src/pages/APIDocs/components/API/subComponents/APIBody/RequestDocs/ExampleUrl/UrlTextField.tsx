@@ -1,5 +1,5 @@
 import React from 'react';
-import { APIDetailInfo } from '../../../../API.data.types';
+import { APIDetailInfo } from '../../../../../../types/data/API.data';
 
 interface UrlTextfieldProps {
   value: APIDetailInfo['requestDocs']['example_url'];

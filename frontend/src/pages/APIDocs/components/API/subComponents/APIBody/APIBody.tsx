@@ -1,5 +1,4 @@
-// frontend/src/pages/APIDocs/components/API/subComponents/APIBody/APIBody.tsx
-
+import React, { useState } from 'react';
 import { useAPIContext } from '../../API';
 import Flexbox from '../../../../../../components/Flexbox';
 import colorPalette from '../../../../../../styles/colorPalette';
@@ -11,21 +10,25 @@ import Button from '../../../../../../components/Button';
 import { useGetAPIDetail } from '../../../../reactQueries/api';
 import { TestCaseTable } from './TestCase/TestCaseTable/TestCaseTable';
 import { useAPI } from '../../../../hooks/useAPI';
-import { APIDetailInfo } from '../../../../types/data/API.data'; // 타입 경로 확인
 
 export const APIBody = () => {
   const context = useAPIContext();
   const { isFocused } = context.useIsFocusedHook;
   const apiId = context.requestDocs.id;
 
-  const { editAPIModalHandler, addTestCaseModalHandler, handleRemoveTestCase } =
-    useAPI();
+  const { editAPIModalHandler } = useAPI();
 
   const {
     data: apiDetail,
     isLoading,
     isError,
-  } = useGetAPIDetail({ apiId }, { enabled: isFocused });
+  } = useGetAPIDetail({ apiId }, { enabled: isFocused, staleTime: 0 });
+
+  const [isAdding, setIsAdding] = useState<boolean>(false);
+
+  const handleAddTestCaseClick = () => {
+    setIsAdding(true);
+  };
 
   if (isLoading) {
     return (
@@ -52,10 +55,6 @@ export const APIBody = () => {
 
   const method = apiDetail.requestDocs.method || 'method';
   const fontColor = method === 'method' ? 'light' : method;
-
-  const handleAddTestCaseClick = () => {
-    addTestCaseModalHandler(apiId);
-  };
 
   return (
     <div className={s.CollapseContainerRecipe({ isOpen: isFocused })}>
@@ -133,7 +132,7 @@ export const APIBody = () => {
               </Flexbox>
             </Flexbox>
 
-            {/* 1.1.2 BOTTOM : 편집,삭제 버튼 그룹*/}
+            {/* 1.1.2 BOTTOM : 편집,삭제, 추가 버튼 그룹*/}
             <Flexbox
               flexDirections="row"
               justifyContents="start"
@@ -144,7 +143,7 @@ export const APIBody = () => {
               <Button
                 color="grey"
                 rounded={0.3}
-                onClick={() => editAPIModalHandler(apiDetail.requestDocs)} // 수정된 부분
+                onClick={() => editAPIModalHandler(apiDetail.requestDocs)}
               >
                 편집
               </Button>
@@ -191,11 +190,20 @@ export const APIBody = () => {
                     key={testCase.id}
                     testCaseId={testCase.id}
                     apiId={apiId}
-                    onRemove={handleRemoveTestCase} // ensure this is a function
                   />
                 ))
               ) : (
                 <div>테스트케이스가 없습니다.</div>
+              )}
+
+              {/* 추가: 새로운 테스트케이스를 추가할 수 있는 TestCaseTable 추가 */}
+              {isAdding && (
+                <TestCaseTable
+                  isAddMode
+                  apiId={apiId}
+                  onAddSuccess={() => setIsAdding(false)}
+                  onCancel={() => setIsAdding(false)}
+                />
               )}
             </Flexbox>
           </Flexbox>

@@ -5,7 +5,7 @@ import * as style from './ManagerAvatar.css';
 import colorPalette from '../../../../../../../styles/colorPalette';
 import Typography from '../../../../../../../components/Typography';
 import Flexbox from '../../../../../../../components/Flexbox';
-import { APIDetailInfo } from '../../../API.data.types';
+import { APIDetailInfo } from '../../../../../types/data/API.data';
 
 interface ManagerAvatarProps {
   manager?: {
