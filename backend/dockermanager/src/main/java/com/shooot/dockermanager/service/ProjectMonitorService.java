@@ -54,7 +54,7 @@ public class ProjectMonitorService {
                 "-i", keys.get(metaData.getInstanceName()),
                 "-p", ports.get(metaData.getInstanceName()).toString(),
                 "vagrant@localhost",
-                "'ls'"
+                "'ping localhost'"
             );
             processBuilder.redirectErrorStream(true);
 
