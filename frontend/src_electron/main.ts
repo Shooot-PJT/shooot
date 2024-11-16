@@ -19,7 +19,14 @@ const createWindow = () => {
   });
 
   mainWindow.loadURL(BASE_URL);
-  mainWindow.webContents.openDevTools();
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow?.webContents.setZoomFactor(0.75);
+  });
+
+  if (process.env.NODE_ENV === 'development') {
+    mainWindow.webContents.openDevTools();
+  }
 };
 
 app.whenReady().then(() => {

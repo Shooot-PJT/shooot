@@ -16,6 +16,7 @@ import {
 } from '../../../hooks';
 import { useNavBarStore } from '../../../../../stores/navbarStore';
 import useModal from '../../../../../hooks/useModal';
+import { validateEmail } from '../../../../Signup/utils/validator';
 
 export const InviteMembersModal = () => {
   /* 필요 정보 */
@@ -84,8 +85,10 @@ export const InviteMembersModal = () => {
           <Textfield
             fullWidth
             onChange={async (e) => {
-              const member = await searchMember(e.target.value);
-              setResult(() => member);
+              if (!validateEmail(e.target.value.trim()).isError) {
+                const member = await searchMember(e.target.value);
+                setResult(() => member);
+              }
             }}
             placeholder="초대할 사람의 이메일을 입력해주세요"
           />
