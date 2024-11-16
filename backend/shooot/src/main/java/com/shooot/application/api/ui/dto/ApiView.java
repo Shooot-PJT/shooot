@@ -2,6 +2,7 @@ package com.shooot.application.api.ui.dto;
 
 import com.shooot.application.api.domain.Api;
 import com.shooot.application.api.domain.ApiTestStatusType;
+import com.shooot.application.user.domain.ProfileColor;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ public class ApiView {
     private Integer domainId;
     private Integer managerId;
     private String managerName;
+    private ProfileColor profileColor;
     private String title;
     private String description;
     private String method;
@@ -37,6 +39,7 @@ public class ApiView {
                 .domainId(api.getDomain().getId())
                 .managerId(api.getProjectParticipant().getId())
                 .managerName(api.getProjectParticipant().getUser().getNickname())
+                .profileColor(api.getProjectParticipant().getUser().getColor())
                 .title(api.getTitle())
                 .description(api.getDescription())
                 .method(api.getMethod() == null ? null : api.getMethod().toLowerCase())

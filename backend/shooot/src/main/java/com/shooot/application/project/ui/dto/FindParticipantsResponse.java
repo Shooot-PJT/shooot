@@ -1,11 +1,8 @@
 package com.shooot.application.project.ui.dto;
 
+import com.shooot.application.user.domain.ProfileColor;
 import com.shooot.application.user.domain.User;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
@@ -16,12 +13,14 @@ public class FindParticipantsResponse {
     private Integer userId;
     private String email;
     private String nickname;
+    private ProfileColor color;
 
     public static FindParticipantsResponse from(User user) {
         return FindParticipantsResponse.builder()
-            .userId(user.getId())
-            .email(user.getUsername())
-            .nickname(user.getNickname())
-            .build();
+                .userId(user.getId())
+                .email(user.getUsername())
+                .nickname(user.getNickname())
+                .color(user.getColor())
+                .build();
     }
 }
