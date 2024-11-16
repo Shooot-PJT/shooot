@@ -36,7 +36,6 @@ public class ProjectDeleteParticipantService {
             .findByProjectAndUser(project, user)
             .orElseThrow(ProjectParticipantNotFoundException::new);
 
-        projectParticipantRepository.delete(projectParticipant);
+        projectParticipant.delete();
     }
-
 }
