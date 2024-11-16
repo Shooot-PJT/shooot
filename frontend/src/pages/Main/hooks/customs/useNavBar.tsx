@@ -76,6 +76,8 @@ export const useNavBar = () => {
         queryKey: [QUERY_KEYS.readMembersByProjectId, navbarStore.project],
       });
     }
+
+    sessionStorage.setItem('menu', navbarStore.menu.toString());
   }, [navbarStore.menu, navbarStore.project]);
 
   return {
