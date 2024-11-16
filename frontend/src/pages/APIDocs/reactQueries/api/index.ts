@@ -6,6 +6,7 @@ import {
   editAPI,
   toggleAPIState,
   removeAPI,
+  getParticipantList,
 } from '../../apis/api';
 import {
   AddAPIRequest,
@@ -14,11 +15,12 @@ import {
   GetAPIDetailRequest,
   EditAPIRequest,
   EditAPIRequestBody,
-  ToggleAPIStateRequest,
   ToggleAPIStateRequestBody,
   RemoveAPIRequest,
+  GetParticipantListRequest,
+  GetParticipantListResponse,
 } from '../../apis/api/types';
-import { RequestDocs } from '../../types/data/API.data';
+import { APIDetailInfo, RequestDocs } from '../../types/data/API.data';
 
 // 1. API 목록 조회
 export const useGetAPIList = (
@@ -85,13 +87,40 @@ export const useToggleAPIState = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: {
-      apiId: ToggleAPIStateRequest['apiId'];
+      apiId: number;
       body: ToggleAPIStateRequestBody;
+      domainId: number;
     }) => toggleAPIState({ apiId: data.apiId }, data.body),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ['apiDetail', variables.apiId],
-      });
+      queryClient.setQueryData<RequestDocs[]>(
+        ['apiList', variables.domainId],
+        (oldData) => {
+          if (!oldData) return [];
+          return oldData.map((api) => {
+            if (api.id === variables.apiId) {
+              return {
+                ...api,
+                ...variables.body,
+              };
+            }
+            return api;
+          });
+        },
+      );
+
+      queryClient.setQueryData<APIDetailInfo>(
+        ['apiDetail', variables.apiId],
+        (oldData) => {
+          if (!oldData) return oldData;
+          return {
+            ...oldData,
+            requestDocs: {
+              ...oldData.requestDocs,
+              ...variables.body,
+            },
+          };
+        },
+      );
     },
   });
 };
@@ -110,5 +139,16 @@ export const useRemoveAPI = () => {
         queryKey: ['apiList'],
       });
     },
+  });
+};
+
+export const useGetParticipantList = (
+  { projectId }: GetParticipantListRequest,
+  options = {},
+) => {
+  return useQuery<GetParticipantListResponse>({
+    queryKey: ['participantList', projectId],
+    queryFn: () => getParticipantList({ projectId }),
+    ...options,
   });
 };

@@ -3,20 +3,56 @@ import Icon from '../../../../../../../components/Icon';
 
 import { HiLockClosed, HiLockOpen } from 'react-icons/hi2';
 import { CustomTooltip } from '../../../../../../../components/CustomToolTip';
-import { APIDetailInfo } from '../../../../../types/data/API.data';
+import { useToggleAPIState } from '../../../../../reactQueries/api';
+import { useAPIContext } from '../../../API';
+import { useEffect, useState } from 'react';
 
 interface LockButtonProps {
-  isSecure: APIDetailInfo['requestDocs']['isSecure'];
-  onClick?: () => void;
+  isSecure: boolean;
 }
 
-const LockButton = ({ isSecure, onClick }: LockButtonProps) => {
-  const tooltipGuide = isSecure ? '권한 필요' : '권한 불필요';
+export const LockButton = ({ isSecure }: LockButtonProps) => {
+  const { requestDocs } = useAPIContext();
+  const [secureState, setSecureState] = useState<boolean>(isSecure);
+  const { mutate: toggleAPIState } = useToggleAPIState();
+
+  useEffect(() => {
+    setSecureState(isSecure);
+  }, [isSecure]);
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newSecureState = !secureState;
+    setSecureState(newSecureState);
+
+    toggleAPIState(
+      {
+        apiId: requestDocs.id,
+        body: {
+          isSecure: newSecureState,
+        },
+        domainId: requestDocs.domainId,
+      },
+      {
+        onSuccess: () => {
+          //
+        },
+        onError: () => {
+          setSecureState(!newSecureState);
+        },
+      },
+    );
+  };
+
+  const tooltipGuide = secureState ? '권한 필요' : '권한 불필요';
   return (
     <CustomTooltip title={tooltipGuide}>
-      <div onClick={onClick} className={s.lockButton({ isSecure })}>
+      <div
+        onClick={handleClick}
+        className={s.lockButton({ isSecure: secureState })}
+      >
         <Icon background="none" color="disabled">
-          {isSecure ? <HiLockClosed /> : <HiLockOpen />}
+          {secureState ? <HiLockClosed /> : <HiLockOpen />}
         </Icon>
       </div>
     </CustomTooltip>
