@@ -41,7 +41,7 @@ public class ProjectMonitorService {
         "instance5",
         2203
     );
-    private final String command = "ssh -o StrictHostKeyChecking=no -i %s -p %d vagrant@localhost 'sar -t 1'";
+    private final String command = "sar -t 1";
 
     public void getStatus(Integer projectId, Integer projectJarFileId, Integer duration) {
         MetaData metaData = projectDirectoryManager.getMetaData(
@@ -49,8 +49,12 @@ public class ProjectMonitorService {
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(
-                command.formatted(keys.get(metaData.getInstanceName()),
-                    ports.get(metaData.getInstanceName()))
+                "ssh",
+                "-o", "StrictHostKeyChecking=no",
+                "-i", keys.get(metaData.getInstanceName()),
+                "-p", ports.get(metaData.getInstanceName()).toString(),
+                "vagrant@localhost",
+                "'ls'"
             );
             processBuilder.redirectErrorStream(true);
 
