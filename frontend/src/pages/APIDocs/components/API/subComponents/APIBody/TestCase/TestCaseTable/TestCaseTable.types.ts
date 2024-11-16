@@ -40,11 +40,18 @@ export interface TestCaseContent {
   expectedResponse: ExpectedResponse;
 }
 
+// 추가된 TableRow 타입 정의
 export interface TableRow {
   id: string;
   key: string;
-  value: any;
+  value: string;
   description: string;
-  type: 'Text' | 'File' | null;
-  isRequired: boolean | null;
+}
+
+// 추가된 TestCaseDetailInfo 타입 정의 (필요에 따라 수정)
+export interface TestCaseDetailInfo {
+  id: number;
+  title: string;
+  type: 'MULTIPART' | 'JSON' | 'NONE';
+  content: TestCaseContent;
 }
