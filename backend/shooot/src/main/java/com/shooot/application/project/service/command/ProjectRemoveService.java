@@ -11,6 +11,7 @@ import com.shooot.application.project.domain.ProjectParticipant;
 import com.shooot.application.project.domain.repository.ProjectParticipantRepository;
 import com.shooot.application.project.domain.repository.ProjectRepository;
 import com.shooot.application.project.exception.ProjectNotFoundException;
+import com.shooot.application.project.exception.ProjectNotTerminatedException;
 import com.shooot.application.project.exception.ProjectParticipantNotFoundException;
 import com.shooot.application.project.exception.ProjectPermissionDeniedException;
 import com.shooot.application.user.domain.User;
@@ -40,6 +41,10 @@ public class ProjectRemoveService {
             .orElseThrow(ProjectNotFoundException::new);
         ProjectParticipant projectParticipant = projectParticipantRepository.findByProjectAndUser(
             project, user).orElseThrow(ProjectParticipantNotFoundException::new);
+
+        if (project.isDeploy()) {
+            throw new ProjectNotTerminatedException();
+        }
 
         if (!projectParticipant.getIsOwner()) {
             throw new ProjectPermissionDeniedException();
