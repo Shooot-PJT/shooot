@@ -4,8 +4,15 @@ import { Endpoint as EP } from '../../constants/endpoint';
 
 export const addTestCase = async (
   { apiId }: AT.AddTestCaseRequest,
-  formData: AT.AddTestCaseRequestBody,
+  data: AT.AddTestCaseRequestBody,
 ) => {
+  const formData = new FormData();
+
+  formData.append('title', data.title);
+  formData.append('httpStatusCode', String(data.httpStatusCode));
+  formData.append('type', data.type);
+  formData.append('content', JSON.stringify(data.content));
+
   const response = await multipart.post<AT.AddTestCaseResponse>(
     `/${EP.projects}/${EP.domains}/${EP.apis}/${apiId}/${EP.testcases}`,
     formData,
@@ -24,8 +31,15 @@ export const getTestCaseDetail = async ({
 
 export const editTestCase = async (
   { testcaseId }: AT.EditTestCaseRequest,
-  formData: FormData,
+  data: AT.AddTestCaseRequestBody,
 ) => {
+  const formData = new FormData();
+
+  formData.append('title', data.title);
+  formData.append('httpStatusCode', String(data.httpStatusCode));
+  formData.append('type', data.type);
+  formData.append('content', JSON.stringify(data.content));
+
   const response = await multipart.patch<AT.AddTestCaseResponse>(
     `/${EP.projects}/${EP.domains}/${EP.apis}/${EP.testcases}/${testcaseId}`,
     formData,

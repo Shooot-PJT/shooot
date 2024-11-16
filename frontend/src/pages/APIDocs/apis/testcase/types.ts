@@ -23,8 +23,7 @@ export interface EditTestCaseRequest {
   testcaseId: number;
 }
 
-export type EditTestCaseRequestBody = FormData;
-
+export type EditTestCaseRequestBody = AddTestCaseRequestBody;
 export interface RemoveTestCaseRequest {
   testcaseId: number;
 }

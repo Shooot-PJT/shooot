@@ -16,7 +16,6 @@ import {
 } from '../../apis/testcase/types';
 import { TestCaseDetailInfo } from '../../types/data/TestCase.data';
 
-// useGetTestCaseDetail 훅
 export const useGetTestCaseDetail = (
   { testcaseId }: GetTestCaseDetailRequest,
   options?: Omit<
@@ -31,15 +30,14 @@ export const useGetTestCaseDetail = (
   });
 };
 
-// useAddTestCase 훅
 export const useAddTestCase = () => {
   const queryClient = useQueryClient();
   return useMutation<
     TestCaseDetailInfo,
     Error,
-    { apiId: number; formData: AddTestCaseRequestBody }
+    { apiId: number; data: AddTestCaseRequestBody }
   >({
-    mutationFn: ({ apiId, formData }) => addTestCase({ apiId }, formData),
+    mutationFn: ({ apiId, data }) => addTestCase({ apiId }, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['apiDetail', variables.apiId],
@@ -48,7 +46,6 @@ export const useAddTestCase = () => {
   });
 };
 
-// useRemoveTestCase 훅
 export const useRemoveTestCase = () => {
   const queryClient = useQueryClient();
   return useMutation<void, Error, { apiId: number; testcaseId: number }>({
@@ -61,16 +58,14 @@ export const useRemoveTestCase = () => {
   });
 };
 
-// useEditTestCase 훅 추가 (필요 시)
 export const useEditTestCase = () => {
   const queryClient = useQueryClient();
   return useMutation<
     TestCaseDetailInfo,
     Error,
-    { testcaseId: number; formData: FormData }
+    { testcaseId: number; data: AddTestCaseRequestBody }
   >({
-    mutationFn: ({ testcaseId, formData }) =>
-      editTestCase({ testcaseId }, formData),
+    mutationFn: ({ testcaseId, data }) => editTestCase({ testcaseId }, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['testCaseDetail', variables.testcaseId],
