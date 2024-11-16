@@ -41,7 +41,7 @@ public class ProjectMonitorService {
         "instance5",
         2203
     );
-    private final String command = "sar -u -r -n DEV 1";
+    private final String command = "sar -u -r -n DEV -p -d 1";
 
     public void getStatus(Integer projectId, Integer projectJarFileId, Integer duration) {
         MetaData metaData = projectDirectoryManager.getMetaData(
@@ -67,16 +67,21 @@ public class ProjectMonitorService {
                 new InputStreamReader(process.getInputStream()))) {
                 while (System.currentTimeMillis() < endTime) {
                     Double cpu = getCpu(reader);
-                    System.out.println(cpu);
+                    System.out.println("cpu: " + cpu);
                     Double ram = getRam(reader);
-                    System.out.println(ram);
+                    System.out.println("ram: " + ram);
+                    Double disk = getDisk(reader);
+                    System.out.println("disk: " + disk);
                     Double network = getNetwork(reader);
-                    System.out.println(network);
+                    System.out.println("network: " + network);
                     projectMonitorMessagePublisher.publish(
                         ProjectMonitorMessage.builder()
                             .projectId(projectId)
                             .projectJarFileId(projectJarFileId)
-                            .message("")
+                            .cpu(cpu)
+                            .memory(ram)
+                            .disk(disk)
+                            .network(network)
                             .build());
                     Thread.sleep(1000);
                 }
@@ -135,6 +140,23 @@ public class ProjectMonitorService {
                     if (columns.length > 9) {
                         String network = columns[9];
                         Double value = Double.parseDouble(network);
+                        return value * 100;
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    private double getDisk(BufferedReader br) throws IOException {
+        String line;
+        while ((line = br.readLine()) != null) {
+            if (line.contains("sda")) {
+                if (line != null) {
+                    String[] columns = line.trim().split("\\s+");
+                    if (columns.length > 9) {
+                        String disk = columns[9];
+                        Double value = Double.parseDouble(disk);
                         return value * 100;
                     }
                 }
