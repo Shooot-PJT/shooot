@@ -1,25 +1,47 @@
-import { ChangeEvent, FC } from 'react';
+import { ReactNode, useState } from 'react';
+import { GoTriangleUp } from 'react-icons/go';
+import { GoTriangleDown } from 'react-icons/go';
 import * as s from './SelectBox.css';
-import { TestMethodType } from '../../types';
+import Flexbox from '../../../../components/Flexbox';
 
 interface SelectBoxProps {
-  value: TestMethodType;
-  onChange: (value: TestMethodType) => void;
-  options: TestMethodType[];
+  value: number;
+  onChange: (value: number) => void;
+  options: ReactNode[];
 }
 
-export const SelectBox: FC<SelectBoxProps> = ({ value, onChange, options }) => {
-  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    onChange(event.target.value as TestMethodType);
+export const SelectBox = ({ value = 0, onChange, options }: SelectBoxProps) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const handleValue = (index: number) => {
+    setIsOpen(false);
+    onChange(index);
+    console.log(index);
+  };
+
+  const handleOpen = () => {
+    setIsOpen(!isOpen);
   };
 
   return (
-    <select className={s.selectBox} value={value} onChange={handleChange}>
-      {options.map((option) => (
-        <option key={option} value={option}>
-          {option}
-        </option>
-      ))}
-    </select>
+    <div className={s.container}>
+      <div className={s.selectBox} onClick={handleOpen}>
+        <Flexbox justifyContents="between" alignItems="center">
+          <div className={`${s.selectedItem}`}>{options[value]}</div>
+          {isOpen ? <GoTriangleUp size={24} /> : <GoTriangleDown size={24} />}
+        </Flexbox>
+      </div>
+      <div className={`${s.expendBox} ${!isOpen ? s.closeBox : s.openBox}`}>
+        {options.map((option, index) => (
+          <div
+            className={s.optionItem}
+            key={index}
+            onClick={() => handleValue(index)}
+          >
+            {option}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };

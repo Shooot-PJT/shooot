@@ -7,40 +7,32 @@ import Icon from '../../../../../components/Icon';
 import { HiUser } from 'react-icons/hi2';
 import { UserInfo } from '../../../types';
 import { Chip } from '../../../components/Chip';
-import { findMember, sendInvitingMail } from '../../../apis';
 import usePopup from '../../../../../hooks/usePopup';
 import { ProjectMember } from '../../../../MyProject/types';
+import {
+  useApiHandler,
+  useReadMembersByProjectId,
+  useReadUserInfo,
+} from '../../../hooks';
+import { useNavBarStore } from '../../../../../stores/navbarStore';
+import useModal from '../../../../../hooks/useModal';
+import { validateEmail } from '../../../../Signup/utils/validator';
 
-interface InviteMembersModalProps {
-  projectId: number;
-  userInfo: UserInfo;
-  memberInfo: ProjectMember[];
-  popHandler: () => void;
-}
-
-export const InviteMembersModal = ({
-  projectId,
-  userInfo,
-  memberInfo,
-  popHandler,
-}: InviteMembersModalProps) => {
+export const InviteMembersModal = () => {
+  /* 필요 정보 */
   const popup = usePopup();
+  const modal = useModal();
+  const navbarStore = useNavBarStore();
+  const { user } = useReadUserInfo();
+  const { members } = useReadMembersByProjectId(navbarStore.project);
+  const { searchMember, sendInvitingMail } = useApiHandler();
+
+  /* 자원 관리 */
   const [result, setResult] = useState<UserInfo | undefined>(undefined);
   const [targets, setTargets] = useState<UserInfo[]>([]);
 
-  const searchMember = async (email: string) => {
-    await findMember(email)
-      .then((res) => {
-        setResult(() => ({
-          userId: res.data.userId,
-          nickname: res.data.nickname,
-          email: res.data.email,
-        }));
-      })
-      .catch(() => setResult(undefined));
-  };
   const addTarget = (info: UserInfo) => {
-    if (info.email === userInfo.email) {
+    if (info.email === user?.data.email) {
       popup.push({
         title: '팀원 초대',
         children: <Typography>본인은 초대할 수 없습니다.</Typography>,
@@ -48,7 +40,7 @@ export const InviteMembersModal = ({
       });
     } else {
       let res = true;
-      memberInfo.forEach((member: ProjectMember) => {
+      members?.data.forEach((member: ProjectMember) => {
         if (member.email === info.email) res = false;
       });
 
@@ -74,35 +66,6 @@ export const InviteMembersModal = ({
       return before;
     });
   };
-  const sendMail = async () => {
-    if (targets.length) {
-      targets.forEach(async (t: UserInfo, idx: number) => {
-        await sendInvitingMail(projectId, t.userId)
-          .then(() => {
-            if (idx + 1 === targets.length) {
-              popup.push({
-                title: '메일 전송',
-                children: <Typography>초대 메일을 전송하였습니다.</Typography>,
-                onClose: () => popHandler(),
-              });
-            }
-          })
-          .catch(() => {
-            popup.push({
-              title: '메일 전송 실패',
-              children: <Typography>메일 전송에 실패하였습니다.</Typography>,
-              type: 'fail',
-            });
-          });
-      });
-    } else {
-      popup.push({
-        title: '메일 전송 실패',
-        children: <Typography>초대할 사람이 없습니다.</Typography>,
-        type: 'fail',
-      });
-    }
-  };
 
   return (
     <Flexbox flexDirections="col" style={{ rowGap: '2rem' }}>
@@ -114,12 +77,21 @@ export const InviteMembersModal = ({
       {/* 사용자 검색 */}
       <Flexbox flexDirections="col" style={{ rowGap: '0.5rem' }}>
         <Typography color="disabled" size={0.875} weight="500">
-          사용자 검색
+          이메일로 사용자 검색
         </Typography>
 
         <div style={{ width: '100%' }}>
           {/* 이메일 입력*/}
-          <Textfield fullWidth onChange={(e) => searchMember(e.target.value)} />
+          <Textfield
+            fullWidth
+            onChange={async (e) => {
+              if (!validateEmail(e.target.value.trim()).isError) {
+                const member = await searchMember(e.target.value);
+                setResult(() => member);
+              }
+            }}
+            placeholder="초대할 사람의 이메일을 입력해주세요"
+          />
 
           {/* 검색 결과 */}
           {result && (
@@ -169,7 +141,7 @@ export const InviteMembersModal = ({
 
       {/* 메일 전송 */}
       <Flexbox justifyContents="end" style={{ columnGap: '1rem' }}>
-        <Button color="grey" rounded={0.5} onClick={popHandler}>
+        <Button color="grey" rounded={0.5} onClick={() => modal.pop()}>
           <Typography weight="600" size={0.875}>
             취소
           </Typography>
@@ -177,7 +149,9 @@ export const InviteMembersModal = ({
         <Button
           color="primary"
           rounded={0.5}
-          onClick={async () => await sendMail()}
+          onClick={async () =>
+            await sendInvitingMail(navbarStore.project, targets)
+          }
         >
           <Typography weight="600" size={0.875}>
             초대 메일 전송

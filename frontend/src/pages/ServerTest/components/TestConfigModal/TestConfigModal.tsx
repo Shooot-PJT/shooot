@@ -1,78 +1,117 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useRef, useState } from 'react';
+import { HiCog6Tooth, HiRocketLaunch } from 'react-icons/hi2';
 import Button from '../../../../components/Button';
-import Flexbox from '../../../../components/Flexbox';
-import useModal from '../../../../hooks/useModal';
-import { DataTable } from '../DataTable/DataTable';
-import * as s from './TestConfigModal.css';
-import { TestConfigForm } from '../TestConfigForm/TestConfigForm';
-import { MethodChip } from '../MethodChip/MethodChip';
-import Checkbox from '../Checkbox/Checkbox';
-import { APITestFormData, TestMethodType } from '../../types';
-import { Method } from '../../../APIDocs/types/methods';
-import Typography from '../../../../components/Typography';
-import { HiRocketLaunch, HiCog6Tooth } from 'react-icons/hi2';
 import { CustomTooltip } from '../../../../components/CustomToolTip';
+import Flexbox from '../../../../components/Flexbox';
+import Typography from '../../../../components/Typography';
+import useModal from '../../../../hooks/useModal';
+import { Method } from '../../../APIDocs/types/methods';
+import { excuteApiTest, getAPIConfigs } from '../../apis/TestApi';
+import {
+  APIIncludeTestData,
+  APITestFormData,
+  APITestListResponse,
+  ExecuteApiTestRequest,
+  TestMethodType,
+} from '../../types';
+import Checkbox from '../Checkbox/Checkbox';
+import { DataTable } from '../DataTable/DataTable';
+import { MethodChip } from '../MethodChip/MethodChip';
+import { TestConfigForm } from '../TestConfigForm/TestConfigForm';
+import * as s from './TestConfigModal.css';
+import { ExcuteTestModal } from '../ExcuteTestModal/ExcuteTestModal';
+import usePopup from '../../../../hooks/usePopup';
+import { useUploadStateStore } from '../../stores/useUploadStateStore';
 
-const apiData = {
-  includes: [
-    {
-      apiId: 1,
-      domainName: 'egg',
-      method: 'GET' as Method,
-      endPoint: 'api/eggs/count',
-      description:
-        '특별한 계란 목록을 가져옵니다 특별한 계란 목록을 가져옵니다 특별한 계란 목록을 가져옵니다 특별한 계란 목록을 가져옵니다',
-      vuser: 10,
-      duration: 1,
-      testMethod: 'FIXED' as TestMethodType,
-    },
-    {
-      apiId: 2,
-      domainName: 'egg',
-      method: 'POST' as Method,
-      endPoint: 'api/eggs/count',
-      description: '특별한 계란 목록을 가져옵니다',
-      vuser: 10,
-      duration: 1,
-      testMethod: 'SPIKE' as TestMethodType,
-    },
-  ],
-  excludes: [
-    {
-      method: 'POST' as Method,
-      endPoint: 'api/users',
-    },
-    {
-      method: 'PUT' as Method,
-      endPoint: 'api/users',
-    },
-    {
-      method: 'PATCH' as Method,
-      endPoint: 'api/users',
-    },
-    {
-      method: 'DELETE' as Method,
-      endPoint: 'api/users',
-    },
-  ],
-};
+interface TestConfigModalProps {
+  projectJarFileId: number;
+}
 
-export const TestConfigModal = () => {
+export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
   const [testFormData, setTestFormData] = useState<APITestFormData[]>([]);
   const [expandedRowIndex, setExpandedRowIndex] = useState<number>(-1);
+  const [validationState, setValidationState] = useState<boolean>(false);
   const modal = useModal();
+  const popup = usePopup();
+  const { state, setState } = useUploadStateStore();
   const colWidths = [15, 10, 25, 30, 10, 10];
+  const checkedApisNum = useRef<number>(0);
+
+  const { data: apiConfigs = {} as APITestListResponse } = useQuery({
+    queryKey: ['apiConfigs', projectJarFileId],
+    queryFn: async () => {
+      const response = await getAPIConfigs({
+        projectJarFileId: projectJarFileId,
+      });
+      return response?.data ?? {};
+    },
+    staleTime: 120 * 1000,
+  });
+
+  useEffect(() => {
+    return () => {
+      if (state === 'End') {
+        modal.pop();
+        setState('None');
+      }
+    };
+  }, [state]);
 
   const handleCheckbox = (idx: number) => {
-    setTestFormData((prevData) =>
-      prevData.map((item, index) =>
+    setTestFormData((prevData) => {
+      const updatedData = prevData.map((item, index) =>
         index === idx ? { ...item, checked: !item.checked } : item,
-      ),
-    );
+      );
+      const checkedCount = updatedData.filter((item) => item.checked).length;
+      checkedApisNum.current = checkedCount;
+      setValidationState(checkedCount > 0);
+
+      return updatedData;
+    });
   };
 
   const handleExpanedRowIdx = (idx: number) => {
+    console.log('idx : ' + idx + ', expandedRow : ' + expandedRowIndex);
     setExpandedRowIndex((prevIndex) => (prevIndex === idx ? -1 : idx));
+  };
+
+  const handleSubmitTestConfig = () => {
+    // todo: api 연결되는대로 수정
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const testConfig = testFormData
+      .filter((item) => item.checked)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      .map(({ checked, ...rest }) => rest);
+
+    const request: ExecuteApiTestRequest = {
+      // projectJarFileId: projectJarFileId,
+      // endPointSettings: testConfig,
+      projectJarFileId: 49,
+      endPointSettings: [
+        {
+          apiId: 25,
+          method: 'FIXED',
+          vuserNum: 100,
+          duration: 100,
+        },
+      ],
+    };
+    excuteApiTest(request)
+      .then(() => {
+        modal.push({
+          children: <ExcuteTestModal projectJarFileId={49} />,
+        });
+      })
+      .catch((error) => {
+        popup.push({
+          title: '테스트 시도 실패',
+          children: <>{error.message}</>,
+          type: 'fail',
+        });
+      });
+
+    console.log(request);
   };
 
   const handleFormChange = (
@@ -87,54 +126,81 @@ export const TestConfigModal = () => {
     );
   };
 
-  // Form 초기 상태 생성
   useEffect(() => {
-    const newTestFormData = apiData.includes.map((item) => ({
-      apiId: item.apiId,
-      method: item.testMethod,
-      vuserNum: item.vuser,
-      duration: item.duration,
-      checked: false,
-    }));
+    if (!Array.isArray(apiConfigs.includes) || !apiConfigs.includes.length) {
+      setTestFormData([]);
+      return;
+    }
+
+    const newTestFormData = apiConfigs.includes.map(
+      (item: APIIncludeTestData) => ({
+        apiId: item.apiId,
+        method: item.testMethod,
+        vuserNum: item.vuser,
+        duration: item.duration,
+        checked: false,
+      }),
+    );
     setTestFormData(newTestFormData);
-  }, []);
+  }, [apiConfigs.includes]);
 
-  // tableData를 생성하는 함수
-  const convertTableData = () => {
-    const newTableIncludeData = apiData.includes.map((item, idx) => [
-      <CustomTooltip title={item.domainName} placement="bottom" arrow={true}>
-        <div className={s.Description}>{item.domainName}</div>
-      </CustomTooltip>,
-      <MethodChip method={item.method.toLowerCase() as Method} />,
-      <CustomTooltip title={item.endPoint} placement="bottom" arrow={true}>
-        <div className={s.Description}>{item.endPoint}</div>
-      </CustomTooltip>,
-      <CustomTooltip title={item.description} placement="bottom" arrow={true}>
-        <div className={s.Description}>{item.description}</div>
-      </CustomTooltip>,
-      <HiCog6Tooth
-        size={24}
-        className={s.ConfigIcon}
-        onClick={() => handleExpanedRowIdx(idx)}
-      />,
-      <Checkbox
-        checked={testFormData[idx]?.checked}
-        onChange={() => handleCheckbox(idx)}
-      />,
-    ]);
+  const convertTableData = (data: APITestListResponse) => {
+    if (!data?.includes?.length && !data?.excludes?.length) {
+      return [];
+    }
 
-    const newTableExcludeData = apiData.excludes.map((item) => [
-      '-',
-      <MethodChip method={item.method.toLowerCase() as Method} />,
-      <CustomTooltip title={item.endPoint} placement="bottom" arrow={true}>
-        <div className={s.Description}>{item.endPoint}</div>
-      </CustomTooltip>,
-      <div className={s.UndefinedAPIDescription}>
-        현재 API Docs에 정의되지 않은 API입니다.
-      </div>,
-      '-',
-      '-',
-    ]);
+    const newTableIncludeData = Array.isArray(data.includes)
+      ? data.includes.map((item, idx) => [
+          <CustomTooltip
+            title={item.domainName}
+            placement="bottom"
+            arrow={true}
+          >
+            <div className={s.Description}>{item.domainName}</div>
+          </CustomTooltip>,
+          <MethodChip method={item.method.toLowerCase() as Method} />,
+          <CustomTooltip title={item.endPoint} placement="bottom" arrow={true}>
+            <div className={s.Description}>{item.endPoint}</div>
+          </CustomTooltip>,
+          <CustomTooltip
+            title={item.description}
+            placement="bottom"
+            arrow={true}
+          >
+            <div className={s.Description}>{item.description}</div>
+          </CustomTooltip>,
+          <HiCog6Tooth
+            size={24}
+            className={s.ConfigIcon}
+            onClick={() => handleExpanedRowIdx(idx)}
+          />,
+          <Checkbox
+            checked={testFormData[idx]?.checked}
+            onChange={() => handleCheckbox(idx)}
+          />,
+        ])
+      : [];
+
+    const newTableExcludeData = Array.isArray(data.excludes)
+      ? data.excludes.map((item) => [
+          '-',
+          <MethodChip method={item.method.toLowerCase() as Method} />,
+          <CustomTooltip title={item.endPoint} placement="bottom" arrow={true}>
+            <div className={s.Description}>{item.endPoint}</div>
+          </CustomTooltip>,
+          <div className={s.UndefinedAPIDescription}>
+            현재 API Docs에 정의되지 않은 API입니다.
+          </div>,
+          '-',
+          <CustomTooltip
+            title={'테스트 하기 위해서는 API Docs 등록이 필요합니다.'}
+            placement="bottom"
+            arrow={true}
+          >
+            <div>-</div>
+          </CustomTooltip>,
+        ])
+      : [];
 
     return [...newTableIncludeData, ...newTableExcludeData];
   };
@@ -164,7 +230,7 @@ export const TestConfigModal = () => {
         <Typography size={1}>테스트할 API 목록들을 체크해주세요</Typography>
       </div>
       <DataTable
-        data={convertTableData()}
+        data={convertTableData(apiConfigs)}
         colWidths={colWidths}
         headers={headers}
         expandedRowIndex={expandedRowIndex}
@@ -180,7 +246,13 @@ export const TestConfigModal = () => {
         }
       />
       <Flexbox justifyContents="end" style={{ gap: '1rem', marginTop: '1rem' }}>
-        <Button paddingX={2} paddingY={1} color="primary">
+        <Button
+          paddingX={2}
+          paddingY={1}
+          color="primary"
+          onClick={handleSubmitTestConfig}
+          disabled={!validationState}
+        >
           Shooot! <HiRocketLaunch />
         </Button>
         <Button paddingX={2} paddingY={1} color="delete" onClick={modal.pop}>
