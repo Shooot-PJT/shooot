@@ -5,6 +5,7 @@ import com.shooot.dockermanager.handler.ProjectDirectoryManager;
 import com.shooot.dockermanager.publisher.ProjectMonitorMessage;
 import com.shooot.dockermanager.publisher.ProjectMonitorMessagePublisher;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,8 @@ public class ProjectMonitorService {
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("vagrant", "ssh",
-                metaData.getInstanceName(), "-c", "'sar -t 1'");
+                metaData.getInstanceName(), "-c", "'sar -t 1'").directory(
+                new File("/home/hyunjinkim/deployment/scripts"));
             processBuilder.redirectErrorStream(true);
 
             Process process = processBuilder.start();
