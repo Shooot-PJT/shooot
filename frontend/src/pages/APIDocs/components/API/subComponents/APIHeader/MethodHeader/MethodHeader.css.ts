@@ -1,5 +1,6 @@
 import { recipe } from '@vanilla-extract/recipes';
 import theme from '../../../../../../../styles/theme.css';
+import colorPalette from '../../../../../../../styles/colorPalette';
 
 export const methodHeader = recipe({
   base: {
@@ -9,29 +10,28 @@ export const methodHeader = recipe({
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
+    backgroundColor: colorPalette.grey['300'],
   },
 
   variants: {
     method: {
+      method: {
+        backgroundColor: colorPalette.grey['300'],
+      },
       get: {
         backgroundColor: theme.palette.get['main'],
-        color: theme.palette.get['contrastText'],
       },
       post: {
         backgroundColor: theme.palette.post['main'],
-        color: theme.palette.post['contrastText'],
       },
       put: {
         backgroundColor: theme.palette.put['main'],
-        color: theme.palette.put['contrastText'],
       },
       patch: {
         backgroundColor: theme.palette.patch['main'],
-        color: theme.palette.patch['contrastText'],
       },
       delete: {
         backgroundColor: theme.palette.delete['main'],
-        color: theme.palette.delete['contrastText'],
       },
     },
   },

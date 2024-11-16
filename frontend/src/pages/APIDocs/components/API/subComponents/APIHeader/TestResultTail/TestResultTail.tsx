@@ -1,7 +1,7 @@
-import { TestResult } from './TestResultTail.types';
+import { TestResult } from '../../../../../types/data/API.data';
 import * as s from './TestResultTail.css';
 import { CustomTooltip } from '../../../../../../../components/CustomToolTip';
-import { TEST_RESULTS } from '../../../API.data.types';
+import { TEST_RESULTS } from '../../../../../types/data/API.data';
 
 interface TestResultTailProps {
   testStatus: TestResult;
@@ -13,7 +13,7 @@ const makeTestMessage = (testResult: TestResult): string => {
     message += ' 성공했습니다.';
   } else if (testResult === TEST_RESULTS.FAIL) {
     message += ' 실패했습니다.';
-  } else if (testResult === TEST_RESULTS.NOT_TESTED) {
+  } else if (testResult === TEST_RESULTS.YET) {
     message = '아직 테스트되지 않았습니다.';
   } else message = '비정상적 테스트 상태';
 
