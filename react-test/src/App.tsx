@@ -1,55 +1,42 @@
-import React from "react";
+import { useEffect } from "react";
 import "./App.css";
 import shooot from "shooot";
 
 function App() {
-    const handler = async () => {
+    const get = async () => {
         await shooot.axios
-            .get("https://pikachu.com/test", { params: { rp: 1, method: "get" } }, { pv1: 1, pv2: 2 })
+            .get("/api/get/test/1", {
+                params: {
+                    testcase: 1,
+                },
+            })
             .then((res) => console.log(res))
             .catch((err) => console.log(err));
     };
 
-    const posthandler = async () => {
+    const post = async () => {
         await shooot.axios
-            .post("https://pikachu.com/test", { d1: 1, d2: 2, method: "post" }, {}, { pv1: 1, pv2: 2 })
+            .post(
+                "/api/post/test/1",
+                {},
+                {
+                    params: {
+                        testcase: 1,
+                    },
+                }
+            )
             .then((res) => console.log(res))
             .catch((err) => console.log(err));
     };
 
-    const puthandler = async () => {
-        await shooot.axios
-            .put("https://pikachu.com/test", { d1: 1, d2: 2, method: "put" }, {}, { pv1: 1, pv2: 2 })
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err));
-    };
+    useEffect(() => {
+        shooot.setConfigs("apitest");
+    }, []);
 
-    const patchhandler = async () => {
-        await shooot.axios
-            .patch("https://pikachu.com/test", { d1: 1, d2: 2, method: "patch" }, {}, { pv1: 1, pv2: 2 })
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err));
-    };
-
-    const deletehandler = async () => {
-        await shooot.axios
-            .delete("https://pikachu.com/test", { params: { rp: 1, method: "delete" } }, { pv1: 1, pv2: 2 })
-            .then((res) => console.log(res))
-            .catch((err) => console.log(err));
-    };
-
-    const setconfig = async () => {
-        await shooot.setConfigs("pikachu", 50000);
-    };
     return (
         <div style={{ padding: "5rem" }}>
-            <button onClick={async () => await handler()}>get</button>
-            <button onClick={async () => await posthandler()}>post</button>
-            <button onClick={async () => await puthandler()}>put</button>
-            <button onClick={async () => await patchhandler()}>patch</button>
-            <button onClick={async () => await deletehandler()}>delete</button>
-            <button onClick={async () => await setconfig()}>config</button>
-            <div style={{ marginTop: "3rem" }}>{}</div>
+            <button onClick={async () => await get()}>get</button>
+            <button onClick={async () => await post()}>post</button>
         </div>
     );
 }
