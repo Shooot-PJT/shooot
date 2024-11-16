@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect, useState } from 'react';
 import Typography from '../../../../../../components/Typography';
 import Button from '../../../../../../components/Button';
-import {
-  TextField,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-} from '@mui/material';
-import { Method } from '../../../../types/methods';
+import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import Flexbox from '../../../../../../components/Flexbox';
-import { EditAPIRequestBody } from '../../../../apis/api/types';
+import { EditAPIRequestBody, Participant } from '../../../../apis/api/types';
 import { APIDetailInfo } from '../../../../types/data/API.data';
+import { useGetParticipantList } from '../../../../reactQueries/api';
+import { useNavBarStore } from '../../../../../../stores/navbarStore';
+import { Method } from '../../../../types/methods';
+import Textfield from '../../../../../../components/Textfield';
 
 interface EditAPIModalProps {
   apiId: number;
@@ -25,24 +23,43 @@ export const EditAPIModal: React.FC<EditAPIModalProps> = ({
   popHandler,
   editHandler,
 }) => {
-  const [method, setMethod] = useState<APIDetailInfo['requestDocs']['method']>(
-    initialData.method,
-  );
+  const [method, setMethod] = useState(initialData.method);
   const [title, setTitle] = useState(initialData.title);
   const [description, setDescription] = useState(initialData.description);
   const [url, setUrl] = useState(initialData.url);
-  const [managerId, setManagerId] = useState<number | null>(
-    initialData.managerId || null,
+  const [managerId, setManagerId] = useState<string>(
+    initialData.managerId ? initialData.managerId.toString() : '',
   );
+  const [participants, setParticipants] = useState<Participant[]>([]);
+
+  const currentProjectId = useNavBarStore((state) => state.project);
+
+  const {
+    data: participantList,
+    isLoading,
+    isError,
+  } = useGetParticipantList({
+    projectId: currentProjectId,
+  });
+
+  useEffect(() => {
+    if (participantList && Array.isArray(participantList)) {
+      const formattedParticipants = participantList.map((p: any) => ({
+        id: p.participantId,
+        nickname: p.nickname,
+      }));
+      setParticipants(formattedParticipants);
+    }
+  }, [participantList]);
 
   const handleSubmit = async () => {
     try {
       await editHandler({
         method,
-        title,
-        description,
-        url,
-        managerId,
+        title: title?.trim(),
+        description: description?.trim(),
+        url: url?.trim(),
+        managerId: managerId ? Number(managerId) : null,
       });
       popHandler();
     } catch (error) {
@@ -50,13 +67,22 @@ export const EditAPIModal: React.FC<EditAPIModalProps> = ({
     }
   };
 
+  if (isLoading) {
+    return <Typography>참여자 목록을 불러오는 중입니다...</Typography>;
+  }
+
+  if (isError) {
+    return <Typography>참여자 목록을 불러오는 데 실패했습니다.</Typography>;
+  }
+
   return (
     <Flexbox flexDirections="col" style={{ padding: '2rem', gap: '1rem' }}>
       <Typography size={1.5} weight="600">
         API 편집
       </Typography>
-      <FormControl fullWidth>
-        <InputLabel>Method</InputLabel>
+      <FormControl fullWidth size="small">
+        <InputLabel color="secondary">Method</InputLabel>
+
         <Select
           value={method || 'METHOD'}
           onChange={(e) =>
@@ -65,48 +91,68 @@ export const EditAPIModal: React.FC<EditAPIModalProps> = ({
             )
           }
           label="Method"
+          color="secondary"
+          MenuProps={{
+            PaperProps: {
+              style: { maxHeight: 200, backgroundColor: '#f7f7f7' },
+            },
+          }}
         >
-          <MenuItem value="METHOD">METHOD</MenuItem>
           <MenuItem value="GET">GET</MenuItem>
           <MenuItem value="POST">POST</MenuItem>
           <MenuItem value="PUT">PUT</MenuItem>
           <MenuItem value="DELETE">DELETE</MenuItem>
           <MenuItem value="PATCH">PATCH</MenuItem>
-          {/* 필요한 다른 메서드 추가 */}
         </Select>
       </FormControl>
-      <TextField
-        label="Title"
+      <Textfield
+        label="API 이름"
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        onChange={(e: {
+          target: { value: React.SetStateAction<string | undefined> };
+        }) => setTitle(e.target.value)}
         fullWidth
+        color="secondary"
       />
-      <TextField
-        label="Description"
+      <Textfield
+        label="API 설명"
         value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        multiline
-        rows={4}
+        onChange={(e: {
+          target: { value: React.SetStateAction<string | undefined> };
+        }) => setDescription(e.target.value)}
         fullWidth
+        color="secondary"
       />
-      <TextField
+      <Textfield
         label="URL"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
+        value={url as string}
+        onChange={(e: {
+          target: { value: React.SetStateAction<string | null | undefined> };
+        }) => setUrl(e.target.value)}
         fullWidth
+        color="secondary"
       />
-      <FormControl fullWidth>
-        <InputLabel>담당자</InputLabel>
+      <FormControl fullWidth size="small" variant="outlined">
+        <InputLabel color="secondary">담당자</InputLabel>
         <Select
-          value={managerId || ''}
-          onChange={(e) => {
-            const value = e.target.value as string;
-            setManagerId(value ? Number(value) : null);
-          }}
+          value={managerId}
+          onChange={(e) => setManagerId(e.target.value)}
           label="담당자"
+          color="secondary"
+          MenuProps={{
+            PaperProps: {
+              style: { maxHeight: 200, backgroundColor: '#f7f7f7' },
+            },
+          }}
         >
-          <MenuItem value="">담당자 선택</MenuItem>
-          <MenuItem value="1">Manager 1</MenuItem>
+          <MenuItem value="">
+            <em>선택 안 함</em>
+          </MenuItem>
+          {participants.map((participant) => (
+            <MenuItem key={participant.id} value={participant.id.toString()}>
+              {participant.nickname}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
       <Flexbox
