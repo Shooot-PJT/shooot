@@ -1,11 +1,20 @@
-import { createContext, useContext } from 'react';
+import { createContext, ReactNode, useContext } from 'react';
 import * as style from './API.css';
-import { APIContextProps } from './API.types';
-import { APIProps } from './API.types';
+import useIsFocusedHook, {
+  useIsFocusedHookReturnType,
+} from '../../hooks/useIsFocusedHook';
+import { APIBody } from './subComponents/APIBody/APIBody';
+import { APIHeader } from './subComponents/APIHeader/APIHeader';
+import { APIDetailInfo } from '../../types/data/API.data';
 
-import useIsFocusedHook from '../../hooks/useIsFocusedHook';
-import { Body } from './subComponents/APIBody';
-import { Header } from './subComponents/APIHeader';
+export interface APIProps {
+  children: ReactNode;
+  requestDocs: APIDetailInfo['requestDocs'];
+}
+
+export interface APIContextProps extends APIProps {
+  useIsFocusedHook: useIsFocusedHookReturnType;
+}
 
 const APIContext = createContext<APIContextProps | null>(null);
 
@@ -17,13 +26,13 @@ export const useAPIContext = () => {
   return context;
 };
 
-export const API = ({ children, headerInfo }: APIProps) => {
+export const API = ({ children, requestDocs }: APIProps) => {
   return (
     <div className={style.apiRootContainer}>
       <APIContext.Provider
         value={{
           children,
-          headerInfo,
+          requestDocs,
           useIsFocusedHook: { ...useIsFocusedHook() },
         }}
       >
@@ -33,5 +42,5 @@ export const API = ({ children, headerInfo }: APIProps) => {
   );
 };
 
-API.Header = Header;
-API.Body = Body;
+API.Header = APIHeader;
+API.Body = APIBody;
