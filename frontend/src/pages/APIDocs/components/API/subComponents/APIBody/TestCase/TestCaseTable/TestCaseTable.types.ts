@@ -1,3 +1,5 @@
+// frontend/src/pages/APIDocs/components/API/subComponents/APIBody/TestCase/TestCaseTable/TestCaseTable.types.ts
+
 // 기본 타입 정의
 export type Key = string;
 export type Value = string | number | boolean | null;
@@ -38,4 +40,20 @@ export interface TestCaseContent {
   pathvariable: TableData | null;
   body: Body;
   expectedResponse: ExpectedResponse;
+}
+
+// 추가된 TableRow 타입 정의
+export interface TableRow {
+  id: string;
+  key: string;
+  value: string;
+  description: string;
+}
+
+// 추가된 TestCaseDetailInfo 타입 정의 (필요에 따라 수정)
+export interface TestCaseDetailInfo {
+  id: number;
+  title: string;
+  type: 'MULTIPART' | 'JSON' | 'NONE';
+  content: TestCaseContent;
 }

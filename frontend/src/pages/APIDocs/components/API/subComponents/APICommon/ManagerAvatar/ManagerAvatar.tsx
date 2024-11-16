@@ -1,14 +1,17 @@
 import { CustomTooltip } from '../../../../../../../components/CustomToolTip';
-import { Manager } from './ManagerAvatar.types';
 import { HiMiniUser } from 'react-icons/hi2';
 import { getRandomColor } from '../../../../../utils';
 import * as style from './ManagerAvatar.css';
 import colorPalette from '../../../../../../../styles/colorPalette';
 import Typography from '../../../../../../../components/Typography';
 import Flexbox from '../../../../../../../components/Flexbox';
+import { APIDetailInfo } from '../../../API.data.types';
 
 interface ManagerAvatarProps {
-  manager?: Manager;
+  manager?: {
+    id?: APIDetailInfo['requestDocs']['managerId'];
+    nickname?: APIDetailInfo['requestDocs']['managerName'];
+  };
   rounded?: number;
   size?: number;
   withLabel?: boolean;

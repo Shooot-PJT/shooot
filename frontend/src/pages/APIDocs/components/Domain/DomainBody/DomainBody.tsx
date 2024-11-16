@@ -4,6 +4,7 @@ import Flexbox from '../../../../../components/Flexbox';
 import * as s from './DomainBody.css';
 import { Skeleton } from '@mui/material';
 import { API } from '../../API/API';
+import { APIDetailInfo } from '../../API/API.data.types';
 
 export const DomainBody = (): JSX.Element => {
   const context = useDomainContext();
@@ -44,10 +45,10 @@ export const DomainBody = (): JSX.Element => {
         )}
         {isError && <div>데이터 로드 중 오류가 발생했습니다.</div>}
         {apiListData
-          ? apiListData.map((apiInfo) => (
-              <API key={apiInfo.id} headerInfo={apiInfo}>
+          ? apiListData.map((requestDocs: APIDetailInfo['requestDocs']) => (
+              <API key={requestDocs.id} requestDocs={requestDocs}>
                 <API.Header />
-                <API.DomainBody />
+                <API.Body />
               </API>
             ))
           : null}

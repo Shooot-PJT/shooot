@@ -15,7 +15,7 @@ export const APIHeader = () => {
   const context = useAPIContext();
   const { isFocused, handleToggleIsFocused } = context.useIsFocusedHook;
 
-  const method = context.headerInfo.method || 'method';
+  const method = context.requestDocs.method || 'method';
 
   const onClickHeader = useCallback(
     throttle((e: React.MouseEvent) => {
@@ -28,7 +28,7 @@ export const APIHeader = () => {
   return (
     <div
       onClick={onClickHeader}
-      key={context.headerInfo.id}
+      key={context.requestDocs.id}
       className={s.apiHeaderBoxRecipe({ isOpen: isFocused })}
     >
       <MethodHeader method={method} />
@@ -44,9 +44,9 @@ export const APIHeader = () => {
           justifyContents="start"
           style={s.apiHeaderLeftContentStyle}
         >
-          <LockButton isSecure={context.headerInfo.isSecure!} />
+          <LockButton isSecure={context.requestDocs.isSecure!} />
           <Typography size={1} color="disabled">
-            {context.headerInfo.url}
+            {context.requestDocs.url}
           </Typography>
           {/* 추후: realServer토글버튼 - 상태 추가 필요 */}
         </Flexbox>
@@ -58,7 +58,7 @@ export const APIHeader = () => {
           style={s.apiHeaderRightContentStyle}
         >
           <Typography size={0.85} weight="300" color="disabled">
-            {context.headerInfo.title}
+            {context.requestDocs.title}
           </Typography>
           <Flexbox
             alignItems="center"
@@ -70,8 +70,8 @@ export const APIHeader = () => {
           >
             <ManagerAvatar
               manager={{
-                id: context.headerInfo.managerId,
-                nickname: context.headerInfo.managerName,
+                id: context.requestDocs.managerId,
+                nickname: context.requestDocs.managerName,
               }}
             />
             <TestButton.API />
@@ -79,7 +79,7 @@ export const APIHeader = () => {
           </Flexbox>
         </Flexbox>
       </Flexbox>
-      <TestResultTail testStatus={context.headerInfo.testStatus!} />
+      <TestResultTail testStatus={context.requestDocs.testStatus!} />
     </div>
   );
 };

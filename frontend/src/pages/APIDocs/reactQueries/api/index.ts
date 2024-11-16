@@ -1,4 +1,3 @@
-// frontend/src/pages/APIDocs/reactQueries/api/index.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   addAPI,
@@ -19,7 +18,7 @@ import {
   ToggleAPIStateRequestBody,
   RemoveAPIRequest,
 } from '../../apis/api/types';
-import { APIRequestDocsInfo } from '../../types/data/API.data';
+import { RequestDocs } from '../../types/data/API.data';
 
 // 1. API 목록 조회
 export const useGetAPIList = (
@@ -68,15 +67,12 @@ export const useEditAPI = () => {
       body: EditAPIRequestBody;
     }) => editAPI({ apiId: data.apiId }, data.body),
     onSuccess: (updatedData, variables) => {
-      queryClient.setQueryData<APIRequestDocsInfo[]>(
-        ['apiList'],
-        (prevData) => {
-          if (!prevData) return [];
-          return prevData.map((api) =>
-            api.id === variables.apiId ? { ...api, ...updatedData } : api,
-          );
-        },
-      );
+      queryClient.setQueryData<RequestDocs[]>(['apiList'], (prevData) => {
+        if (!prevData) return [];
+        return prevData.map((api) =>
+          api.id === variables.apiId ? { ...api, ...updatedData } : api,
+        );
+      });
       queryClient.invalidateQueries({
         queryKey: ['apiDetail', variables.apiId],
       });
@@ -106,13 +102,10 @@ export const useRemoveAPI = () => {
   return useMutation({
     mutationFn: (data: RemoveAPIRequest) => removeAPI(data),
     onSuccess: (_, variables) => {
-      queryClient.setQueryData<APIRequestDocsInfo[]>(
-        ['apiList'],
-        (prevData) => {
-          if (!prevData) return [];
-          return prevData.filter((api) => api.id !== variables.apiId);
-        },
-      );
+      queryClient.setQueryData<RequestDocs[]>(['apiList'], (prevData) => {
+        if (!prevData) return [];
+        return prevData.filter((api) => api.id !== variables.apiId);
+      });
       queryClient.invalidateQueries({
         queryKey: ['apiList'],
       });

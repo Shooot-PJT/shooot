@@ -1,5 +1,5 @@
 import { api } from '../../../../apis/interceptors';
-import { DomainInfo } from '../../components/Domain/Domain.data.types';
+import { DomainInfo } from '../../types/data/Domain.data';
 
 import {
   AddDomainRequest,
@@ -15,6 +15,7 @@ import {
 
 import { Endpoint as EP } from '../../constants/endpoint';
 
+// 도메인 목록 조회
 export const getDomainList = async ({ projectId }: GetDomainListRequest) => {
   const response = await api.get<DomainInfo[]>(
     `/${EP.projects}/${projectId}/${EP.domains}`,
@@ -22,6 +23,7 @@ export const getDomainList = async ({ projectId }: GetDomainListRequest) => {
   return response.data;
 };
 
+// 도메인 추가
 export const addDomain = async (info: AddDomainRequest) => {
   const requestData = {
     projectId: info.projectId,
@@ -36,6 +38,7 @@ export const addDomain = async (info: AddDomainRequest) => {
   return response.data;
 };
 
+// 도메인 수정
 export const editDomain = async (info: EditDomainRequest) => {
   const requestData = {
     title: info.title,
@@ -49,6 +52,7 @@ export const editDomain = async (info: EditDomainRequest) => {
   return response.data;
 };
 
+// 도메인 삭제
 export const removeDomain = async ({ domainId }: RemoveDomainRequest) => {
   const response = await api.delete<RemoveDomainResponse>(
     `/${EP.projects}/${EP.domains}/${domainId}`,
@@ -56,11 +60,12 @@ export const removeDomain = async ({ domainId }: RemoveDomainRequest) => {
   return response.data;
 };
 
+// 알림 구독
 export const subscribeNotification = async ({
   domainId,
 }: SubscribeNotificationRequest) => {
   const response = await api.post<SubscribeNotificationResponse>(
-    `/${EP.projects}/${EP.domains}/${domainId}`,
+    `/${EP.projects}/${EP.domains}/${domainId}/${EP.subscriptions}`,
   );
   return response.data;
 };

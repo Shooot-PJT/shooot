@@ -1,3 +1,5 @@
+// frontend/src/pages/APIDocs/components/API/subComponents/APIBody/TestCase/TestCaseTable/TestCaseTable.tsx
+
 import { useEffect, useRef, useState } from 'react';
 import { useGetTestCaseDetail } from '../../../../../../reactQueries';
 import { editTestCase } from '../../../../../../apis'; // editTestCase 함수 임포트
@@ -10,14 +12,17 @@ import {
 import { TestCaseDetailInfo } from '../../../../../../types/data/TestCase.data';
 import { useQueryClient } from '@tanstack/react-query';
 import {
+  TableRow,
+  TableData,
   CustomFormData,
   FileMeta,
-  TableData,
-  TableValueFormat,
+  TestCaseContent,
 } from './TestCaseTable.types';
 
 import * as styles from './KeyValueTable.css';
 import * as bodyFormDataStyles from './BodyFormData.css';
+
+import { v4 as uuidv4 } from 'uuid'; // UUID 생성용 라이브러리 추가
 
 interface TestCaseTableProps {
   testCaseId: number;
@@ -48,7 +53,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({ testCaseId }) => {
         ...testCaseDetail,
         content: {
           ...testCaseDetail.content,
-          body: testCaseDetail.content.body || { raw: null, formData: null },
+          // params, pathvariable, headers는 여전히 객체 형태로 유지
         },
       });
 
@@ -116,7 +121,13 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({ testCaseId }) => {
         formData.append('type', editedTestCase.type);
         console.log('TYPE: ', editedTestCase.type);
 
-        formData.append('content', JSON.stringify(editedTestCase.content));
+        // Serialize content as JSON
+        const contentToSave: TestCaseContent = {
+          ...editedTestCase.content,
+          // params, pathvariable, headers는 이미 객체 형태로 유지
+        };
+
+        formData.append('content', JSON.stringify(contentToSave));
 
         console.log('FormData entries:');
         for (let pair of formData.entries()) {
@@ -139,13 +150,13 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({ testCaseId }) => {
     setIsEditMode(!isEditMode);
   };
 
-  const handleDataChange = (section: string, data: any) => {
+  const handleDataChange = (section: string, data: TableData) => {
     if (!editedTestCase) return;
     setEditedTestCase({
       ...editedTestCase,
       content: {
         ...editedTestCase.content,
-        [section]: data,
+        [section]: data, // data는 객체 형태로 전달
       },
     });
   };
@@ -250,7 +261,11 @@ interface KeyValueTableProps {
   data: TableData | null;
   isEditMode: boolean;
   section: string;
-  onDataChange: (section: string, data: any) => void;
+  onDataChange: (section: string, data: TableData) => void;
+}
+
+interface TableRowWithId extends TableRow {
+  id: string;
 }
 
 const KeyValueTable: React.FC<KeyValueTableProps> = ({
@@ -259,46 +274,144 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   section,
   onDataChange,
 }) => {
-  const [tableData, setTableData] = useState<TableData>(data || {});
-  const isInitialMount = useRef(true);
+  const [tableData, setTableData] = useState<TableRowWithId[]>([]);
+  const idMapRef = useRef<Record<string, string>>({}); // key to id mapping
+  const emptyRowIdRef = useRef<string[]>([]); // IDs for rows with empty keys
 
   useEffect(() => {
-    if (isInitialMount.current) {
-      setTableData(data || {});
-      isInitialMount.current = false;
+    if (data && typeof data === 'object') {
+      const rows: TableRowWithId[] = Object.entries(data).map(
+        ([key, [value, description, type, isRequired]]) => {
+          // Check if the key already has an ID
+          let id = '';
+          if (key in idMapRef.current) {
+            id = idMapRef.current[key];
+          } else {
+            id = uuidv4();
+            idMapRef.current[key] = id;
+          }
+
+          return {
+            id,
+            key,
+            value: value !== null && value !== undefined ? String(value) : '',
+            description: description || '',
+          };
+        },
+      );
+
+      setTableData(rows);
+    } else {
+      setTableData([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const handleAddRow = () => {
-    setTableData({
-      ...tableData,
-      ['']: ['', '', null, null],
+    const newId = uuidv4();
+    const newRow: TableRowWithId = {
+      id: newId,
+      key: '',
+      value: '',
+      description: '',
+    };
+    setTableData((prevRows) => [...prevRows, newRow]);
+
+    // Update emptyRowIdRef
+    emptyRowIdRef.current.push(newId);
+
+    // Convert array back to Record (exclude empty keys)
+    const updatedRecord: TableData = {};
+    [...tableData, newRow].forEach((row) => {
+      if (row.key.trim() !== '') {
+        updatedRecord[row.key] = [row.value, row.description, null, null];
+      }
     });
+    onDataChange(section, updatedRecord);
   };
 
-  const handleDeleteRow = (keyToDelete: string) => {
-    const { [keyToDelete]: _, ...rest } = tableData;
-    setTableData(rest);
-    onDataChange(section, rest);
-  };
+  const handleDeleteRow = (id: string) => {
+    setTableData((prevRows) => prevRows.filter((row) => row.id !== id));
 
-  const handleChange = (
-    key: string,
-    fieldIndex: number,
-    value: any,
-    newKey?: string,
-  ) => {
-    const newData = { ...tableData };
-
-    if (newKey && newKey !== key) {
-      newData[newKey] = [...newData[key]] as TableValueFormat;
-      delete newData[key];
-      key = newKey;
+    // Remove from idMapRef if key is present
+    const rowToDelete = tableData.find((row) => row.id === id);
+    if (rowToDelete && rowToDelete.key.trim() !== '') {
+      delete idMapRef.current[rowToDelete.key];
     }
 
-    newData[key][fieldIndex] = value;
-    setTableData(newData);
-    onDataChange(section, newData);
+    // Remove from emptyRowIdRef if present
+    emptyRowIdRef.current = emptyRowIdRef.current.filter(
+      (rowId) => rowId !== id,
+    );
+
+    // Convert array back to Record (exclude empty keys)
+    const updatedRecord: TableData = {};
+    tableData
+      .filter((row) => row.id !== id)
+      .forEach((row) => {
+        if (row.key.trim() !== '') {
+          updatedRecord[row.key] = [row.value, row.description, null, null];
+        }
+      });
+    onDataChange(section, updatedRecord);
+  };
+
+  const handleChange = (id: string, field: keyof TableRow, value: any) => {
+    setTableData((prevRows) =>
+      prevRows.map((row) => {
+        if (row.id === id) {
+          return { ...row, [field]: value };
+        }
+        return row;
+      }),
+    );
+
+    // Find the row being updated
+    const updatedRow = tableData.find((row) => row.id === id);
+    if (!updatedRow) return;
+
+    // Handle key changes to maintain idMapRef
+    if (field === 'key') {
+      const oldKey = updatedRow.key;
+      const newKey = value.trim();
+
+      if (oldKey !== newKey) {
+        // Remove old key from idMapRef
+        if (oldKey in idMapRef.current) {
+          delete idMapRef.current[oldKey];
+        }
+
+        // Assign ID for new key
+        if (newKey !== '') {
+          if (newKey in idMapRef.current) {
+            // If new key already exists, use existing ID
+            // This might cause duplicate keys, which should be handled appropriately
+            // Here we choose to overwrite
+            // Alternatively, prevent duplicate keys
+          } else {
+            idMapRef.current[newKey] = id;
+          }
+        }
+      }
+    }
+
+    // Convert array back to Record (exclude empty keys)
+    const updatedRecord: TableData = {};
+    tableData.forEach((row) => {
+      if (row.id === id) {
+        if (value.trim() !== '') {
+          updatedRecord[value.trim()] = [
+            row.value,
+            row.description,
+            null,
+            null,
+          ];
+        }
+      } else if (row.key.trim() !== '') {
+        updatedRecord[row.key] = [row.value, row.description, null, null];
+      }
+    });
+    onDataChange(section, updatedRecord);
   };
 
   return (
@@ -313,57 +426,59 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
           </tr>
         </thead>
         <tbody>
-          {Object.entries(tableData).map(
-            ([key, [value, description]], index) => (
-              <tr key={index} className={styles.rowStyle}>
-                <td className={styles.keyCellStyle}>
-                  {isEditMode ? (
-                    <input
-                      value={key}
-                      onChange={(e) =>
-                        handleChange(key, 0, value || '', e.target.value)
-                      }
-                    />
-                  ) : (
-                    <div className={styles.cellViewStyle}>{key}</div>
-                  )}
-                </td>
-                <td className={styles.valueCellStyle}>
-                  {isEditMode ? (
-                    <input
-                      value={
-                        value !== null && value !== undefined
-                          ? String(value)
-                          : ''
-                      }
-                      onChange={(e) => handleChange(key, 0, e.target.value)}
-                    />
-                  ) : (
-                    <div className={styles.cellViewStyle}>
-                      {value !== null && value !== undefined
-                        ? String(value)
-                        : ''}
-                    </div>
-                  )}
-                </td>
-                <td className={styles.descriptionCellStyle}>
-                  {isEditMode ? (
-                    <input
-                      value={description || ''}
-                      onChange={(e) => handleChange(key, 1, e.target.value)}
-                    />
-                  ) : (
-                    <div className={styles.cellViewStyle}>{description}</div>
-                  )}
-                </td>
-                {isEditMode && (
-                  <td className={styles.actionCellStyle}>
-                    <button onClick={() => handleDeleteRow(key)}>삭제</button>
-                  </td>
+          {tableData.map((row) => (
+            <tr key={row.id} className={styles.rowStyle}>
+              <td className={styles.keyCellStyle}>
+                {isEditMode ? (
+                  <input
+                    value={row.key}
+                    onChange={(e) =>
+                      handleChange(row.id, 'key', e.target.value)
+                    }
+                  />
+                ) : (
+                  <div className={styles.cellViewStyle}>{row.key}</div>
                 )}
-              </tr>
-            ),
-          )}
+              </td>
+              <td className={styles.valueCellStyle}>
+                {isEditMode ? (
+                  <input
+                    value={
+                      row.value !== null && row.value !== undefined
+                        ? String(row.value)
+                        : ''
+                    }
+                    onChange={(e) =>
+                      handleChange(row.id, 'value', e.target.value)
+                    }
+                  />
+                ) : (
+                  <div className={styles.cellViewStyle}>
+                    {row.value !== null && row.value !== undefined
+                      ? String(row.value)
+                      : ''}
+                  </div>
+                )}
+              </td>
+              <td className={styles.descriptionCellStyle}>
+                {isEditMode ? (
+                  <input
+                    value={row.description || ''}
+                    onChange={(e) =>
+                      handleChange(row.id, 'description', e.target.value)
+                    }
+                  />
+                ) : (
+                  <div className={styles.cellViewStyle}>{row.description}</div>
+                )}
+              </td>
+              {isEditMode && (
+                <td className={styles.actionCellStyle}>
+                  <button onClick={() => handleDeleteRow(row.id)}>삭제</button>
+                </td>
+              )}
+            </tr>
+          ))}
           {isEditMode && (
             <tr>
               <td colSpan={isEditMode ? 4 : 3}>
@@ -382,6 +497,8 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
   );
 };
 
+// BodyRaw 및 BodyFormData 컴포넌트는 이전과 동일하게 유지
+
 interface BodyRawProps {
   raw: object | null;
   isEditMode: boolean;
@@ -398,8 +515,8 @@ const BodyRaw: React.FC<BodyRawProps> = ({
   const [jsonData, setJsonData] = useState<string>('');
 
   useEffect(() => {
-    if (raw && raw.datas) {
-      setJsonData(JSON.stringify(raw.datas, null, 2));
+    if (raw && (raw as any).datas) {
+      setJsonData(JSON.stringify((raw as any).datas, null, 2));
     } else {
       setJsonData('');
     }
