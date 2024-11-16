@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @SuperBuilder
@@ -22,6 +23,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Table(name = "project_participant")
 @Entity
+@SQLRestriction("is_deleted = false")
 public class ProjectParticipant extends SoftDeleteEntity {
 
     @Id
@@ -42,7 +44,7 @@ public class ProjectParticipant extends SoftDeleteEntity {
 
     // todo : 추후에 업데이트 있으면 dto로 변경해주기
     // 지금은 하나밖에 없어서 최대한 안건드릴려고 이렇게 작성함
-    public void update(User user){
+    public void update(User user) {
         this.user = user;
     }
 }

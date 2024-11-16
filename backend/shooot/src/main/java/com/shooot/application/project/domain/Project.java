@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.SQLRestriction;
 
 @SuperBuilder
 @Getter
@@ -20,6 +21,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @Table(name = "project")
 @Entity
+@SQLRestriction("is_deleted = false")
 public class Project extends SoftDeleteEntity {
 
     @Id
