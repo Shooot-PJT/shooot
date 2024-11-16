@@ -13,7 +13,9 @@ type NavBarAction = {
 };
 
 export const useNavBarStore = create<NavBarState & NavBarAction>()((set) => ({
-  menu: 2,
+  menu: sessionStorage.getItem('menu')
+    ? Number(sessionStorage.getItem('menu'))
+    : 2,
   isOpen: false,
   project: 0,
   setMenu: (menu) => set(() => ({ menu: menu })),
