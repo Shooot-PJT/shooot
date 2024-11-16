@@ -15,6 +15,7 @@ export const useRemoveUserInfo = () => {
     mutationFn: async () => await removeUserInfo(),
     onSuccess: () => {
       queryClient.clear();
+      sessionStorage.clear();
       nav('/auth/login');
     },
     onError: () => {
