@@ -213,7 +213,7 @@ CREATE TABLE notification
     user_id         INTEGER  NOT NULL,
     content         JSON     NOT NULL,
     created_at      DATETIME NOT NULL,
-    is_read         BOOL NOT NULL,
+    is_read         BOOL     NOT NULL,
     foreign key (user_id) REFERENCES user (user_id)
 );
 

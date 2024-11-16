@@ -13,9 +13,11 @@ import com.shooot.application.api.service.command.api.dto.ApiToggleModifyRequest
 import com.shooot.application.api.service.query.api.ApiGetService;
 import com.shooot.application.api.ui.dto.ApiDetailListView;
 import com.shooot.application.api.ui.dto.ApiView;
+import com.shooot.application.security.service.UserLoginContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -36,9 +38,11 @@ public class ApiController {
     @RequiresProjectParticipation(type = ProjectDomainType.DOMAIN)
     public ResponseEntity<?> createApi(
             @PathVariable(name = "domainId") Integer domainId,
-            @RequestBody ApiCreateRequest apiCreateRequest
+            @RequestBody ApiCreateRequest apiCreateRequest,
+            @AuthenticationPrincipal UserLoginContext userLoginContext
     ){
-        ApiView saveApi = apiCreateService.createApi(domainId, apiCreateRequest);
+        Integer userId = userLoginContext.getUserId();
+        ApiView saveApi = apiCreateService.createApi(domainId, apiCreateRequest, userId);
 
         return ResponseEntity.ok(saveApi);
     }
@@ -47,11 +51,12 @@ public class ApiController {
     @RequiresProjectParticipation(type = ProjectDomainType.API)
     public ResponseEntity<?> modifyApi(
             @PathVariable(name = "apiId") Integer apiId,
-            @RequestBody ApiModifyRequest apiModifyRequest
+            @RequestBody ApiModifyRequest apiModifyRequest,
+            @AuthenticationPrincipal UserLoginContext userLoginContext
     ) throws Exception{
         log.info("apiModifyRequest = {}", apiModifyRequest);
-
-        ApiView modifyApi = apiModifyService.modifyApi(apiId, apiModifyRequest);
+        Integer userId = userLoginContext.getUserId();
+        ApiView modifyApi = apiModifyService.modifyApi(apiId, apiModifyRequest, userId);
 
         return ResponseEntity.ok(modifyApi);
     }

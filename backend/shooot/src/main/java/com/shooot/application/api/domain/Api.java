@@ -129,6 +129,12 @@ public class Api extends SoftDeleteEntity {
 
     }
 
+    public void update(ProjectParticipant projectParticipant){
+        if(projectParticipant != null){
+            this.projectParticipant = projectParticipant;
+        }
+    }
+
     public void update(ApiToggleModifyRequest apiToggleModifyRequest) {
         if (apiToggleModifyRequest.getIsRealServer() != null) {
             this.isRealServer = apiToggleModifyRequest.getIsRealServer();

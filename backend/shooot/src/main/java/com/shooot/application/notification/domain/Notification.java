@@ -36,4 +36,12 @@ public class Notification extends BaseEntity {
 
     @Column(name = "is_read")
     private Boolean isRead;
+
+    @PrePersist
+    private void setDefaults(){
+        if(isRead == null){
+            this.isRead = false;
+        }
+    }
+
 }
