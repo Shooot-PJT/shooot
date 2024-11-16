@@ -12,37 +12,47 @@ export const Header = () => {
   return (
     <>
       <Flexbox justifyContents="between">
-        <Typography size={1.5}>테스트 결과 상세 조회</Typography>
+        <Typography size={1.5} weight="700">
+          테스트 결과 상세 조회
+        </Typography>
         <div className={s.TotalTimeIndicator}>
-          <Typography weight="600">총 진행 시간</Typography>
+          <Typography weight="700" color="post">
+            총 진행 시간
+          </Typography>
           <div>
             <LuTimer size={24} />
           </div>
-          <Typography color="primary">4분 17초</Typography>
+          <Typography>4분 17초</Typography>
         </div>
       </Flexbox>
       <div className={s.FullSection}>
         <div className={s.LeftSection}>
           <div className={s.SectionItem}>
-            <Typography weight="600">해당 API 테스트 시간</Typography>
+            <Typography weight="600" color="put">
+              해당 API 테스트 시간
+            </Typography>
             <div>
               <LuTimer size={24} />
             </div>
-            <Typography color="primary">1분</Typography>
+            <Typography>1분</Typography>
           </div>
           <div className={s.SectionItem}>
-            <Typography weight="600">해당 API 가상유저</Typography>
+            <Typography weight="600" color="put">
+              해당 API 가상유저
+            </Typography>
             <div>
               <HiMiniUser size={24} />
             </div>
-            <Typography color="primary">10명</Typography>
+            <Typography>10명</Typography>
           </div>
           <div className={s.SectionItem}>
-            <Typography weight="600">해당 API 테스트 메서드</Typography>
+            <Typography weight="600" color="put">
+              해당 API 테스트 메서드
+            </Typography>
             <div>
               <HiCog6Tooth size={24} />
             </div>
-            <Typography color="primary">Fixed</Typography>
+            <Typography>Fixed</Typography>
           </div>
         </div>
         <div className={s.RightSection}>
