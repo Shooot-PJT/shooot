@@ -1,11 +1,12 @@
 import axios from "axios";
-import { checkDomain, checkProjectName, checkServiceWorker, getAxiosConfigs } from "./utils";
+import { checkProjectName, checkServiceWorker, getApis } from "./utils";
 
 const methods = ["get", "post", "put", "patch", "delete"];
+let apis;
+
 const shooot = {};
 
 shooot.projectName = "";
-shooot.delay = 0;
 shooot.axios = {};
 
 Object.keys(axios).forEach((v) => {
@@ -21,21 +22,17 @@ Object.keys(axios).forEach((v) => {
  * @template D - AxiosRequestConfig 데이터 타입
  * @param {string} url - 요청 url
  * @param {import('axios').AxiosRequestConfig<D>} [config] - 기존 axios 에서 사용하던 config
- * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
  * @returns {Promise<R>} - 요청 결과를 포함한 AxiosResponse
  */
-shooot.axios.get = async function (url, config = {}, pathVariables = {}) {
-    let to = url;
-    if (pathVariables) {
-        Object.keys(pathVariables).forEach((k) => (to += `/${pathVariables[k]}`));
+shooot.axios.get = async function (url, config = {}) {
+    const sw = await checkServiceWorker("Get");
+
+    if (!sw) {
+        if (config.params.testcase) {
+            delete config.params["testcase"];
+        }
     }
-
-    const swState = await checkServiceWorker("Axios-Get");
-    const domainState = checkDomain(to, shooot.projectName);
-    const newConfig =
-        swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-
-    return axios.get(swState && domainState ? url : to, newConfig);
+    return axios.get(url, config);
 };
 
 /**
@@ -46,21 +43,17 @@ shooot.axios.get = async function (url, config = {}, pathVariables = {}) {
  * @param {string} url - 요청 url
  * @param {any | undefined} data - 담아 보낼 data
  * @param {import('axios').AxiosRequestConfig<D>} [config] - 기존 axios 에서 사용하던 config
- * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
  * @returns {Promise<R>} - 요청 결과를 포함한 AxiosResponse
  */
-shooot.axios.post = async function (url, data = {}, config = {}, pathVariables = {}) {
-    let to = url;
-    if (pathVariables) {
-        Object.keys(pathVariables).forEach((k) => (to += `/${pathVariables[k]}`));
+shooot.axios.post = async function (url, data = {}, config = {}) {
+    const sw = await checkServiceWorker("Post");
+
+    if (!sw) {
+        if (config.params.testcase) {
+            delete config.params["testcase"];
+        }
     }
-
-    const swState = await checkServiceWorker("Axios-Post");
-    const domainState = checkDomain(to, shooot.projectName);
-    const newConfig =
-        swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-
-    return axios.post(swState && domainState ? url : to, data, newConfig);
+    return axios.post(url, data, config);
 };
 
 /**
@@ -71,22 +64,19 @@ shooot.axios.post = async function (url, data = {}, config = {}, pathVariables =
  * @param {string} url - 요청 url
  * @param {any | undefined} data - 담아 보낼 data
  * @param {import('axios').AxiosRequestConfig<D>} [config] - 기존 axios 에서 사용하던 config
- * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
  * @returns {Promise<R>} - 요청 결과를 포함한 AxiosResponse
  */
-shooot.axios.put = async function (url, data = {}, config = {}, pathVariables = {}) {
-    let to = url;
-    if (pathVariables) {
-        Object.keys(pathVariables).forEach((k) => (to += `/${pathVariables[k]}`));
+shooot.axios.put = async function (url, data = {}, config = {}) {
+    const sw = await checkServiceWorker("Put");
+
+    if (!sw) {
+        if (config.params.testcase) {
+            delete config.params["testcase"];
+        }
     }
-
-    const swState = await checkServiceWorker("Axios-Put");
-    const domainState = checkDomain(to, shooot.projectName);
-    const newConfig =
-        swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-
-    return axios.put(swState && domainState ? url : to, data, newConfig);
+    return axios.put(url, data, config);
 };
+
 /**
  * Custom PATCH request
  * @template T - 응답 데이터 타입
@@ -95,21 +85,17 @@ shooot.axios.put = async function (url, data = {}, config = {}, pathVariables = 
  * @param {string} url - 요청 url
  * @param {any | undefined} data - 담아 보낼 data
  * @param {import('axios').AxiosRequestConfig<D>} [config] - 기존 axios 에서 사용하던 config
- * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
  * @returns {Promise<R>} - 요청 결과를 포함한 AxiosResponse
  */
-shooot.axios.patch = async function (url, data = {}, config = {}, pathVariables = {}) {
-    let to = url;
-    if (pathVariables) {
-        Object.keys(pathVariables).forEach((k) => (to += `/${pathVariables[k]}`));
+shooot.axios.patch = async function (url, data = {}, config = {}) {
+    const sw = await checkServiceWorker("Patch");
+
+    if (!sw) {
+        if (config.params.testcase) {
+            delete config.params["testcase"];
+        }
     }
-
-    const swState = await checkServiceWorker("Axios-Patch");
-    const domainState = checkDomain(to, shooot.projectName);
-    const newConfig =
-        swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-
-    return axios.patch(swState && domainState ? url : to, data, newConfig);
+    return axios.patch(url, data, config);
 };
 
 /**
@@ -119,21 +105,17 @@ shooot.axios.patch = async function (url, data = {}, config = {}, pathVariables 
  * @template D - AxiosRequestConfig 데이터 타입
  * @param {string} url - 요청 url
  * @param {import('axios').AxiosRequestConfig<D>} [config] - 기존 axios 에서 사용하던 config
- * @param {object | undefined} pathVariables - path variable, url 에 적용될 순서대로 입력해야 함
  * @returns {Promise<R>} - 요청 결과를 포함한 AxiosResponse
  */
-shooot.axios.delete = async function (url, config = {}, pathVariables = {}) {
-    let to = url;
-    if (pathVariables) {
-        Object.keys(pathVariables).forEach((k) => (to += `/${pathVariables[k]}`));
+shooot.axios.delete = async function (url, config = {}) {
+    const sw = await checkServiceWorker("Delete");
+
+    if (!sw) {
+        if (config.params.testcase) {
+            delete config.params["testcase"];
+        }
     }
-
-    const swState = await checkServiceWorker("Axios-Delete");
-    const domainState = checkDomain(to, shooot.projectName);
-    const newConfig =
-        swState && domainState ? getAxiosConfigs(pathVariables, config) : { ...config, params: { ...config.params } };
-
-    return axios.delete(swState && domainState ? url : to, newConfig);
+    return axios.delete(url, config);
 };
 
 shooot.register = async function () {
@@ -169,15 +151,7 @@ shooot.unregister = async function () {
     }
 };
 
-shooot.controller = async function (mode) {
-    if (process.env.NODE_ENV === (mode ? mode : "development")) {
-        await this.register();
-    } else {
-        await this.unregister();
-    }
-};
-
-shooot.setConfigs = async function (projectName, delay) {
+shooot.setConfigs = async function (projectName) {
     const projectNameRegex = /^[a-z0-9-]{1,20}$/;
 
     if (!projectName) {
@@ -193,13 +167,14 @@ shooot.setConfigs = async function (projectName, delay) {
         if (canUse === "AVAILABLE") {
             const checkServiceWorkerResult = await checkServiceWorker("Set-Config");
             if (checkServiceWorkerResult) {
-                shooot.projectName = projectName;
-                shooot.delay = delay;
+                shooot.projectName = pn;
+                apis = await getApis(pn);
+                console.log("[Set-Config]: apis", apis);
 
                 const message = {
                     type: "SET_CONFIGS",
-                    projectName: shooot.projectName,
-                    delay: shooot.delay,
+                    projectName: pn,
+                    apis: apis,
                 };
 
                 checkServiceWorkerResult.active.postMessage(message);
