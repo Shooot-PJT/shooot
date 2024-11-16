@@ -54,7 +54,7 @@ export const useApiHandler = () => {
               popup.push({
                 title: '메일 전송',
                 children: <Typography>초대 메일을 전송하였습니다.</Typography>,
-                onClose: () => popup.pop(),
+                onClose: () => modal.pop(),
               });
             }
           })
