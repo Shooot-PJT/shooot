@@ -23,7 +23,7 @@ public class ProjectTestRunService {
 
     private final ApiTestMethodRepository apiTestMethodRepository;
     private final ProjectBuildRepository projectBuildRepository;
-    private final ConcurrentHashMap<Integer, String> running = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, Integer> running = new ConcurrentHashMap<>();
 
     @Transactional
     public void testRunRequest(ProjectBuildTestRunRequest request) {
@@ -47,6 +47,8 @@ public class ProjectTestRunService {
                     apiTestMethod.getApi().getId())).findFirst().get();
             apiTestMethod.update(apiTestMethodRequest);
         });
+
+        running.put(request.getProjectJarFileId(), 0);
 
         Events.raise(new ProjectTestRequestedEvent(apiIds, request.getProjectJarFileId()));
     }
