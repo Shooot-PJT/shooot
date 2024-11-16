@@ -1,5 +1,5 @@
 import { ProjectInfo } from '../../../MyProject/types';
-import { DomainInfo } from '../../components/Domain/Domain.data.types';
+import { DomainInfo } from '../../types/data/Domain.data';
 
 export type GetDomainListResponse = DomainInfo[];
 export type AddDomainResponse = Omit<DomainInfo, 'subscribeNotification'>;

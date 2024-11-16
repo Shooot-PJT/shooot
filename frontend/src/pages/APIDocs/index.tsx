@@ -1,10 +1,8 @@
 import Flexbox from '../../components/Flexbox';
-import { API } from './components/API/API';
 import { AuthorizeButton } from './components/AuthorizeButton/AuthorizeButton';
 import { Domain } from './components/Domain/Domain';
 import { AddDomainButton } from './components/Domain/DomainButtons/DomainButtons';
 import { useGetDomainList } from './reactQueries/domain';
-import { DUMMY_API_HEADER_INFO_LIST } from './dummies/api_header_info_list';
 import { useNavBarStore } from '../../stores/navbarStore';
 import { useEffect } from 'react';
 
@@ -46,14 +44,7 @@ export const APIDocs = () => {
       {domainList?.map((domainInfo) => (
         <Domain key={domainInfo.domainId} domainInfo={domainInfo}>
           <Domain.Header />
-          <Domain.Body>
-            {DUMMY_API_HEADER_INFO_LIST.map((headerInfo) => (
-              <API key={headerInfo.apiId} headerInfo={headerInfo}>
-                <API.Header />
-                <API.Body />
-              </API>
-            ))}
-          </Domain.Body>
+          <Domain.Body />
         </Domain>
       ))}
     </Flexbox>
