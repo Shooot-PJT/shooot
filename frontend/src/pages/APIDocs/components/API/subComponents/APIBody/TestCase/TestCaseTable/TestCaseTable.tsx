@@ -22,10 +22,16 @@ import {
 } from './TestCaseTable.types';
 
 import * as styles from './KeyValueTable.css';
+import * as s from './TestCaseTable.css';
 import * as bodyFormDataStyles from './BodyFormData.css';
 import { AddTestCaseRequestBody } from '../../../../../../apis/testcase/types';
 
 import { v4 as uuidv4 } from 'uuid';
+import Flexbox from '../../../../../../../../components/Flexbox';
+import Typography from '../../../../../../../../components/Typography';
+import { HTTP_STATUS_CODES } from '../../../../../../types/httpStatus';
+import Button from '../../../../../../../../components/Button';
+import Textfield from '../../../../../../../../components/Textfield';
 
 interface TestCaseTableProps {
   testCaseId?: number;
@@ -44,6 +50,20 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<number>(0);
   const [isEditMode, setIsEditMode] = useState<boolean>(isAddMode);
+
+  // isOpenBody 관리 로직
+  const [isOpenBody, setIsOpenBody] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (isAddMode) {
+      setIsOpenBody(true);
+    }
+  }, [isAddMode]);
+
+  const handleHeaderClick = () => {
+    setIsOpenBody((prev) => !prev);
+  };
+  //
 
   const {
     data: testCaseDetail,
@@ -238,214 +258,256 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
 
   return (
     <div>
-      <h1>
-        {isAddMode
-          ? isEditMode
-            ? '새 테스트케이스 추가'
-            : '새 테스트케이스 미리보기'
-          : testCase?.title}
-      </h1>
-      {isAddMode ? (
-        <div>
-          <button onClick={toggleEditMode}>
+      <div
+        className={s.headerContainerRecipe({ isOpen: isOpenBody })}
+        onClick={handleHeaderClick}
+      >
+        <Flexbox
+          flexDirections="row"
+          alignItems="center"
+          style={{
+            gap: '1rem',
+            height: '2.5rem',
+          }}
+        >
+          <Typography
+            size={0.85}
+            weight="500"
+            color={
+              testCase?.httpStatusCode?.toString().charAt(0).match('2')
+                ? 'originalGreen'
+                : 'originalRed'
+            }
+          >
+            {`${testCase?.httpStatusCode}  ${HTTP_STATUS_CODES[testCase?.httpStatusCode as number]}`}
+          </Typography>
+          <Typography size={0.8} weight="400" color={'disabled'}>
+            {testCase?.title}
+          </Typography>
+        </Flexbox>
+      </div>
+      {/* 바디 */}
+      <div className={s.testBodyContainerRecipe({ isOpen: isOpenBody })}>
+        {isAddMode ? (
+          <Flexbox flexDirections="row">
+            <Button rounded={0.5} onClick={toggleEditMode}>
+              <Typography size={0.75}>
+                {isEditMode ? '저장' : '편집'}
+              </Typography>
+            </Button>
+            {/* <button onClick={toggleEditMode}>
             {isEditMode ? '저장' : '편집'}
-          </button>
-          {isEditMode && (
-            <button
-              onClick={() => {
-                if (onCancel) onCancel();
-              }}
-            >
-              취소
-            </button>
-          )}
-        </div>
-      ) : (
-        <button onClick={toggleEditMode}>{isEditMode ? '저장' : '편집'}</button>
-      )}
+          </button> */}
+            {isEditMode && (
+              <Button
+                rounded={0.5}
+                onClick={() => {
+                  if (onCancel) onCancel();
+                }}
+              >
+                취소
+              </Button>
+            )}
+          </Flexbox>
+        ) : (
+          <Flexbox flexDirections="row">
+            <Button rounded={0.5} onClick={toggleEditMode}>
+              <Typography size={0.75}>
+                {isEditMode ? '저장' : '편집'}
+              </Typography>
+            </Button>
+            {isEditMode && (
+              <Button rounded={0.5}>
+                <Typography size={0.75}>취소</Typography>
+              </Button>
+            )}
+          </Flexbox>
+        )}
 
-      <div>
         {isEditMode ? (
-          <div>
-            <label>
-              제목:
-              <input
-                type="text"
+          <div style={{ textAlign: 'start' }}>
+            <Flexbox style={{ gap: '1rem' }}>
+              <Textfield
+                label="테스트케이스 제목"
                 value={editedTestCase?.title || ''}
                 onChange={handleTitleChange}
               />
-            </label>
-            <label>
-              HTTP Status Code:
-              <input
+
+              <Textfield
+                label="HTTP Status Code"
                 type="number"
-                value={editedTestCase?.httpStatusCode || 200}
+                value={editedTestCase?.httpStatusCode}
                 onChange={handleStatusCodeChange}
               />
-            </label>
+            </Flexbox>
           </div>
         ) : (
-          <div>
-            <p>제목: {testCase?.title}</p>
-            <p>HTTP Status Code: {testCase?.httpStatusCode}</p>
-          </div>
+          <></>
         )}
-      </div>
 
-      <CustomTabs value={activeTab} onChange={handleTabChange}>
-        {tabLabels.map((label, index) => (
-          <CustomTab key={index} label={label} />
-        ))}
-      </CustomTabs>
+        {/*  */}
+        <Flexbox
+          flexDirections="col"
+          style={{
+            gap: '0.5rem',
+          }}
+        >
+          <CustomTabs value={activeTab} onChange={handleTabChange}>
+            {tabLabels.map((label, index) => (
+              <CustomTab key={index} label={label} />
+            ))}
+          </CustomTabs>
 
-      <div style={{ display: activeTab === 0 ? 'block' : 'none' }}>
-        <KeyValueTable
-          data={testCase?.content?.params ?? null}
-          isEditMode={isEditMode}
-          section="params"
-          onDataChange={handleDataChange}
-        />
-      </div>
-      <div style={{ display: activeTab === 1 ? 'block' : 'none' }}>
-        <KeyValueTable
-          data={testCase?.content?.pathvariable ?? null}
-          isEditMode={isEditMode}
-          section="pathvariable"
-          onDataChange={handleDataChange}
-        />
-      </div>
-      <div style={{ display: activeTab === 2 ? 'block' : 'none' }}>
-        <KeyValueTable
-          data={testCase?.content?.headers ?? null}
-          isEditMode={isEditMode}
-          section="headers"
-          onDataChange={handleDataChange}
-        />
-      </div>
-      {activeTab === 3 && (
-        <div>
-          <div>
-            <label>
-              <input
-                type="radio"
-                value="none"
-                checked={bodyType === 'none'}
-                onChange={() => handleBodyTypeChange('none')}
-                disabled={!isEditMode}
-              />
-              None
-            </label>
-            <label>
-              <input
-                type="radio"
-                value="raw"
-                checked={bodyType === 'raw'}
-                onChange={() => handleBodyTypeChange('raw')}
-                disabled={!isEditMode}
-              />
-              Raw
-            </label>
-            <label>
-              <input
-                type="radio"
-                value="form-data"
-                checked={bodyType === 'form-data'}
-                onChange={() => handleBodyTypeChange('form-data')}
-                disabled={!isEditMode}
-              />
-              Form Data
-            </label>
+          <div style={{ display: activeTab === 0 ? 'block' : 'none' }}>
+            <KeyValueTable
+              data={testCase?.content?.params ?? null}
+              isEditMode={isEditMode}
+              section="params"
+              onDataChange={handleDataChange}
+            />
           </div>
-
-          {bodyType === 'none' && <BodyNone />}
-          {bodyType === 'raw' && (
-            <BodyRaw
-              raw={testCase?.content.body?.raw ?? null}
+          <div style={{ display: activeTab === 1 ? 'block' : 'none' }}>
+            <KeyValueTable
+              data={testCase?.content?.pathvariable ?? null}
               isEditMode={isEditMode}
-              onDataChange={handleDataChange}
-              body={testCase?.content?.body || {}}
-            />
-          )}
-          {bodyType === 'form-data' && (
-            <BodyFormData
-              formData={testCase?.content.body?.formData ?? null}
-              isEditMode={isEditMode}
+              section="pathvariable"
               onDataChange={handleDataChange}
             />
+          </div>
+          <div style={{ display: activeTab === 2 ? 'block' : 'none' }}>
+            <KeyValueTable
+              data={testCase?.content?.headers ?? null}
+              isEditMode={isEditMode}
+              section="headers"
+              onDataChange={handleDataChange}
+            />
+          </div>
+          {activeTab === 3 && (
+            <div>
+              <div>
+                <label>
+                  <input
+                    type="radio"
+                    value="none"
+                    checked={bodyType === 'none'}
+                    onChange={() => handleBodyTypeChange('none')}
+                    disabled={!isEditMode}
+                  />
+                  None
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    value="raw"
+                    checked={bodyType === 'raw'}
+                    onChange={() => handleBodyTypeChange('raw')}
+                    disabled={!isEditMode}
+                  />
+                  Raw
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    value="form-data"
+                    checked={bodyType === 'form-data'}
+                    onChange={() => handleBodyTypeChange('form-data')}
+                    disabled={!isEditMode}
+                  />
+                  Form Data
+                </label>
+              </div>
+
+              {bodyType === 'none' && <BodyNone />}
+              {bodyType === 'raw' && (
+                <BodyRaw
+                  raw={testCase?.content.body?.raw ?? null}
+                  isEditMode={isEditMode}
+                  onDataChange={handleDataChange}
+                  body={testCase?.content?.body || {}}
+                />
+              )}
+              {bodyType === 'form-data' && (
+                <BodyFormData
+                  formData={testCase?.content.body?.formData ?? null}
+                  isEditMode={isEditMode}
+                  onDataChange={handleDataChange}
+                />
+              )}
+            </div>
           )}
-        </div>
-      )}
 
-      {/* Expected Response Editors */}
-      <div>
-        <h3>Expected Response</h3>
+          {/* Expected Response Editors */}
+          <div>
+            <h3>Expected Response</h3>
 
-        <div>
-          <h4>Schema</h4>
-          <Editor
-            height="200px"
-            defaultLanguage="plaintext"
-            value={editedTestCase?.content.expectedResponse.schema || ''}
-            onChange={(value) => {
-              if (!editedTestCase) return;
-              setEditedTestCase({
-                ...editedTestCase,
-                content: {
-                  ...editedTestCase.content,
-                  expectedResponse: {
-                    ...editedTestCase.content.expectedResponse,
-                    schema: value || '',
-                  },
-                },
-              });
-            }}
-            options={{
-              readOnly: !isEditMode,
-              minimap: { enabled: false },
-            }}
-          />
-        </div>
-        <div>
-          <h4>Example</h4>
-          <Editor
-            height="200px"
-            defaultLanguage="json"
-            value={
-              editedTestCase?.content.expectedResponse.example
-                ? JSON.stringify(
-                    editedTestCase.content.expectedResponse.example,
-                    null,
-                    2,
-                  )
-                : ''
-            }
-            onChange={(value) => {
-              if (!editedTestCase) return;
-
-              if (!isEditMode) return;
-
-              try {
-                const parsedValue = JSON.parse(value || '{}');
-                setEditedTestCase({
-                  ...editedTestCase,
-                  content: {
-                    ...editedTestCase.content,
-                    expectedResponse: {
-                      ...editedTestCase.content.expectedResponse,
-                      example: parsedValue,
+            <div>
+              <Typography>Schema</Typography>
+              <Editor
+                height="200px"
+                defaultLanguage="plaintext"
+                value={editedTestCase?.content.expectedResponse.schema || ''}
+                onChange={(value) => {
+                  if (!editedTestCase) return;
+                  setEditedTestCase({
+                    ...editedTestCase,
+                    content: {
+                      ...editedTestCase.content,
+                      expectedResponse: {
+                        ...editedTestCase.content.expectedResponse,
+                        schema: value || '',
+                      },
                     },
-                  },
-                });
-              } catch (error) {
-                console.error('Invalid JSON in Example editor:', error);
-              }
-            }}
-            options={{
-              readOnly: !isEditMode,
-              minimap: { enabled: false },
-            }}
-          />
-        </div>
+                  });
+                }}
+                options={{
+                  readOnly: !isEditMode,
+                  minimap: { enabled: false },
+                }}
+              />
+            </div>
+            <div>
+              <Typography>Example</Typography>
+              <Editor
+                height="200px"
+                defaultLanguage="json"
+                value={
+                  editedTestCase?.content.expectedResponse.example
+                    ? JSON.stringify(
+                        editedTestCase.content.expectedResponse.example,
+                        null,
+                        2,
+                      )
+                    : ''
+                }
+                onChange={(value) => {
+                  if (!editedTestCase) return;
+
+                  if (!isEditMode) return;
+
+                  try {
+                    const parsedValue = JSON.parse(value || '{}');
+                    setEditedTestCase({
+                      ...editedTestCase,
+                      content: {
+                        ...editedTestCase.content,
+                        expectedResponse: {
+                          ...editedTestCase.content.expectedResponse,
+                          example: parsedValue,
+                        },
+                      },
+                    });
+                  } catch (error) {
+                    console.error('Invalid JSON in Example editor:', error);
+                  }
+                }}
+                options={{
+                  readOnly: !isEditMode,
+                  minimap: { enabled: false },
+                }}
+              />
+            </div>
+          </div>
+        </Flexbox>
       </div>
     </div>
   );
