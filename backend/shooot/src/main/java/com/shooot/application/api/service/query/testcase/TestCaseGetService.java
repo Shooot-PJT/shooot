@@ -36,7 +36,7 @@ public class TestCaseGetService {
 
         if (!apiTestCaseRequests.isEmpty()) {
             ApiTestCaseRequest latestApiTestCaseRequest = apiTestCaseRequests.get(0);
-            ApiTestCase apiTestCase = apiTestCaseRepository.findById(latestApiTestCaseRequest.getId())
+            ApiTestCase apiTestCase = apiTestCaseRepository.findById(latestApiTestCaseRequest.getApiTestCase().getId())
                     .orElseThrow();
 
             return TestCaseView.builder()
