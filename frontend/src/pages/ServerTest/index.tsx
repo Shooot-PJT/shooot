@@ -33,13 +33,13 @@ export const ServerTest = () => {
   });
 
   const handleInitializeDeploy = () => {
-    setLogs([]);
+    setLogs((prev) => [...prev, '빌드가 중단되었습니다.']);
     setProjectStatus('DONE');
     handleRender();
   };
 
   const handleOnBuild = () => {
-    setLogs(['빌드 시도 중입니다... 10초 이상 소요됩니다.']);
+    setLogs(['빌드 시도 중입니다... (10초 가량 소요됩니다)']);
     setProjectStatus('RUN');
     handleRender();
   };
