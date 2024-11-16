@@ -65,8 +65,11 @@ public class ProjectMonitorStreamSubscriber implements
         try {
             String jsonMessage = message.getValue().get("message");
             Map<String, Object> map = objectMapper.readValue(jsonMessage, Map.class);
-            System.out.println(map.get("projectJarFileId"));
-            System.out.println(map.get("message"));
+            System.out.println(System.currentTimeMillis());
+            System.out.println(map.get("cpu"));
+            System.out.println(map.get("memory"));
+            System.out.println(map.get("disk"));
+            System.out.println(map.get("network"));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

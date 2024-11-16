@@ -54,7 +54,7 @@ public class ProjectStressTestHandler {
             }
 
             try {
-                Thread.sleep(apiTestMethod.getTestDuration());
+                Thread.sleep(apiTestMethod.getTestDuration() * 1000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
