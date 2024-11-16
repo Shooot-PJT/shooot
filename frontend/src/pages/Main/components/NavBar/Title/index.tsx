@@ -16,6 +16,10 @@ export const Title = () => {
   const { isLarge } = useResize();
   const { mutate } = useRemoveUserInfo();
 
+  const logoHandler = () => {
+    navbarStore.setMenu(2);
+  };
+
   return (
     <>
       {isLarge ? (
@@ -23,6 +27,7 @@ export const Title = () => {
           justifyContents="center"
           alignItems="center"
           style={{ columnGap: '1rem', padding: '4rem 0' }}
+          onClick={logoHandler}
         >
           <Icon background="none" size={3}>
             <HiRocketLaunch />
