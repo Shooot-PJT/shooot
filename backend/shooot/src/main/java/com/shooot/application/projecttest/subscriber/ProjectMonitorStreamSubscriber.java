@@ -3,6 +3,7 @@ package com.shooot.application.projecttest.subscriber;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shooot.application.sseemitter.service.StressTestSseService;
+import com.shooot.application.stresstest.controller.dto.StressTestDto;
 import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 import java.util.Map;
@@ -66,10 +67,24 @@ public class ProjectMonitorStreamSubscriber implements
             String jsonMessage = message.getValue().get("message");
             Map<String, Object> map = objectMapper.readValue(jsonMessage, Map.class);
             System.out.println(System.currentTimeMillis());
-            System.out.println(map.get("cpu"));
-            System.out.println(map.get("memory"));
-            System.out.println(map.get("disk"));
-            System.out.println(map.get("network"));
+
+            Integer projectJarFileId = (Integer) map.get("projectJarFileId");
+            System.out.println(projectJarFileId);
+
+            Double cpu = (Double) map.get("cpu");
+            Double memory = (Double) map.get("memory");
+            Double disk = (Double) map.get("disk");
+            Double network = (Double) map.get("network");
+
+            stressTestSseService.send(
+                projectJarFileId,
+                StressTestDto.builder()
+                    .cpu(cpu)
+                    .memory(memory)
+                    .disk(disk)
+                    .network(network)
+                    .build()
+            );
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

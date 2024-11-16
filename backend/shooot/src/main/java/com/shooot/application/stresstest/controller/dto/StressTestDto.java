@@ -7,6 +7,8 @@ import lombok.Getter;
 @Getter
 public class StressTestDto {
 
-    private Float cpuUtilization;
-    private Float ramUtilization;
+    private Double cpu;
+    private Double memory;
+    private Double disk;
+    private Double network;
 }
