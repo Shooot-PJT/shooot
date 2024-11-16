@@ -24,7 +24,7 @@ public class ProjectMonitorService {
         System.out.println(metaData.getInstanceName());
 
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder("vagrant", "ssh",
+            ProcessBuilder processBuilder = new ProcessBuilder("/opt/vagrant/bin/vagrant", "ssh",
                 metaData.getInstanceName(), "-c", "ls").directory(
                 new File("/home/hyunjinkim/deployment/scripts"));
             processBuilder.redirectErrorStream(true);
