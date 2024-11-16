@@ -8,7 +8,7 @@ import useModal from '../../../hooks/useModal';
 import usePopup from '../../../hooks/usePopup';
 import { useNavBarStore } from '../../../stores/navbarStore';
 import { AddDomainModal } from '../components/Domain/AddDomainModal/AddDomainModal';
-import { DomainInfo } from '../components/Domain/Domain.data.types';
+import { DomainInfo } from '../types/data/Domain.data';
 import { RemoveDomainModal } from '../components/Domain/RemoveDomainModal/RemoveDomainModal';
 import Flexbox from '../../../components/Flexbox';
 import shooot_remove from '/assets/shooot/shooot_remove.png';

@@ -1,6 +1,6 @@
 import { recipe } from '@vanilla-extract/recipes';
 import colorPalette from '../../../../../../../styles/colorPalette';
-import { TEST_RESULTS } from '../../../API.data.types';
+import { TEST_RESULTS } from '../../../../../types/data/API.data';
 
 export const testResultTailRecipe = recipe({
   base: {
@@ -16,13 +16,13 @@ export const testResultTailRecipe = recipe({
       FAIL: {
         backgroundColor: colorPalette.originalRed,
       },
-      NOT_TESTED: {
+      YET: {
         backgroundColor: colorPalette.grey[800],
       },
     },
   },
 
   defaultVariants: {
-    testStatus: TEST_RESULTS.NOT_TESTED,
+    testStatus: TEST_RESULTS.YET,
   },
 });

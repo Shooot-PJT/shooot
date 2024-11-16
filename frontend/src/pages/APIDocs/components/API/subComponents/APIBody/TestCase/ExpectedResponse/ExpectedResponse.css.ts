@@ -1,8 +1,8 @@
 import { style } from '@vanilla-extract/css';
-import { roundedBorder } from '../../TestCase/TestCaseTable/TestCaseTable.css';
+
 import colorPalette from '../../../../../../../../styles/colorPalette';
 
-export { roundedBorder };
+// export { roundedBorder };
 
 export const containerStyle = {
   gap: '0.5rem',

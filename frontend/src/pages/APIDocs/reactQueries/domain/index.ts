@@ -13,7 +13,7 @@ import {
   SubscribeNotificationRequest,
   GetDomainListRequest,
 } from '../../apis/domain/types';
-import { DomainInfo } from '../../components/Domain/Domain.data.types';
+import { DomainInfo } from '../../types/data/Domain.data';
 
 // 1. getDomainList: 프로젝트 ID로 도메인 목록 조회
 export const useGetDomainList = ({ projectId }: GetDomainListRequest) => {
