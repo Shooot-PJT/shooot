@@ -14,4 +14,5 @@ export interface ProjectMember {
   userId: number;
   email: string;
   nickname: string;
+  color: string;
 }

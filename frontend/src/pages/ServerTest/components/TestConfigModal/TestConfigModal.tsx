@@ -78,11 +78,9 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
 
   const handleSubmitTestConfig = () => {
     // todo: api 연결되는대로 수정
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const testConfig = testFormData
-      .filter((item) => item.checked)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .map(({ checked, ...rest }) => rest);
+    // const testConfig = testFormData
+    //   .filter((item) => item.checked)
+    //   .map(({ checked, ...rest }) => rest);
 
     const request: ExecuteApiTestRequest = {
       // projectJarFileId: projectJarFileId,
