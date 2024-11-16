@@ -1,3 +1,5 @@
+// frontend/src/pages/APIDocs/components/API/subComponents/APIBody/APIBody.tsx
+
 import { useAPIContext } from '../../API';
 import Flexbox from '../../../../../../components/Flexbox';
 import colorPalette from '../../../../../../styles/colorPalette';
@@ -9,16 +11,16 @@ import Button from '../../../../../../components/Button';
 import { useGetAPIDetail } from '../../../../reactQueries/api';
 import { TestCaseTable } from './TestCase/TestCaseTable/TestCaseTable';
 import { useAPI } from '../../../../hooks/useAPI';
+import { APIDetailInfo } from '../../../../types/data/API.data'; // 타입 경로 확인
 
 export const APIBody = () => {
   const context = useAPIContext();
   const { isFocused } = context.useIsFocusedHook;
   const apiId = context.requestDocs.id;
 
-  const { editAPIModalHandler } = useAPI();
+  const { editAPIModalHandler, addTestCaseModalHandler, handleRemoveTestCase } =
+    useAPI();
 
-  // @@@@@ APIDetailData 타입부터 다시 제대로 내려보내줄것.
-  // 더 정확히는 APIDetailData. 여기서 불러오는것이 아님.
   const {
     data: apiDetail,
     isLoading,
@@ -50,6 +52,10 @@ export const APIBody = () => {
 
   const method = apiDetail.requestDocs.method || 'method';
   const fontColor = method === 'method' ? 'light' : method;
+
+  const handleAddTestCaseClick = () => {
+    addTestCaseModalHandler(apiId);
+  };
 
   return (
     <div className={s.CollapseContainerRecipe({ isOpen: isFocused })}>
@@ -145,6 +151,13 @@ export const APIBody = () => {
               <Button color="grey" rounded={0.3}>
                 삭제
               </Button>
+              <Button
+                color="primary"
+                rounded={0.3}
+                onClick={handleAddTestCaseClick}
+              >
+                테스트케이스 추가
+              </Button>
             </Flexbox>
           </Flexbox>
           {/* 1.2 RIGHT: API 요청 정의서 & 테스트케이스 리스트 섹션 */}
@@ -174,7 +187,12 @@ export const APIBody = () => {
               {/* 1.2.2 RIGHT-BOTTOM: 테스트케이스 리스트 섹션 */}
               {apiDetail.testCases && apiDetail.testCases.length > 0 ? (
                 apiDetail.testCases.map((testCase) => (
-                  <TestCaseTable key={testCase.id} testCaseId={testCase.id} />
+                  <TestCaseTable
+                    key={testCase.id}
+                    testCaseId={testCase.id}
+                    apiId={apiId}
+                    onRemove={handleRemoveTestCase} // ensure this is a function
+                  />
                 ))
               ) : (
                 <div>테스트케이스가 없습니다.</div>

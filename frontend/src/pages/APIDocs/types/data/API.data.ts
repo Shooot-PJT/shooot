@@ -1,3 +1,5 @@
+// frontend/src/pages/APIDocs/types/data/API.data.ts
+
 import { Method } from '../../types/methods';
 import { DomainInfo } from './Domain.data';
 
@@ -36,6 +38,7 @@ export type JsonData = object;
 
 export type TableValueFormat = [Value, Description, Type, IsRequired];
 export type TableData = Record<Key, TableValueFormat>;
+
 export interface FileMeta {
   parameterVar: string;
   description: string | null;
@@ -48,27 +51,20 @@ interface BodyFormData {
   files: Record<Key, Record<string, [string, FileMeta, Type, null]>> | null;
 }
 
-interface BodyFormData {
-  datas: TableData | null;
-  files: Record<Key, Record<string, [string, FileMeta, Type, null]>> | null;
-}
-
 type Body = BodyRaw | BodyFormData;
-export interface ExampleContent {
-  params: null;
-  pathvariable: null;
-  headers?: BodyFormData | null;
-  body?: Body | null;
-  expectedResponse?: ExpectedResponse | null;
-}
-//======
 
-//===== 기대 응답 Json Data Type Editor & JSON Editor 구성을 위한 Expected Response 구성 위한 타입 정의
 export interface ExpectedResponse {
   schema: string | null;
   example: JsonData | null;
 }
-//======
+
+export interface ExampleContent {
+  params: TableData | null;
+  pathvariable: TableData | null;
+  headers?: BodyFormData | null;
+  body?: Body | null;
+  expectedResponse?: ExpectedResponse | null;
+}
 
 export interface RequestDocs {
   id: number;
@@ -91,13 +87,31 @@ export interface RequestDocs {
 
 export interface TestCaseHeaderInfo {
   id: number;
-  statusCode: string;
-  description: string;
+  apiId: number;
+  title: string;
+  httpStatusCode: number;
+  testStatus: 'YET' | 'SUCCESS' | 'FAILURE';
+  createdAt?: string;
+  modifiedAt?: string;
 }
 
 export interface APIDetailInfo {
   requestDocs: RequestDocs;
   testCases?: Array<TestCaseHeaderInfo>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  lastlog?: any; //미정, 정해지면 바꿀 예정
+  lastlog?: any; // 미정, 정해지면 변경 예정
+}
+
+export interface TestCaseDetailInfo {
+  id: number; // 응답에서만 받음
+  apiId: number; // 응답에서만 받음
+  title: string;
+  httpStatusCode: number;
+  type: TestCaseRequestType;
+  content: TestCaseContent;
+  testStatus: 'YET' | 'SUCCESS' | 'FAILURE'; // 응답에서 받는 테스트 상태
+  createdAt?: string;
+  modifiedAt?: string;
+  isSecure?: boolean;
+  isDeleted?: boolean;
 }
