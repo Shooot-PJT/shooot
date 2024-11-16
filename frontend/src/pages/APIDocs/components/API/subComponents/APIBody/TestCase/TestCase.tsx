@@ -8,7 +8,7 @@ import {
 import Typography from '../../../../../../../components/Typography';
 import { CollapseIcon } from '../../APICommon/CollapseIcon/CollapseIcon';
 import TestButton from '../../../../TestButton/TestButton';
-import { ExpectedResponse } from './ExpectedResponse/ExpectedResponse';
+// import { ExpectedResponse } from './ExpectedResponse/ExpectedResponse';
 import { ParamBase, TestCaseTable } from './TestCaseTable_BEF/TestCaseTable';
 
 import Button from '../../../../../../../components/Button';
@@ -264,10 +264,10 @@ TestCase.Body = function Body() {
       </Flexbox>
 
       {/* Expected Responses */}
-      <ExpectedResponse isEditing={isEditing}>
+      {/* <ExpectedResponse isEditing={isEditing}>
         <ExpectedResponse.Schema />
         <ExpectedResponse.Example />
-      </ExpectedResponse>
+      </ExpectedResponse> */}
     </div>
   );
 };
