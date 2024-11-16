@@ -1,8 +1,6 @@
-// BodyFormData.css.ts
-
 import { keyframes, style } from '@vanilla-extract/css';
-import colorPalette from '../../../styles/colorPalette';
-import themeCss from '../../../styles/theme.css';
+import colorPalette from '../../../../../../../../styles/colorPalette';
+import themeCss from '../../../../../../../../styles/theme.css';
 
 const popIn = keyframes({
   '0%': {
@@ -54,9 +52,8 @@ export const cellViewStyle = style({
 });
 
 export const keyCellStyle = style([cellStyle, { width: '20%' }]);
-export const typeCellStyle = style([cellStyle, { width: '10%' }]);
 export const valueCellStyle = style([cellStyle, { width: '30%' }]);
-export const descriptionCellStyle = style([cellStyle, { width: '40%' }]);
+export const descriptionCellStyle = style([cellStyle, { width: '50%' }]);
 
 export const actionCellStyle = style([cellStyle, { width: '10%' }]);
 

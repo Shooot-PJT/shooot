@@ -1,8 +1,7 @@
-// frontend/src/pages/APIDocs/components/API/subComponents/APIHeader/index.tsx
 import { useCallback } from 'react';
 import { useAPIContext } from '../../API';
 import { throttle } from 'lodash';
-import * as s from './index.css';
+import * as s from './APIHeader.css';
 import MethodHeader from './MethodHeader/MethodHeader';
 import Flexbox from '../../../../../../components/Flexbox';
 import LockButton from './LockButton/LockButton';
@@ -12,7 +11,7 @@ import { CollapseIcon } from '../APICommon/CollapseIcon/CollapseIcon';
 import TestResultTail from './TestResultTail/TestResultTail';
 import TestButton from '../../../TestButton/TestButton';
 
-export const Header = () => {
+export const APIHeader = () => {
   const context = useAPIContext();
   const { isFocused, handleToggleIsFocused } = context.useIsFocusedHook;
 

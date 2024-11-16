@@ -1,9 +1,4 @@
-// frontend/src/pages/APIDocs/apis/api/types.ts
-import {
-  APIDetailInfo,
-  APIRequestDocsInfo,
-  Manager,
-} from '../../types/data/API.data';
+import { APIDetailInfo, Manager } from '../../types/data/API.data';
 import { DomainInfo } from '../../types/data/Domain.data';
 
 // API 등록
@@ -13,13 +8,13 @@ export interface AddAPIRequest {
 
 export interface AddAPIRequestBody {
   managerId: Manager['id'];
-  title: APIRequestDocsInfo['title'];
-  description: APIRequestDocsInfo['description'];
-  url: APIRequestDocsInfo['url'];
+  title: APIDetailInfo['requestDocs']['title'];
+  description: APIDetailInfo['requestDocs']['description'];
+  url: APIDetailInfo['requestDocs']['url'];
 }
 
 export type AddAPIResponse = Omit<
-  APIRequestDocsInfo,
+  APIDetailInfo['requestDocs'],
   'example_url' | 'example_content'
 >;
 
@@ -27,42 +22,42 @@ export type AddAPIResponse = Omit<
 export interface GetAPIListRequest {
   domainId: DomainInfo['domainId'];
 }
-
-export type GetAPIListResponse = Array<APIRequestDocsInfo>;
+// API 리스트 조회 결과
+export type GetAPIListResponse = APIDetailInfo['requestDocs'][];
 
 // API 상세 조회
 export interface GetAPIDetailRequest {
-  apiId: APIRequestDocsInfo['id'];
+  apiId: APIDetailInfo['requestDocs']['id'];
 }
 
 export type GetAPIDetailResponse = APIDetailInfo;
 
 // API 수정
 export interface EditAPIRequest {
-  apiId: APIRequestDocsInfo['id'];
+  apiId: APIDetailInfo['requestDocs']['id'];
 }
 
 export interface EditAPIRequestBody {
-  managerId?: APIRequestDocsInfo['managerId'];
-  title?: APIRequestDocsInfo['title'];
-  description?: APIRequestDocsInfo['description'];
-  url?: APIRequestDocsInfo['url'];
-  method?: APIRequestDocsInfo['method'];
-  exampleUrl?: APIRequestDocsInfo['example_url'];
-  exampleContent?: APIRequestDocsInfo['example_content'];
+  managerId?: APIDetailInfo['requestDocs']['managerId'];
+  title?: APIDetailInfo['requestDocs']['title'];
+  description?: APIDetailInfo['requestDocs']['description'];
+  url?: APIDetailInfo['requestDocs']['url'];
+  method?: APIDetailInfo['requestDocs']['method'];
+  exampleUrl?: APIDetailInfo['requestDocs']['example_url'];
+  exampleContent?: APIDetailInfo['requestDocs']['example_content'];
 }
 
 // API TOGGLE 수정
 export interface ToggleAPIStateRequest {
-  apiId: APIRequestDocsInfo['id'];
+  apiId: APIDetailInfo['requestDocs']['id'];
 }
 
 export interface ToggleAPIStateRequestBody {
-  isSecure: APIRequestDocsInfo['isSecure'];
-  isRealServer: APIRequestDocsInfo['isRealServer'];
+  isSecure: APIDetailInfo['requestDocs']['isSecure'];
+  isRealServer: APIDetailInfo['requestDocs']['isRealServer'];
 }
 
 // API 삭제
 export interface RemoveAPIRequest {
-  apiId: APIRequestDocsInfo['id'];
+  apiId: APIDetailInfo['requestDocs']['id'];
 }

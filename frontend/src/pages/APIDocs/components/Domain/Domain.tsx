@@ -1,9 +1,20 @@
-import { createContext, useContext } from 'react';
-import { DomainContextProps, DomainProps } from './Domain.types';
-import useIsFocusedHook from '../../hooks/useIsFocusedHook';
-import { Header } from './Header/Header';
-import { Body } from './Body/Body';
+import { createContext, ReactNode, useContext } from 'react';
+import useIsFocusedHook, {
+  useIsFocusedHookReturnType,
+} from '../../hooks/useIsFocusedHook';
+import { DomainHeader } from './DomainHeader/DomainHeader';
+import { DomainBody } from './DomainBody/DomainBody';
 import * as s from './Domain.css';
+import { DomainInfo } from '../../types/data/Domain.data';
+
+export interface DomainProps {
+  children: ReactNode;
+  domainInfo: DomainInfo;
+}
+
+export interface DomainContextProps extends DomainProps {
+  useIsFocusedHook: useIsFocusedHookReturnType;
+}
 
 const DomainContext = createContext<DomainContextProps | null>(null);
 
@@ -37,5 +48,5 @@ export const Domain = ({ children, domainInfo }: DomainProps) => {
   );
 };
 
-Domain.Header = Header;
-Domain.Body = Body;
+Domain.Header = DomainHeader;
+Domain.Body = DomainBody;

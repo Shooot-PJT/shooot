@@ -9,11 +9,9 @@ import Typography from '../../../../../../../components/Typography';
 import { CollapseIcon } from '../../APICommon/CollapseIcon/CollapseIcon';
 import TestButton from '../../../../TestButton/TestButton';
 import { ExpectedResponse } from './ExpectedResponse/ExpectedResponse';
-// import { TestCaseTable } from './TestCaseTable/Temp/TestCaseTable';
-import { ParamBase, TestCaseTable } from './TestCaseTable/TestCaseTable';
+import { ParamBase, TestCaseTable } from './TestCaseTable_BEF/TestCaseTable';
 
 import Button from '../../../../../../../components/Button';
-import { TestCaseHeaderInfo } from '../../../../../dummies/testcase_dummy_list';
 import {
   CustomTab,
   CustomTabs,
@@ -27,6 +25,12 @@ import useIsFocusedHook, {
 import { throttle } from 'lodash';
 import { HTTP_STATUS_CODES } from '../../../../../types/httpStatus';
 import { TEST_RESULTS } from '../../../API.data.types';
+
+export interface TestCaseHeaderInfo {
+  id: number;
+  statusCode: string;
+  description: string;
+}
 
 interface TestCaseProps {
   children: React.ReactNode;
@@ -242,7 +246,7 @@ TestCase.Body = function Body() {
           </Button>
         </Flexbox>
 
-        {/* 1.2 Tabs 컨텐츠: TestCaseTable */}
+        {/* 1.2 Tabs 컨텐츠: TestCaseTable ( TEMP )*/}
         {/* <TestCaseTable isEditing={isEditing}>
           <TestCaseTable.Section
             headers={testcaseDummyList[tabValue.value].headers}

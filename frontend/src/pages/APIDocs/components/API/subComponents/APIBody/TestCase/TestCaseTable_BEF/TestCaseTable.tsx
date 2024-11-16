@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import * as styles from './RequestSchemaTable.css';
-import CellTextField from './CellTextfield/CellTextfield';
-import DropdownMenu from './DropdownMenu/DropdownMenu';
-import Icon from '../../../../../../../../../components/Icon';
-import { FaPlus, FaTrash } from 'react-icons/fa';
+import * as styles from './TestCaseTable.css';
+import CellTextField from '../../RequestDocs/RequestContents/RequestSchemaTable/CellTextfield/CellTextfield';
+import DropdownMenu from '../../RequestDocs/RequestContents/RequestSchemaTable/DropdownMenu/DropdownMenu';
+import Icon from '../../../../../../../../components/Icon';
+import { FaPlus } from 'react-icons/fa';
 
 export interface ParamBase {
   key: string;
+  value: string;
   description: string;
-  required: string;
   type?: string;
 }
 
@@ -20,12 +20,12 @@ type Param = ParamBase | ReqBodyParam;
 
 interface TableProps<T extends Param> {
   data: T[];
-  type: 'params' | 'pathvariable' | 'headers' | 'req body';
+  type: 'params' | 'path variable' | 'headers' | 'req body';
   isEditMode?: boolean;
   onChange: (newData: T[]) => void;
 }
 
-export const RequestSchemaTable = <T extends Param>({
+export const TestCaseTable = <T extends Param>({
   data,
   type,
   isEditMode = false,
@@ -64,25 +64,23 @@ export const RequestSchemaTable = <T extends Param>({
   };
 
   const handleAddRow = () => {
-    const newRow: T =
-      type === 'req body'
-        ? ({
-            key: '',
-            description: '',
-            required: '선택',
-            type: 'Text',
-          } as T)
-        : ({
-            key: '',
-            description: '',
-            required: '선택',
-          } as T);
-    onChange([...data, newRow]);
-  };
+    let newRow: T;
+    if (type === 'req body') {
+      newRow = {
+        key: '',
+        type: 'Text',
+        value: '',
+        description: '',
+      } as T;
+    } else {
+      newRow = {
+        key: '',
+        value: '',
+        description: '',
+      } as T;
+    }
 
-  const handleDeleteRow = (index: number) => {
-    const updatedData = data.filter((_, idx) => idx !== index);
-    onChange(updatedData);
+    onChange([...data, newRow]);
   };
 
   return (
@@ -98,17 +96,12 @@ export const RequestSchemaTable = <T extends Param>({
                 Type
               </th>
             )}
-            <th className={styles.headerCellStyle} style={{ width: '10%' }}>
-              필수 여부
+            <th className={styles.headerCellStyle} style={{ width: '30%' }}>
+              Value
             </th>
-            <th className={styles.headerCellStyle} style={{ width: '50%' }}>
+            <th className={styles.headerCellStyle} style={{ width: '40%' }}>
               Description
             </th>
-            {isEditMode && (
-              <th className={styles.headerCellStyle} style={{ width: '10%' }}>
-                삭제
-              </th>
-            )}
           </tr>
         </thead>
         <tbody>
@@ -152,17 +145,16 @@ export const RequestSchemaTable = <T extends Param>({
                   )}
                 </td>
               )}
-              <td className={styles.requiredCellStyle}>
+              <td className={styles.keyCellStyle}>
                 {isEditMode ? (
-                  <DropdownMenu
-                    options={['선택', '필수']}
-                    selected={param.required}
-                    onSelect={(newValue: string) =>
-                      handleDropdownChange(index, 'required', newValue)
+                  <CellTextField
+                    value={param.value}
+                    onChange={(newValue: string) =>
+                      handleTextFieldChange(index, 'value', newValue)
                     }
                   />
                 ) : (
-                  <div className={styles.cellViewStyle}>{param.required}</div>
+                  <div className={styles.cellViewStyle}>{param.value}</div>
                 )}
               </td>
               <td className={styles.descriptionCellStyle}>
@@ -179,17 +171,6 @@ export const RequestSchemaTable = <T extends Param>({
                   </div>
                 )}
               </td>
-              {isEditMode && (
-                <td>
-                  <Icon
-                    background="none"
-                    color="light"
-                    onClick={() => handleDeleteRow(index)}
-                  >
-                    <FaTrash />
-                  </Icon>
-                </td>
-              )}
             </tr>
           ))}
         </tbody>

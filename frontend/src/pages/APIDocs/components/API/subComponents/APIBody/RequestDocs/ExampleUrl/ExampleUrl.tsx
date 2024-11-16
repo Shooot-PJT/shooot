@@ -1,4 +1,3 @@
-// frontend/src/pages/APIDocs/components/API/subComponents/APIBody/RequestDocs/ExampleUrl/ExampleUrl.tsx
 import Flexbox from '../../../../../../../../components/Flexbox';
 import colorPalette from '../../../../../../../../styles/colorPalette';
 
@@ -6,11 +5,10 @@ import Typography from '../../../../../../../../components/Typography';
 import UrlTextField from './UrlTextField';
 import { useState } from 'react';
 import { cellViewStyle } from '../RequestContents/RequestSchemaTable/RequestSchemaTable.css';
-import { getFontColorByMethod } from '../../../APIHeader/MethodHeader/MethodHeader';
-import { APIRequestDocsInfo } from '../../../../API.data.types';
+import { APIDetailInfo } from '../../../../API.data.types';
 
 interface ExampleUrlProps {
-  method?: APIRequestDocsInfo['method'];
+  method?: APIDetailInfo['requestDocs']['method'];
   exampleUrl: string;
   isEditMode: boolean;
 }
@@ -20,7 +18,8 @@ export const ExampleUrl = ({
   exampleUrl,
   isEditMode = false,
 }: ExampleUrlProps) => {
-  const [url, setUrl] = useState<APIRequestDocsInfo['example_url']>(exampleUrl);
+  const [url, setUrl] =
+    useState<APIDetailInfo['requestDocs']['example_url']>(exampleUrl);
 
   const handleChangeUrl = (newValue: string) => {
     setUrl(newValue);

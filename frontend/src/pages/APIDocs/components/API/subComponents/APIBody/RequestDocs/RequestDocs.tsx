@@ -24,7 +24,7 @@ import {
   TableValueFormat,
   TableData,
 } from '../../../../../types/data/TestCase.data';
-import { APIRequestDocsContent } from '../../../../../types/data/API.data';
+import { APIDetailInfo } from '../../../API.data.types';
 
 type ReqTabMenuTypes = 'params' | 'pathvariable' | 'headers' | 'req body';
 type ReqBodyTypes = 'none' | 'form-data' | 'raw';
@@ -35,7 +35,7 @@ interface TabValue {
 }
 
 interface RequestDocsProps {
-  requestDocs: APIRequestDocsContent | null;
+  requestDocs: APIDetailInfo['requestDocs'] | null;
 }
 
 export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
@@ -223,13 +223,17 @@ export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
   );
 };
 
-// Updated utility function
 function convertTableDataToParamBase(
   tableData: Record<string, TableValueFormat>,
   type: ReqTabMenuTypes,
 ): ParamBase[] {
   return Object.entries(tableData).map(([key, value]) => {
-    const [val, description, fieldType, isRequired] = value;
+    const [
+      // val,
+      description,
+      fieldType,
+      isRequired,
+    ] = value;
     const requiredStr = isRequired === true ? '필수' : '선택';
 
     return {

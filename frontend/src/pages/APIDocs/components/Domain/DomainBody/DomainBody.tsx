@@ -1,11 +1,11 @@
 import { useDomainContext } from '../Domain';
 import { useGetAPIList } from '../../../reactQueries/api';
 import Flexbox from '../../../../../components/Flexbox';
-import * as s from './Body.css';
+import * as s from './DomainBody.css';
 import { Skeleton } from '@mui/material';
 import { API } from '../../API/API';
 
-export const Body = (): JSX.Element => {
+export const DomainBody = (): JSX.Element => {
   const context = useDomainContext();
   const { isFocused } = context.useIsFocusedHook;
   const domainId = context.domainInfo.domainId;
@@ -47,7 +47,7 @@ export const Body = (): JSX.Element => {
           ? apiListData.map((apiInfo) => (
               <API key={apiInfo.id} headerInfo={apiInfo}>
                 <API.Header />
-                <API.Body />
+                <API.DomainBody />
               </API>
             ))
           : null}

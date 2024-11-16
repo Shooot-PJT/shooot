@@ -1,12 +1,11 @@
-// frontend/src/pages/APIDocs/components/API/API.tsx
 import { createContext, useContext } from 'react';
 import * as style from './API.css';
 import { APIContextProps } from './API.types';
 import { APIProps } from './API.types';
 
 import useIsFocusedHook from '../../hooks/useIsFocusedHook';
-import { Body } from './subComponents/APIBody';
-import { Header } from './subComponents/APIHeader';
+import { APIBody } from './subComponents/APIBody/APIBody';
+import { APIHeader } from './subComponents/APIHeader/APIHeader';
 
 const APIContext = createContext<APIContextProps | null>(null);
 
@@ -34,5 +33,5 @@ export const API = ({ children, headerInfo }: APIProps) => {
   );
 };
 
-API.Header = Header;
-API.Body = Body;
+API.Header = APIHeader;
+API.Body = APIBody;

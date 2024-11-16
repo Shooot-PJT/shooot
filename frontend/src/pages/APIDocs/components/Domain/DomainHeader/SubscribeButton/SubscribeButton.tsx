@@ -1,7 +1,7 @@
 import { IoNotifications } from 'react-icons/io5';
 import { CustomTooltip } from '../../../../../../components/CustomToolTip';
 import * as s from './SubscribeButton.css';
-import { DomainInfo } from '../../Domain.data.types';
+import { DomainInfo } from '../../../../types/data/Domain.data';
 
 export const SubscribeButton = ({
   isSubscribed,

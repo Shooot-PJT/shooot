@@ -1,77 +1,6 @@
-// import { TestCaseHeaderInfo } from '../../dummies/testcase_dummy_list';
-// import { Method } from '../../types/methods';
-// import { DomainInfo } from './Domain.data';
-// import { ExpectedResponse, TableData } from './testcase.data';
+import { Method } from '../../types/methods';
+import { DomainInfo } from './Domain.data';
 
-// export type NominalUrl = string | null | undefined;
-// export type TestResult = 'FAIL' | 'SUCCESS' | 'YET';
-// export const TEST_RESULTS: Record<TestResult, TestResult> = {
-//   FAIL: 'FAIL',
-//   SUCCESS: 'SUCCESS',
-//   YET: 'YET',
-// };
-
-// export interface APIRequestDocsContent {
-//   params: TableData | null;
-//   headers: TableData | null;
-//   pathvariable: TableData | null;
-//   body: Body;
-//   expectedResponse: ExpectedResponse;
-// }
-
-// export interface APIRequestDocsInfo {
-//   id: number;
-//   domainId: DomainInfo['domainId'];
-//   managerId: Manager['id'];
-//   managerName: Manager['nickname'];
-//   title: string;
-//   description: string;
-//   method: Method;
-//   url: string; // 헤더용 대표 엔드포인트
-//   createdAt?: string;
-//   modifiedAt?: string;
-//   isRealServer?: boolean;
-//   isSecure?: boolean;
-//   isDeleted?: boolean;
-//   testStatus?: TestResult;
-//   //
-//   example_url?: string; // 예시용 자유양식 url (ExampleUrl)
-//   example_content?: APIRequestDocsContent;
-// }
-
-// export interface APIDetailInfo {
-//   requestDocs: APIRequestDocsInfo;
-//   testCases?: Array<TestCaseHeaderInfo>;
-//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//   lastlog?: any; //미정, 정해지면 바꿀 예정
-// }
-
-// export interface APIHeaderInfo {
-//   id: APIRequestDocsInfo['id'];
-//   title: APIRequestDocsInfo['title'];
-//   description: APIRequestDocsInfo['description'];
-//   method: APIRequestDocsInfo['method'];
-//   managerId: Manager['id'] | null;
-//   managerName: Manager['nickname'] | null;
-//   url?: APIRequestDocsInfo['url'];
-//   isRealServer?: APIRequestDocsInfo['isRealServer'];
-//   isSecure?: APIRequestDocsInfo['isSecure'];
-//   testStatus?: APIRequestDocsInfo['testStatus'];
-//   createdAt?: APIRequestDocsInfo['createdAt'];
-//   modifiedAt?: APIRequestDocsInfo['modifiedAt'];
-// }
-
-// // 등록 시 기본값
-// export interface APIBasicInfo {
-//   id: APIRequestDocsInfo['id'];
-//   title: APIRequestDocsInfo['title'];
-//   description: APIRequestDocsInfo['description'];
-//   method: APIRequestDocsInfo['method'];
-//   manager?: Manager | null | undefined;
-//   url?: APIRequestDocsInfo['url'];
-// }
-
-// // ===========================
 export interface User {
   id: number;
   email: string;
@@ -90,12 +19,6 @@ export interface Manager {
   nickname: User['nickname'] | null;
 }
 
-// frontend/src/pages/APIDocs/types/data/API.data.ts
-import { TestCaseHeaderInfo } from '../../dummies/testcase_dummy_list';
-import { Method } from '../../types/methods';
-import { DomainInfo } from './Domain.data';
-import { ExpectedResponse, TableData, Body } from './TestCase.data';
-
 export type NominalUrl = string | null | undefined;
 export type TestResult = 'FAIL' | 'SUCCESS' | 'YET';
 export const TEST_RESULTS: Record<TestResult, TestResult> = {
@@ -104,63 +27,76 @@ export const TEST_RESULTS: Record<TestResult, TestResult> = {
   YET: 'YET',
 };
 
-export interface APIRequestDocsContent {
-  params: TableData | null;
-  headers: TableData | null;
-  pathvariable: TableData | null;
-  body: Body;
-  expectedResponse: ExpectedResponse;
-  method: Method | null;
-  example_url: string;
-  title: string;
-  description: string;
-  managerId: number;
-  managerName: string;
+export type Key = string;
+export type Value = string | number | boolean | null;
+export type Description = string | null;
+export type IsRequired = boolean | null;
+export type Type = 'Text' | 'File' | string | null;
+export type JsonData = object;
+
+export type TableValueFormat = [Value, Description, Type, IsRequired];
+export type TableData = Record<Key, TableValueFormat>;
+export interface FileMeta {
+  parameterVar: string;
+  description: string | null;
 }
 
-// export interface APIRequestDocsInfo {
-//   id: number;
-//   domainId: DomainInfo['domainId'];
-//   managerId: number;
-//   managerName: string;
-//   title: string;
-//   description: string;
-//   method: Method;
-//   url: string;
-//   createdAt?: string;
-//   modifiedAt?: string;
-//   isRealServer?: boolean;
-//   isSecure?: boolean;
-//   isDeleted?: boolean;
-//   testStatus?: TestResult;
-//   example_url?: string;
-//   example_content?: string;
-// }
+type BodyRaw = object | null;
 
-export interface APIRequestDocsInfo {
+interface BodyFormData {
+  datas: TableData | null;
+  files: Record<Key, Record<string, [string, FileMeta, Type, null]>> | null;
+}
+
+interface BodyFormData {
+  datas: TableData | null;
+  files: Record<Key, Record<string, [string, FileMeta, Type, null]>> | null;
+}
+
+type Body = BodyRaw | BodyFormData;
+export interface ExampleContent {
+  params: null;
+  pathvariable: null;
+  headers?: BodyFormData | null;
+  body?: Body | null;
+  expectedResponse?: ExpectedResponse | null;
+}
+//======
+
+//===== 기대 응답 Json Data Type Editor & JSON Editor 구성을 위한 Expected Response 구성 위한 타입 정의
+export interface ExpectedResponse {
+  schema: string | null;
+  example: JsonData | null;
+}
+//======
+
+export interface RequestDocs {
   id: number;
   domainId: DomainInfo['domainId'];
-  managerId: Manager['id'];
-  managerName: Manager['nickname'];
-  title: string;
-  description: string;
-  method: Method | null;
-  url: string; // 헤더용 대표 엔드포인트
-  createdAt?: string;
+  managerId?: Manager['id'];
+  managerName?: Manager['nickname'];
+  title?: string;
+  description?: string;
+  method?: Method | null;
+  url?: string | null; // 헤더용 대표 엔드포인트
+  example_url?: string | null;
+  createdAt?: string | null;
   modifiedAt?: string;
   isRealServer?: boolean;
   isSecure?: boolean;
   isDeleted?: boolean;
   testStatus?: TestResult;
-  example_url?: string | null;
-  example_content?: APIRequestDocsContent | null;
+  example_content?: ExampleContent | null;
 }
 
-// APIHeaderInfo 타입 정의 추가
-export type APIHeaderInfo = APIRequestDocsInfo;
+export interface TestCaseHeaderInfo {
+  id: number;
+  statusCode: string;
+  description: string;
+}
 
 export interface APIDetailInfo {
-  requestDocs: APIRequestDocsContent & APIRequestDocsInfo;
+  requestDocs: RequestDocs;
   testCases?: Array<TestCaseHeaderInfo>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   lastlog?: any; //미정, 정해지면 바꿀 예정

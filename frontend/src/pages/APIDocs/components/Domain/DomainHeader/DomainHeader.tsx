@@ -1,4 +1,3 @@
-// frontend/src/pages/APIDocs/components/Domain/Header/Header.tsx
 import { useCallback, useState } from 'react';
 import { useDomainContext } from '../Domain';
 import { throttle } from 'lodash';
@@ -15,7 +14,7 @@ import {
 } from '../DomainButtons/DomainButtons';
 import AddAPIForm from '../../AddAPIForm/AddAPIForm';
 
-export const Header = () => {
+export const DomainHeader = () => {
   const context = useDomainContext();
   const { isFocused, handleToggleIsFocused } = context.useIsFocusedHook;
   const [isAddingAPI, setIsAddingAPI] = useState(false);

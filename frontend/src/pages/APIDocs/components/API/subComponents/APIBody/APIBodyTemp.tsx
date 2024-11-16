@@ -1,25 +1,25 @@
-// frontend/src/pages/APIDocs/components/API/subComponents/APIBody/index.tsx
-
 import { useAPIContext } from '../../API';
 import Flexbox from '../../../../../../components/Flexbox';
 import colorPalette from '../../../../../../styles/colorPalette';
-import * as s from './index.css';
+import * as s from './APIBody.css';
 import { RequestDocs } from './RequestDocs/RequestDocs';
 import { Skeleton } from '@mui/material';
 import ManagerAvatar from '../APICommon/ManagerAvatar/ManagerAvatar';
 import Typography from '../../../../../../components/Typography';
 import Button from '../../../../../../components/Button';
 import { useGetAPIDetail } from '../../../../reactQueries/api';
-import { DummyTestCase } from '../../../../dummies/DummyTestCase';
-import { useAPI } from '../../../../hooks/useAPI'; // 수정된 부분
+import { TestCaseTable } from './TestCase/TestCaseTable/TestCaseTable';
+import { useAPI } from '../../../../hooks/useAPI';
 
-export const Body = () => {
+export const APIBody = () => {
   const context = useAPIContext();
   const { isFocused } = context.useIsFocusedHook;
   const apiId = context.headerInfo.id;
 
-  const { editAPIModalHandler } = useAPI(); // 수정된 부분
+  const { editAPIModalHandler } = useAPI();
 
+  // @@@@@ APIDetailData 타입부터 다시 제대로 내려보내줄것.
+  // 더 정확히는 APIDetailData. 여기서 불러오는것이 아님.
   const {
     data: apiDetailData,
     isLoading,
@@ -176,7 +176,7 @@ export const Body = () => {
               {/* 1.2.2 RIGHT-BOTTOM: 테스트케이스 리스트 섹션 */}
               {testCases && testCases.length > 0 ? (
                 testCases.map((testCase) => (
-                  <DummyTestCase key={testCase.id} testCaseId={testCase.id} />
+                  <TestCaseTable key={testCase.id} testCaseId={testCase.id} />
                 ))
               ) : (
                 <div>테스트케이스가 없습니다.</div>
