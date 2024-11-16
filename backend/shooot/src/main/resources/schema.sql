@@ -26,7 +26,7 @@ CREATE TABLE user
     email      VARCHAR(40) NOT NULL,
     is_deleted BOOL        NOT NULL,
     created_at DATETIME    NOT NULL,
-    color VARCHAR(10) DEFAULT 'GREY'
+    color VARCHAR(10) DEFAULT 'DISABLED'
 );
 
 
