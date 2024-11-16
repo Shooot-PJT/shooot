@@ -17,6 +17,7 @@ import {
 import { useNavBarStore } from '../../../../../stores/navbarStore';
 import useModal from '../../../../../hooks/useModal';
 import { validateEmail } from '../../../../Signup/utils/validator';
+import { IconColor } from '../../../../../components/Icon/Icon.types';
 
 export const InviteMembersModal = () => {
   /* 필요 정보 */
@@ -105,7 +106,7 @@ export const InviteMembersModal = () => {
               }}
             >
               <Flexbox alignItems="center" style={{ columnGap: '0.5rem' }}>
-                <Icon color="primary">
+                <Icon color={result.color.toLowerCase() as IconColor}>
                   <HiUser />
                 </Icon>
                 <Flexbox flexDirections="col">
