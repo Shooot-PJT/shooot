@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAPIContext } from '../../API';
 import Flexbox from '../../../../../../components/Flexbox';
 import colorPalette from '../../../../../../styles/colorPalette';

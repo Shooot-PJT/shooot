@@ -4,7 +4,7 @@ import Flexbox from '../../../../../components/Flexbox';
 import * as s from './DomainBody.css';
 import { Skeleton } from '@mui/material';
 import { API } from '../../API/API';
-import { APIDetailInfo } from '../../API/API.data.types';
+import { APIDetailInfo } from '../../../types/data/API.data';
 
 export const DomainBody = (): JSX.Element => {
   const context = useDomainContext();

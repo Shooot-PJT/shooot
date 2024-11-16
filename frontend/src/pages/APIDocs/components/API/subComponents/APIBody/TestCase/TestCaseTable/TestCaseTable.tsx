@@ -127,6 +127,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
   const tabLabels = ['Params', 'PathVariables', 'Header', 'Body'];
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    console.log(event);
     setActiveTab(newValue);
   };
 
