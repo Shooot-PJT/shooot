@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +24,8 @@ public class ProjectMonitorService {
         System.out.println(metaData.getInstanceName());
 
         try {
-            ProcessBuilder processBuilderTest = new ProcessBuilder("ls").directory(
-                new File("/home/hyunjinkim/deployment/scripts"));
-            System.out.println(
-                Arrays.toString(processBuilderTest.start().getInputStream().readAllBytes()));
-
             ProcessBuilder processBuilder = new ProcessBuilder("vagrant", "ssh",
-                metaData.getInstanceName(), "-c", "'sar -t 1'").directory(
+                metaData.getInstanceName(), "-c", "ls").directory(
                 new File("/home/hyunjinkim/deployment/scripts"));
             processBuilder.redirectErrorStream(true);
 
