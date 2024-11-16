@@ -9,6 +9,7 @@ import useModal from '../../../../../hooks/useModal';
 import { ConfirmKickModal } from './ConfirmKickModal';
 import { useNavBarStore } from '../../../../../stores/navbarStore';
 import { useReadMembersByProjectId, useReadUserInfo } from '../../../hooks';
+import { IconColor } from '../../../../../components/Icon/Icon.types';
 
 export const KickMemberModal = () => {
   const modal = useModal();
@@ -56,7 +57,7 @@ export const KickMemberModal = () => {
                     <Flexbox alignItems="center" style={{ columnGap: '1rem' }}>
                       <CustomTooltip title={member.email}>
                         <div>
-                          <Icon color="primary">
+                          <Icon color={member.color.toLowerCase() as IconColor}>
                             <HiUser />
                           </Icon>
                         </div>
