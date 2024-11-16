@@ -63,7 +63,10 @@ public class ProjectStressTestHandler {
             StressTestRequest request = StressTestRequest.builder()
                 .projectId(projectBuild.getProject().getId())
                 .projectJarFileId(event.getProjectJarFileId())
-                .duration(apiTestMethod.getTestDuration()).build();
+                .duration(apiTestMethod.getTestDuration())
+                .method(api.getMethod())
+                .url(api.getUrl())
+                .build();
             restTemplate.postForObject(requestUrl, request, Void.class);
         });
 

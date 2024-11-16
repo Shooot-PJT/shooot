@@ -14,4 +14,7 @@ public class ProjectMonitorMessage implements Message {
     private Double memory;
     private Double disk;
     private Double network;
+
+    private String method;
+    private String url;
 }

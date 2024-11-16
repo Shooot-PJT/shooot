@@ -11,4 +11,6 @@ public class StressTestDto {
     private Double memory;
     private Double disk;
     private Double network;
+    private String method;
+    private String url;
 }

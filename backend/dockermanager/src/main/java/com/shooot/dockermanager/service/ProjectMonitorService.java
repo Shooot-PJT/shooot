@@ -43,7 +43,8 @@ public class ProjectMonitorService {
     );
     private final String command = "sar -u -r -n DEV -p -d 1";
 
-    public void getStatus(Integer projectId, Integer projectJarFileId, Integer duration) {
+    public void getStatus(Integer projectId, Integer projectJarFileId, Integer duration,
+        String method, String url) {
         MetaData metaData = projectDirectoryManager.getMetaData(
             projectDirectoryManager.file(projectId, projectJarFileId).toPath());
 
@@ -82,6 +83,8 @@ public class ProjectMonitorService {
                             .memory(ram)
                             .disk(disk)
                             .network(network)
+                            .method(method)
+                            .url(url)
                             .build());
                     Thread.sleep(1000);
                 }

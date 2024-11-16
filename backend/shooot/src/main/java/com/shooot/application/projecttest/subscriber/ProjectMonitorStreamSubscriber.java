@@ -75,6 +75,8 @@ public class ProjectMonitorStreamSubscriber implements
             Double memory = (Double) map.get("memory");
             Double disk = (Double) map.get("disk");
             Double network = (Double) map.get("network");
+            String method = map.get("method").toString();
+            String url = map.get("url").toString();
 
             stressTestSseService.send(
                 projectJarFileId,
@@ -83,6 +85,8 @@ public class ProjectMonitorStreamSubscriber implements
                     .memory(memory)
                     .disk(disk)
                     .network(network)
+                    .method(method)
+                    .url(url)
                     .build()
             );
         } catch (JsonProcessingException e) {
