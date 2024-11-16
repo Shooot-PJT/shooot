@@ -96,6 +96,10 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
         ...testCaseDetail,
         content: {
           ...testCaseDetail.content,
+          expectedResponse: testCaseDetail.content.expectedResponse || {
+            schema: null,
+            example: null,
+          },
         },
       });
 
@@ -206,7 +210,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
     }
   };
 
-  const handleDataChange = (section: string, data: TableData) => {
+  const handleDataChange = (section: string, data: any) => {
     if (!editedTestCase) return;
     setEditedTestCase({
       ...editedTestCase,
@@ -371,6 +375,78 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
           )}
         </div>
       )}
+
+      {/* Expected Response Editors */}
+      <div>
+        <h3>Expected Response</h3>
+
+        <div>
+          <h4>Schema</h4>
+          <Editor
+            height="200px"
+            defaultLanguage="plaintext"
+            value={editedTestCase?.content.expectedResponse.schema || ''}
+            onChange={(value) => {
+              if (!editedTestCase) return;
+              setEditedTestCase({
+                ...editedTestCase,
+                content: {
+                  ...editedTestCase.content,
+                  expectedResponse: {
+                    ...editedTestCase.content.expectedResponse,
+                    schema: value || '',
+                  },
+                },
+              });
+            }}
+            options={{
+              readOnly: !isEditMode,
+              minimap: { enabled: false },
+            }}
+          />
+        </div>
+        <div>
+          <h4>Example</h4>
+          <Editor
+            height="200px"
+            defaultLanguage="json"
+            value={
+              editedTestCase?.content.expectedResponse.example
+                ? JSON.stringify(
+                    editedTestCase.content.expectedResponse.example,
+                    null,
+                    2,
+                  )
+                : ''
+            }
+            onChange={(value) => {
+              if (!editedTestCase) return;
+
+              if (!isEditMode) return;
+
+              try {
+                const parsedValue = JSON.parse(value || '{}');
+                setEditedTestCase({
+                  ...editedTestCase,
+                  content: {
+                    ...editedTestCase.content,
+                    expectedResponse: {
+                      ...editedTestCase.content.expectedResponse,
+                      example: parsedValue,
+                    },
+                  },
+                });
+              } catch (error) {
+                console.error('Invalid JSON in Example editor:', error);
+              }
+            }}
+            options={{
+              readOnly: !isEditMode,
+              minimap: { enabled: false },
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };
