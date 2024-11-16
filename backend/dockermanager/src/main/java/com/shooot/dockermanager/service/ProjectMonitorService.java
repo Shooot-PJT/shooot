@@ -67,13 +67,13 @@ public class ProjectMonitorService {
                 new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while (System.currentTimeMillis() < endTime) {
-                    line = reader.readLine();
-                    System.out.println(line);
+                    Double cpu = getCpu(reader);
+                    System.out.println(cpu);
                     projectMonitorMessagePublisher.publish(
                         ProjectMonitorMessage.builder()
                             .projectId(projectId)
                             .projectJarFileId(projectJarFileId)
-                            .message(line)
+                            .message("")
                             .build());
                     Thread.sleep(1000);
                 }
@@ -85,5 +85,23 @@ public class ProjectMonitorService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private double getCpu(BufferedReader br) throws IOException {
+        String line;
+        while ((line = br.readLine()) != null) {
+            if (line.contains("%idle")) {
+                String nextLine = br.readLine();
+                if (nextLine != null) {
+                    String[] columns = nextLine.trim().split("\\s+");
+                    if (columns.length > 5) {
+                        String idleValue = columns[7];
+                        Double value = Double.parseDouble(idleValue);
+                        return value;
+                    }
+                }
+            }
+        }
+        return 0;
     }
 }
