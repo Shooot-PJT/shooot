@@ -54,11 +54,14 @@ public class ProjectStressTestHandler {
             ApiTestMethod apiTestMethod = apiTestMethodRepository.findByApi(api).orElseThrow();
 
             switch (apiTestMethod.getBuildFileTestMethod()) {
-                case FIXED -> stressTestService.fixed(baseUrl, api, apiTestMethod.getVUsers(),
+                case FIXED -> stressTestService.fixed(event.getProjectJarFileId(), baseUrl, api,
+                    apiTestMethod.getVUsers(),
                     apiTestMethod.getTestDuration());
-                case SPIKE -> stressTestService.spike(baseUrl, api, apiTestMethod.getVUsers(),
+                case SPIKE -> stressTestService.spike(event.getProjectJarFileId(), baseUrl, api,
+                    apiTestMethod.getVUsers(),
                     apiTestMethod.getTestDuration());
-                case RAMP_UP -> stressTestService.rampUp(baseUrl, api, apiTestMethod.getVUsers(),
+                case RAMP_UP -> stressTestService.rampUp(event.getProjectJarFileId(), baseUrl, api,
+                    apiTestMethod.getVUsers(),
                     apiTestMethod.getTestDuration());
             }
 
@@ -76,6 +79,8 @@ public class ProjectStressTestHandler {
 
         projectMonitorStreamSubscriber.removeSubscriptionForProject(
             projectBuild.getProject().getId());
+
+        stressTestService.finish(event.getProjectJarFileId());
 
         projectTestRunService.finish(event.getProjectJarFileId());
     }
