@@ -29,7 +29,6 @@ public class ProjectDeployService {
     private static final String DOCKER_SERVER_DEPLOY_STOP_REQUEST_ENDPOINT = "http://khj745700.iptime.org:8080/project/stop";
     private final ProjectBuildLogRepository projectBuildLogRepository;
 
-    @Transactional
     public void projectDeployStartRequest(ProjectBuildIdDto dto) {
         ProjectBuild projectBuild = projectBuildRepository.findById(dto.getProjectJarFileId()).orElseThrow(FileIsNotExistException::new);
         ProjectBuildLog pb = projectBuild.getProjectBuildLog();
@@ -48,8 +47,6 @@ public class ProjectDeployService {
             consoleLogStreamSubscriber.removeSubscriptionForProject(projectBuild.getProject().getId());
             throw new InstanceIsFullException();
         }
-
-
 
     }
 
