@@ -135,10 +135,9 @@ public class ProjectMonitorService {
         while ((line = br.readLine()) != null) {
             System.out.println(line);
             if (line.contains("enp0s8")) {
-                String nextLine = br.readLine();
-                System.out.println(nextLine);
-                if (nextLine != null) {
-                    String[] columns = nextLine.trim().split("\\s+");
+                System.out.println(line);
+                if (line != null) {
+                    String[] columns = line.trim().split("\\s+");
                     if (columns.length > 9) {
                         String network = columns[9];
                         Double value = Double.parseDouble(network);
