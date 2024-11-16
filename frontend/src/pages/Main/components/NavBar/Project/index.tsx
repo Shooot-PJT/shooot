@@ -30,12 +30,6 @@ export const Project = () => {
     });
   }, [projectList, navbarStore.project]);
 
-  useEffect(() => {
-    navbarStore.setProject(
-      projectList?.data.length ? projectList?.data[0].projectId : 0,
-    );
-  }, [isLoading]);
-
   return (
     <>
       {isLoading ? (

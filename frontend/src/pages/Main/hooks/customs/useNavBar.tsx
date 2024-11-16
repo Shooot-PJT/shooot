@@ -78,6 +78,7 @@ export const useNavBar = () => {
     }
 
     sessionStorage.setItem('menu', navbarStore.menu.toString());
+    sessionStorage.setItem('project', navbarStore.project.toString());
   }, [navbarStore.menu, navbarStore.project]);
 
   return {
