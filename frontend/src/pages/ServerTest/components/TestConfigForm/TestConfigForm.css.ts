@@ -18,3 +18,13 @@ export const FormGrid = style({
   margin: '0rem 0rem 0rem 2rem',
   maxWidth: '500px',
 });
+
+export const conditionIndicator = style({
+  display: 'flex',
+  position: 'absolute',
+  alignItems: 'center',
+  top: '20%',
+  left: '32%',
+  fontWeight: '700',
+  gap: '1rem',
+});

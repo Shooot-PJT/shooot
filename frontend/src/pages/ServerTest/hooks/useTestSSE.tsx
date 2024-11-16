@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { TestSSEData } from '../types';
 
 interface UseProjectSSEProps {
   projectJarFileId: number;
@@ -11,6 +12,16 @@ export const useTestSSE = ({
   onLogReceived,
   onStatusReceived,
 }: UseProjectSSEProps) => {
+  const [testData, setTestData] = useState<TestSSEData[]>([
+    {
+      cpuUtilization: 0.0,
+      ramUtilization: 0.0,
+    },
+    {
+      cpuUtilization: 0.0,
+      ramUtilization: 0.0,
+    },
+  ]);
   const eventSourceRef = useRef<EventSource | null>(null);
 
   useEffect(() => {
@@ -24,27 +35,23 @@ export const useTestSSE = ({
       eventSourceRef.current = eventSource;
     }
 
-    if (eventSourceRef.current) {
-      eventSourceRef.current.addEventListener('project_log', (event) => {
-        try {
-          const parsedData = JSON.parse(event.data);
-          if (onLogReceived) onLogReceived(parsedData.log);
-        } catch (e) {
-          console.error('Failed to parse project_log event data:', e);
-        }
-      });
-
-      eventSourceRef.current.addEventListener('project_status', (event) => {
-        try {
-          const parsedData = JSON.parse(event.data);
-          if (parsedData.status) {
-            if (onStatusReceived) onStatusReceived(parsedData.status);
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      });
-    }
+    eventSourceRef.current.addEventListener('test_data', (event) => {
+      try {
+        const parsedData = JSON.parse(event.data);
+        setTestData((prev) => {
+          const updatedData = [
+            ...prev,
+            {
+              cpuUtilization: parsedData.cpuUtilization,
+              ramUtilization: parsedData.ramUtilization / 1000000000,
+            },
+          ];
+          return updatedData;
+        });
+      } catch (e) {
+        console.error('Failed to parse project_log event data:', e);
+      }
+    });
 
     return () => {
       if (eventSourceRef.current) {
@@ -57,5 +64,6 @@ export const useTestSSE = ({
 
   return {
     eventSourceRef,
+    testData,
   };
 };

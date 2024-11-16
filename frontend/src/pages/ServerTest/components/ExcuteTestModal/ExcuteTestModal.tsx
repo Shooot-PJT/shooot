@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Button from '../../../../components/Button';
+import Flexbox from '../../../../components/Flexbox';
 import Graph from '../../../../components/Graph/Graph';
 import Typography from '../../../../components/Typography';
 import useModal from '../../../../hooks/useModal';
-import { DataTable } from '../DataTable/DataTable';
-import * as s from './ExcuteTestModal.css';
-import { MethodChip } from '../MethodChip/MethodChip';
-import Flexbox from '../../../../components/Flexbox';
-import { useUploadStateStore } from '../../stores/useUploadStateStore';
-import { EndServerTestModal } from '../EndServerTestModal/EndServerTestModal';
 import { useTestSSE } from '../../hooks/useTestSSE';
+import { useUploadStateStore } from '../../stores/useUploadStateStore';
+import { DataTable } from '../DataTable/DataTable';
+import { EndServerTestModal } from '../EndServerTestModal/EndServerTestModal';
+import { MethodChip } from '../MethodChip/MethodChip';
+import * as s from './ExcuteTestModal.css';
 
 interface ExcuteTestModalProps {
   projectJarFileId: number;
@@ -17,10 +17,9 @@ interface ExcuteTestModalProps {
 
 export const ExcuteTestModal = ({ projectJarFileId }: ExcuteTestModalProps) => {
   const modal = useModal();
-  const { state } = useUploadStateStore();
-  const [data, setData] = useState<number[]>([]);
+  const { setState } = useUploadStateStore();
 
-  useTestSSE({
+  const { testData } = useTestSSE({
     projectJarFileId,
   });
 
@@ -31,21 +30,11 @@ export const ExcuteTestModal = ({ projectJarFileId }: ExcuteTestModalProps) => {
   };
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setData((prev = []) => [...prev, 120 - Math.floor(Math.random() * 120)]);
-    }, 3000);
-
     return () => {
-      clearInterval(intervalId);
-      // modal.pop();
+      modal.pop();
+      setState('None');
     };
   }, []);
-
-  useEffect(() => {
-    if (state === 'End') {
-      modal.pop();
-    }
-  }, [state]);
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
@@ -89,16 +78,22 @@ export const ExcuteTestModal = ({ projectJarFileId }: ExcuteTestModalProps) => {
             <Graph
               frameColor={'primary'}
               lineColor={'primary'}
-              SSEData={data}
+              SSEData={testData}
+              dataName={'cpuUtilization'}
             />
           </div>
           <div>
             <Typography weight="700">RAM 사용량</Typography>
-            <Graph frameColor={'put'} lineColor={'put'} SSEData={data} />
+            <Graph
+              frameColor={'put'}
+              lineColor={'put'}
+              SSEData={testData}
+              dataName={'ramUtilization'}
+            />
           </div>
           <div>
             <Typography weight="700">디스크 사용량</Typography>
-            <Graph frameColor={'get'} lineColor={'get'} SSEData={data} />
+            {/* <Graph frameColor={'get'} lineColor={'get'} SSEData={testData} /> */}
           </div>
         </div>
       </div>

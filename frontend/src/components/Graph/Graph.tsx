@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as s from './Graph.css';
 import { GraphColor } from './Graph.type';
 import { graphColorPalette } from './GraphColor';
+import { TestSSEData } from '../../pages/ServerTest/types';
 
 export interface BottomText {
   text: string;
@@ -13,7 +14,8 @@ export interface BottomText {
 export interface GraphProps {
   frameColor: GraphColor;
   lineColor: GraphColor;
-  SSEData: number[];
+  SSEData: TestSSEData[];
+  dataName: string;
 }
 
 const formatTime = (seconds: number) => {
@@ -24,9 +26,9 @@ const formatTime = (seconds: number) => {
 
 const convertToPercentage = (value: number) => {
   if (value <= 0) return 100;
-  if (value >= 115) return 0;
+  if (value >= 120) return 0;
 
-  return Math.round(((115 - value) / 115) * 100);
+  return Math.round(((120 - value) / 120) * 100);
 };
 
 const drawSpline = (
@@ -74,28 +76,40 @@ const drawSpline = (
   context.fill();
 };
 
-export const Graph = ({ frameColor, lineColor, SSEData }: GraphProps) => {
-  const [texts, setTexts] = useState<BottomText[]>([
-    { text: '00:00', x: 1350, y: 134, pointY: 120 },
-  ]);
-  const [points, setPoints] = useState<BottomText[]>([
-    { text: '00:00', x: 1350, y: 134, pointY: 120 },
-  ]);
-  const [time, setTime] = useState<number>(0);
+export const Graph = ({
+  frameColor,
+  lineColor,
+  SSEData,
+  dataName,
+}: GraphProps) => {
+  const [texts, setTexts] = useState<BottomText[]>([]);
+  const [points, setPoints] = useState<BottomText[]>([]);
+  const [time, setTime] = useState<number>(-180);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const timeRef = useRef(time);
+  const dataIndexRef = useRef(0);
 
-  const addTimeText = useCallback((time: number) => {
-    const randomY = 120 - Math.floor(Math.random() * 120);
-    const timeText = {
-      text: formatTime(time / 60),
-      x: 1350,
-      y: 134,
-      pointY: randomY,
-    };
-    setPoints((prevPoints) => [timeText, ...prevPoints]);
-    setTexts((prevTexts) => [timeText, ...prevTexts]);
-  }, []);
+  const addTimeText = useCallback(
+    (time: number) => {
+      if (SSEData.length - 1 > dataIndexRef.current) {
+        dataIndexRef.current += 1;
+      }
+      const pointY =
+        120 -
+        Math.floor(
+          SSEData[dataIndexRef.current][dataName as keyof TestSSEData] * 120,
+        );
+      const timeText = {
+        text: formatTime(time / 60),
+        x: 1170,
+        y: 134,
+        pointY: pointY,
+      };
+      setPoints((prevPoints) => [timeText, ...prevPoints]);
+      setTexts((prevTexts) => [timeText, ...prevTexts]);
+    },
+    [SSEData, dataName],
+  );
 
   const renderCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -179,12 +193,12 @@ export const Graph = ({ frameColor, lineColor, SSEData }: GraphProps) => {
     setTexts((prevTexts) =>
       prevTexts
         .map(({ text, x, y, pointY }) => ({ text, x: x - 1, y, pointY }))
-        .filter(({ x }) => x > -5000),
+        .filter(({ x }) => x > -1000),
     );
     setPoints((prevPoints) =>
       prevPoints
         .map(({ text, x, y, pointY }) => ({ text, x: x - 1, y, pointY }))
-        .filter(({ x }) => x > -5000),
+        .filter(({ x }) => x > -1000),
     );
     timeRef.current += 1;
     setTime(timeRef.current);

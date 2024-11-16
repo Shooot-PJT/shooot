@@ -39,7 +39,7 @@ export const ServerTest = () => {
   };
 
   const handleOnBuild = () => {
-    setLogs(['빌드 시도 중입니다...']);
+    setLogs(['빌드 시도 중입니다... 10초 이상 소요됩니다.']);
     setProjectStatus('RUN');
     handleRender();
   };
