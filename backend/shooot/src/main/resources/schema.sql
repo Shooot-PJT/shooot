@@ -25,7 +25,8 @@ CREATE TABLE user
     password   BINARY(60) NOT NULL,
     email      VARCHAR(40) NOT NULL,
     is_deleted BOOL        NOT NULL,
-    created_at DATETIME    NOT NULL
+    created_at DATETIME    NOT NULL,
+    color VARCHAR(10) DEFAULT 'GREY'
 );
 
 
