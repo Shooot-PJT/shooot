@@ -2,6 +2,7 @@ export interface UserInfo {
   userId: number;
   nickname: string;
   email: string;
+  color: string;
 }
 
 export interface AddProjectRequest {
