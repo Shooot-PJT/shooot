@@ -2,7 +2,7 @@ import Button from '../../../../../components/Button';
 import { CustomTooltip } from '../../../../../components/CustomToolTip';
 import Typography from '../../../../../components/Typography';
 import { useDomain } from '../../../hooks/useDomain';
-import { DomainInfo } from '../Domain.data.types';
+import { DomainInfo } from '../../../types/data/Domain.data';
 import { MdModeEdit } from 'react-icons/md';
 import { MdDeleteOutline } from 'react-icons/md';
 
