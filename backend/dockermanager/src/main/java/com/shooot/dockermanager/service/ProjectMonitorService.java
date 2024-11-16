@@ -2,11 +2,9 @@ package com.shooot.dockermanager.service;
 
 import com.shooot.dockermanager.handler.MetaData;
 import com.shooot.dockermanager.handler.ProjectDirectoryManager;
-import com.shooot.dockermanager.handler.ProjectDirectoryManager.DirStructure;
 import com.shooot.dockermanager.publisher.ProjectMonitorMessage;
 import com.shooot.dockermanager.publisher.ProjectMonitorMessagePublisher;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +18,8 @@ public class ProjectMonitorService {
     private final ProjectMonitorMessagePublisher projectMonitorMessagePublisher;
 
     public void getStatus(Integer projectId, Integer projectJarFileId, Integer duration) {
-        File metaDataFile = projectDirectoryManager.getFile(projectId, projectJarFileId,
-            DirStructure.METADATA).orElseThrow();
-        System.out.println(metaDataFile.toPath());
-        MetaData metaData = projectDirectoryManager.getMetaData(metaDataFile.toPath());
+        MetaData metaData = projectDirectoryManager.getMetaData(
+            projectDirectoryManager.file(projectId, projectJarFileId).toPath());
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("vagrant", "ssh",
