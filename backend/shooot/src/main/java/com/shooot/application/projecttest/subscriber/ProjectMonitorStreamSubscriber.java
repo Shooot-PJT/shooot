@@ -2,6 +2,7 @@ package com.shooot.application.projecttest.subscriber;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shooot.application.sseemitter.service.StressTestSseService;
 import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class ProjectMonitorStreamSubscriber implements
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
     private final Map<Integer, Subscription> subscriptions = new ConcurrentHashMap<>();
+    private final StressTestSseService stressTestSseService;
     private StreamMessageListenerContainer<String, MapRecord<String, String, String>> listenerContainer;
 
     @PostConstruct
@@ -63,6 +65,7 @@ public class ProjectMonitorStreamSubscriber implements
         try {
             String jsonMessage = message.getValue().get("message");
             Map<String, Object> map = objectMapper.readValue(jsonMessage, Map.class);
+            System.out.println(map.get("projectJarFileId"));
             System.out.println(map.get("message"));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
