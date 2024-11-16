@@ -1,6 +1,7 @@
 package com.shooot.application.sseemitter.service;
 
 import com.shooot.application.stresstest.controller.dto.StressTestDto;
+import com.shooot.application.stresstest.controller.dto.TestStateDto;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,30 @@ public class StressTestSseService {
         try {
             sseEmitter.send(
                 SseEmitter.event().name("test_data").data(dto, MediaType.APPLICATION_JSON));
+        } catch (IOException e) {
+            sseEmitter.complete();
+        }
+    }
+
+    public void start(Integer projectJarFileId) {
+        SseEmitter sseEmitter = sseEmitters.get(projectJarFileId);
+        try {
+            sseEmitter.send(
+                SseEmitter.event().name("test_state")
+                    .data(TestStateDto.builder().state("start").build(),
+                        MediaType.APPLICATION_JSON));
+        } catch (IOException e) {
+            sseEmitter.complete();
+        }
+    }
+
+    public void end(Integer projectJarFileId) {
+        SseEmitter sseEmitter = sseEmitters.get(projectJarFileId);
+        try {
+            sseEmitter.send(
+                SseEmitter.event().name("test_state")
+                    .data(TestStateDto.builder().state("end").build(),
+                        MediaType.APPLICATION_JSON));
         } catch (IOException e) {
             sseEmitter.complete();
         }
