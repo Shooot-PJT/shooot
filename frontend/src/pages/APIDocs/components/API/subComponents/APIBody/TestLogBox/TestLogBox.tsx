@@ -1,4 +1,4 @@
-import { roundedBorder } from './TestLogBox.css';
+import { roundedBorder } from '../TestCase/TestCaseTable_BEF/TestCaseTable.css';
 
 export const TestLogBox = () => {
   return (
