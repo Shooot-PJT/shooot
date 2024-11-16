@@ -19,7 +19,11 @@ const createWindow = () => {
   });
 
   mainWindow.loadURL(BASE_URL);
-  mainWindow.webContents.setZoomFactor(0.5);
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow?.webContents.setZoomFactor(0.75);
+  });
+
   if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools();
   }
