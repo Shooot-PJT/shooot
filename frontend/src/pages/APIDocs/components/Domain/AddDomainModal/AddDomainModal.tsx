@@ -6,13 +6,13 @@ import Typography from '../../../../../components/Typography';
 import Flexbox from '../../../../../components/Flexbox';
 import Textfield from '../../../../../components/Textfield';
 import { ProjectInfo } from '../../../../MyProject/types';
-import { DomainInfo } from '../Domain.data.types';
 
 import Button from '../../../../../components/Button';
 import {
   AddDomainRequest,
   EditDomainRequest,
 } from '../../../apis/domain/types';
+import { DomainInfo } from '../../../types/data/Domain.data';
 
 interface AddDomainModalProps {
   type: 'add' | 'edit';

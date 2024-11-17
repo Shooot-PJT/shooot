@@ -35,6 +35,9 @@ export const button = recipe({
         ':active': {
           backgroundColor: theme.palette.primary['active'],
         },
+        ':disabled': {
+          backgroundColor: theme.palette.grey['main'],
+        },
       },
       secondary: {
         backgroundColor: theme.palette.secondary['main'],
@@ -44,6 +47,9 @@ export const button = recipe({
         },
         ':active': {
           backgroundColor: theme.palette.secondary['active'],
+        },
+        ':disabled': {
+          backgroundColor: theme.palette.grey['main'],
         },
       },
       tertiary: {
@@ -55,6 +61,9 @@ export const button = recipe({
         ':active': {
           backgroundColor: theme.palette.tertiary['active'],
         },
+        ':disabled': {
+          backgroundColor: theme.palette.grey['main'],
+        },
       },
       get: {
         backgroundColor: theme.palette.get['main'],
@@ -64,6 +73,9 @@ export const button = recipe({
         },
         ':active': {
           backgroundColor: theme.palette.get['active'],
+        },
+        ':disabled': {
+          backgroundColor: theme.palette.grey['main'],
         },
       },
       post: {
@@ -75,6 +87,9 @@ export const button = recipe({
         ':active': {
           backgroundColor: theme.palette.post['active'],
         },
+        ':disabled': {
+          backgroundColor: theme.palette.grey['main'],
+        },
       },
       put: {
         backgroundColor: theme.palette.put['main'],
@@ -84,6 +99,9 @@ export const button = recipe({
         },
         ':active': {
           backgroundColor: theme.palette.put['active'],
+        },
+        ':disabled': {
+          backgroundColor: theme.palette.grey['main'],
         },
       },
       patch: {
@@ -95,6 +113,9 @@ export const button = recipe({
         ':active': {
           backgroundColor: theme.palette.patch['active'],
         },
+        ':disabled': {
+          backgroundColor: theme.palette.grey['main'],
+        },
       },
       delete: {
         backgroundColor: theme.palette.delete['main'],
@@ -104,6 +125,9 @@ export const button = recipe({
         },
         ':active': {
           backgroundColor: theme.palette.delete['active'],
+        },
+        ':disabled': {
+          backgroundColor: theme.palette.grey['main'],
         },
       },
       grey: {
@@ -115,6 +139,9 @@ export const button = recipe({
         ':active': {
           backgroundColor: theme.palette.grey['active'],
         },
+        ':disabled': {
+          backgroundColor: theme.palette.grey['main'],
+        },
       },
       none: {
         backgroundColor: 'none',
@@ -124,6 +151,9 @@ export const button = recipe({
         },
         ':active': {
           backgroundColor: theme.color.background['200'],
+        },
+        ':disabled': {
+          backgroundColor: theme.palette.grey['main'],
         },
       },
     },

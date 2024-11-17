@@ -1,6 +1,7 @@
 import { style } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 import colorPalette from '../../../../../../../styles/colorPalette';
+import { popIn } from '../../APIBody/RequestDocs/RequestContents/RequestSchemaTable/RequestSchemaTable.css';
 
 export const editorContainer = style({
   height: '500px',
@@ -18,17 +19,16 @@ export const buttonStyle = style({
 
 export const responseContainer = recipe({
   base: {
+    animation: `${popIn} 0.2s ease-in-out`,
     borderRadius: '1rem',
     transition: 'all 0.25s ease-in-out',
     overflow: 'auto',
   },
   variants: {
     hasJsonData: {
-      // editor
       true: {
         height: '13rem',
       },
-      // addButton
       false: {
         display: 'flex',
         justifyContent: 'center',
