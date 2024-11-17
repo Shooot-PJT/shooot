@@ -4,6 +4,7 @@ import com.shooot.dockermanager.handler.MetaData;
 import com.shooot.dockermanager.handler.ProjectDirectoryManager;
 import com.shooot.dockermanager.publisher.ProjectMonitorMessage;
 import com.shooot.dockermanager.publisher.ProjectMonitorMessagePublisher;
+import com.shooot.dockermanager.publisher.StressTestValue;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -52,6 +53,29 @@ public class ProjectMonitorService {
 
     public void getStatus(Integer projectId, Integer projectJarFileId, Integer duration,
         String method, String url) {
+
+        StressTestValue sum = StressTestValue.builder()
+            .cpu(0.0)
+            .memory(0.0)
+            .disk(0.0)
+            .network(0.0)
+            .build();
+        int count = 0;
+
+        StressTestValue min = StressTestValue.builder()
+            .cpu(Double.MAX_VALUE)
+            .memory(Double.MAX_VALUE)
+            .disk(Double.MAX_VALUE)
+            .network(Double.MAX_VALUE)
+            .build();
+
+        StressTestValue max = StressTestValue.builder()
+            .cpu(Double.MIN_VALUE)
+            .memory(Double.MIN_VALUE)
+            .disk(Double.MIN_VALUE)
+            .network(Double.MIN_VALUE)
+            .build();
+
         MetaData metaData = projectDirectoryManager.getMetaData(
             projectDirectoryManager.file(projectId, projectJarFileId).toPath());
         running.put(projectJarFileId, 0);
@@ -80,21 +104,31 @@ public class ProjectMonitorService {
                     }
 
                     Double cpu = getCpu(reader);
-                    System.out.println("cpu: " + cpu);
                     Double ram = getRam(reader);
-                    System.out.println("ram: " + ram);
                     Double disk = getDisk(reader);
-                    System.out.println("disk: " + disk);
                     Double network = getNetwork(reader);
-                    System.out.println("network: " + network);
+
+                    StressTestValue curr = StressTestValue.builder()
+                        .cpu(cpu)
+                        .memory(ram)
+                        .disk(disk)
+                        .network(network)
+                        .build();
+
+                    sum.add(curr);
+                    count++;
+
+                    min.min(curr);
+                    max.max(curr);
+
                     projectMonitorMessagePublisher.publish(
                         ProjectMonitorMessage.builder()
                             .projectId(projectId)
                             .projectJarFileId(projectJarFileId)
-                            .cpu(cpu)
-                            .memory(ram)
-                            .disk(disk)
-                            .network(network)
+                            .curr(curr)
+                            .avg(getAverage(sum, count))
+                            .min(min)
+                            .max(max)
                             .method(method)
                             .url(url)
                             .build());
@@ -178,5 +212,14 @@ public class ProjectMonitorService {
             }
         }
         return 0;
+    }
+
+    private StressTestValue getAverage(StressTestValue sum, int count) {
+        return StressTestValue.builder()
+            .cpu(sum.getCpu() / count)
+            .memory(sum.getMemory() / count)
+            .disk(sum.getDisk() / count)
+            .network(sum.getNetwork() / count)
+            .build();
     }
 }
