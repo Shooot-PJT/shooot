@@ -1,5 +1,7 @@
 package com.shooot.application.sseemitter.service;
 
+import com.shooot.application.notification.service.NotificationSendService;
+import com.shooot.application.notification.ui.dto.NotificationView;
 import com.shooot.application.stresstest.controller.dto.StressTestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -28,11 +30,11 @@ public class LoginUserSseService {
         return sseEmitter;
     }
 
-    public void send(Integer projectJarFileId, StressTestDto dto) {
-        SseEmitter sseEmitter = sseEmitters.get(projectJarFileId);
+    public void send(Integer userId, NotificationView notificationView) {
+        SseEmitter sseEmitter = sseEmitters.get(userId);
         try {
             sseEmitter.send(
-                    SseEmitter.event().name("test_data").data(dto, MediaType.APPLICATION_JSON));
+                    SseEmitter.event().name("notification_data").data(notificationView, MediaType.APPLICATION_JSON));
         } catch (IOException e) {
             sseEmitter.complete();
         }

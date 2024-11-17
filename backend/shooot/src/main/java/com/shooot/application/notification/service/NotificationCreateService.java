@@ -18,6 +18,7 @@ import com.shooot.application.user.domain.UserRepository;
 import com.shooot.application.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,8 +33,10 @@ public class NotificationCreateService {
     private final ProjectRepository projectRepository;
     private final ApiRepository apiRepository;
     private final DomainSubscribeRepository domainSubscribeRepository;
+    private final NotificationSendService notificationSendService;
 
 
+    @Transactional
     public void saveNotification(Integer userId, Integer apiId){
         //구독이 되어 있는지를 체크하고 구독이 되어 있으면 알림을 보낸다
 
@@ -58,7 +61,6 @@ public class NotificationCreateService {
             Map<String, Object> messageContent = Map.of(
                     "message", String.format("%s 프로젝트의 %s 도메인의 %s API가 수정되었습니다.",
                             project.getName(), domain.getName(), api.getTitle()),
-                    "createdAt", LocalDateTime.now().toString(),
                     "project", Map.of(
                             "id", project.getId(),
                             "name", project.getName()
@@ -80,7 +82,11 @@ public class NotificationCreateService {
                     .build();
 
             notificationRepository.save(notification); // Notification 저장
+            notificationSendService.notificationAtDomainUpdate(subscriber.getId(), notification);
+
+
         }
     }
+
 
 }
