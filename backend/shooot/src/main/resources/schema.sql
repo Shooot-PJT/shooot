@@ -27,7 +27,7 @@ CREATE TABLE user
     email      VARCHAR(40) NOT NULL,
     is_deleted BOOL        NOT NULL,
     created_at DATETIME    NOT NULL,
-    color VARCHAR(10) DEFAULT 'DISABLED'
+    color      VARCHAR(10) DEFAULT 'DISABLED'
 );
 
 
@@ -200,10 +200,10 @@ CREATE TABLE api_subscribe
 CREATE TABLE domain_subscribe
 (
     domain_subscribe_id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    domain_id INTEGER NOT NULL,
-    user_id INTEGER NOT NULL,
+    domain_id           INTEGER NOT NULL,
+    user_id             INTEGER NOT NULL,
     foreign key (user_id) REFERENCES user (user_id),
-    foreign key (domain_id) REFERENCES domain(api_domain_id)
+    foreign key (domain_id) REFERENCES domain (api_domain_id)
 );
 
 
@@ -295,6 +295,42 @@ CREATE TABLE project_file
     docker_compose_file MEDIUMBLOB,
     file_name           VARCHAR(100)        NOT NULL,
     FOREIGN KEY (project_build_id) REFERENCES project_build (project_build_id)
+);
+
+CREATE TABLE stress_test_log
+(
+    stress_test_log_id BIGINT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    status             VARCHAR(20)        NOT NULL,
+    project_build_id   INTEGER            NOT NULL,
+    is_deleted         BOOL               NOT NULL,
+    created_at         DATETIME           NOT NULL,
+    FOREIGN KEY (project_build_id) REFERENCES project_build (project_build_id)
+);
+
+CREATE TABLE stress_test_result
+(
+    stress_test_result_id BIGINT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    http_method           TEXT               NOT NULL,
+    url                   TEXT               NOT NULL,
+    duration              INTEGER            NOT NULL,
+    vuser                 INTEGER            NOT NULL,
+    test_method           TEXT               NOT NULL,
+    avg_cpu DOUBLE NOT NULL,
+    max_cpu DOUBLE NOT NULL,
+    min_cpu DOUBLE NOT NULL,
+    avg_memory DOUBLE NOT NULL,
+    max_memory DOUBLE NOT NULL,
+    min_memory DOUBLE NOT NULL,
+    avg_disk DOUBLE NOT NULL,
+    max_disk DOUBLE NOT NULL,
+    min_disk DOUBLE NOT NULL,
+    avg_network DOUBLE NOT NULL,
+    max_network DOUBLE NOT NULL,
+    min_network DOUBLE NOT NULL,
+    stress_test_log_id    BIGINT             NOT NULL,
+    is_deleted            BOOL               NOT NULL,
+    created_at            DATETIME           NOT NULL,
+    FOREIGN KEY (stress_test_log_id) REFERENCES stress_test_log (stress_test_log_id)
 );
 
 INSERT INTO user(nickname, password, email, is_deleted, created_at)

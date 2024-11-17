@@ -3,10 +3,12 @@ package com.shooot.application.projecttest.service.command;
 import com.shooot.application.common.events.Events;
 import com.shooot.application.projecttest.domain.ApiTestMethod;
 import com.shooot.application.projecttest.domain.ProjectBuild;
+import com.shooot.application.projecttest.domain.StressTestLog;
+import com.shooot.application.projecttest.domain.StressTestStatus;
 import com.shooot.application.projecttest.domain.repository.ApiTestMethodRepository;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
+import com.shooot.application.projecttest.domain.repository.StressTestLogRepository;
 import com.shooot.application.projecttest.event.dto.ProjectTestRequestedEvent;
-import com.shooot.application.projecttest.exception.FileIsNotExistException;
 import com.shooot.application.projecttest.exception.TestAlreadyRunningException;
 import com.shooot.application.projecttest.service.dto.ApiTestMethodRequest;
 import com.shooot.application.projecttest.service.dto.ProjectBuildTestRunRequest;
@@ -24,6 +26,7 @@ public class ProjectTestRunService {
     private final ApiTestMethodRepository apiTestMethodRepository;
     private final ProjectBuildRepository projectBuildRepository;
     private final ConcurrentHashMap<Integer, Integer> running = new ConcurrentHashMap<>();
+    private final StressTestLogRepository stressTestLogRepository;
 
     @Transactional
     public void testRunRequest(ProjectBuildTestRunRequest request) {
@@ -32,10 +35,17 @@ public class ProjectTestRunService {
             throw new TestAlreadyRunningException();
         }
 
-        ProjectBuild projectBuild = projectBuildRepository.findById(request.getProjectJarFileId())
-            .orElseThrow(FileIsNotExistException::new);
-
         // TODO: 실제 배포 여부
+
+        ProjectBuild projectBuild = projectBuildRepository.findById(request.getProjectJarFileId())
+            .orElseThrow();
+
+        StressTestLog stressTestLog = StressTestLog.builder()
+            .projectBuild(projectBuild)
+            .status(StressTestStatus.DONE)
+            .build();
+
+        stressTestLogRepository.save(stressTestLog);
 
         List<Integer> apiIds = request.getEndPointSettings().stream()
             .map(ApiTestMethodRequest::getApiId).toList();
@@ -50,7 +60,8 @@ public class ProjectTestRunService {
 
         running.put(request.getProjectJarFileId(), 0);
 
-        Events.raise(new ProjectTestRequestedEvent(apiIds, request.getProjectJarFileId()));
+        Events.raise(new ProjectTestRequestedEvent(apiIds, request.getProjectJarFileId(),
+            stressTestLog.getId()));
     }
 
     public void finish(Integer projectJarFileId) {
