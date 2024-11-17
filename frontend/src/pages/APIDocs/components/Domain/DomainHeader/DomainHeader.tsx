@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useDomainContext } from '../Domain';
 import { throttle } from 'lodash';
 import Flexbox from '../../../../../components/Flexbox';
@@ -12,12 +12,13 @@ import {
   EditDomainButton,
   RemoveDomainButton,
 } from '../DomainButtons/DomainButtons';
-import AddAPIForm from '../../AddAPIForm/AddAPIForm';
+import { useAPI } from '../../../hooks/useAPI';
 
 export const DomainHeader = () => {
   const context = useDomainContext();
   const { isFocused, handleToggleIsFocused } = context.useIsFocusedHook;
-  const [isAddingAPI, setIsAddingAPI] = useState(false);
+
+  const { addAPIModalHandler } = useAPI();
 
   const onClickCollapseButton = useCallback(
     throttle((e: React.MouseEvent) => {
@@ -26,14 +27,6 @@ export const DomainHeader = () => {
     }, 500),
     [isFocused],
   );
-
-  const handleAddButtonClick = () => {
-    setIsAddingAPI(true);
-  };
-
-  const closeAddAPIForm = () => {
-    setIsAddingAPI(false);
-  };
 
   return (
     <Flexbox
@@ -86,18 +79,15 @@ export const DomainHeader = () => {
           }}
         >
           <TestButton.Domain />
-          <Button color="grey" rounded={0.5} onClick={handleAddButtonClick}>
+          <Button
+            color="grey"
+            rounded={0.5}
+            onClick={() => addAPIModalHandler(context.domainInfo.domainId)}
+          >
             <Typography>API 추가</Typography>
           </Button>
         </Flexbox>
       </Flexbox>
-      {/* API 추가 폼 렌더링 */}
-      {isAddingAPI && (
-        <AddAPIForm
-          domainId={context.domainInfo.domainId}
-          onClose={closeAddAPIForm}
-        />
-      )}
     </Flexbox>
   );
 };
