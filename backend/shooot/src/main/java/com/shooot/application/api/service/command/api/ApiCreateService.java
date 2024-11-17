@@ -49,7 +49,7 @@ public class ApiCreateService {
                 .build();
 
         Api saveApi = apiRepository.save(api);
-        notificationCreateService.saveNotification(userId, saveApi.getId());
+        notificationCreateService.saveNotification(userId, saveApi.getId(), "추가되었습니다.");
 
         return ApiView.from(saveApi);
     }

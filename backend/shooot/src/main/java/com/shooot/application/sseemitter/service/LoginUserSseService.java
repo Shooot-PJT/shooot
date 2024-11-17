@@ -33,6 +33,7 @@ public class LoginUserSseService {
     public void send(Integer userId, NotificationView notificationView) {
         SseEmitter sseEmitter = sseEmitters.get(userId);
         try {
+            if(sseEmitter == null) return;
             sseEmitter.send(
                     SseEmitter.event().name("notification_data").data(notificationView, MediaType.APPLICATION_JSON));
         } catch (IOException e) {

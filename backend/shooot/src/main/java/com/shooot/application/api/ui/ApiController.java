@@ -75,8 +75,12 @@ public class ApiController {
 
     @DeleteMapping("/apis/{apiId}")
     @RequiresProjectParticipation(type = ProjectDomainType.API)
-    public ResponseEntity<?> deleteApi(@PathVariable(name = "apiId") Integer apiId){
-        apiDeleteService.deleteApi(apiId);
+    public ResponseEntity<?> deleteApi(
+            @PathVariable(name = "apiId") Integer apiId,
+            @AuthenticationPrincipal UserLoginContext userLoginContext
+    ){
+        Integer userId = userLoginContext.getUserId();
+        apiDeleteService.deleteApi(apiId, userId);
 
         return ResponseEntity.ok(null);
     }
