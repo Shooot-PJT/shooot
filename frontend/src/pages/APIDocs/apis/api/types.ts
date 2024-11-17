@@ -1,3 +1,5 @@
+import { UserInfo } from '../../../Main/types';
+import { ProjectInfo } from '../../../MyProject/types';
 import { APIDetailInfo, Manager } from '../../types/data/API.data';
 import { DomainInfo } from '../../types/data/Domain.data';
 
@@ -48,10 +50,22 @@ export interface ToggleAPIStateRequest {
 }
 
 export interface ToggleAPIStateRequestBody {
-  isSecure: APIDetailInfo['requestDocs']['isSecure'];
-  isRealServer: APIDetailInfo['requestDocs']['isRealServer'];
+  isSecure?: boolean;
+  isRealServer?: boolean;
 }
 
 export interface RemoveAPIRequest {
   apiId: APIDetailInfo['requestDocs']['id'];
+}
+
+export interface GetParticipantListRequest {
+  projectId: ProjectInfo['projectId'];
+}
+
+export type GetParticipantListResponse = Participant[];
+
+export interface Participant {
+  id: number;
+  nickname: UserInfo['nickname'];
+  color?: string | null;
 }
