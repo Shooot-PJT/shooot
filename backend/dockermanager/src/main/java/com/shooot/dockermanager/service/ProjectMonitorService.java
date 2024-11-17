@@ -1,5 +1,11 @@
 package com.shooot.dockermanager.service;
 
+import com.shooot.dockermanager.domain.projecttest.BuildFileTestMethod;
+import com.shooot.dockermanager.domain.projecttest.StressTestLog;
+import com.shooot.dockermanager.domain.projecttest.StressTestResult;
+import com.shooot.dockermanager.domain.projecttest.repository.StressTestLogRepository;
+import com.shooot.dockermanager.domain.projecttest.repository.StressTestResultRepository;
+import com.shooot.dockermanager.dto.ProjectMonitorRequest;
 import com.shooot.dockermanager.handler.MetaData;
 import com.shooot.dockermanager.handler.ProjectDirectoryManager;
 import com.shooot.dockermanager.publisher.ProjectMonitorMessage;
@@ -12,6 +18,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -46,13 +53,17 @@ public class ProjectMonitorService {
         2203
     );
     private final String command = "sar -u -r -n DEV -p -d 3";
+    private final StressTestLogRepository stressTestLogRepository;
+    private final StressTestResultRepository stressTestResultRepository;
 
     public void stop(Integer projectJarFileId) {
         running.remove(projectJarFileId);
     }
 
-    public void getStatus(Integer projectId, Integer projectJarFileId, Integer duration,
-        String method, String url) {
+    @Transactional
+    public void getStatus(ProjectMonitorRequest request) {
+
+        System.out.println(request);
 
         StressTestValue sum = StressTestValue.builder()
             .cpu(0.0)
@@ -77,8 +88,9 @@ public class ProjectMonitorService {
             .build();
 
         MetaData metaData = projectDirectoryManager.getMetaData(
-            projectDirectoryManager.file(projectId, projectJarFileId).toPath());
-        running.put(projectJarFileId, 0);
+            projectDirectoryManager.file(request.getProjectId(), request.getProjectJarFileId())
+                .toPath());
+        running.put(request.getProjectJarFileId(), 0);
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(
@@ -94,12 +106,12 @@ public class ProjectMonitorService {
             Process process = processBuilder.start();
 
             long currentTime = System.currentTimeMillis();
-            long endTime = currentTime + duration * 1000;
+            long endTime = currentTime + request.getDuration() * 1000;
 
             try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(process.getInputStream()))) {
                 while (System.currentTimeMillis() < endTime) {
-                    if (!running.containsKey(projectJarFileId)) {
+                    if (!running.containsKey(request.getProjectJarFileId())) {
                         break;
                     }
 
@@ -123,14 +135,14 @@ public class ProjectMonitorService {
 
                     projectMonitorMessagePublisher.publish(
                         ProjectMonitorMessage.builder()
-                            .projectId(projectId)
-                            .projectJarFileId(projectJarFileId)
+                            .projectId(request.getProjectId())
+                            .projectJarFileId(request.getProjectJarFileId())
                             .curr(curr)
                             .avg(getAverage(sum, count))
                             .min(min)
                             .max(max)
-                            .method(method)
-                            .url(url)
+                            .method(request.getMethod())
+                            .url(request.getUrl())
                             .build());
                     Thread.sleep(3000);
                 }
@@ -142,6 +154,34 @@ public class ProjectMonitorService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        StressTestLog stressTestLog = stressTestLogRepository.findById(request.getStressTestLogId())
+            .orElseThrow();
+
+        StressTestValue avg = getAverage(sum, count);
+
+        StressTestResult result = StressTestResult.builder()
+            .stressTestLog(stressTestLog)
+            .httpMethod(request.getMethod())
+            .url(request.getUrl())
+            .duration(request.getDuration())
+            .vUser(Integer.parseInt(request.getVuser()))
+            .testMethod(BuildFileTestMethod.valueOf(request.getTestMethod()))
+            .avgCpu(avg.getCpu())
+            .maxCpu(max.getCpu())
+            .minCpu(min.getCpu())
+            .avgMemory(avg.getMemory())
+            .maxMemory(max.getMemory())
+            .minMemory(min.getMemory())
+            .avgDisk(avg.getDisk())
+            .maxDisk(max.getDisk())
+            .minDisk(min.getDisk())
+            .avgNetwork(avg.getNetwork())
+            .maxNetwork(max.getNetwork())
+            .minNetwork(min.getNetwork())
+            .build();
+
+        stressTestResultRepository.save(result);
     }
 
     private double getCpu(BufferedReader br) throws IOException {

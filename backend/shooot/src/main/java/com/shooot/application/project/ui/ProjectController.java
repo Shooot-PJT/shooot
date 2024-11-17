@@ -15,6 +15,8 @@ import com.shooot.application.project.service.query.FindParticipantsService;
 import com.shooot.application.project.service.query.GetAllProjectsService;
 import com.shooot.application.project.service.query.GetLogoService;
 import com.shooot.application.project.service.query.GetProjectService;
+import com.shooot.application.project.service.query.GetStressTestLogService;
+import com.shooot.application.project.service.query.GetStressTestResultService;
 import com.shooot.application.project.ui.dto.FindParticipantsResponse;
 import com.shooot.application.project.ui.dto.ModifyProjectResponse;
 import com.shooot.application.project.ui.dto.ProjectResponse;
@@ -56,6 +58,8 @@ public class ProjectController {
     private final GetAllProjectsService getAllProjectsService;
     private final GetProjectService getProjectService;
     private final ProjectRemoveService projectRemoveService;
+    private final GetStressTestLogService getStressTestLogService;
+    private final GetStressTestResultService getStressTestResultService;
 
     @Value("${url.project.base}")
     private String baseUrl;
@@ -180,7 +184,7 @@ public class ProjectController {
     public ResponseEntity<?> getProjectParticipantId(
         @PathVariable(name = "projectId") Integer projectId,
         @AuthenticationPrincipal UserLoginContext userLoginContext
-    ){
+    ) {
         Integer userId = userLoginContext.getUserId();
         return ResponseEntity.ok(findParticipantsService.findParticipantId(projectId, userId));
     }
@@ -188,8 +192,21 @@ public class ProjectController {
     @GetMapping("/{projectId}/participant-list")
     public ResponseEntity<?> getProjectParticipantList(
         @PathVariable(name = "projectId") Integer projectId
-    ){
+    ) {
         return ResponseEntity.ok(findParticipantsService.findParticipantList(projectId));
     }
 
+    @GetMapping("/{projectId}/test-log")
+    public ResponseEntity<?> getStressTestLog(
+        @PathVariable(name = "projectId") Integer projectId
+    ) {
+        return ResponseEntity.ok(getStressTestLogService.getStressTestLog(projectId));
+    }
+
+    @GetMapping("/test-log/{stressTestLogId}")
+    public ResponseEntity<?> getStressTestResult(
+        @PathVariable(name = "stressTestLogId") Long stressTestLogId
+    ) {
+        return ResponseEntity.ok(getStressTestResultService.getStressTestResults(stressTestLogId));
+    }
 }
