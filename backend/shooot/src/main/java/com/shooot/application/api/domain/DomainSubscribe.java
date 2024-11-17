@@ -1,6 +1,6 @@
 package com.shooot.application.api.domain;
 
-import com.shooot.application.project.domain.ProjectParticipant;
+import com.shooot.application.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,19 +11,19 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "api_subscribe")
+@Table(name = "domain_subscribe")
 @Entity
-public class ApiSubscribe {
+public class DomainSubscribe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "api_subscribe_id")
+    @Column(name = "domain_subscribe_id")
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "api_id")
-    private Api api;
+    @JoinColumn(name = "domain_id")
+    private Domain domain;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_participant_id")
-    private ProjectParticipant projectParticipant;
+    @JoinColumn(name = "user_id")
+    private User user;
 }

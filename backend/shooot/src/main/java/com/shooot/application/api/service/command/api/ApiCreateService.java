@@ -4,9 +4,12 @@ import com.shooot.application.api.domain.Api;
 import com.shooot.application.api.domain.Domain;
 import com.shooot.application.api.domain.repository.ApiRepository;
 import com.shooot.application.api.domain.repository.DomainRepository;
+import com.shooot.application.api.domain.repository.DomainSubscribeRepository;
 import com.shooot.application.api.exception.domain.DomainNotFoundException;
 import com.shooot.application.api.service.command.api.dto.ApiCreateRequest;
 import com.shooot.application.api.ui.dto.ApiView;
+import com.shooot.application.notification.domain.repository.NotificationRepository;
+import com.shooot.application.notification.service.NotificationCreateService;
 import com.shooot.application.project.domain.Project;
 import com.shooot.application.project.domain.ProjectParticipant;
 import com.shooot.application.project.domain.repository.ProjectParticipantRepository;
@@ -22,9 +25,10 @@ public class ApiCreateService {
     private final ApiRepository apiRepository;
     private final DomainRepository domainRepository;
     private final ProjectParticipantRepository projectParticipantRepository;
+    private final NotificationCreateService notificationCreateService;
 
     @Transactional
-    public ApiView createApi(Integer domainId, ApiCreateRequest apiCreateRequest){
+    public ApiView createApi(Integer domainId, ApiCreateRequest apiCreateRequest, Integer userId){
         Domain domain = domainRepository.findById(domainId)
                 .orElseThrow(DomainNotFoundException::new);
 
@@ -45,6 +49,7 @@ public class ApiCreateService {
                 .build();
 
         Api saveApi = apiRepository.save(api);
+        notificationCreateService.saveNotification(userId, saveApi.getId());
 
         return ApiView.from(saveApi);
     }
@@ -54,4 +59,5 @@ public class ApiCreateService {
             throw new ProjectPermissionDeniedException();
         }
     }
+
 }

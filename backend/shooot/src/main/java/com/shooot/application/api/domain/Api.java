@@ -3,7 +3,6 @@ package com.shooot.application.api.domain;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shooot.application.api.service.command.api.dto.ApiModifyRequest;
 import com.shooot.application.api.service.command.api.dto.ApiToggleModifyRequest;
-import com.shooot.application.common.jpa.BaseEntity;
 import com.shooot.application.common.jpa.SoftDeleteEntity;
 import com.shooot.application.common.jpa.map.MapToJsonConverter;
 import com.shooot.application.project.domain.ProjectParticipant;
@@ -16,7 +15,6 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.repository.EntityGraph;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -80,8 +78,8 @@ public class Api extends SoftDeleteEntity {
     private ApiTestStatusType testStatus;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "api")
-    private List<ApiSubscribe> subscribers = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "id")
+    private List<DomainSubscribe> subscribers = new ArrayList<>();
 
     @Override
     protected void prePersistAction() {
@@ -129,6 +127,12 @@ public class Api extends SoftDeleteEntity {
             this.isSecure = apiModifyRequest.getIsSecure();
         }
 
+    }
+
+    public void update(ProjectParticipant projectParticipant){
+        if(projectParticipant != null){
+            this.projectParticipant = projectParticipant;
+        }
     }
 
     public void update(ApiToggleModifyRequest apiToggleModifyRequest) {

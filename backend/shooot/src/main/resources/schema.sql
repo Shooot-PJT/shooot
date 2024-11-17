@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS notification;
 DROP TABLE IF EXISTS project_build_log;
 DROP TABLE IF EXISTS project_test_metric_log;
 DROP TABLE IF EXISTS api_test_method;
@@ -7,6 +8,7 @@ DROP TABLE IF EXISTS build_file_api_docs;
 DROP TABLE IF EXISTS project_file;
 DROP TABLE IF EXISTS project_build;
 DROP TABLE IF EXISTS api_subscribe;
+DROP TABLE IF EXISTS domain_subscribe;
 DROP TABLE IF EXISTS api_test_case_request;
 DROP TABLE IF EXISTS api_test_file;
 DROP TABLE IF EXISTS api_test_log;
@@ -15,7 +17,6 @@ DROP TABLE IF EXISTS api;
 DROP TABLE IF EXISTS domain;
 DROP TABLE IF EXISTS project_participant;
 DROP TABLE IF EXISTS project;
-DROP TABLE IF EXISTS notification;
 DROP TABLE IF EXISTS user;
 
 CREATE TABLE user
@@ -111,6 +112,8 @@ CREATE TABLE api_test_log
     http_header            JSON,
     created_at             DATETIME NOT NULL,
     is_deleted             BOOL     NOT NULL,
+    response_message       TEXT,
+    response_code          INTEGER,
     FOREIGN KEY (project_participant_id) REFERENCES project_participant (project_participant_id),
     FOREIGN KEY (api_test_case_id) REFERENCES api_test_case (api_test_case_id)
 );
@@ -194,6 +197,15 @@ CREATE TABLE api_subscribe
     FOREIGN KEY (project_participant_id) REFERENCES project_participant (project_participant_id)
 );
 
+CREATE TABLE domain_subscribe
+(
+    domain_subscribe_id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    domain_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    foreign key (user_id) REFERENCES user (user_id),
+    foreign key (domain_id) REFERENCES domain(api_domain_id)
+);
+
 
 CREATE TABLE notification
 (
@@ -201,6 +213,7 @@ CREATE TABLE notification
     user_id         INTEGER  NOT NULL,
     content         JSON     NOT NULL,
     created_at      DATETIME NOT NULL,
+    is_read         BOOL     NOT NULL,
     foreign key (user_id) REFERENCES user (user_id)
 );
 
