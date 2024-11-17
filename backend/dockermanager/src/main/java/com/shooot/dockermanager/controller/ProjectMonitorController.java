@@ -19,8 +19,7 @@ public class ProjectMonitorController {
 
     @PostMapping("/start")
     public ResponseEntity<Void> startProjectMonitor(@RequestBody ProjectMonitorRequest request) {
-        projectMonitorService.getStatus(request.getProjectId(), request.getProjectJarFileId(),
-            request.getDuration(), request.getMethod(), request.getUrl());
+        projectMonitorService.getStatus(request);
         return ResponseEntity.ok().build();
     }
 

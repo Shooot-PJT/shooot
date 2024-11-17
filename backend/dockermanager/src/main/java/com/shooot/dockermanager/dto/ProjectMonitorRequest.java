@@ -12,4 +12,7 @@ public class ProjectMonitorRequest {
     private Integer duration;
     private String method;
     private String url;
+    Integer vUser;
+    String testMethod;
+    Long stressTestLogId;
 }

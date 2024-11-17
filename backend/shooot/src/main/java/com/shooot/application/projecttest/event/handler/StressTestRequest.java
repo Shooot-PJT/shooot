@@ -10,6 +10,9 @@ public class StressTestRequest {
     Integer projectId;
     Integer projectJarFileId;
     Integer duration;
+    Integer vUser;
+    String testMethod;
     String method;
     String url;
+    Long stressTestLogId;
 }
