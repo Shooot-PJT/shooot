@@ -14,6 +14,7 @@ public class DomainView {
     private Integer projectId;
     private String title;
     private String description;
+    private Boolean isSubscribe;
 
     public static DomainView from(Domain domain){
         return DomainView.builder()

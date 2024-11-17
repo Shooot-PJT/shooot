@@ -60,8 +60,12 @@ public class DomainController {
 
     @GetMapping("/{projectId}/domains")
     @RequiresProjectParticipation(type = ProjectDomainType.PROJECT)
-    public ResponseEntity<?> getListService(@PathVariable(name = "projectId") Integer projectId){
-        List<DomainView> domains = domainListService.getDomainList(projectId);
+    public ResponseEntity<?> getListService(
+            @PathVariable(name = "projectId") Integer projectId,
+            @AuthenticationPrincipal UserLoginContext context
+    ){
+        Integer userId = context.getUserId();
+        List<DomainView> domains = domainListService.getDomainList(projectId, userId);
 
         return ResponseEntity.ok(domains);
     }
