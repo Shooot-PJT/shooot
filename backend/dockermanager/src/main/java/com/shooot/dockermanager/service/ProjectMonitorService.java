@@ -165,7 +165,7 @@ public class ProjectMonitorService {
             .httpMethod(request.getMethod())
             .url(request.getUrl())
             .duration(request.getDuration())
-            .vUser(Integer.parseInt(request.getVUser()))
+            .vUser(Integer.parseInt(request.getVuser()))
             .testMethod(BuildFileTestMethod.valueOf(request.getTestMethod()))
             .avgCpu(avg.getCpu())
             .maxCpu(max.getCpu())
