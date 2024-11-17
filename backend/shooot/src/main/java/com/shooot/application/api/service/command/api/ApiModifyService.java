@@ -77,8 +77,12 @@ public class ApiModifyService {
     }
 
     private User findUserById(Integer managerId){
-        return userRepository.findById(managerId)
+//        return userRepository.findById(managerId)
+//                .orElseThrow(ProjectPermissionDeniedException::new);
+        ProjectParticipant projectParticipant = participantRepository.findById(managerId)
                 .orElseThrow(ProjectPermissionDeniedException::new);
+
+        return projectParticipant.getUser();
     }
 
     private Api findApiById(Integer apiId){
