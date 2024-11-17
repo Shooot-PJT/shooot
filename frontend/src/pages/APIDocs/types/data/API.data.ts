@@ -1,5 +1,3 @@
-// frontend/src/pages/APIDocs/types/data/API.data.ts
-
 import { TestCaseContent } from '../../components/API/subComponents/APIBody/TestCase/TestCaseTable/TestCaseTable.types';
 import { Method } from '../../types/methods';
 import { DomainInfo } from './Domain.data';
@@ -41,19 +39,15 @@ export type JsonData = object;
 export type TableValueFormat = [Value, Description, Type, IsRequired];
 export type TableData = Record<Key, TableValueFormat>;
 
-export interface FileMeta {
-  parameterVar: string;
-  description: string | null;
+export interface BodyFormData {
+  datas?: TableData | null;
+  files?: Record<Key, TableValueFormat> | null;
 }
 
-type BodyRaw = object | null;
-
-interface BodyFormData {
-  datas: TableData | null;
-  files: Record<Key, Record<string, [string, FileMeta, Type, null]>> | null;
+export interface Body {
+  raw?: string | null;
+  formData?: BodyFormData | null;
 }
-
-type Body = BodyRaw | BodyFormData;
 
 export interface ExpectedResponse {
   schema: string | null;
@@ -63,9 +57,8 @@ export interface ExpectedResponse {
 export interface ExampleContent {
   params: TableData | null;
   pathvariable: TableData | null;
-  headers?: BodyFormData | null;
+  headers?: TableData | null;
   body?: Body | null;
-  expectedResponse?: ExpectedResponse | null;
 }
 
 export interface RequestDocs {
@@ -76,7 +69,7 @@ export interface RequestDocs {
   title?: string;
   description?: string;
   method?: Method | null;
-  url?: string | null; // 헤더용 대표 엔드포인트
+  url?: string | null;
   example_url?: string | null;
   createdAt?: string | null;
   modifiedAt?: string;
