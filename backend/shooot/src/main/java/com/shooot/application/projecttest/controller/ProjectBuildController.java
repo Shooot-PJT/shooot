@@ -57,7 +57,7 @@ public class ProjectBuildController {
 
     @PatchMapping("/jarFile")
     public ResponseEntity<ProjectJarFileUploadView> dockerComposeFileUpdate(
-        @RequestPart ProjectIdDto projectIdDto, @RequestPart MultipartFile dockerComposeFile,
+        @RequestPart ProjectIdDto projectIdDto, @RequestPart(required = false) MultipartFile dockerComposeFile,
         @AuthenticationPrincipal UserLoginContext userLoginContext) {
         projectBuildUploadService.dockerFileUpdate(projectIdDto.getProjectId(), dockerComposeFile);
         return ResponseEntity.ok().build();

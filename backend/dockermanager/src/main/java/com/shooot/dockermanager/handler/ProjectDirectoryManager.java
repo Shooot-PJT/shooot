@@ -59,15 +59,22 @@ ProjectDirectoryManager {
         return Optional.empty();
     }
 
-    public void setFile(Integer projectId, Integer projectJarFileId, DirStructure structure, byte[] fileByte) {
+    public void setFile(Integer projectId, Integer projectJarFileId, DirStructure structure, byte[] fileByte) throws IOException {
         File file = file(projectId, projectJarFileId);
 
-        File target = switch (structure) {
-            case METADATA -> new File(file.getPath() + "/metadata");
-            case JAR -> new File(file.getPath() + "/application.jar");
-            case DOCKER_COMPOSE -> new File(file.getPath() + "/docker-compose.yml");
-        };
-
+        File target = null;
+        switch (structure) {
+            case METADATA -> target = new File(file.getPath() + "/metadata");
+            case JAR -> target = new File(file.getPath() + "/application.jar");
+            case DOCKER_COMPOSE -> {
+                File dockerCompose = new File(file.getPath() + "/docker-compose.yml");
+                dockerCompose.createNewFile();
+                if (fileByte == null) {
+                    return;
+                }
+                target = dockerCompose;
+            }
+        }
 
         try (FileOutputStream fos = new FileOutputStream(target)) {
             fos.write(fileByte);

@@ -80,6 +80,10 @@ public class ProjectBuildUploadService {
             throw new FileIsDeploymentException();
         }
 
+        if(uploadedDockerComposeFile.isEmpty()) {
+            return;
+        }
+
         File dockerComposeFile = convertToFile(uploadedDockerComposeFile, "docker-compose.yml");
         dockerComposeValidator.validateComposeFile(dockerComposeFile.getAbsolutePath());
 

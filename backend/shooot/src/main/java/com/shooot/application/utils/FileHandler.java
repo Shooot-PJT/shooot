@@ -22,6 +22,9 @@ public final class FileHandler {
     }
 
     public static byte[] getAllBytes(File file) {
+        if(file == null) {
+            return null;
+        }
         try(FileInputStream fileInputStream = new FileInputStream(file)) {
             return fileInputStream.readAllBytes();
         }catch (IOException e) {
