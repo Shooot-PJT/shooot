@@ -1,6 +1,6 @@
 package com.shooot.application.sseemitter.service;
 
-import com.shooot.application.stresstest.controller.dto.StressTestDto;
+import com.shooot.application.stresstest.controller.dto.StressTestResponse;
 import com.shooot.application.stresstest.controller.dto.TestStateDto;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,7 +29,7 @@ public class StressTestSseService {
         return sseEmitter;
     }
 
-    public void send(Integer projectJarFileId, StressTestDto dto) {
+    public void send(Integer projectJarFileId, StressTestResponse dto) {
         SseEmitter sseEmitter = sseEmitters.get(projectJarFileId);
         try {
             sseEmitter.send(

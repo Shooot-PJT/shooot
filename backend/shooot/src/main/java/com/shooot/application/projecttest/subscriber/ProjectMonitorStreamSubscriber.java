@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shooot.application.sseemitter.service.StressTestSseService;
 import com.shooot.application.stresstest.controller.dto.StressTestDto;
+import com.shooot.application.stresstest.controller.dto.StressTestResponse;
+import com.shooot.application.stresstest.controller.dto.StressTestValue;
 import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 import java.util.Map;
@@ -78,13 +80,20 @@ public class ProjectMonitorStreamSubscriber implements
             String method = map.get("method").toString();
             String url = map.get("url").toString();
 
+            StressTestValue curr = StressTestValue.builder()
+                .cpu(cpu)
+                .memory(memory)
+                .disk(disk)
+                .network(network)
+                .build();
+
             stressTestSseService.send(
                 projectJarFileId,
-                StressTestDto.builder()
-                    .cpu(cpu)
-                    .memory(memory)
-                    .disk(disk)
-                    .network(network)
+                StressTestResponse.builder()
+                    .curr(curr)
+                    .avg(curr)
+                    .min(curr)
+                    .max(curr)
                     .method(method)
                     .url(url)
                     .build()

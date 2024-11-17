@@ -15,10 +15,10 @@ public class ProjectTestStopService {
     private String requestUrl = "http://khj745700.iptime.org:8080/stress-test/stop";
 
     public void stop(Integer jarFileId) {
+        stressTestService.stop(jarFileId);
         ProjectTestStopRequest request = ProjectTestStopRequest.builder()
             .projectJarFileId(jarFileId)
             .build();
         restTemplate.postForObject(requestUrl, request, Void.class);
-        stressTestService.stop(jarFileId);
     }
 }

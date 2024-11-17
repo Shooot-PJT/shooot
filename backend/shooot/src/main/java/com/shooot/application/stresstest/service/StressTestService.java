@@ -2,6 +2,7 @@ package com.shooot.application.stresstest.service;
 
 import com.shooot.application.api.domain.Api;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
+import com.shooot.application.projecttest.exception.TestExecutorNotFoundException;
 import com.shooot.application.sseemitter.service.StressTestSseService;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -68,6 +69,9 @@ public class StressTestService {
     }
 
     public void stop(Integer id) {
+        if (!executors.containsKey(id)) {
+            throw new TestExecutorNotFoundException();
+        }
         ExecutorService executorService = executors.get(id);
         executorService.shutdownNow();
         executors.remove(id);

@@ -23,6 +23,7 @@ public enum ProjectBuildExceptionConstants implements CustomExceptionDefinition 
     FILE_IS_NOT_DEPLOYMENT("현재 배포중인 서버가 아닙니다.", "R001", HttpStatus.BAD_REQUEST),
     FILE_IS_DEPLOYMENT("현재 배포중인 서버입니다.", "R002", HttpStatus.BAD_REQUEST),
     TEST_ALREADY_RUNNING("이미 테스트 실행 중입니다.", "T007", HttpStatus.BAD_REQUEST),
+    TEST_EXECUTOR_NOT_FOUND_EXCEPTION("테스트가 실행 중이 아닙니다.", "T008", HttpStatus.NOT_FOUND),
     ;
 
     private final String message;
