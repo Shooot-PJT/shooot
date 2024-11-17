@@ -41,7 +41,7 @@ public class ProjectBuildUploadService {
 
     public Integer buildFileApiExtractor(Integer projectId, MultipartFile uploadedProjectFile, MultipartFile uploadedDockerComposeFile) {
         File dockerFile = null;
-        if(!uploadedProjectFile.isEmpty()){
+        if(!uploadedDockerComposeFile.isEmpty()){
             dockerFile = convertToFile(uploadedDockerComposeFile, "docker-compose.yml");
             dockerComposeValidator.validateComposeFile(dockerFile.getAbsolutePath());
         }
