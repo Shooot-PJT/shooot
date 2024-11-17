@@ -10,4 +10,6 @@ public class ProjectMonitorRequest {
     private Integer projectId;
     private Integer projectJarFileId;
     private Integer duration;
+    private String method;
+    private String url;
 }
