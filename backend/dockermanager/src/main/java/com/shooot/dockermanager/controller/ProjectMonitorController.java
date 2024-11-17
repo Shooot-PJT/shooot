@@ -1,6 +1,7 @@
 package com.shooot.dockermanager.controller;
 
 import com.shooot.dockermanager.dto.ProjectMonitorRequest;
+import com.shooot.dockermanager.dto.ProjectMonitorStopRequest;
 import com.shooot.dockermanager.service.ProjectMonitorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,13 @@ public class ProjectMonitorController {
     @PostMapping("/start")
     public ResponseEntity<Void> startProjectMonitor(@RequestBody ProjectMonitorRequest request) {
         projectMonitorService.getStatus(request.getProjectId(), request.getProjectJarFileId(),
-            request.getDuration());
+            request.getDuration(), request.getMethod(), request.getUrl());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/stop")
+    public ResponseEntity<Void> stopProjectMonitor(@RequestBody ProjectMonitorStopRequest request) {
+        projectMonitorService.stop(request.getProjectJarFileId());
         return ResponseEntity.ok().build();
     }
 }

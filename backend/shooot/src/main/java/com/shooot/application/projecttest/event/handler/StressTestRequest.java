@@ -10,4 +10,6 @@ public class StressTestRequest {
     Integer projectId;
     Integer projectJarFileId;
     Integer duration;
+    String method;
+    String url;
 }

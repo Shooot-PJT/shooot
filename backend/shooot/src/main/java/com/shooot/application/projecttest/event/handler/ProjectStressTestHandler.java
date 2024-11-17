@@ -8,6 +8,7 @@ import com.shooot.application.projecttest.domain.ProjectBuild;
 import com.shooot.application.projecttest.domain.repository.ApiTestMethodRepository;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
 import com.shooot.application.projecttest.event.dto.ProjectTestRequestedEvent;
+import com.shooot.application.projecttest.service.command.ProjectTestRunService;
 import com.shooot.application.projecttest.subscriber.ProjectMonitorStreamSubscriber;
 import com.shooot.application.sseemitter.service.StressTestSseService;
 import com.shooot.application.stresstest.service.StressTestService;
@@ -30,6 +31,7 @@ public class ProjectStressTestHandler {
     private final ProjectMonitorStreamSubscriber projectMonitorStreamSubscriber;
     private final RestTemplate restTemplate = new RestTemplate();
     private final StressTestSseService stressTestSseService;
+    private final ProjectTestRunService projectTestRunService;
 
     private String requestUrl = "http://khj745700.iptime.org:8080/stress-test/start";
 
@@ -52,18 +54,24 @@ public class ProjectStressTestHandler {
             ApiTestMethod apiTestMethod = apiTestMethodRepository.findByApi(api).orElseThrow();
 
             switch (apiTestMethod.getBuildFileTestMethod()) {
-                case FIXED -> stressTestService.fixed(baseUrl, api, apiTestMethod.getVUsers(),
+                case FIXED -> stressTestService.fixed(event.getProjectJarFileId(), baseUrl, api,
+                    apiTestMethod.getVUsers(),
                     apiTestMethod.getTestDuration());
-                case SPIKE -> stressTestService.spike(baseUrl, api, apiTestMethod.getVUsers(),
+                case SPIKE -> stressTestService.spike(event.getProjectJarFileId(), baseUrl, api,
+                    apiTestMethod.getVUsers(),
                     apiTestMethod.getTestDuration());
-                case RAMP_UP -> stressTestService.rampUp(baseUrl, api, apiTestMethod.getVUsers(),
+                case RAMP_UP -> stressTestService.rampUp(event.getProjectJarFileId(), baseUrl, api,
+                    apiTestMethod.getVUsers(),
                     apiTestMethod.getTestDuration());
             }
 
             StressTestRequest request = StressTestRequest.builder()
                 .projectId(projectBuild.getProject().getId())
                 .projectJarFileId(event.getProjectJarFileId())
-                .duration(apiTestMethod.getTestDuration()).build();
+                .duration(apiTestMethod.getTestDuration())
+                .method(api.getMethod())
+                .url(api.getUrl())
+                .build();
             restTemplate.postForObject(requestUrl, request, Void.class);
         });
 
@@ -71,5 +79,9 @@ public class ProjectStressTestHandler {
 
         projectMonitorStreamSubscriber.removeSubscriptionForProject(
             projectBuild.getProject().getId());
+
+        stressTestService.finish(event.getProjectJarFileId());
+
+        projectTestRunService.finish(event.getProjectJarFileId());
     }
 }

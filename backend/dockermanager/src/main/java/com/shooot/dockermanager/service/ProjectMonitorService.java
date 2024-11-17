@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,8 @@ public class ProjectMonitorService {
 
     private final ProjectDirectoryManager projectDirectoryManager;
     private final ProjectMonitorMessagePublisher projectMonitorMessagePublisher;
+    private final ConcurrentHashMap<Integer, Integer> running = new ConcurrentHashMap<>();
+
     private final Map<String, String> keys = Map.of(
         "instance1",
         "/home/hyunjinkim/deployment/scripts/.vagrant/machines/instance1/virtualbox/private_key",
@@ -41,11 +44,17 @@ public class ProjectMonitorService {
         "instance5",
         2203
     );
-    private final String command = "sar -u -r -n DEV -p -d 1";
+    private final String command = "sar -u -r -n DEV -p -d 3";
 
-    public void getStatus(Integer projectId, Integer projectJarFileId, Integer duration) {
+    public void stop(Integer projectJarFileId) {
+        running.remove(projectJarFileId);
+    }
+
+    public void getStatus(Integer projectId, Integer projectJarFileId, Integer duration,
+        String method, String url) {
         MetaData metaData = projectDirectoryManager.getMetaData(
             projectDirectoryManager.file(projectId, projectJarFileId).toPath());
+        running.put(projectJarFileId, 0);
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(
@@ -66,6 +75,10 @@ public class ProjectMonitorService {
             try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(process.getInputStream()))) {
                 while (System.currentTimeMillis() < endTime) {
+                    if (!running.containsKey(projectJarFileId)) {
+                        break;
+                    }
+
                     Double cpu = getCpu(reader);
                     System.out.println("cpu: " + cpu);
                     Double ram = getRam(reader);
@@ -82,8 +95,10 @@ public class ProjectMonitorService {
                             .memory(ram)
                             .disk(disk)
                             .network(network)
+                            .method(method)
+                            .url(url)
                             .build());
-                    Thread.sleep(1000);
+                    Thread.sleep(3000);
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);

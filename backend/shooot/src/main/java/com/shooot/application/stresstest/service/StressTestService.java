@@ -2,10 +2,12 @@ package com.shooot.application.stresstest.service;
 
 import com.shooot.application.api.domain.Api;
 import com.shooot.application.projecttest.domain.repository.ProjectBuildRepository;
+import com.shooot.application.projecttest.exception.TestExecutorNotFoundException;
 import com.shooot.application.sseemitter.service.StressTestSseService;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -20,8 +22,9 @@ public class StressTestService {
 
     private final ProjectBuildRepository projectBuildRepository;
     private final StressTestSseService stressTestSseService;
+    private final ConcurrentHashMap<Integer, ExecutorService> executors = new ConcurrentHashMap<>();
 
-    public void fixed(String baseUrl, Api api, Integer vUser, Integer duration) {
+    public void fixed(Integer id, String baseUrl, Api api, Integer vUser, Integer duration) {
         long currentTime = System.currentTimeMillis();
         long endTime = currentTime + duration * 1000;
 
@@ -31,9 +34,10 @@ public class StressTestService {
         for (int i = 0; i < vUser; i++) {
             executor.execute(sender);
         }
+        executors.put(id, executor);
     }
 
-    public void spike(String baseUrl, Api api, Integer vUser, Integer duration) {
+    public void spike(Integer id, String baseUrl, Api api, Integer vUser, Integer duration) {
         long currentTime = System.currentTimeMillis();
         long endTime = currentTime + duration * 1000;
         long interval = duration * 1000 / 2;
@@ -47,9 +51,10 @@ public class StressTestService {
         for (int i = 0; i < vUser - 1; i++) {
             executor.schedule(spikeSender, interval, TimeUnit.MILLISECONDS);
         }
+        executors.put(id, executor);
     }
 
-    public void rampUp(String baseUrl, Api api, Integer vUser, Integer duration) {
+    public void rampUp(Integer id, String baseUrl, Api api, Integer vUser, Integer duration) {
         long currentTime = System.currentTimeMillis();
         long endTime = currentTime + duration * 1000;
         long interval = duration * 1000 / vUser;
@@ -60,6 +65,20 @@ public class StressTestService {
         for (int i = 0; i < vUser; i++) {
             executor.schedule(sender, interval * i, TimeUnit.MILLISECONDS);
         }
+        executors.put(id, executor);
+    }
+
+    public void stop(Integer id) {
+        if (!executors.containsKey(id)) {
+            throw new TestExecutorNotFoundException();
+        }
+        ExecutorService executorService = executors.get(id);
+        executorService.shutdownNow();
+        executors.remove(id);
+    }
+
+    public void finish(Integer id) {
+        executors.remove(id);
     }
 
     @AllArgsConstructor
