@@ -47,9 +47,9 @@ self.addEventListener("fetch", async function (event) {
                                 }`
                             );
                             const result = await response.json();
-                            return new Response(JSON.stringify(result), { status: 200 });
+                            return new Response(JSON.stringify(result), { status: response.status });
                         } catch (error) {
-                            return new Response(JSON.stringify({ result: "[Fetch Event]: express error" + error }), {
+                            return new Response(JSON.stringify({ message: "from express" + error }), {
                                 status: 500,
                             });
                         }
