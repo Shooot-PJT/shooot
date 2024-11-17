@@ -23,6 +23,11 @@ import * as s from './TestConfigModal.css';
 import { ExcuteTestModal } from '../ExcuteTestModal/ExcuteTestModal';
 import usePopup from '../../../../hooks/usePopup';
 import { useUploadStateStore } from '../../stores/useUploadStateStore';
+import { useTestSSE } from '../../hooks/useTestSSE';
+import {
+  initialTestData,
+  useTestDataStore,
+} from '../../stores/useTestDataStore';
 
 interface TestConfigModalProps {
   projectJarFileId: number;
@@ -35,10 +40,11 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
   const modal = useModal();
   const popup = usePopup();
   const { state, setState } = useUploadStateStore();
+  const { setTestData } = useTestDataStore();
   const colWidths = [15, 10, 25, 30, 10, 10];
   const checkedApisNum = useRef<number>(0);
 
-  const { data: apiConfigs = {} as APITestListResponse } = useQuery({
+  const { data: apiConfigs = {} as APITestListResponse, isPending } = useQuery({
     queryKey: ['apiConfigs', projectJarFileId],
     queryFn: async () => {
       const response = await getAPIConfigs({
@@ -47,6 +53,10 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
       return response?.data ?? {};
     },
     staleTime: 120 * 1000,
+  });
+
+  useTestSSE({
+    projectJarFileId: 49,
   });
 
   useEffect(() => {
@@ -77,41 +87,50 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
   };
 
   const handleSubmitTestConfig = () => {
-    // todo: api 연결되는대로 수정
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const testConfig = testFormData
       .filter((item) => item.checked)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .map(({ checked, ...rest }) => rest);
+      .map(({ checked, ...rest }) => {
+        void checked;
+        return rest;
+      });
+
+    const testTime = testConfig.reduce((acc, item) => acc + item.duration, 0);
 
     const request: ExecuteApiTestRequest = {
-      // projectJarFileId: projectJarFileId,
-      // endPointSettings: testConfig,
-      projectJarFileId: 49,
-      endPointSettings: [
-        {
-          apiId: 25,
-          method: 'FIXED',
-          vuserNum: 100,
-          duration: 100,
-        },
-      ],
+      projectJarFileId: projectJarFileId,
+      endPointSettings: testConfig,
     };
+    console.log(request);
     excuteApiTest(request)
       .then(() => {
+        setTestData(() => {
+          return [initialTestData, initialTestData];
+        });
         modal.push({
-          children: <ExcuteTestModal projectJarFileId={49} />,
+          children: (
+            <ExcuteTestModal
+              testTime={testTime}
+              projectJarFileId={projectJarFileId}
+            />
+          ),
         });
       })
       .catch((error) => {
+        modal.push({
+          children: (
+            <ExcuteTestModal
+              testTime={testTime}
+              projectJarFileId={projectJarFileId}
+            />
+          ),
+        });
         popup.push({
           title: '테스트 시도 실패',
           children: <>{error.message}</>,
           type: 'fail',
+          onClose: () => modal.pop,
         });
       });
-
-    console.log(request);
   };
 
   const handleFormChange = (
@@ -233,6 +252,7 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
         data={convertTableData(apiConfigs)}
         colWidths={colWidths}
         headers={headers}
+        isPending={isPending}
         expandedRowIndex={expandedRowIndex}
         ExpandedRow={
           <TestConfigForm

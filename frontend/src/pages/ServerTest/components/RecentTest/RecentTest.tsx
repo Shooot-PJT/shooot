@@ -1,73 +1,25 @@
-import Button from '../../../../components/Button';
 import Typography from '../../../../components/Typography';
 import useModal from '../../../../hooks/useModal';
+import { GetTestRecordResponse } from '../../types';
+import { convertTestRecordTable } from '../../utils';
 import { DataTable } from '../DataTable/DataTable';
-import { StateIcon } from '../StateIcon/StateIcon';
 import { TestResultModal } from '../TestResultModal/TestResultModal';
 
-export const RecentTest = () => {
+interface RecentTestProps {
+  testRecords: GetTestRecordResponse[];
+}
+
+export const RecentTest = ({ testRecords }: RecentTestProps) => {
   const modal = useModal();
 
-  const handleTestDetail = () => {
+  const handleTestDetail = (id: number) => {
     modal.push({
-      children: <TestResultModal />,
+      children: <TestResultModal id={id} />,
     });
   };
 
-  const data = [
-    [
-      'myproject - 0.0.5',
-      '2024-10-16 18:32:25',
-      <StateIcon state="정상종료" />,
-      <Typography color="primary">5</Typography>,
-      <Typography color="primary">4분 17초</Typography>,
-      <Button paddingY={0.3} onClick={handleTestDetail}>
-        상세보기
-      </Button>,
-    ],
-    [
-      'myproject - 0.0.5',
-      '2024-10-16 18:32:25',
-      <StateIcon state="정상종료" />,
-      <Typography color="primary">5</Typography>,
-      <Typography color="primary">4분 17초</Typography>,
-      <Button paddingY={0.3} onClick={handleTestDetail}>
-        상세보기
-      </Button>,
-    ],
-    [
-      'myproject - 0.0.5',
-      '2024-10-16 18:32:25',
-      <StateIcon state="정상종료" />,
-      <Typography color="primary">5</Typography>,
-      <Typography color="primary">4분 17초</Typography>,
-      <Button paddingY={0.3} onClick={handleTestDetail}>
-        상세보기
-      </Button>,
-    ],
-    [
-      'myproject - 0.0.5',
-      '2024-10-16 18:32:25',
-      <StateIcon state="런타임에러" />,
-      <Typography color="primary">5</Typography>,
-      <Typography color="primary">4분 17초</Typography>,
-      <Button paddingY={0.3} color="grey" disabled>
-        상세보기
-      </Button>,
-    ],
-    [
-      'myproject - 0.0.5',
-      '2024-10-16 18:32:25',
-      <StateIcon state="정상종료" />,
-      <Typography color="primary">5</Typography>,
-      <Typography color="primary">4분 17초</Typography>,
-      <Button paddingY={0.3} onClick={handleTestDetail}>
-        상세보기
-      </Button>,
-    ],
-  ];
   const headers = [
-    '버전',
+    '파일명/버전',
     '테스트 시작 시간',
     '테스트 작동 결과',
     '테스트 API 개수',
@@ -76,9 +28,15 @@ export const RecentTest = () => {
   ];
   const colWidths = [25, 25, 15, 10, 15, 20];
   return (
-    <div>
-      <Typography size={2}>최근 테스트 이력</Typography>
-      <DataTable headers={headers} colWidths={colWidths} data={data} />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <Typography size={1.5} weight="600">
+        최근 테스트 이력
+      </Typography>
+      <DataTable
+        headers={headers}
+        colWidths={colWidths}
+        data={convertTestRecordTable(testRecords, handleTestDetail)}
+      />
     </div>
   );
 };

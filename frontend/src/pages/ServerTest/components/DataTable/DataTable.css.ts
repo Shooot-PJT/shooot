@@ -41,6 +41,8 @@ export const headerItem = style({
 
 export const resizeBar = style({
   width: '3px',
+  marginLeft: '1px',
+  marginRight: '1px',
   height: '100%',
   cursor: 'col-resize',
   backgroundColor: colorPalette.util[300],
@@ -109,4 +111,8 @@ export const expandedRowContainer = style({
       minHeight: '200px',
     },
   },
+});
+
+export const pendingIndicator = style({
+  marginTop: '0.5rem',
 });

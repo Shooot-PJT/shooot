@@ -1,14 +1,28 @@
-import { useState } from 'react';
+import { ReactNode } from 'react';
 import { HiCog6Tooth, HiMiniUser } from 'react-icons/hi2';
 import { LuTimer } from 'react-icons/lu';
 import Flexbox from '../../../../components/Flexbox';
 import Typography from '../../../../components/Typography';
-import { MethodChip } from '../MethodChip/MethodChip';
+import { GetTestRecordDetailResponse } from '../../types';
+import { convertSecondsToTimeString } from '../../utils';
 import { SelectBox } from '../SelectBox/SelectBox';
 import * as s from './Header.css';
 
-export const Header = () => {
-  const [selectedAPI, setSelectedAPI] = useState<number>(0);
+interface HeaderProps {
+  Items: ReactNode[];
+  selectedNum: number;
+  handleSelectedNum: (n: number) => void;
+  selectedApi: GetTestRecordDetailResponse;
+  totalTime: number;
+}
+
+export const Header = ({
+  Items,
+  selectedNum,
+  handleSelectedNum,
+  selectedApi,
+  totalTime,
+}: HeaderProps) => {
   return (
     <>
       <Flexbox justifyContents="between">
@@ -22,7 +36,7 @@ export const Header = () => {
           <div>
             <LuTimer size={24} />
           </div>
-          <Typography>4분 17초</Typography>
+          <Typography>{convertSecondsToTimeString(totalTime)}</Typography>
         </div>
       </Flexbox>
       <div className={s.FullSection}>
@@ -34,7 +48,9 @@ export const Header = () => {
             <div>
               <LuTimer size={24} />
             </div>
-            <Typography>1분</Typography>
+            <Typography>
+              {convertSecondsToTimeString(selectedApi.duration)}
+            </Typography>
           </div>
           <div className={s.SectionItem}>
             <Typography weight="600" color="put">
@@ -43,7 +59,7 @@ export const Header = () => {
             <div>
               <HiMiniUser size={24} />
             </div>
-            <Typography>10명</Typography>
+            <Typography>{selectedApi.vuser}명</Typography>
           </div>
           <div className={s.SectionItem}>
             <Typography weight="600" color="put">
@@ -52,24 +68,15 @@ export const Header = () => {
             <div>
               <HiCog6Tooth size={24} />
             </div>
-            <Typography>Fixed</Typography>
+            <Typography>{selectedApi.testMethod}</Typography>
           </div>
         </div>
         <div className={s.RightSection}>
           <SelectBox
-            options={[
-              <div className={s.option}>
-                <MethodChip method="get" />
-                <div>api/eggs/count</div>
-              </div>,
-              <div className={s.option}>
-                <MethodChip method="post" />
-                <div>api/eggs/count</div>
-              </div>,
-            ]}
-            value={selectedAPI}
+            options={Items}
+            value={selectedNum}
             onChange={(n: number) => {
-              setSelectedAPI(n);
+              handleSelectedNum(n);
             }}
           />
         </div>
