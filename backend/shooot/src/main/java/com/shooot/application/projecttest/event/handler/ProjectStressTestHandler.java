@@ -75,6 +75,7 @@ public class ProjectStressTestHandler {
                 .vUser(apiTestMethod.getVUsers())
                 .testMethod(String.valueOf(apiTestMethod.getBuildFileTestMethod()))
                 .build();
+            System.out.println(request);
             restTemplate.postForObject(requestUrl, request, Void.class);
         });
 

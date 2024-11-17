@@ -9,12 +9,12 @@ import lombok.ToString;
 @ToString
 public class ProjectMonitorRequest {
 
-    private Integer projectId;
-    private Integer projectJarFileId;
-    private Integer duration;
-    private String method;
-    private String url;
+    Integer projectId;
+    Integer projectJarFileId;
+    Integer duration;
     Integer vUser;
     String testMethod;
+    String method;
+    String url;
     Long stressTestLogId;
 }
