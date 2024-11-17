@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shooot.application.sseemitter.service.StressTestSseService;
 import com.shooot.application.stresstest.controller.dto.StressTestResponse;
-import com.shooot.application.stresstest.controller.dto.StressTestValue;
+import com.shooot.application.stresstest.controller.dto.StressTestSseResponse;
 import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 import java.util.Map;
@@ -68,33 +68,23 @@ public class ProjectMonitorStreamSubscriber implements
     public void onMessage(MapRecord<String, String, String> message) {
         try {
             String jsonMessage = message.getValue().get("message");
-            Map<String, Object> map = objectMapper.readValue(jsonMessage, Map.class);
+            StressTestResponse response = objectMapper.readValue(jsonMessage,
+                StressTestResponse.class);
             System.out.println(System.currentTimeMillis());
 
-            Integer projectJarFileId = (Integer) map.get("projectJarFileId");
+            Integer projectJarFileId = response.getProjectJarFileId();
             System.out.println(projectJarFileId);
 
-            Double cpu = (Double) map.get("cpu");
-            Double memory = (Double) map.get("memory");
-            Double disk = (Double) map.get("disk");
-            Double network = (Double) map.get("network");
-            String method = map.get("method").toString();
-            String url = map.get("url").toString();
-
-            StressTestValue curr = StressTestValue.builder()
-                .cpu(cpu)
-                .memory(memory)
-                .disk(disk)
-                .network(network)
-                .build();
+            String method = response.getMethod();
+            String url = response.getUrl();
 
             stressTestSseService.send(
                 projectJarFileId,
-                StressTestResponse.builder()
-                    .curr(curr)
-                    .avg(curr)
-                    .min(curr)
-                    .max(curr)
+                StressTestSseResponse.builder()
+                    .curr(response.getCurr())
+                    .avg(response.getAvg())
+                    .min(response.getMin())
+                    .max(response.getMax())
                     .method(method)
                     .url(url)
                     .build()
@@ -102,13 +92,5 @@ public class ProjectMonitorStreamSubscriber implements
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void start(Integer jarFileId) {
-        running.put(jarFileId, -1);
-    }
-
-    public void stop(Integer jarFileId) {
-        running.remove(jarFileId);
     }
 }

@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StressTestResponse {
-
-    private Integer projectId;
-    private Integer projectJarFileId;
+public class StressTestSseResponse {
 
     private StressTestValue curr;
     private StressTestValue avg;
