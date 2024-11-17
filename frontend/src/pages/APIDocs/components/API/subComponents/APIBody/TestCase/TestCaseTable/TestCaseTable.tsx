@@ -399,7 +399,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
                   }
                   row
                   sx={{
-                    gap: '1rem', // 라디오 버튼 간 간격을 넓힘
+                    gap: '1rem',
                   }}
                 >
                   <FormControlLabel
@@ -409,7 +409,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
                         color="secondary"
                         sx={{
                           '&.Mui-disabled': {
-                            color: '#A020F0', //
+                            color: '#A020F0',
                           },
                         }}
                       />
