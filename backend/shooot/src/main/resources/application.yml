@@ -16,7 +16,7 @@ spring:
     include: dev, secret
 
   jpa:
-    show-sql: true
+    show-sql: false
     open-in-view: false #default : true이기에 수정해야 함.
     hibernate:
       ddl-auto: none
