@@ -12,7 +12,7 @@ public class ProjectMonitorRequest {
     Integer projectId;
     Integer projectJarFileId;
     Integer duration;
-    Integer vUser;
+    String vUser;
     String testMethod;
     String method;
     String url;
