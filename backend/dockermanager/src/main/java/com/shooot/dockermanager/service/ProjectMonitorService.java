@@ -63,6 +63,8 @@ public class ProjectMonitorService {
     @Transactional
     public void getStatus(ProjectMonitorRequest request) {
 
+        System.out.println(request);
+
         StressTestValue sum = StressTestValue.builder()
             .cpu(0.0)
             .memory(0.0)

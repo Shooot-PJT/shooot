@@ -2,9 +2,11 @@ package com.shooot.dockermanager.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @Builder
+@ToString
 public class ProjectMonitorRequest {
 
     private Integer projectId;
