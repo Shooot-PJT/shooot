@@ -1,4 +1,6 @@
 import { BrowserWindow, app } from 'electron';
+import path from 'path';
+
 const BASE_URL =
   process.env.NODE_ENV === 'development'
     ? 'http://localhost:5173'
@@ -13,6 +15,7 @@ const createWindow = () => {
     minWidth: 1024,
     minHeight: 600,
     resizable: true,
+    icon: path.join(path.resolve(), '/logo.svg'),
     webPreferences: {
       nodeIntegration: true,
     },

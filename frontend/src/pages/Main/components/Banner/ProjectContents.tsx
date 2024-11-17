@@ -5,22 +5,11 @@ import {
   useReadMembersByProjectId,
   useReadProjectByProjectId,
 } from '../../hooks';
-import { IconColor } from '../../../../components/Icon/Icon.types';
 import Flexbox from '../../../../components/Flexbox';
 import Typography from '../../../../components/Typography';
 import { CustomTooltip } from '../../../../components/CustomToolTip';
 import Icon from '../../../../components/Icon';
-const colors: IconColor[] = [
-  'primary',
-  'secondary',
-  'tertiary',
-  'disabled',
-  'get',
-  'post',
-  'put',
-  'patch',
-  'delete',
-];
+import { IconColor } from '../../../../components/Icon/Icon.types';
 
 export const ProjectContents = () => {
   const navbarStore = useNavBarStore();
@@ -58,7 +47,7 @@ export const ProjectContents = () => {
                       <Icon
                         size={1}
                         rounded={999}
-                        color={colors[Math.floor(Math.random() * 8)]}
+                        color={member.color.toLowerCase() as IconColor}
                       >
                         <HiUser />
                       </Icon>
