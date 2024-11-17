@@ -83,12 +83,12 @@ exports.searchTestCase = async (req, res) => {
                     return res.status(400).json({ message: "등록된 test case 내에서만 mocking 이 가능합니다" });
                 } else {
                     const content = await getContent(results[testcase - 1].api_test_case_id);
-                    return res.status(200).json(content);
+                    return res.status(results[testcase - 1].http_status_code).json(content);
                 }
             } else {
                 if (results[0].http_status_code === 200) {
                     const content = await getContent(results[0].api_test_case_id);
-                    return res.status(200).json(content);
+                    return res.status(results[0].http_status_code).json(content);
                 } else {
                     return res.status(400).json({ message: "200 에 대한 test case 를 등록해주세요" });
                 }
