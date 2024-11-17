@@ -103,7 +103,7 @@ export const AddProjectModal = ({ handleRender }: AddProjectModalProps) => {
         </Flexbox>
         <Flexbox flexDirections="col" style={{ gap: '0.25rem' }}>
           <Typography style={{ marginBottom: '0.5rem' }}>
-            Docker-Compose 파일
+            Docker-Compose 파일 (선택)
           </Typography>
           <UploadFile
             requiredExtension="yml"
@@ -116,11 +116,7 @@ export const AddProjectModal = ({ handleRender }: AddProjectModalProps) => {
         <Button
           paddingX={2}
           paddingY={1}
-          disabled={
-            !validationFiles['jar'] ||
-            !validationFiles['yml'] ||
-            state === 'Pending'
-          }
+          disabled={!validationFiles['jar'] || state === 'Pending'}
           color="primary"
           onClick={handleSubmit}
         >

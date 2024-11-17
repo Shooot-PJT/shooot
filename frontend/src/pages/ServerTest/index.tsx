@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Flexbox from '../../components/Flexbox';
 import { useNavBarStore } from '../../stores/navbarStore';
 import { getJarFiles } from './apis/JarFileApi';
@@ -9,6 +9,7 @@ import { RecentTest } from './components/RecentTest/RecentTest';
 import { convertJarFileIdList } from './utils';
 import { GetJarFilesResponse } from './types';
 import { useProjectSSE } from './hooks/useProjectSSE';
+import { getTestRecord } from './apis/TestApi';
 
 export const ServerTest = () => {
   const [renderKey, setRenderKey] = useState<number>(0);
@@ -19,18 +20,38 @@ export const ServerTest = () => {
       project,
     });
 
-  const handleRender = () => {
-    setRenderKey(renderKey + 1);
-  };
-
-  const { data: jarFiles = [] } = useQuery({
+  const { data: jarFiles = [], isPending } = useQuery({
     queryKey: ['jarFiles', project, renderKey, projectStatus],
     queryFn: async () => {
       const response = await getJarFiles({ projectId: project });
       return response?.data ?? [];
     },
-    staleTime: 60 * 1000,
+    staleTime: 360 * 1000,
   });
+
+  const { data: testRecords = [] } = useQuery({
+    queryKey: ['testRecords', project, renderKey],
+    queryFn: async () => {
+      const response = await getTestRecord({ projectId: project });
+      return response?.data ?? [];
+    },
+  });
+
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  useEffect(() => {
+    if (!isPending && isInitialLoad) {
+      setIsInitialLoad(false);
+    }
+  }, [isPending, isInitialLoad]);
+
+  useEffect(() => {
+    setIsInitialLoad(true);
+  }, [project]);
+
+  const handleRender = () => {
+    setRenderKey(renderKey + 1);
+  };
 
   const handleInitializeDeploy = () => {
     setLogs((prev) => [...prev, '빌드가 중단되었습니다.']);
@@ -48,7 +69,7 @@ export const ServerTest = () => {
     <Flexbox
       flexDirections="col"
       style={{
-        gap: '3rem',
+        gap: '2.5rem',
         marginLeft: '1rem',
         marginRight: '1rem',
         width: '100%',
@@ -67,6 +88,7 @@ export const ServerTest = () => {
             idList={convertJarFileIdList(jarFiles)}
             handleRender={handleRender}
             handleOnBuild={handleOnBuild}
+            isPending={isInitialLoad && isPending}
           />
         </div>
         <div
@@ -82,8 +104,8 @@ export const ServerTest = () => {
           />
         </div>
       </div>
-      <div>
-        <RecentTest />
+      <div style={{ marginBottom: '3rem' }}>
+        <RecentTest testRecords={testRecords} />
       </div>
     </Flexbox>
   );

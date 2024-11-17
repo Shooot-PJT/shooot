@@ -4,10 +4,36 @@ import Flexbox from '../../../../components/Flexbox';
 import Typography from '../../../../components/Typography';
 import useModal from '../../../../hooks/useModal';
 import { useUploadStateStore } from '../../stores/useUploadStateStore';
+import { stopApiTest } from '../../apis/TestApi';
+import usePopup from '../../../../hooks/usePopup';
 
-export const EndServerTestModal = () => {
+interface EndServerTestModal {
+  id: number;
+}
+
+export const EndServerTestModal = ({ id }: EndServerTestModal) => {
   const modal = useModal();
+  const popup = usePopup();
   const { state, setState } = useUploadStateStore();
+
+  const handleStopTest = () => {
+    if (state === 'Pending') {
+      stopApiTest({ projectJarFileId: id })
+        .then(() => {
+          setState('End');
+          modal.pop();
+        })
+        .catch(() => {
+          popup.push({
+            title: '중단 실패',
+            children: '다시 시도해주세요',
+            type: 'fail',
+          });
+        });
+    } else {
+      modal.pop();
+    }
+  };
 
   useEffect(() => {
     return () => {
@@ -32,13 +58,7 @@ export const EndServerTestModal = () => {
         <Button color="grey" onClick={() => modal.pop()}>
           취소
         </Button>
-        <Button
-          color="delete"
-          onClick={() => {
-            setState('End');
-            modal.pop();
-          }}
-        >
+        <Button color="delete" onClick={handleStopTest}>
           종료
         </Button>
       </Flexbox>
