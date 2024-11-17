@@ -45,6 +45,13 @@ export interface EditAPIRequestBody {
   exampleContent?: APIDetailInfo['requestDocs']['example_content'];
 }
 
+export type EditAPIResponse = APIDetailInfo['requestDocs'];
+
+export interface EditAPIExampleContentRequestBody {
+  exampleContent?: APIDetailInfo['requestDocs']['example_content'];
+  exampleUrl?: APIDetailInfo['requestDocs']['example_url'];
+}
+
 export interface ToggleAPIStateRequest {
   apiId: APIDetailInfo['requestDocs']['id'];
 }

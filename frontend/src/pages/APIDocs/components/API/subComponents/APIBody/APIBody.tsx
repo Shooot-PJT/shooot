@@ -10,6 +10,7 @@ import Button from '../../../../../../components/Button';
 import { useGetAPIDetail } from '../../../../reactQueries/api';
 import { TestCaseTable } from './TestCase/TestCaseTable/TestCaseTable';
 import { useAPI } from '../../../../hooks/useAPI';
+import { RequestDocs } from './RequestDocs/RequestDocs';
 
 export const APIBody = () => {
   const context = useAPIContext();
@@ -163,27 +164,37 @@ export const APIBody = () => {
               style={{ gap: '3rem', width: '100%' }}
             >
               {/* 1.2.1 RIGHT-TOP: API 요청 정의서 */}
-              {/* <RequestDocs apiDetail.requestDocs={apiDetail.requestDocs || null} /> */}
+              <RequestDocs requestDocs={apiDetail.requestDocs || null} />
 
               {/* HORIZONTAL DIVIDER */}
               <div
                 style={{
                   width: '100%',
-                  height: '0.25rem',
+                  height: '0.35rem',
                   backgroundColor: colorPalette.util['300'],
                   borderRadius: '999rem',
-                  margin: '0.5rem 0rem',
+                  margin: '0.25rem 0rem 0rem 0rem',
                 }}
               />
-              <Button
-                color="primary"
-                rounded={0.3}
-                onClick={handleAddTestCaseClick}
-              >
-                테스트케이스 추가
-              </Button>
+              <Flexbox flexDirections="row" justifyContents="between">
+                <Typography
+                  style={{
+                    textAlign: 'start',
+                    fontSize: '1.4rem',
+                    fontWeight: '600',
+                  }}
+                >
+                  테스트 케이스
+                </Typography>
+                <Button
+                  color="primary"
+                  rounded={0.3}
+                  onClick={handleAddTestCaseClick}
+                >
+                  테스트케이스 추가
+                </Button>
+              </Flexbox>
               <Flexbox flexDirections="col">
-                {/* 추가: 새로운 테스트케이스를 추가할 수 있는 TestCaseTable 추가 */}
                 {isAdding && (
                   <TestCaseTable
                     isAddMode

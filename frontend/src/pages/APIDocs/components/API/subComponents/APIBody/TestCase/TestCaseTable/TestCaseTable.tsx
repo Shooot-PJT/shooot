@@ -33,6 +33,13 @@ import { HTTP_STATUS_CODES } from '../../../../../../types/httpStatus';
 import Button from '../../../../../../../../components/Button';
 import Textfield from '../../../../../../../../components/Textfield';
 
+import {
+  FormControl,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+} from '@mui/material';
+
 interface TestCaseTableProps {
   testCaseId?: number;
   isAddMode?: boolean;
@@ -51,7 +58,6 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
   const [activeTab, setActiveTab] = useState<number>(0);
   const [isEditMode, setIsEditMode] = useState<boolean>(isAddMode);
 
-  // isOpenBody 관리 로직
   const [isOpenBody, setIsOpenBody] = useState<boolean>(false);
 
   useEffect(() => {
@@ -63,7 +69,6 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
   const handleHeaderClick = () => {
     setIsOpenBody((prev) => !prev);
   };
-  //
 
   const {
     data: testCaseDetail,
@@ -384,38 +389,90 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
           </div>
           {activeTab === 3 && (
             <div>
-              <div>
-                <label>
-                  <input
-                    type="radio"
+              <FormControl component="fieldset">
+                <RadioGroup
+                  value={bodyType}
+                  onChange={(e) =>
+                    handleBodyTypeChange(
+                      e.target.value as 'none' | 'raw' | 'form-data',
+                    )
+                  }
+                  row
+                  sx={{
+                    gap: '1rem',
+                  }}
+                >
+                  <FormControlLabel
                     value="none"
-                    checked={bodyType === 'none'}
-                    onChange={() => handleBodyTypeChange('none')}
+                    control={
+                      <Radio
+                        color="secondary"
+                        sx={{
+                          '&.Mui-disabled': {
+                            color: '#A020F0',
+                          },
+                        }}
+                      />
+                    }
+                    label="None"
                     disabled={!isEditMode}
+                    sx={{
+                      '.MuiFormControlLabel-label': {
+                        color: '#FFFFFF',
+                      },
+                      '&.Mui-disabled .MuiFormControlLabel-label': {
+                        color: '#FFFFFF',
+                      },
+                    }}
                   />
-                  None
-                </label>
-                <label>
-                  <input
-                    type="radio"
+                  <FormControlLabel
                     value="raw"
-                    checked={bodyType === 'raw'}
-                    onChange={() => handleBodyTypeChange('raw')}
+                    control={
+                      <Radio
+                        color="secondary"
+                        sx={{
+                          '&.Mui-disabled': {
+                            color: '#A020F0',
+                          },
+                        }}
+                      />
+                    }
+                    label="Raw"
                     disabled={!isEditMode}
+                    sx={{
+                      '.MuiFormControlLabel-label': {
+                        color: '#FFFFFF',
+                      },
+                      '&.Mui-disabled .MuiFormControlLabel-label': {
+                        color: '#FFFFFF',
+                      },
+                    }}
                   />
-                  Raw
-                </label>
-                <label>
-                  <input
-                    type="radio"
+                  <FormControlLabel
                     value="form-data"
-                    checked={bodyType === 'form-data'}
-                    onChange={() => handleBodyTypeChange('form-data')}
+                    control={
+                      <Radio
+                        color="secondary"
+                        sx={{
+                          '&.Mui-disabled': {
+                            color: '#A020F0',
+                          },
+                        }}
+                      />
+                    }
+                    label="Form Data"
                     disabled={!isEditMode}
+                    sx={{
+                      '.MuiFormControlLabel-label': {
+                        color: '#FFFFFF',
+                      },
+                      '&.Mui-disabled .MuiFormControlLabel-label': {
+                        color: '#FFFFFF',
+                      },
+                    }}
                   />
-                  Form Data
-                </label>
-              </div>
+                </RadioGroup>
+              </FormControl>
 
               {bodyType === 'none' && <BodyNone />}
               {bodyType === 'raw' && (
@@ -520,9 +577,6 @@ interface KeyValueTableProps {
   onDataChange: (section: string, data: TableData) => void;
 }
 
-interface TableRowWithId extends TableRow {
-  id: string;
-}
 interface TableRowWithId extends TableRow {
   id: string;
 }
@@ -925,8 +979,8 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
     }
 
     const formDataResult =
-      (datas && Object.keys(datas).length > 0) ||
-      (files && Object.keys(files).length > 0)
+      (datas && Object.keys(datas!).length > 0) ||
+      (files && Object.keys(files!).length > 0)
         ? {
             datas: Object.keys(datas!).length > 0 ? datas : null,
             files: Object.keys(files!).length > 0 ? files : null,
