@@ -11,10 +11,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StressTestResponse {
 
-    private String method;
-    private String url;
+    private Integer projectId;
+    private Integer projectJarFileId;
+
     private StressTestValue curr;
     private StressTestValue avg;
     private StressTestValue min;
     private StressTestValue max;
+
+    private String method;
+    private String url;
 }

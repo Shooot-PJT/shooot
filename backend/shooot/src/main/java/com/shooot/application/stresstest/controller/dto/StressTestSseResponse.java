@@ -1,14 +1,15 @@
-package com.shooot.dockermanager.publisher;
+package com.shooot.application.stresstest.controller.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
-public class ProjectMonitorMessage implements Message {
-
-    private Integer projectId;
-    private Integer projectJarFileId;
+@NoArgsConstructor
+@AllArgsConstructor
+public class StressTestSseResponse {
 
     private StressTestValue curr;
     private StressTestValue avg;
