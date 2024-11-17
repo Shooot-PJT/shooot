@@ -7,6 +7,7 @@ import {
   toggleAPIState,
   removeAPI,
   getParticipantList,
+  editAPIExampleContent,
 } from '../../apis/api';
 import {
   AddAPIRequest,
@@ -19,6 +20,8 @@ import {
   RemoveAPIRequest,
   GetParticipantListRequest,
   GetParticipantListResponse,
+  EditAPIExampleContentRequestBody,
+  EditAPIResponse,
 } from '../../apis/api/types';
 import { APIDetailInfo, RequestDocs } from '../../types/data/API.data';
 
@@ -75,6 +78,32 @@ export const useEditAPI = () => {
           api.id === variables.apiId ? { ...api, ...updatedData } : api,
         );
       });
+      queryClient.invalidateQueries({
+        queryKey: ['apiDetail', variables.apiId],
+      });
+    },
+  });
+};
+// 4-1. API example_content, example_url 수정
+export const useEditAPIExampleContent = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: {
+      apiId: EditAPIRequest['apiId'];
+      body: EditAPIExampleContentRequestBody;
+    }) => editAPIExampleContent({ apiId: data.apiId }, data.body),
+    onSuccess: (updatedData: EditAPIResponse, variables) => {
+      queryClient.setQueryData<APIDetailInfo['requestDocs']>(
+        ['apiDetail', variables.apiId],
+        (prevData) => {
+          if (!prevData) return prevData;
+          return {
+            ...prevData,
+            example_content: updatedData.example_content,
+            example_url: updatedData.example_url,
+          };
+        },
+      );
       queryClient.invalidateQueries({
         queryKey: ['apiDetail', variables.apiId],
       });
