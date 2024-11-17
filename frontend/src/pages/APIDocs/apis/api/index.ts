@@ -15,6 +15,8 @@ import {
   RemoveAPIRequest,
   GetParticipantListRequest,
   GetParticipantListResponse,
+  EditAPIExampleContentRequestBody,
+  EditAPIResponse,
 } from './types';
 
 export const addAPI = async (
@@ -47,6 +49,17 @@ export const editAPI = async (
   body: EditAPIRequestBody,
 ) => {
   const response = await api.patch<AddAPIResponse>(
+    `/${EP.projects}/${EP.domains}/${EP.apis}/${apiId}`,
+    body,
+  );
+  return response.data;
+};
+
+export const editAPIExampleContent = async (
+  { apiId }: EditAPIRequest,
+  body: EditAPIExampleContentRequestBody,
+) => {
+  const response = await api.patch<EditAPIResponse>(
     `/${EP.projects}/${EP.domains}/${EP.apis}/${apiId}`,
     body,
   );

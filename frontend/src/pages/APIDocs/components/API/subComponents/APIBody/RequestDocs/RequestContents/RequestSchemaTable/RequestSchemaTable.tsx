@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as styles from './RequestSchemaTable.css';
 import CellTextField from './CellTextfield/CellTextfield';
 import DropdownMenu from './DropdownMenu/DropdownMenu';
@@ -8,38 +8,40 @@ import { FaPlus, FaTrash } from 'react-icons/fa';
 export interface ParamBase {
   key: string;
   description: string;
-  required: string;
+  required?: string;
   type?: string;
 }
 
-interface ReqBodyParam extends ParamBase {
-  type: string;
-}
-
-type Param = ParamBase | ReqBodyParam;
-
-interface TableProps<T extends Param> {
-  data: T[];
+interface TableProps {
+  data: ParamBase[];
   type: 'params' | 'pathvariable' | 'headers' | 'req body';
   isEditMode?: boolean;
-  onChange: (newData: T[]) => void;
+  onChange: (newData: ParamBase[]) => void;
 }
 
-export const RequestSchemaTable = <T extends Param>({
+export const RequestSchemaTable = ({
   data,
   type,
   isEditMode = false,
   onChange,
-}: TableProps<T>) => {
+}: TableProps) => {
   const [selectedRow, setSelectedRow] = useState<number | null>(null);
+
+  const keyInputRefs = useRef<Array<HTMLInputElement | null>>([]);
+
+  useEffect(() => {
+    if (isEditMode && keyInputRefs.current[0]) {
+      keyInputRefs.current[0].focus();
+    }
+  }, [isEditMode]);
 
   const handleRowClick = (index: number) => {
     if (isEditMode) setSelectedRow(index);
   };
 
-  const handleTextFieldChange = <K extends keyof T>(
+  const handleTextFieldChange = (
     index: number,
-    field: K,
+    field: keyof ParamBase,
     newValue: string,
   ) => {
     const updatedData = [...data];
@@ -50,9 +52,9 @@ export const RequestSchemaTable = <T extends Param>({
     onChange(updatedData);
   };
 
-  const handleDropdownChange = <K extends keyof T>(
+  const handleDropdownChange = (
     index: number,
-    field: K,
+    field: keyof ParamBase,
     newValue: string,
   ) => {
     const updatedData = [...data];
@@ -64,20 +66,26 @@ export const RequestSchemaTable = <T extends Param>({
   };
 
   const handleAddRow = () => {
-    const newRow: T =
+    const newRow: ParamBase =
       type === 'req body'
-        ? ({
+        ? {
             key: '',
             description: '',
             required: '선택',
             type: 'Text',
-          } as T)
-        : ({
-            key: '',
-            description: '',
-            required: '선택',
-          } as T);
-    onChange([...data, newRow]);
+          }
+        : type === 'pathvariable'
+          ? {
+              key: '',
+              description: '',
+            }
+          : {
+              key: '',
+              description: '',
+              required: '선택',
+            };
+    const newData = [...data, newRow];
+    onChange(newData);
   };
 
   const handleDeleteRow = (index: number) => {
@@ -98,9 +106,11 @@ export const RequestSchemaTable = <T extends Param>({
                 Type
               </th>
             )}
-            <th className={styles.headerCellStyle} style={{ width: '10%' }}>
-              필수 여부
-            </th>
+            {type !== 'pathvariable' && (
+              <th className={styles.headerCellStyle} style={{ width: '10%' }}>
+                필수 여부
+              </th>
+            )}
             <th className={styles.headerCellStyle} style={{ width: '50%' }}>
               Description
             </th>
@@ -135,36 +145,40 @@ export const RequestSchemaTable = <T extends Param>({
                   <div className={styles.cellViewStyle}>{param.key}</div>
                 )}
               </td>
-              {type === 'req body' && 'type' in param && (
+              {type === 'req body' && (
                 <td className={styles.typeCellStyle}>
                   {isEditMode ? (
                     <DropdownMenu
                       options={['Text', 'File']}
-                      selected={(param as ReqBodyParam).type || 'Text'}
+                      selected={param.type || 'Text'}
                       onSelect={(newValue: string) =>
-                        handleDropdownChange(index, 'type' as keyof T, newValue)
+                        handleDropdownChange(index, 'type', newValue)
                       }
                     />
                   ) : (
                     <div className={styles.cellViewStyle}>
-                      {(param as ReqBodyParam).type || 'Text'}
+                      {param.type || 'Text'}
                     </div>
                   )}
                 </td>
               )}
-              <td className={styles.requiredCellStyle}>
-                {isEditMode ? (
-                  <DropdownMenu
-                    options={['선택', '필수']}
-                    selected={param.required}
-                    onSelect={(newValue: string) =>
-                      handleDropdownChange(index, 'required', newValue)
-                    }
-                  />
-                ) : (
-                  <div className={styles.cellViewStyle}>{param.required}</div>
-                )}
-              </td>
+              {type !== 'pathvariable' && (
+                <td className={styles.requiredCellStyle}>
+                  {isEditMode ? (
+                    <DropdownMenu
+                      options={['선택', '필수']}
+                      selected={param.required || '선택'}
+                      onSelect={(newValue: string) =>
+                        handleDropdownChange(index, 'required', newValue)
+                      }
+                    />
+                  ) : (
+                    <div className={styles.cellViewStyle}>
+                      {param.required || '선택'}
+                    </div>
+                  )}
+                </td>
+              )}
               <td className={styles.descriptionCellStyle}>
                 {isEditMode ? (
                   <CellTextField
