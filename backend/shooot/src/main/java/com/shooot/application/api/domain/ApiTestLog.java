@@ -48,6 +48,12 @@ public class ApiTestLog extends SoftDeleteEntity {
     @Lob
     private String httpHeader;
 
+    @Column(name = "response_message")
+    private String responseMessage;
+
+    @Column(name = "response_code")
+    private HttpStatus responseCode;
+
     public static ApiTestLogInfiniteResponse from(ApiTestLog apiTestLog){
         return ApiTestLogInfiniteResponse.builder()
                 .id(apiTestLog.getId())

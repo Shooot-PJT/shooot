@@ -17,10 +17,12 @@ public class ApiTestLastLogView {
     private Integer managerId;
     private String managerName;
     private Boolean isSuccess;
-    private HttpStatus httpStatus;
+    private Integer httpStatus;
     private LocalDateTime createdAt;
-    private String httpBody;
-    private String httpHeader;
+    private Integer resultCode;
+    private String response;
+//    private String httpBody;
+//    private String httpHeader;
 
     public static ApiTestLastLogView from(ApiTestLog apiTestLog){
         return ApiTestLastLogView.builder()
@@ -28,10 +30,12 @@ public class ApiTestLastLogView {
                 .managerId(apiTestLog.getProjectParticipant().getId())
                 .managerName(apiTestLog.getProjectParticipant().getUser().getNickname())
                 .isSuccess(apiTestLog.getIsSuccess())
-                .httpStatus(apiTestLog.getHttpStatus())
+                .httpStatus(apiTestLog.getHttpStatus().value())
                 .createdAt(apiTestLog.getCreatedAt())
-                .httpBody(apiTestLog.getHttpBody())
-                .httpHeader(apiTestLog.getHttpHeader())
+                .resultCode(apiTestLog.getResponseCode() == null ? 200 : apiTestLog.getResponseCode().value())
+                .response(apiTestLog.getResponseMessage() == null ? "" : apiTestLog.getResponseMessage())
+//                .httpBody(apiTestLog.getHttpBody())
+//                .httpHeader(apiTestLog.getHttpHeader())
                 .build();
     }
 }

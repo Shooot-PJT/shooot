@@ -17,7 +17,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table
+@Table(name = "notification")
 @Entity
 public class Notification extends BaseEntity {
     @Id
@@ -33,4 +33,19 @@ public class Notification extends BaseEntity {
     @Convert(converter = MapToJsonConverter.class)
     @Column(name = "content")
     private Map<String, Object> content;
+
+    @Column(name = "is_read")
+    private Boolean isRead;
+
+    @PrePersist
+    private void setDefaults(){
+        if(isRead == null){
+            this.isRead = false;
+        }
+    }
+
+    public void read(){
+        this.isRead = true;
+    }
+
 }

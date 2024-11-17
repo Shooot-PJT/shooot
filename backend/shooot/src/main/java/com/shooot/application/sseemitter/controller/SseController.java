@@ -2,6 +2,7 @@ package com.shooot.application.sseemitter.controller;
 
 import com.shooot.application.security.service.UserLoginContext;
 import com.shooot.application.sseemitter.repository.SseNotificationRepository;
+import com.shooot.application.sseemitter.service.LoginUserSseService;
 import com.shooot.application.sseemitter.service.ProjectSseColdStreamService;
 import com.shooot.application.sseemitter.service.StressTestSseService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +27,7 @@ public class SseController {
     private final SseNotificationRepository sseNotificationRepository;
     private final ProjectSseColdStreamService projectSseColdStreamService;
     private final StressTestSseService stressTestSseService;
+    private final LoginUserSseService loginUserSseService;
 
     @GetMapping("/notification/connection")
     public ResponseEntity<SseEmitter> connectionNotificationSse(
@@ -56,5 +58,18 @@ public class SseController {
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noStore())
             .body(emitter);
+    }
+
+    @GetMapping(value = "/login/connection", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<SseEmitter> connectionLoginUser(
+            @AuthenticationPrincipal UserLoginContext userLoginContext,
+            HttpServletResponse response
+    ){
+        Integer userId = userLoginContext.getUserId();
+        SseEmitter emitter = loginUserSseService.add(userId);
+        response.setHeader("X-Accel-Buffering", "no");
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.noStore())
+                .body(emitter);
     }
 }

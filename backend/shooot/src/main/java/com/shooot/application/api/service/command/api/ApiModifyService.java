@@ -9,9 +9,14 @@ import com.shooot.application.api.exception.domain.DomainNotFoundException;
 import com.shooot.application.api.service.command.api.dto.ApiModifyRequest;
 import com.shooot.application.api.service.command.api.dto.ApiToggleModifyRequest;
 import com.shooot.application.api.ui.dto.ApiView;
+import com.shooot.application.notification.domain.repository.NotificationRepository;
+import com.shooot.application.notification.service.NotificationCreateService;
+import com.shooot.application.project.domain.Project;
 import com.shooot.application.project.domain.ProjectParticipant;
 import com.shooot.application.project.domain.repository.ProjectParticipantRepository;
+import com.shooot.application.project.domain.repository.ProjectRepository;
 import com.shooot.application.project.exception.ProjectNotFoundException;
+import com.shooot.application.project.exception.ProjectParticipantNotFoundException;
 import com.shooot.application.project.exception.ProjectPermissionDeniedException;
 import com.shooot.application.user.domain.User;
 import com.shooot.application.user.domain.UserRepository;
@@ -20,8 +25,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
-
 @Service
 @RequiredArgsConstructor
 public class ApiModifyService {
@@ -29,9 +32,10 @@ public class ApiModifyService {
     private final ProjectParticipantRepository participantRepository;
     private final UserRepository userRepository;
     private final DomainRepository domainRepository;
+    private final NotificationCreateService notificationCreateService;
 
     @Transactional
-    public ApiView modifyApi(Integer apiId, ApiModifyRequest apiModifyRequest){
+    public ApiView modifyApi(Integer apiId, ApiModifyRequest apiModifyRequest, Integer userId){
         Api api = findApiById(apiId);
 
 //        checkPermission(api);
@@ -39,9 +43,14 @@ public class ApiModifyService {
         if(apiModifyRequest.getManagerId() != null){
             //todo user 없을때 예외 던지기
             updateApiManager(api.getProjectParticipant().getId(), apiModifyRequest.getManagerId());
+            ProjectParticipant projectParticipant = participantRepository.findById(apiModifyRequest.getManagerId())
+                    .orElseThrow(ProjectParticipantNotFoundException::new);
+
+            api.update(projectParticipant);
         }
 
         api.update(apiModifyRequest);
+        notificationCreateService.saveNotification(userId, apiId);
 
         return ApiView.from(api);
     }
@@ -89,4 +98,5 @@ public class ApiModifyService {
 
         projectParticipant.update(user);
     }
+
 }
