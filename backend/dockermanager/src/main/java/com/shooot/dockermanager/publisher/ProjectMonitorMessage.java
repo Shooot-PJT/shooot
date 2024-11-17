@@ -10,10 +10,10 @@ public class ProjectMonitorMessage implements Message {
     private Integer projectId;
     private Integer projectJarFileId;
 
-    private Double cpu;
-    private Double memory;
-    private Double disk;
-    private Double network;
+    private StressTestValue curr;
+    private StressTestValue avg;
+    private StressTestValue min;
+    private StressTestValue max;
 
     private String method;
     private String url;

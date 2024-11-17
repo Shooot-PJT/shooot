@@ -3,7 +3,6 @@ package com.shooot.application.projecttest.subscriber;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shooot.application.sseemitter.service.StressTestSseService;
-import com.shooot.application.stresstest.controller.dto.StressTestDto;
 import com.shooot.application.stresstest.controller.dto.StressTestResponse;
 import com.shooot.application.stresstest.controller.dto.StressTestValue;
 import jakarta.annotation.PostConstruct;
@@ -33,6 +32,8 @@ public class ProjectMonitorStreamSubscriber implements
     private final Map<Integer, Subscription> subscriptions = new ConcurrentHashMap<>();
     private final StressTestSseService stressTestSseService;
     private StreamMessageListenerContainer<String, MapRecord<String, String, String>> listenerContainer;
+
+    private ConcurrentHashMap<Integer, Integer> running = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void startListening() {
@@ -101,5 +102,13 @@ public class ProjectMonitorStreamSubscriber implements
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void start(Integer jarFileId) {
+        running.put(jarFileId, -1);
+    }
+
+    public void stop(Integer jarFileId) {
+        running.remove(jarFileId);
     }
 }
