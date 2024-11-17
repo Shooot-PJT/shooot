@@ -195,7 +195,6 @@ export const APIBody = () => {
                 </Button>
               </Flexbox>
               <Flexbox flexDirections="col">
-                {/* 추가: 새로운 테스트케이스를 추가할 수 있는 TestCaseTable 추가 */}
                 {isAdding && (
                   <TestCaseTable
                     isAddMode
