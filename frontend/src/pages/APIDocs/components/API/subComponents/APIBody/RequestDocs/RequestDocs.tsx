@@ -354,24 +354,78 @@ export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
                 value={reqBodyMenu}
                 onChange={handleChangeReqBodyMenu}
                 row
+                sx={{
+                  gap: '1rem',
+                }}
               >
                 <FormControlLabel
                   value="none"
-                  control={<Radio />}
+                  control={
+                    <Radio
+                      color="secondary"
+                      sx={{
+                        '&.Mui-disabled': {
+                          color: '#A020F0',
+                        },
+                      }}
+                    />
+                  }
                   label="None"
                   disabled={!isEditMode}
+                  sx={{
+                    '.MuiFormControlLabel-label': {
+                      color: '#FFFFFF',
+                    },
+                    '&.Mui-disabled .MuiFormControlLabel-label': {
+                      color: '#FFFFFF',
+                    },
+                  }}
                 />
                 <FormControlLabel
                   value="form-data"
-                  control={<Radio />}
+                  control={
+                    <Radio
+                      color="secondary"
+                      sx={{
+                        '&.Mui-disabled': {
+                          color: '#A020F0',
+                        },
+                      }}
+                    />
+                  }
                   label="Form Data"
                   disabled={!isEditMode}
+                  sx={{
+                    '.MuiFormControlLabel-label': {
+                      color: '#FFFFFF',
+                    },
+                    '&.Mui-disabled .MuiFormControlLabel-label': {
+                      color: '#FFFFFF',
+                    },
+                  }}
                 />
                 <FormControlLabel
                   value="raw"
-                  control={<Radio />}
+                  control={
+                    <Radio
+                      color="secondary"
+                      sx={{
+                        '&.Mui-disabled': {
+                          color: '#A020F0',
+                        },
+                      }}
+                    />
+                  }
                   label="Raw"
                   disabled={!isEditMode}
+                  sx={{
+                    '.MuiFormControlLabel-label': {
+                      color: '#FFFFFF',
+                    },
+                    '&.Mui-disabled .MuiFormControlLabel-label': {
+                      color: '#FFFFFF',
+                    },
+                  }}
                 />
               </RadioGroup>
             </FormControl>
