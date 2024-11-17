@@ -50,7 +50,7 @@ public class ApiModifyService {
         }
 
         api.update(apiModifyRequest);
-        notificationCreateService.saveNotification(userId, apiId);
+        notificationCreateService.saveNotification(userId, apiId, "수정되었습니다.");
 
         return ApiView.from(api);
     }

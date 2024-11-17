@@ -37,7 +37,7 @@ public class NotificationCreateService {
 
 
     @Transactional
-    public void saveNotification(Integer userId, Integer apiId){
+    public void saveNotification(Integer userId, Integer apiId, String type){
         //구독이 되어 있는지를 체크하고 구독이 되어 있으면 알림을 보낸다
 
         User user = userRepository.findById(userId)
@@ -58,9 +58,9 @@ public class NotificationCreateService {
             User subscriber = subscribe.getUser(); // DomainSubscribe의 user 객체 가져오기
 
             if(userId.equals(subscriber.getId())) continue;
+
             Map<String, Object> messageContent = Map.of(
-                    "message", String.format("%s 프로젝트의 %s 도메인의 %s API가 수정되었습니다.",
-                            project.getName(), domain.getName(), api.getTitle()),
+                    "message", type,
                     "project", Map.of(
                             "id", project.getId(),
                             "name", project.getName()
