@@ -2,6 +2,7 @@ import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import { apiTest, getApiTestLogs, testcaseTest } from '../../apis/apitest';
 import usePopup from '../../../../hooks/usePopup';
 import Typography from '../../../../components/Typography';
+import { useCommonLoginStore } from '../../stores/commonLoginStore';
 
 const MUTATION_KEYS = {
   testcaseTest: 'testcaseTest',
@@ -11,10 +12,12 @@ const MUTATION_KEYS = {
 // 테스트케이스 테스트
 export const useTestCaseTestMutation = () => {
   const popup = usePopup();
+  const { session } = useCommonLoginStore();
 
   const { mutate } = useMutation({
     mutationKey: [MUTATION_KEYS.testcaseTest],
-    mutationFn: async (testcaseId: number) => await testcaseTest(testcaseId),
+    mutationFn: async (testcaseId: number) =>
+      await testcaseTest(testcaseId, session),
     onSuccess: (data) => {
       popup.push({
         title: '테케 테스트 결과',
@@ -32,10 +35,11 @@ export const useTestCaseTestMutation = () => {
 // API 테스트
 export const useApiTestMutation = () => {
   const popup = usePopup();
+  const { session } = useCommonLoginStore();
 
   const { mutate } = useMutation({
     mutationKey: [MUTATION_KEYS.apiTest],
-    mutationFn: async (apiId: number) => await apiTest(apiId),
+    mutationFn: async (apiId: number) => await apiTest(apiId, session),
     onSuccess: (data) => {
       popup.push({
         title: '테케 테스트 결과',
@@ -58,10 +62,12 @@ export const useApiTestMutation = () => {
 
 // 테스트 로그 무한 스크롤
 export const useApiTestLogInfiniteQuery = (apiId: number) => {
+  const { session } = useCommonLoginStore();
+
   const { data, isLoading, hasNextPage, fetchNextPage } = useInfiniteQuery({
     queryKey: ['logs', apiId],
     queryFn: async ({ pageParam }) => {
-      const response = await getApiTestLogs(apiId, pageParam);
+      const response = await getApiTestLogs(apiId, pageParam, session);
       return response.data;
     },
     initialPageParam: 0,
