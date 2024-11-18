@@ -122,3 +122,12 @@ export const testBodyContainerRecipe = recipe({
     isOpen: false,
   },
 });
+
+export const testButton = style({
+  color: 'white',
+  fontFamily: 'Pretendard',
+  fontSize: '0.8125rem',
+  borderRadius: '0.5rem',
+  marginRight: '-1.8rem',
+  backgroundColor: themeCss.palette.grey.main,
+});
