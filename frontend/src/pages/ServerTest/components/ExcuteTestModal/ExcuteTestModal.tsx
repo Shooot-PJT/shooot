@@ -55,8 +55,6 @@ export const ExcuteTestModal = ({
       !isDone
     ) {
       dataIndexRef.current += 1;
-      console.log(testData);
-      console.log(dataIndexRef.current);
     }
     if (isDone && time % 180 === 45) {
       dataTableBuffer.current += 1;
@@ -81,7 +79,6 @@ export const ExcuteTestModal = ({
   const minutesDisplay = Math.max(0, Math.ceil(remainingTime / 60));
 
   useEffect(() => {
-    // console.log(testData);
     return () => {
       modal.pop();
       setState('none');

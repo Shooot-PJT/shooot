@@ -3,7 +3,6 @@ import Button from '../../../../components/Button';
 import Flexbox from '../../../../components/Flexbox';
 import Typography from '../../../../components/Typography';
 import useModal from '../../../../hooks/useModal';
-import usePopup from '../../../../hooks/usePopup';
 import { useNavBarStore } from '../../../../stores/navbarStore';
 import { stopApiTest } from '../../apis/TestApi';
 import { useTestDataStore } from '../../stores/useTestDataStore';
@@ -15,7 +14,6 @@ interface EndServerTestModal {
 
 export const EndServerTestModal = ({ id }: EndServerTestModal) => {
   const modal = useModal();
-  const popup = usePopup();
   const { state, setState } = useTestDataStore();
   const { state: uploadState, setState: setUploadState } =
     useUploadStateStore();
@@ -30,24 +28,22 @@ export const EndServerTestModal = ({ id }: EndServerTestModal) => {
         })
         .catch(() => {
           setUploadState('Error');
-          popup.push({
-            title: '중단 실패',
-            children: '다시 시도해주세요',
-            type: 'fail',
-          });
+          modal.pop();
         });
     } else {
+      setUploadState('Pending');
       modal.pop();
     }
   };
 
   useEffect(() => {
     return () => {
-      if (uploadState !== 'Error') {
+      if (uploadState !== 'None') {
+        setUploadState('None');
         modal.pop();
       }
     };
-  }, [state]);
+  }, [uploadState]);
 
   return (
     <Flexbox flexDirections="col" style={{ rowGap: '2rem' }}>
@@ -55,13 +51,25 @@ export const EndServerTestModal = ({ id }: EndServerTestModal) => {
         서버 테스트 종료
       </Typography>
       <div>
-        <Typography weight="500">테스트 창을 닫으시겠습니까?</Typography>
-        <Typography weight="500" color="delete" size={0.8}>
-          테스트가 중단됩니다.
-        </Typography>
+        {state === 'start' ? (
+          <>
+            <Typography weight="500">테스트를 중단하시겠습니까?</Typography>
+            <Typography weight="500" color="delete" size={0.8}>
+              진행중인 테스트는 중단됩니다.
+            </Typography>
+          </>
+        ) : (
+          <Typography weight="500">테스트 창을 닫으시겠습니까?</Typography>
+        )}
       </div>
       <Flexbox justifyContents="end" style={{ columnGap: '1rem' }}>
-        <Button color="grey" onClick={() => modal.pop()}>
+        <Button
+          color="grey"
+          onClick={() => {
+            setUploadState('None');
+            modal.pop();
+          }}
+        >
           취소
         </Button>
         <Button color="delete" onClick={handleStopTest}>

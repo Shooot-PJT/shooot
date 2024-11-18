@@ -27,16 +27,12 @@ export const Console = ({
   }, [project]);
 
   const handleStopDeploy = () => {
-    console.log(deployedFileId);
     if (deployedFileId !== -1 && state === 'DEPLOY') {
       stopDeployFile({ projectJarFileId: deployedFileId })
         .then(() => {
           handleInitialDeploy();
-          console.log('중단');
         })
-        .catch(() => {
-          console.log('실패');
-        });
+        .catch(() => {});
     }
   };
 

@@ -27,7 +27,6 @@ export const TestResultModal = ({ id }: TestResultModalProps) => {
     queryKey: ['testDetailRecords', id],
     queryFn: async () => {
       const response = await getTestRecordDetail({ stressTestLogId: id });
-      console.log(response.data);
       return response?.data ?? [];
     },
   });

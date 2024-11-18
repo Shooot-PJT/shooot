@@ -82,7 +82,6 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
   };
 
   const handleExpanedRowIdx = (idx: number) => {
-    console.log('idx : ' + idx + ', expandedRow : ' + expandedRowIndex);
     setExpandedRowIndex((prevIndex) => (prevIndex === idx ? -1 : idx));
   };
 
@@ -100,7 +99,6 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
       projectJarFileId: projectJarFileId,
       endPointSettings: testConfig,
     };
-    console.log(request);
     excuteApiTest(request)
       .then(() => {
         setTestData(() => {
