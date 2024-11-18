@@ -1,4 +1,4 @@
-import { useAddAPI, useEditAPI } from '../reactQueries/api';
+import { useAddAPI, useEditAPI, useRemoveAPI } from '../reactQueries/api';
 import Typography from '../../../components/Typography';
 import useModal from '../../../hooks/useModal';
 import usePopup from '../../../hooks/usePopup';
@@ -8,8 +8,13 @@ import shooot_oops from '/assets/shooot/shooot_oops.png';
 import shooot_remove from '/assets/shooot/shooot_remove.png';
 import { AddAPIModal } from '../components/API/subComponents/AddAPIModal/AddAPIModal';
 import { EditAPIModal } from '../components/API/subComponents/EditAPIModal/EditAPIModal';
+import { RemoveAPIModal } from '../components/API/subComponents/RemoveAPIModal/RemoveAPIModal';
 import { RequestDocs } from '../types/data/API.data';
-import { AddAPIRequestBody, EditAPIRequestBody } from '../apis/api/types';
+import {
+  AddAPIRequestBody,
+  EditAPIRequestBody,
+  RemoveAPIRequest,
+} from '../apis/api/types';
 import { useTestCase } from './useTestCase';
 
 export const useAPI = () => {
@@ -17,6 +22,8 @@ export const useAPI = () => {
   const popup = usePopup();
 
   const { removeTestCase, isAdding, isRemoving, removeError } = useTestCase();
+
+  const { mutate: removeAPIMutation } = useRemoveAPI();
 
   const modalPopHandler = () => modal.pop();
 
@@ -162,6 +169,72 @@ export const useAPI = () => {
     });
   };
 
+  const removeAPIModalHandler = (apiId: number) => {
+    modal.push({
+      children: (
+        <RemoveAPIModal
+          apiId={apiId}
+          popHandler={modalPopHandler}
+          removeHandler={(request: RemoveAPIRequest) =>
+            removeAPIMutation(request, {
+              onSuccess: () => {
+                popup.push({
+                  type: 'success',
+                  title: '',
+                  children: (
+                    <Flexbox
+                      flexDirections="col"
+                      style={{
+                        gap: '2rem',
+                        alignItems: 'center',
+                        padding: '2rem 0rem',
+                      }}
+                    >
+                      <img
+                        height="100px"
+                        src={shooot_remove}
+                        style={{ width: '12.5rem', height: 'auto' }}
+                      />
+                      <Typography size={1.5} weight="600">
+                        성공적으로 삭제되었습니다.
+                      </Typography>
+                    </Flexbox>
+                  ),
+                  onClose: modalPopHandler,
+                });
+              },
+              onError: () => {
+                popup.push({
+                  type: 'fail',
+                  title: 'API 삭제 실패',
+                  children: (
+                    <Flexbox
+                      flexDirections="col"
+                      style={{
+                        gap: '2rem',
+                        alignItems: 'center',
+                        padding: '2rem 0rem',
+                      }}
+                    >
+                      <img
+                        height="100px"
+                        src={shooot_oops}
+                        style={{ width: '12.5rem', height: 'auto' }}
+                      />
+                      <Typography size={1.5} weight="600">
+                        삭제에 실패했습니다. 다시 시도해주세요.
+                      </Typography>
+                    </Flexbox>
+                  ),
+                });
+              },
+            })
+          }
+        />
+      ),
+    });
+  };
+
   const handleRemoveTestCase = (apiId: number, testcaseId: number) => {
     removeTestCase(apiId, testcaseId);
 
@@ -220,6 +293,7 @@ export const useAPI = () => {
   return {
     addAPIModalHandler,
     editAPIModalHandler,
+    removeAPIModalHandler,
     handleRemoveTestCase,
     isAdding,
     isRemoving,
