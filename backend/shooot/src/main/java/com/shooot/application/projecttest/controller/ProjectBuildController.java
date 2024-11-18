@@ -7,11 +7,7 @@ import com.shooot.application.projecttest.service.command.ProjectApiDocsSettingS
 import com.shooot.application.projecttest.service.command.ProjectBuildRemoveService;
 import com.shooot.application.projecttest.service.command.ProjectBuildUploadService;
 import com.shooot.application.projecttest.service.command.ProjectDeployService;
-import com.shooot.application.projecttest.service.command.ProjectTestRunService;
-import com.shooot.application.projecttest.service.command.ProjectTestStopService;
 import com.shooot.application.projecttest.service.dto.ProjectBuildIdDto;
-import com.shooot.application.projecttest.service.dto.ProjectBuildTestRunRequest;
-import com.shooot.application.projecttest.service.dto.ProjectBuildTestStopRequest;
 import com.shooot.application.projecttest.service.dto.ProjectIdDto;
 import com.shooot.application.projecttest.service.query.ProjectBuildFindService;
 import com.shooot.application.security.service.UserLoginContext;
@@ -39,10 +35,8 @@ public class ProjectBuildController {
     private final ProjectBuildFindService projectBuildFindService;
     private final ProjectBuildUploadService projectBuildUploadService;
     private final ProjectApiDocsSettingService projectApiDocsSettingService;
-    private final ProjectTestRunService projectTestRunService;
     private final ProjectDeployService projectDeployService;
     private final ProjectBuildRemoveService projectBuildRemoveService;
-    private final ProjectTestStopService projectTestStopService;
 
     @PostMapping("/jarFile")
     public ResponseEntity<ProjectJarFileUploadView> jarFileUpload(
@@ -57,7 +51,8 @@ public class ProjectBuildController {
 
     @PatchMapping("/jarFile")
     public ResponseEntity<ProjectJarFileUploadView> dockerComposeFileUpdate(
-        @RequestPart ProjectIdDto projectIdDto, @RequestPart(required = false) MultipartFile dockerComposeFile,
+        @RequestPart ProjectIdDto projectIdDto,
+        @RequestPart(required = false) MultipartFile dockerComposeFile,
         @AuthenticationPrincipal UserLoginContext userLoginContext) {
         projectBuildUploadService.dockerFileUpdate(projectIdDto.getProjectId(), dockerComposeFile);
         return ResponseEntity.ok().build();
@@ -76,20 +71,6 @@ public class ProjectBuildController {
         @PathVariable(name = "projectJarFileId") Integer projectJarFileId) {
         ProjectApiDocsForTestView view = projectApiDocsSettingService.forTestInfo(projectJarFileId);
         return ResponseEntity.ok(view);
-    }
-
-    @PatchMapping("/jarFile/test/run")
-    public ResponseEntity<Void> testRun(
-        @RequestBody ProjectBuildTestRunRequest projectBuildTestRunRequest,
-        @AuthenticationPrincipal UserLoginContext userLoginContext) {
-        projectTestRunService.testRunRequest(projectBuildTestRunRequest);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/jarFile/test/stop")
-    public ResponseEntity<Void> testStop(@RequestBody ProjectBuildTestStopRequest request) {
-        projectTestStopService.stop(request.getProjectJarFileId());
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{projectId}/jarFile/deploy")

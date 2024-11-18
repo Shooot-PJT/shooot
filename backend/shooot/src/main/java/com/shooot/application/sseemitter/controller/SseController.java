@@ -4,7 +4,7 @@ import com.shooot.application.security.service.UserLoginContext;
 import com.shooot.application.sseemitter.repository.SseNotificationRepository;
 import com.shooot.application.sseemitter.service.LoginUserSseService;
 import com.shooot.application.sseemitter.service.ProjectSseColdStreamService;
-import com.shooot.application.sseemitter.service.StressTestSseService;
+import com.shooot.application.stresstest.service.StressTestSseService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,28 +48,16 @@ public class SseController {
         return ResponseEntity.ok(subscribe);
     }
 
-    @GetMapping(value = "/projects/jarFile/{projectJarFileId}/connection", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public ResponseEntity<SseEmitter> connectionStressTest(
-        @PathVariable Integer projectJarFileId,
-        HttpServletResponse response
-    ) {
-        SseEmitter emitter = stressTestSseService.add(projectJarFileId);
-        response.setHeader("X-Accel-Buffering", "no");
-        return ResponseEntity.ok()
-            .cacheControl(CacheControl.noStore())
-            .body(emitter);
-    }
-
     @GetMapping(value = "/login/connection", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> connectionLoginUser(
-            @AuthenticationPrincipal UserLoginContext userLoginContext,
-            HttpServletResponse response
-    ){
+        @AuthenticationPrincipal UserLoginContext userLoginContext,
+        HttpServletResponse response
+    ) {
         Integer userId = userLoginContext.getUserId();
         SseEmitter emitter = loginUserSseService.add(userId);
         response.setHeader("X-Accel-Buffering", "no");
         return ResponseEntity.ok()
-                .cacheControl(CacheControl.noStore())
-                .body(emitter);
+            .cacheControl(CacheControl.noStore())
+            .body(emitter);
     }
 }
