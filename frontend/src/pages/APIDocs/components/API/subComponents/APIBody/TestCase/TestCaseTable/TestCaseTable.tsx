@@ -44,6 +44,7 @@ import { Editor, OnMount } from '@monaco-editor/react';
 import Icon from '../../../../../../../../components/Icon';
 import { FaTrash } from 'react-icons/fa';
 import colorPalette from '../../../../../../../../styles/colorPalette';
+import DropdownMenu from '../../RequestDocs/RequestContents/RequestSchemaTable/DropdownMenu/DropdownMenu';
 
 interface TestCaseTableProps {
   testCaseId?: number;
@@ -879,6 +880,13 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
               <td className={styles.keyCellStyle}>
                 {isEditMode ? (
                   <input
+                    style={{
+                      width: '-webkit-fill-available',
+                      backgroundColor: colorPalette.util['200'],
+                      border: 'none',
+                      padding: '0.25rem',
+                      color: 'white',
+                    }}
                     value={row.key}
                     onChange={(e) =>
                       handleChange(row.id, 'key', e.target.value)
@@ -891,6 +899,13 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
               <td className={styles.valueCellStyle}>
                 {isEditMode ? (
                   <input
+                    style={{
+                      width: '-webkit-fill-available',
+                      backgroundColor: colorPalette.util['200'],
+                      border: 'none',
+                      padding: '0.25rem',
+                      color: 'white',
+                    }}
                     value={
                       row.value !== null && row.value !== undefined
                         ? String(row.value)
@@ -913,6 +928,10 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                   <input
                     style={{
                       width: '-webkit-fill-available',
+                      backgroundColor: colorPalette.util['200'],
+                      border: 'none',
+                      padding: '0.25rem',
+                      color: 'white',
                     }}
                     value={row.description || ''}
                     onChange={(e) =>
@@ -1215,6 +1234,10 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
                   <input
                     style={{
                       width: '-webkit-fill-available',
+                      backgroundColor: colorPalette.util['200'],
+                      border: 'none',
+                      padding: '0.25rem',
+                      color: 'white',
                     }}
                     value={entry.key}
                     onChange={(e) => handleChange(index, 'key', e.target.value)}
@@ -1227,19 +1250,13 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
               </td>
               <td className={bodyFormDataStyles.typeCellStyle}>
                 {isEditMode ? (
-                  <select
-                    value={entry.type}
-                    onChange={(e) =>
-                      handleChange(
-                        index,
-                        'type',
-                        e.target.value as 'Text' | 'File',
-                      )
+                  <DropdownMenu
+                    options={['Text', 'File']}
+                    selected={entry.type}
+                    onSelect={(value: string) =>
+                      handleChange(index, 'type', value as 'Text' | 'File')
                     }
-                  >
-                    <option value="Text">Text</option>
-                    <option value="File">File</option>
-                  </select>
+                  />
                 ) : (
                   <div className={bodyFormDataStyles.cellViewStyle}>
                     {entry.type}
@@ -1252,6 +1269,10 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
                     <input
                       style={{
                         width: '-webkit-fill-available',
+                        backgroundColor: colorPalette.util['200'],
+                        border: 'none',
+                        padding: '0.25rem',
+                        color: 'white',
                       }}
                       value={
                         entry.value !== null && entry.value !== undefined
@@ -1296,6 +1317,13 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
               <td className={bodyFormDataStyles.descriptionCellStyle}>
                 {isEditMode ? (
                   <input
+                    style={{
+                      width: '-webkit-fill-available',
+                      backgroundColor: colorPalette.util['200'],
+                      border: 'none',
+                      padding: '0.25rem',
+                      color: 'white',
+                    }}
                     value={entry.description || ''}
                     onChange={(e) =>
                       handleChange(index, 'description', e.target.value)

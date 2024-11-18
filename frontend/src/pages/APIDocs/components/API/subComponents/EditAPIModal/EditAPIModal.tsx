@@ -1,4 +1,3 @@
-/* frontend/src/pages/APIDocs/components/API/subComponents/EditAPIModal/EditAPIModal.tsx */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import Typography from '../../../../../../components/Typography';
@@ -154,7 +153,9 @@ export const EditAPIModal: React.FC<EditAPIModalProps> = ({
         justifyContents="end"
         style={{ gap: '1rem', marginTop: '1rem' }}
       >
-        <Button onClick={popHandler}>취소</Button>
+        <Button color={'grey'} onClick={popHandler}>
+          취소
+        </Button>
         <Button onClick={handleSubmit} color="primary">
           저장
         </Button>
