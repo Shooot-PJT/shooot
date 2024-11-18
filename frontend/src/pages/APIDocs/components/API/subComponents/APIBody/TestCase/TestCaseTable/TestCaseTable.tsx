@@ -39,7 +39,6 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
-import TestButton from '../../../../../TestButton/TestButton';
 import { useTestCaseTestMutation } from '../../../../../../reactQueries/apitests';
 
 interface TestCaseTableProps {
@@ -299,6 +298,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
             </Typography>
           </Flexbox>
           <button
+            className={s.testButton}
             onClick={(event) => {
               event.stopPropagation();
               testcaseTest(testCase!.id);
