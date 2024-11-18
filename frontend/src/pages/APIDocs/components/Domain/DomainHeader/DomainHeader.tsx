@@ -17,10 +17,6 @@ import {
   useSubscribeNotification,
   useUnSubscribeNotification,
 } from '../../../reactQueries/domain';
-import { useGetAPIList } from '../../../reactQueries/api';
-import { useApiTestMutation } from '../../../reactQueries/apitests';
-import usePopup from '../../../../../hooks/usePopup';
-
 export const DomainHeader = () => {
   const context = useDomainContext();
   const { isFocused, handleToggleIsFocused } = context.useIsFocusedHook;
