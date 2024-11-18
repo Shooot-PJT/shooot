@@ -17,8 +17,8 @@ public class ProjectMonitorMessagePublisher {
     private final ObjectMapper objectMapper;
     private final StringRedisTemplate redisTemplate;
 
-    public void publish(ProjectMonitorMessage message) {
-        String key = MONITOR_CHANNEL + message.getProjectId();
+    public void publish(Integer projectId, StressTestMessage message) {
+        String key = MONITOR_CHANNEL + projectId;
         try {
             String json = objectMapper.writeValueAsString(message);
             MapRecord<String, Object, Object> record = StreamRecords.newRecord()
