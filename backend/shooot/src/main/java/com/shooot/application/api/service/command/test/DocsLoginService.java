@@ -25,45 +25,6 @@ import java.util.Map;
 @Service
 @Slf4j
 public class DocsLoginService {
-//    private final RestClient restClient;
-//    private final ProjectRepository projectRepository;
-//
-//    public ResponseEntity<?> getSessionValue(ProjectClientTotalLoginRequest projectClientTotalLoginRequest, HttpSession session){
-////        Project project = projectRepository.findById(projectClientTotalLoginRequest.getProjectId())
-////                .orElseThrow(ProjectNotFoundException::new);
-//
-////        String projectEnglishName = project.getEnglishName();
-////        String url = "https://" + projectEnglishName + ".shooot.shop/" + projectClientTotalLoginRequest.getUrl();
-//        String url = "http://localhost:8081" + projectClientTotalLoginRequest.getUrl();
-//
-//        Map<String, String> loginRequest = new HashMap<>();
-//        loginRequest.put("id", projectClientTotalLoginRequest.getId());
-//        loginRequest.put("password", projectClientTotalLoginRequest.getPassword());
-//
-//        ResponseEntity<?> response = restClient.post()
-//                .uri(url)
-//                .body(loginRequest)
-//                .retrieve()
-//                .toEntity(String.class);
-//
-//        log.info("response.getBody = {}", response.getBody());
-//        log.info("response.getHeaders{}", response.getHeaders());
-//        log.info("response.getStatusCode() = {}", response.getStatusCode().value());
-//
-//        // Set-Cookie 헤더에서 세션 ID 추출
-//        List<String> cookies = response.getHeaders().get(HttpHeaders.SET_COOKIE);
-//        if (cookies != null && !cookies.isEmpty()) {
-//            String rawCookie = cookies.get(0); // 예: JSESSIONID=F388D35B37DB9A1650D5867280E50B66; Path=/; HttpOnly
-//            String sessionId = rawCookie.split(";")[0]; // "JSESSIONID=F388D35B37DB9A1650D5867280E50B66" 추출
-//            log.info("Extracted Session ID: {}", sessionId);
-//            session.setAttribute("sessionId", sessionId);
-//            return ResponseEntity.ok(sessionId); // 세션 ID 반환
-//        }
-//
-//        return ResponseEntity.ok(null);
-//    }
-
-
 
     private final RestClient restClient;
     private final ProjectRepository projectRepository;
@@ -86,7 +47,7 @@ public class DocsLoginService {
 
         if(request.get("endpoint") == null) throw new RuntimeException("엔드포인트없음");
 
-        final String url = "https://%s.shooot.shop".formatted(project.getEnglishName()) + "/" + ((String) request.get("endpoint"));
+        final String url = "https://%s.shooot.shop".formatted(project.getEnglishName()) + ((String) request.get("endpoint"));
 
 //        final String url = "http://localhost:8081" + "/" + ((String)request.get("endpoint"));
 

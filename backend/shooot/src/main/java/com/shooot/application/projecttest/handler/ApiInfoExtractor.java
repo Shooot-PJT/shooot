@@ -32,6 +32,10 @@ public final class ApiInfoExtractor {
                 prefix = String.join(", ", getPathsFromAnnotation(annotation));
             }
 
+            if(prefix == null) {
+                prefix = "";
+            }
+
             if (isRestController || isController) {
 
                 for (Method method : clazz.getDeclaredMethods()) {
