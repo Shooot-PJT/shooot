@@ -95,13 +95,14 @@ public class DockerComposeManager {
     }
 
     private void applyUserDeployConfig(Map<String, Object> userServices, String instanceName) {
-        Map<String, Object> userDeployConfig = Map.of(
-                "replicas", 1,
-                "placement", Map.of("constraints", List.of("node.hostname == " + instanceName))
-        );
+
 
         for (Map.Entry<String, Object> entry : userServices.entrySet()) {
             Map<String, Object> serviceConfig = (Map<String, Object>) entry.getValue();
+            Map<String, Object> userDeployConfig = Map.of(
+                    "replicas", 1,
+                    "placement", Map.of("constraints", List.of("node.hostname == " + instanceName))
+            );
             serviceConfig.put("deploy", userDeployConfig);
             serviceConfig.put("networks", List.of(NETWORK_INTERNAL));
         }

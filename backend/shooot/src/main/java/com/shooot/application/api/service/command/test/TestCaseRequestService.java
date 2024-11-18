@@ -205,6 +205,8 @@ public class TestCaseRequestService {
     private Map<String, Object> extractFormData(Map<String, Object> body){
         Map<String, Object> formDataInBody = (Map<String, Object>) body.get("formData");
 //        Map<String, Object[]> datas = (Map<String, Object[]>) formData.get("datas");
+        if(formDataInBody == null) return null;
+
         Map<String, Object> datas = extractDataInFormData(formDataInBody);
         log.info("datas = {}", datas);
 

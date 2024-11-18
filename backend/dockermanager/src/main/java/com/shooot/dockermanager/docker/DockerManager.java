@@ -60,6 +60,7 @@ public class DockerManager {
         String target = vagrantRepository.getFirstEmptyInstance();
         if (target == null) throw new InstanceIsFullException();
 
+        vagrantRepository.put(target, null);
         executorService.submit(() -> startDockerComposeProcess(dto, target));
         return true;
     }
@@ -103,10 +104,11 @@ public class DockerManager {
                 .instanceName(target)
                 .build();
         projectDirectoryManager.setMetaData(dto.getProjectId(), dto.getProjectJarFileId(), metaData);
-
-        copyDockerfile(dto);
-        dockerComposeManager.mergeDockerCompose(projectDirectoryManager.getFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE).orElseThrow(IllegalArgumentException::new), project.getEnglishName(), target, projectVersion);
         vagrantRepository.put(target, metaData);
+        copyDockerfile(dto);
+
+        dockerComposeManager.mergeDockerCompose(projectDirectoryManager.getFile(dto.getProjectId(), dto.getProjectJarFileId(), ProjectDirectoryManager.DirStructure.DOCKER_COMPOSE).orElseThrow(IllegalArgumentException::new), project.getEnglishName(), target, projectVersion);
+
     }
 
     private void copyDockerfile(ServiceStartDto dto) throws IOException {
