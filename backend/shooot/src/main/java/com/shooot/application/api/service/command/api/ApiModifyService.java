@@ -42,7 +42,7 @@ public class ApiModifyService {
 
         if(apiModifyRequest.getManagerId() != null){
             //todo user 없을때 예외 던지기
-            updateApiManager(api.getProjectParticipant().getId(), apiModifyRequest.getManagerId());
+            //updateApiManager(api.getProjectParticipant().getId(), apiModifyRequest.getManagerId());
             ProjectParticipant projectParticipant = participantRepository.findById(apiModifyRequest.getManagerId())
                     .orElseThrow(ProjectParticipantNotFoundException::new);
 
