@@ -7,11 +7,11 @@ export const BellSubscriptionRecipe = recipe({
     display: 'flex',
     alignItems: 'center',
     marginTop: '0.5rem',
-    transition: 'all 0.25s ease-in-out',
+    transition: 'all 0.15s ease-in-out',
     cursor: 'pointer',
   },
   variants: {
-    isSubscribed: {
+    isSubscribe: {
       true: {
         color: colorPalette.amber[400],
         selectors: {
@@ -27,6 +27,6 @@ export const BellSubscriptionRecipe = recipe({
     },
   },
   defaultVariants: {
-    isSubscribed: false,
+    isSubscribe: false,
   },
 });

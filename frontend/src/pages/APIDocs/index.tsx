@@ -5,6 +5,7 @@ import { AddDomainButton } from './components/Domain/DomainButtons/DomainButtons
 import { useGetDomainList } from './reactQueries/domain';
 import { useNavBarStore } from '../../stores/navbarStore';
 import { useEffect } from 'react';
+import Typography from '../../components/Typography';
 
 export const APIDocs = () => {
   const currentProjectId = useNavBarStore((state) => state.project);
@@ -13,6 +14,8 @@ export const APIDocs = () => {
     data: domainList,
     isLoading,
     refetch,
+    isError,
+    error,
   } = useGetDomainList({
     projectId: Number(currentProjectId),
   });
@@ -22,7 +25,27 @@ export const APIDocs = () => {
   }, [currentProjectId, refetch]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <Flexbox
+        flexDirections="col"
+        style={{ padding: '2rem', alignItems: 'center' }}
+      >
+        <Typography>Loading...</Typography>
+      </Flexbox>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Flexbox
+        flexDirections="col"
+        style={{ padding: '2rem', alignItems: 'center' }}
+      >
+        <Typography color="originalRed">
+          {error.message || '도메인 목록을 불러오는 중 오류가 발생했습니다.'}
+        </Typography>
+      </Flexbox>
+    );
   }
 
   return (

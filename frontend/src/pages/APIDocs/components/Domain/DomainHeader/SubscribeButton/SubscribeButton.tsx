@@ -3,18 +3,22 @@ import { CustomTooltip } from '../../../../../../components/CustomToolTip';
 import * as s from './SubscribeButton.css';
 import { DomainInfo } from '../../../../types/data/Domain.data';
 
+interface SubscribeButtonProps {
+  isSubscribe: DomainInfo['isSubscribe'];
+  onToggleSubscribe: () => void;
+}
+
 export const SubscribeButton = ({
-  isSubscribed,
-}: {
-  isSubscribed: DomainInfo['isSubscribed'];
-}) => {
-  const tooltipTitle = isSubscribed ? '알림 구독' : '알림 구독';
+  isSubscribe,
+  onToggleSubscribe,
+}: SubscribeButtonProps) => {
+  const tooltipTitle = isSubscribe ? '알림 구독 취소' : '알림 구독';
   return (
     <CustomTooltip title={tooltipTitle} placement="top">
       <div
-        className={s.BellSubscriptionRecipe({
-          isSubscribed,
-        })}
+        className={s.BellSubscriptionRecipe({ isSubscribe })}
+        onClick={onToggleSubscribe}
+        style={{ cursor: 'pointer' }}
       >
         <IoNotifications />
       </div>

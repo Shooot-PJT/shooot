@@ -80,31 +80,7 @@ export const EditAPIModal: React.FC<EditAPIModalProps> = ({
       <Typography size={1.5} weight="600">
         API 편집
       </Typography>
-      <FormControl fullWidth size="small">
-        <InputLabel color="secondary">Method</InputLabel>
 
-        <Select
-          value={method || 'METHOD'}
-          onChange={(e) =>
-            setMethod(
-              e.target.value === 'METHOD' ? null : (e.target.value as Method),
-            )
-          }
-          label="Method"
-          color="secondary"
-          MenuProps={{
-            PaperProps: {
-              style: { maxHeight: 200, backgroundColor: '#f7f7f7' },
-            },
-          }}
-        >
-          <MenuItem value="GET">GET</MenuItem>
-          <MenuItem value="POST">POST</MenuItem>
-          <MenuItem value="PUT">PUT</MenuItem>
-          <MenuItem value="DELETE">DELETE</MenuItem>
-          <MenuItem value="PATCH">PATCH</MenuItem>
-        </Select>
-      </FormControl>
       <Textfield
         label="API 이름"
         value={title}
@@ -132,6 +108,32 @@ export const EditAPIModal: React.FC<EditAPIModalProps> = ({
         fullWidth
         color="secondary"
       />
+      <FormControl fullWidth size="small">
+        <InputLabel color="secondary">Method</InputLabel>
+
+        <Select
+          value={method || 'METHOD'}
+          onChange={(e) =>
+            setMethod(
+              e.target.value === 'METHOD' ? null : (e.target.value as Method),
+            )
+          }
+          label="Method"
+          color="secondary"
+          MenuProps={{
+            PaperProps: {
+              style: { maxHeight: 200, backgroundColor: '#f7f7f7' },
+            },
+          }}
+        >
+          <MenuItem>선택안함</MenuItem>
+          <MenuItem value="get">GET</MenuItem>
+          <MenuItem value="post">POST</MenuItem>
+          <MenuItem value="put">PUT</MenuItem>
+          <MenuItem value="delete">DELETE</MenuItem>
+          <MenuItem value="patch">PATCH</MenuItem>
+        </Select>
+      </FormControl>
       <FormControl fullWidth size="small" variant="outlined">
         <InputLabel color="secondary">담당자</InputLabel>
         <Select
