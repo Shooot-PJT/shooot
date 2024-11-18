@@ -13,10 +13,12 @@ import { AddProjectModal } from '../AddProjectModal/AddProjectModal';
 import { DataTable } from '../DataTable/DataTable';
 import { TestConfigModal } from '../TestConfigModal/TestConfigModal';
 import { DeleteJarFileModal } from './DeleteJarFileModal/DeleteJarFileModal';
+import { ApiDocumentModal } from '../ApiDocumentModal/ApiDocumentModal';
 
 interface ProjectProps {
   jarFiles: GetJarFilesResponse;
   idList: number[];
+  isPending: boolean;
   handleRender: () => void;
   handleOnBuild: () => void;
 }
@@ -24,12 +26,13 @@ interface ProjectProps {
 export const ProjectTable = ({
   jarFiles,
   idList,
+  isPending,
   handleRender,
   handleOnBuild,
 }: ProjectProps) => {
   const [selectedRow, setSelectedRow] = useState<number>(-1);
   const colWidths = [10, 30, 30, 15, 15];
-  const headers = ['버전', '파일명', '최근 빌드', 'API 문서', '배포하기'];
+  const headers = ['버전', '파일명', '최근 빌드', 'API 목록', '배포하기'];
   const modal = useModal();
   const popup = usePopup();
   const { setState } = useUploadStateStore();
@@ -45,6 +48,12 @@ export const ProjectTable = ({
   const handleAddProjectModal = () => {
     modal.push({
       children: <AddProjectModal handleRender={handleRender} />,
+    });
+  };
+
+  const handleAddDocsModal = (id: number) => {
+    modal.push({
+      children: <ApiDocumentModal projectJarFileId={id} />,
     });
   };
 
@@ -88,9 +97,9 @@ export const ProjectTable = ({
 
   const handleDeploy = (projectJarFileId: number) => {
     setState('Pending');
-    handleOnBuild();
     deployFile({ projectJarFileId: projectJarFileId })
       .then(() => {
+        handleOnBuild();
         handleRender();
       })
       .catch((error) => {
@@ -168,7 +177,8 @@ export const ProjectTable = ({
       <DataTable
         colWidths={colWidths}
         headers={headers}
-        data={convertDataTable(jarFiles, handleDeploy)}
+        data={convertDataTable(jarFiles, handleAddDocsModal, handleDeploy)}
+        isPending={isPending}
         selectable={true}
         selectedRowIndex={selectedRow}
         handleSelectRow={handleSelectRow}

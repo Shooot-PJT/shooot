@@ -3,13 +3,30 @@ import colorPalette from '../../../../styles/colorPalette';
 
 const flightAnimation = keyframes({
   '0%': {
-    transform: 'translateY(-120px)',
-    boxShadow: 'inset 0px 12px 3px rgba(0, 0, 0, 0.2)',
+    transform: 'translateY(-300px) translateX(0px)',
   },
   '100%': {
-    transform: 'translateY(200px)',
+    transform: 'translateY(800px) translateX(-30px)',
     boxShadow: 'inset -16px -20px 3px rgba(0, 0, 0, 0.2)',
   },
+});
+
+const flightAnimation2 = keyframes({
+  '0%': {
+    transform: 'translateY(-300px) translateX(0px)',
+  },
+  '100%': {
+    transform: 'translateY(800px) translateX(20px)',
+    boxShadow: 'inset 0px 3px 3px rgba(0, 0, 0, 0.2)',
+  },
+});
+
+export const container = style({
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
 });
 
 export const moon = style({
@@ -17,7 +34,7 @@ export const moon = style({
   width: '100px',
   height: '100px',
   top: '10%',
-  left: '58%',
+  left: '74%',
   borderRadius: '50%',
   aspectRatio: '1',
   backgroundColor: colorPalette.amber[500],
@@ -25,7 +42,24 @@ export const moon = style({
     'radial-gradient(circle, rgba(255, 249, 196, 0.9) 0%, rgba(125, 125, 125, 0) 100%)',
   opacity: '1',
   willChange: `transform boxShadow`,
-  animation: `${flightAnimation} 3.5s ease-in-out`,
+  animation: `${flightAnimation} 2s linear`,
+  animationIterationCount: 'infinite',
+});
+
+export const moon2 = style({
+  position: 'absolute',
+  width: '60px',
+  height: '60px',
+  top: '10%',
+  left: '10%',
+  borderRadius: '50%',
+  aspectRatio: '1',
+  backgroundColor: colorPalette.blue[500],
+  backgroundImage:
+    'radial-gradient(circle, rgba(255, 249, 196, 0.9) 0%, rgba(125, 125, 125, 0) 100%)',
+  opacity: '1',
+  willChange: `transform boxShadow`,
+  animation: `${flightAnimation2} 2.5s linear`,
   animationIterationCount: 'infinite',
 });
 

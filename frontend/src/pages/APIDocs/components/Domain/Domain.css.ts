@@ -23,7 +23,7 @@ export const BellSubscriptionRecipe = recipe({
     cursor: 'pointer',
   },
   variants: {
-    isSubscribed: {
+    isSubscribe: {
       true: {
         color: colorPalette.amber[400],
         selectors: {
@@ -39,7 +39,7 @@ export const BellSubscriptionRecipe = recipe({
     },
   },
   defaultVariants: {
-    isSubscribed: false,
+    isSubscribe: false,
   },
 });
 
