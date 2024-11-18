@@ -1,6 +1,5 @@
 package com.shooot.application.stresstest.service;
 
-import com.shooot.application.stresstest.controller.dto.StressTestSseResponse;
 import com.shooot.application.stresstest.controller.dto.TestStateDto;
 import com.shooot.application.stresstest.ui.dto.StressTestUsageResponse;
 import java.io.IOException;
@@ -36,16 +35,6 @@ public class StressTestSseService {
                 SseEmitter.event().name("test_data").data(response, MediaType.APPLICATION_JSON));
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    public void send(Integer projectJarFileId, StressTestSseResponse dto) {
-        SseEmitter sseEmitter = sseEmitters.get(projectJarFileId);
-        try {
-            sseEmitter.send(
-                SseEmitter.event().name("test_data").data(dto, MediaType.APPLICATION_JSON));
-        } catch (IOException e) {
-            sseEmitter.complete();
         }
     }
 

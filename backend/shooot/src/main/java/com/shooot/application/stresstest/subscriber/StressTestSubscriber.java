@@ -1,5 +1,9 @@
 package com.shooot.application.stresstest.subscriber;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shooot.application.stresstest.controller.dto.StressTestResponse;
+import com.shooot.application.stresstest.service.StressTestSseService;
+import com.shooot.application.stresstest.ui.dto.StressTestUsageResponse;
 import jakarta.annotation.PostConstruct;
 import java.time.Duration;
 import java.util.Map;
@@ -20,7 +24,9 @@ public class StressTestSubscriber implements
     StreamListener<String, MapRecord<String, String, String>> {
 
     private final StringRedisTemplate redisTemplate;
+    private final ObjectMapper objectMapper;
     private final Map<Integer, Subscription> subscriptions = new ConcurrentHashMap<>();
+    private final StressTestSseService stressTestSseService;
     private StreamMessageListenerContainer<String, MapRecord<String, String, String>> listenerContainer;
 
     @PostConstruct
@@ -50,5 +56,22 @@ public class StressTestSubscriber implements
 
     @Override
     public void onMessage(MapRecord<String, String, String> message) {
+        try {
+            String json = message.getValue().get("message");
+            System.out.println(json);
+            StressTestResponse response = objectMapper.readValue(json, StressTestResponse.class);
+            System.out.println(response);
+            StressTestUsageResponse sseResponse = StressTestUsageResponse.builder()
+                .method(response.getHttpMethod())
+                .url(response.getUrl())
+                .curr(response.getCurr())
+                .avg(response.getAvg())
+                .min(response.getMin())
+                .max(response.getMax())
+                .build();
+            stressTestSseService.sendUsage(response.getProjectJarFileId(), sseResponse);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

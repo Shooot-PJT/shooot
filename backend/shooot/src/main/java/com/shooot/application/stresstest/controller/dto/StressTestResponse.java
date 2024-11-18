@@ -1,5 +1,6 @@
 package com.shooot.application.stresstest.controller.dto;
 
+import com.shooot.application.stresstest.ui.dto.Usage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,14 +12,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StressTestResponse {
 
-    private Integer projectId;
     private Integer projectJarFileId;
 
-    private StressTestValue curr;
-    private StressTestValue avg;
-    private StressTestValue min;
-    private StressTestValue max;
+    private Usage curr;
+    private Usage avg;
+    private Usage min;
+    private Usage max;
 
-    private String method;
+    private String httpMethod;
     private String url;
 }
