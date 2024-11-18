@@ -164,7 +164,7 @@ TestCase.Header = function Header() {
           gap: '0.5rem',
         }}
       >
-        <TestButton.TestCase />
+        <TestButton.TestCase testcaseId={context.testCaseHeaderInfo.id} />
         <CollapseIcon isOpen={false} />
         <TestResultTail testStatus={TEST_RESULTS.SUCCESS} />
       </Flexbox>
