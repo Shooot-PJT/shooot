@@ -13,7 +13,6 @@ export const useTestSSE = ({ projectJarFileId }: UseProjectSSEProps) => {
 
   useEffect(() => {
     if (!eventSourceRef.current) {
-      console.log('커넥션 연결');
       const eventSource = new EventSource(
         `https://shooot.co.kr/api/sse/projects/jarFile/${projectJarFileId}/connection`,
         { withCredentials: true },
@@ -43,7 +42,6 @@ export const useTestSSE = ({ projectJarFileId }: UseProjectSSEProps) => {
 
     return () => {
       if (eventSourceRef.current) {
-        console.log('커넥션 종료');
         eventSourceRef.current.close();
         eventSourceRef.current = null;
       }
