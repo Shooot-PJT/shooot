@@ -1,6 +1,7 @@
 package com.shooot.application.api.ui;
 
 import com.shooot.application.api.service.command.test.DocsLoginService;
+import com.shooot.application.api.service.command.test.TestApiRequestService;
 import com.shooot.application.api.service.command.test.TestCaseRequestService;
 import com.shooot.application.api.ui.dto.ProjectClientTotalLoginRequest;
 import com.shooot.application.api.ui.dto.TestCaseResponseView;
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestClient;
 import reactor.netty.http.Cookies;
 
 import javax.swing.*;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -29,6 +31,7 @@ public class ProjectClientController {
     private final TestCaseRequestService testCaseRequestService;
     private final DocsLoginService docsLoginService;
     private final RestClient restClient;
+    private final TestApiRequestService testApiRequestService;
 
     @PostMapping("/testcases/{testcaseId}")
     public ResponseEntity<?> sendTestCaseRequest(
@@ -39,6 +42,18 @@ public class ProjectClientController {
         TestCaseResponseView testCaseResponseView = testCaseRequestService.testCaseResponse(testcaseId, userId);
 
         return ResponseEntity.ok(testCaseResponseView);
+    }
+
+    @PostMapping("/testcases/{apiId}")
+    public ResponseEntity<?> sendAllTestCaseOfApiRequest(
+            @PathVariable Integer apiId,
+            @AuthenticationPrincipal UserLoginContext userLoginContext
+    ){
+        Integer userId = userLoginContext.getUserId();
+        List<TestCaseResponseView> result = testApiRequestService.allTestcaseOfApi(apiId, userId);
+
+
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/login")

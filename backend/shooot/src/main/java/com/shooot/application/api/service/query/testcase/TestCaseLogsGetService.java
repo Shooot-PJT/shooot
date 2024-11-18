@@ -16,4 +16,5 @@ public class TestCaseLogsGetService {
     public Slice<ApiTestLogInfiniteResponse> getFilterLogs(TestLogSearchRequest testLogSearchRequest, Pageable pageable){
         return apiTestLogQueryRepository.getTestLogs(testLogSearchRequest, pageable);
     }
+
 }

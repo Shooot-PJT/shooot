@@ -144,5 +144,27 @@ public class ApiTestCaseController {
         return ResponseEntity.ok(testCaseLogsGetService.getFilterLogs(testLogSearchRequest, pageable));
     }
 
+    @GetMapping("/{apiId}/testcases/logs")
+    @RequiresProjectParticipation(type = ProjectDomainType.API)
+    public ResponseEntity<?> getApiTestLog(
+            @PathVariable(name = "apiId") Integer apiId,
+            @RequestParam(required = false) Integer testerId,
+            @RequestParam(required = false) Boolean isSuccess,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @PageableDefault(size = 4, page = 0) Pageable pageable
+    ){
+
+        TestLogSearchRequest testLogSearchRequest = TestLogSearchRequest.builder()
+                .apiId(apiId)
+                .testerId(testerId)
+                .isSuccess(isSuccess)
+                .startDate(startDate)
+                .endDate(endDate)
+                .build();
+
+        return ResponseEntity.ok(testCaseLogsGetService.getFilterLogs(testLogSearchRequest, pageable));
+
+    }
 
 }
