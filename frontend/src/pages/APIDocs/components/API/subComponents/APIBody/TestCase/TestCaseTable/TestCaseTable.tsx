@@ -267,7 +267,6 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
     });
   };
 
-  // 추가된 취소 핸들러
   const handleCancel = () => {
     if (isAddMode && onCancel) {
       onCancel();
@@ -379,7 +378,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
                         ? colorPalette.originalGreen
                         : colorPalette.originalRed,
                     height: '0.25rem',
-                    width: '90%',
+                    width: '100%',
                   }}
                 />
               </Flexbox>
@@ -617,34 +616,41 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
                   자유 양식으로 응답 모습을 정의합니다.
                 </Typography>
               </Flexbox>
-              <Editor
-                height="100px"
-                defaultLanguage="plaintext"
-                value={editedTestCase?.content.expectedResponse.schema || ''}
-                onChange={(value) => {
-                  if (!editedTestCase) return;
-                  setEditedTestCase({
-                    ...editedTestCase,
-                    content: {
-                      ...editedTestCase.content,
-                      expectedResponse: {
-                        ...editedTestCase.content.expectedResponse,
-                        schema: value || '',
+              <div
+                style={{
+                  overflow: 'auto',
+                  height: '12rem',
+                  width: '97%',
+                }}
+              >
+                <Editor
+                  height="100px"
+                  defaultLanguage="plaintext"
+                  value={editedTestCase?.content.expectedResponse.schema || ''}
+                  onChange={(value) => {
+                    if (!editedTestCase) return;
+                    setEditedTestCase({
+                      ...editedTestCase,
+                      content: {
+                        ...editedTestCase.content,
+                        expectedResponse: {
+                          ...editedTestCase.content.expectedResponse,
+                          schema: value || '',
+                        },
                       },
-                    },
-                  });
-                }}
-                onMount={handleEditorDidMount}
-                theme="dracula"
-                options={{
-                  readOnly: !isEditMode, // isEditing은 위에서 내려주는거 써야함
-                  lineNumbers: 'on',
-                  folding: true,
-                  minimap: { enabled: false },
-                  renderLineHighlightOnlyWhenFocus: true,
-                }}
-              />
-
+                    });
+                  }}
+                  onMount={handleEditorDidMount}
+                  theme="dracula"
+                  options={{
+                    readOnly: !isEditMode, // isEditing은 위에서 내려주는거 써야함
+                    lineNumbers: 'on',
+                    folding: true,
+                    minimap: { enabled: false },
+                    renderLineHighlightOnlyWhenFocus: true,
+                  }}
+                />
+              </div>
               <Flexbox
                 flexDirections="col"
                 alignItems="start"
@@ -665,49 +671,57 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
                   </Typography>
                 </Flexbox>
               </Flexbox>
-              <Editor
-                height="200px"
-                defaultLanguage="json"
-                value={
-                  editedTestCase?.content.expectedResponse.example
-                    ? JSON.stringify(
-                        editedTestCase.content.expectedResponse.example,
-                        null,
-                        2,
-                      )
-                    : ''
-                }
-                onMount={handleEditorDidMount}
-                theme="dracula"
-                options={{
-                  readOnly: !isEditMode, // isEditing은 위에서 내려주는거 써야함
-                  lineNumbers: 'on',
-                  folding: true,
-                  minimap: { enabled: false },
-                  renderLineHighlightOnlyWhenFocus: true,
+              <div
+                style={{
+                  overflow: 'auto',
+                  height: '12rem',
+                  width: '97%',
                 }}
-                onChange={(value) => {
-                  if (!editedTestCase) return;
-
-                  if (!isEditMode) return;
-
-                  try {
-                    const parsedValue = JSON.parse(value || '{}');
-                    setEditedTestCase({
-                      ...editedTestCase,
-                      content: {
-                        ...editedTestCase.content,
-                        expectedResponse: {
-                          ...editedTestCase.content.expectedResponse,
-                          example: parsedValue,
-                        },
-                      },
-                    });
-                  } catch (error) {
-                    console.error('Invalid JSON in Example editor:', error);
+              >
+                <Editor
+                  height="200px"
+                  defaultLanguage="json"
+                  value={
+                    editedTestCase?.content.expectedResponse.example
+                      ? JSON.stringify(
+                          editedTestCase.content.expectedResponse.example,
+                          null,
+                          2,
+                        )
+                      : ''
                   }
-                }}
-              />
+                  onMount={handleEditorDidMount}
+                  theme="dracula"
+                  options={{
+                    readOnly: !isEditMode, // isEditing은 위에서 내려주는거 써야함
+                    lineNumbers: 'on',
+                    folding: true,
+                    minimap: { enabled: false },
+                    renderLineHighlightOnlyWhenFocus: true,
+                  }}
+                  onChange={(value) => {
+                    if (!editedTestCase) return;
+
+                    if (!isEditMode) return;
+
+                    try {
+                      const parsedValue = JSON.parse(value || '{}');
+                      setEditedTestCase({
+                        ...editedTestCase,
+                        content: {
+                          ...editedTestCase.content,
+                          expectedResponse: {
+                            ...editedTestCase.content.expectedResponse,
+                            example: parsedValue,
+                          },
+                        },
+                      });
+                    } catch (error) {
+                      console.error('Invalid JSON in Example editor:', error);
+                    }
+                  }}
+                />
+              </div>
             </Flexbox>
           </div>
         </Flexbox>
