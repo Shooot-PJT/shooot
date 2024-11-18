@@ -79,6 +79,7 @@ public class ApiController {
             @PathVariable(name = "apiId") Integer apiId,
             @AuthenticationPrincipal UserLoginContext userLoginContext
     ){
+        log.info("들어옴");
         Integer userId = userLoginContext.getUserId();
         apiDeleteService.deleteApi(apiId, userId);
 
