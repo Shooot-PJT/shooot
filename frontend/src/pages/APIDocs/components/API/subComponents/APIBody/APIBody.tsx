@@ -11,6 +11,7 @@ import { useGetAPIDetail } from '../../../../reactQueries/api';
 import { TestCaseTable } from './TestCase/TestCaseTable/TestCaseTable';
 import { useAPI } from '../../../../hooks/useAPI';
 import { RequestDocs } from './RequestDocs/RequestDocs';
+import { TestLogBox } from './TestLogBox/TestLogBox';
 
 export const APIBody = () => {
   const context = useAPIContext();
@@ -219,6 +220,11 @@ export const APIBody = () => {
             </Flexbox>
           </Flexbox>
         </Flexbox>
+        {/* 테스트 로그 */}
+        <TestLogBox
+          apiId={apiDetail.requestDocs.id}
+          lastLog={apiDetail.lastLog!}
+        />
       </Flexbox>
     </div>
   );
