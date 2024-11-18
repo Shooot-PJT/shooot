@@ -25,6 +25,7 @@ export interface EditDomainRequest {
 }
 
 export interface RemoveDomainRequest {
+  projectId: ProjectInfo['projectId'];
   domainId: DomainInfo['domainId'] | undefined;
 }
 

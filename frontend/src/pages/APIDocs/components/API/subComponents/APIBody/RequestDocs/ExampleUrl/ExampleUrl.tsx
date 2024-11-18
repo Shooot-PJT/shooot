@@ -17,12 +17,14 @@ export const ExampleUrl = ({
   method = null,
   exampleUrl,
   isEditMode = false,
-}: ExampleUrlProps) => {
-  const [url, setUrl] =
+  onChange, //
+}: ExampleUrlProps & { onChange: (newValue: string) => void }) => {
+  const [url, setUrlState] =
     useState<APIDetailInfo['requestDocs']['example_url']>(exampleUrl);
 
   const handleChangeUrl = (newValue: string) => {
-    setUrl(newValue);
+    setUrlState(newValue);
+    onChange(newValue);
   };
 
   return (
