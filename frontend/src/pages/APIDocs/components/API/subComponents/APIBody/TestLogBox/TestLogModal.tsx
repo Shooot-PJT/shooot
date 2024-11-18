@@ -56,7 +56,7 @@ export const TestLogModal = ({ apiId }: TestLogModalProps) => {
         </Icon>
       </Flexbox>
       {/* 로그들 */}
-      <Flexbox flexDirections="col" style={{ width: '100%', rowGap: '1rem' }}>
+      <Flexbox flexDirections="col" style={{ width: '100%', rowGap: '2rem' }}>
         {logs?.pages.map((page, pageIndex) => (
           <React.Fragment key={pageIndex}>
             {page.content.map((item) => (

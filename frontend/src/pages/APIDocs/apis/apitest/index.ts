@@ -6,7 +6,7 @@ export const testcaseTest = (testcaseId: number) => {
 };
 
 export const apiTest = (apiId: number) => {
-  return api.post<TestResponse[]>(`/projects/tests/apis/${apiId}`);
+  return api.post<TestResponse[]>(`/projectClient/testcases/apis/${apiId}`);
 };
 
 export const getApiTestLogs = async (apiId: number, pageParam: number) => {
