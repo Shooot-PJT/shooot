@@ -56,7 +56,7 @@ export const ExcuteTestModal = ({
     ) {
       dataIndexRef.current += 1;
     }
-    if (isDone && time % 180 === 45) {
+    if (isDone && time % 180 === 60) {
       dataTableBuffer.current += 1;
     }
   }, [testData, testData.length, time, isDone]);
@@ -89,7 +89,7 @@ export const ExcuteTestModal = ({
     if (testData.length - 1 === dataIndexRef.current && testState === 'end') {
       setIsDone(true);
     }
-    if (isDone && time % 180 === 160) {
+    if (isDone && time % 180 === 165) {
       setTitleStatus(true);
       dataTableBuffer.current += 1;
       cancelAnimationFrame(animationFrameId);
@@ -183,7 +183,7 @@ export const ExcuteTestModal = ({
         </div>
         <div>
           <Typography size={1.25} weight="700">
-            디스크 사용량
+            네트워크 사용량
           </Typography>
           <Graph
             frameColor={'get'}
