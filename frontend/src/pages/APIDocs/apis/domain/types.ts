@@ -18,6 +18,7 @@ export interface AddDomainRequest {
 }
 
 export interface EditDomainRequest {
+  projectId: ProjectInfo['projectId'];
   domainId: DomainInfo['domainId'] | undefined;
   title?: DomainInfo['title'];
   description?: DomainInfo['description'];

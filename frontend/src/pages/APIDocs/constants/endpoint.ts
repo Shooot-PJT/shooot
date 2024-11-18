@@ -2,7 +2,9 @@ type Endpoint =
   | 'projects'
   | 'tests'
   | 'domains'
-  | 'subscriptions'
+  | 'subscribe'
+  | 'notification'
+  | 'count'
   | 'apis'
   | 'logs'
   | 'testcases'
@@ -12,7 +14,9 @@ export const Endpoint: { [E in Endpoint]: E } = {
   projects: 'projects',
   tests: 'tests',
   domains: 'domains',
-  subscriptions: 'subscriptions',
+  subscribe: 'subscribe',
+  notification: 'notification',
+  count: 'count',
   apis: 'apis',
   logs: 'logs',
   testcases: 'testcases',
