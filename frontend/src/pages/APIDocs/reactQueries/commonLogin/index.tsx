@@ -15,10 +15,10 @@ export const useCommonLoginMutation = () => {
   const { mutate } = useMutation({
     mutationKey: ['commonLogin'],
     mutationFn: async (infos: LoginInfo[]) => {
-      const data: Record<string, string> = {};
-      infos.forEach((info) => (data[info.key] = info.value));
+      const info = [...infos];
+      info.splice(0, 1);
 
-      const response = await commonLogin(data);
+      const response = await commonLogin(infos[0].value, JSON.stringify(info));
       return response.data;
     },
     onSuccess: (data) => {
