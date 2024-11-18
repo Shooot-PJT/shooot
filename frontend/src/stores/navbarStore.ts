@@ -10,6 +10,7 @@ type NavBarAction = {
   setMenu: (menu: NavBarState['menu']) => void;
   setIsOpen: (isOpen: NavBarState['isOpen']) => void;
   setProject: (project: number) => void;
+  clear: () => void;
 };
 
 export const useNavBarStore = create<NavBarState & NavBarAction>()((set) => ({
@@ -23,4 +24,5 @@ export const useNavBarStore = create<NavBarState & NavBarAction>()((set) => ({
   setMenu: (menu) => set(() => ({ menu: menu })),
   setIsOpen: (isOpen) => set(() => ({ isOpen: isOpen })),
   setProject: (project) => set(() => ({ project: project })),
+  clear: () => set(() => ({ menu: 2, project: 0 })),
 }));

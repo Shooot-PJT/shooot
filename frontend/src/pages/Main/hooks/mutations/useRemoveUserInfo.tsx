@@ -4,11 +4,13 @@ import { removeUserInfo } from '../../apis/userApis';
 import { useNavigate } from 'react-router-dom';
 import usePopup from '../../../../hooks/usePopup';
 import Typography from '../../../../components/Typography';
+import { useNavBarStore } from '../../../../stores/navbarStore';
 
 export const useRemoveUserInfo = () => {
   const queryClient = useQueryClient();
   const nav = useNavigate();
   const popup = usePopup();
+  const navbarStore = useNavBarStore();
 
   const { mutate } = useMutation({
     mutationKey: [MUTATION_KEYS.removeUserInfo],
@@ -16,6 +18,7 @@ export const useRemoveUserInfo = () => {
     onSuccess: () => {
       queryClient.clear();
       sessionStorage.clear();
+      navbarStore.clear();
       nav('/auth/login');
     },
     onError: () => {
