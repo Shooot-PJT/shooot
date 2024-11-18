@@ -1,5 +1,5 @@
-import { useMutation } from '@tanstack/react-query';
-import { apiTest, testcaseTest } from '../../apis/apitest';
+import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
+import { apiTest, getApiTestLogs, testcaseTest } from '../../apis/apitest';
 import usePopup from '../../../../hooks/usePopup';
 import Typography from '../../../../components/Typography';
 
@@ -54,4 +54,22 @@ export const useApiTestMutation = () => {
   });
 
   return { apiTest: mutate };
+};
+
+// 테스트 로그 무한 스크롤
+export const useApiTestLogInfiniteQuery = (apiId: number) => {
+  const { data, isLoading, hasNextPage, fetchNextPage } = useInfiniteQuery({
+    queryKey: ['logs', apiId],
+    queryFn: async ({ pageParam }) => {
+      const response = await getApiTestLogs(apiId, pageParam);
+      return response.data;
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) =>
+      lastPage.pageable.pageNumber === lastPage.pageable.pageSize - 1
+        ? undefined
+        : lastPage.pageable.pageNumber + 1,
+  });
+
+  return { logs: data, isLoading, hasNextPage, fetchNextPage };
 };

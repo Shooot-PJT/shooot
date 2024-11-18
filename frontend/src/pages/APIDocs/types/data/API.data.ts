@@ -90,11 +90,21 @@ export interface TestCaseHeaderInfo {
   modifiedAt?: string;
 }
 
+export interface ApiDetailLastLogInfo {
+  id: string;
+  isSuccess: boolean;
+  managerId: number;
+  managerName: string;
+  httpStatus: number;
+  resultCode: number;
+  response: string;
+  createdAt: string;
+}
+
 export interface APIDetailInfo {
   requestDocs: RequestDocs;
   testCases?: Array<TestCaseHeaderInfo>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  lastlog?: any; // 미정, 정해지면 변경 예정
+  lastLog?: ApiDetailLastLogInfo;
 }
 
 export interface TestCaseDetailInfo {
