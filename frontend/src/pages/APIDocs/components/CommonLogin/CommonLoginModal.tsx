@@ -7,8 +7,9 @@ import { Table } from './Table';
 import { useState } from 'react';
 import Button from '../../../../components/Button';
 import usePopup from '../../../../hooks/usePopup';
+import { useCommonLoginMutation } from '../../reactQueries/commonLogin';
 
-interface LoginInfo {
+export interface LoginInfo {
   key: string;
   value: string;
 }
@@ -16,6 +17,7 @@ interface LoginInfo {
 export const CommonLoginModal = () => {
   const modal = useModal();
   const popup = usePopup();
+  const { mutate } = useCommonLoginMutation();
   const [infos, setInfos] = useState<LoginInfo[]>(
     localStorage.getItem('commonLoginInfos')
       ? (JSON.parse(localStorage.getItem('commonLoginInfos')!) as LoginInfo[])
@@ -65,7 +67,8 @@ export const CommonLoginModal = () => {
       }
     }
 
-    // localStorage.setItem('commonLoginInfos', JSON.stringify(infos));
+    mutate(infos);
+    localStorage.setItem('commonLoginInfos', JSON.stringify(infos));
   };
 
   return (
