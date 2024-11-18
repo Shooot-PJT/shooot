@@ -3,10 +3,13 @@ import Flexbox from '../../../../../components/Flexbox';
 import Button from '../../../../../components/Button';
 import { RemoveDomainRequest } from '../../../apis/domain/types';
 import { DomainInfo } from '../../../types/data/Domain.data';
+import { useNavBarStore } from '../../../../../stores/navbarStore';
 
 interface RemoveDomainModalProps {
   domainId: DomainInfo['domainId'];
-  removeHandler: (domainId: RemoveDomainRequest) => void;
+  removeHandler: (
+    variables: { projectId: number } & RemoveDomainRequest,
+  ) => void;
   popHandler: () => void;
 }
 
@@ -15,6 +18,7 @@ export const RemoveDomainModal = ({
   removeHandler,
   popHandler,
 }: RemoveDomainModalProps) => {
+  const currentProjectId = useNavBarStore((state) => state.project);
   return (
     <Flexbox flexDirections="col" style={{ width: '100%', rowGap: '1rem' }}>
       <Typography size={1.25} weight="600" color="originalRed">
@@ -34,7 +38,12 @@ export const RemoveDomainModal = ({
         <Button color="grey" onClick={popHandler}>
           취소
         </Button>
-        <Button color="delete" onClick={() => removeHandler!({ domainId })}>
+        <Button
+          color="delete"
+          onClick={() =>
+            removeHandler({ domainId, projectId: currentProjectId })
+          }
+        >
           예, 삭제합니다.
         </Button>
       </Flexbox>

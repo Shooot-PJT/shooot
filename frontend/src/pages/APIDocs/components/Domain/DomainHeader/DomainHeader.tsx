@@ -17,7 +17,6 @@ import {
   useSubscribeNotification,
   useUnSubscribeNotification,
 } from '../../../reactQueries/domain';
-
 export const DomainHeader = () => {
   const context = useDomainContext();
   const { isFocused, handleToggleIsFocused } = context.useIsFocusedHook;
@@ -106,7 +105,7 @@ export const DomainHeader = () => {
             gap: '0.5rem',
           }}
         >
-          <TestButton.Domain />
+          <TestButton.Domain domainId={context.domainInfo.domainId} />
           <Button
             color="grey"
             rounded={0.5}

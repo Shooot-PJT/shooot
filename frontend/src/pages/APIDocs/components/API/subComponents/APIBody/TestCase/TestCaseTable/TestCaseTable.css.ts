@@ -96,12 +96,12 @@ export const testBodyContainerRecipe = recipe({
     overflow: 'hidden',
     transition: 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out',
     opacity: 1,
-    gap: '4rem',
+    gap: '2rem',
     border: '0 0.07rem 0.07rem 0.07rem solid',
     borderRadius: '0rem 0rem 0.5rem 0.5rem',
     borderColor: colorPalette.util[400],
     backgroundColor: themeCss.color.background[200],
-    padding: '0.65rem',
+    padding: '2rem',
   },
   variants: {
     isOpen: {
@@ -112,6 +112,8 @@ export const testBodyContainerRecipe = recipe({
         marginBottom: '3rem',
       },
       false: {
+        height: '0px',
+        padding: '0px',
         maxHeight: '0',
         opacity: 0,
         pointerEvents: 'none',
@@ -121,4 +123,13 @@ export const testBodyContainerRecipe = recipe({
   defaultVariants: {
     isOpen: false,
   },
+});
+
+export const testButton = style({
+  color: 'white',
+  fontFamily: 'Pretendard',
+  fontSize: '0.8125rem',
+  borderRadius: '0.5rem',
+  marginRight: '-1.8rem',
+  backgroundColor: themeCss.palette.grey.main,
 });
