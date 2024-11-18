@@ -17,6 +17,7 @@ import {
   useSubscribeNotification,
   useUnSubscribeNotification,
 } from '../../../reactQueries/domain';
+
 export const DomainHeader = () => {
   const context = useDomainContext();
   const { isFocused, handleToggleIsFocused } = context.useIsFocusedHook;
