@@ -61,7 +61,7 @@ export const APIDocs = () => {
         justifyContents="between"
         style={{ gap: '1rem', width: '100%' }}
       >
-        <AuthorizeButton isAuthorized={true} />
+        <AuthorizeButton />
         <AddDomainButton />
       </Flexbox>
       {domainList?.map((domainInfo) => (
