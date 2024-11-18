@@ -13,6 +13,9 @@ import {
   RemoveDomainButton,
 } from '../DomainButtons/DomainButtons';
 import { useAPI } from '../../../hooks/useAPI';
+import { useGetAPIList } from '../../../reactQueries/api';
+import { useApiTestMutation } from '../../../reactQueries/apitests';
+import usePopup from '../../../../../hooks/usePopup';
 
 export const DomainHeader = () => {
   const context = useDomainContext();
@@ -78,7 +81,7 @@ export const DomainHeader = () => {
             gap: '0.5rem',
           }}
         >
-          <TestButton.Domain />
+          <TestButton.Domain domainId={context.domainInfo.domainId} />
           <Button
             color="grey"
             rounded={0.5}
