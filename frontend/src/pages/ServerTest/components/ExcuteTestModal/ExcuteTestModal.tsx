@@ -11,6 +11,7 @@ import { DataTable } from '../DataTable/DataTable';
 import { EndServerTestModal } from '../EndServerTestModal/EndServerTestModal';
 import { MethodChip } from '../MethodChip/MethodChip';
 import * as s from './ExcuteTestModal.css';
+import { useUploadStateStore } from '../../stores/useUploadStateStore';
 
 interface ExcuteTestModalProps {
   testTime: number;
@@ -22,28 +23,45 @@ export const ExcuteTestModal = ({
   projectJarFileId,
 }: ExcuteTestModalProps) => {
   const modal = useModal();
-  const { testData } = useTestDataStore();
+  const { state: testState, setState, testData } = useTestDataStore();
+  const { setState: setUploadState } = useUploadStateStore();
   const [remainingTime, setRemainingTime] = useState(testTime);
   const [time, setTime] = useState<number>(0);
+  const [isDone, setIsDone] = useState<boolean>(false);
+  const [titleStatus, setTitleStatus] = useState<boolean>(false);
+  const [animationFrameId, setAnimationFrameId] = useState(0);
   const dataIndexRef = useRef<number>(0);
+  const dataTableBuffer = useRef<number>(-2);
 
   useEffect(() => {
     let animationFrameId: number;
 
+    setUploadState('None');
+
     const animate = () => {
       setTime((prevTime) => prevTime + 1);
-      animationFrameId = requestAnimationFrame(animate);
+      setAnimationFrameId(requestAnimationFrame(animate));
     };
 
-    animationFrameId = requestAnimationFrame(animate);
+    setAnimationFrameId(requestAnimationFrame(animate));
+
     return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
   useEffect(() => {
-    if (time % 180 === 0 && testData.length - 1 > dataIndexRef.current) {
+    if (
+      time % 180 === 45 &&
+      testData.length - 1 > dataIndexRef.current &&
+      !isDone
+    ) {
       dataIndexRef.current += 1;
+      console.log(testData);
+      console.log(dataIndexRef.current);
     }
-  }, [testData.length, time]);
+    if (isDone && time % 180 === 45) {
+      dataTableBuffer.current += 1;
+    }
+  }, [testData, testData.length, time, isDone]);
 
   useEffect(() => {
     if (remainingTime > 0) {
@@ -64,19 +82,41 @@ export const ExcuteTestModal = ({
 
   useEffect(() => {
     // console.log(testData);
-    // return () => {
-    //   modal.pop();
-    //   setState('None');
-    // };
+    return () => {
+      modal.pop();
+      setState('none');
+    };
   }, []);
+
+  useEffect(() => {
+    if (testData.length - 1 === dataIndexRef.current && testState === 'end') {
+      setIsDone(true);
+    }
+    if (isDone && time % 180 === 160) {
+      setTitleStatus(true);
+      dataTableBuffer.current += 1;
+      cancelAnimationFrame(animationFrameId);
+    }
+  }, [animationFrameId, isDone, testData.length, testState, time]);
 
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <div>
         <div className={s.title}>
-          <Typography size={2} weight="700">
-            서버 테스트
-          </Typography>
+          <Flexbox alignItems="center" style={{ gap: '1rem' }}>
+            <Typography size={2} weight="700">
+              서버 테스트
+            </Typography>
+            <div className={titleStatus ? s.endTest : s.progressTest}>
+              <Typography
+                size={1.5}
+                color={titleStatus ? 'delete' : 'put'}
+                weight="600"
+              >
+                {titleStatus ? '테스트 종료' : '진행중'}
+              </Typography>
+            </div>
+          </Flexbox>
           <Button color="delete" onClick={handleEndTestModal}>
             테스트 종료
           </Button>
@@ -146,7 +186,7 @@ export const ExcuteTestModal = ({
         </div>
         <div>
           <Typography size={1.25} weight="700">
-            네트워크 사용량
+            디스크 사용량
           </Typography>
           <Graph
             frameColor={'get'}
@@ -166,7 +206,13 @@ export const ExcuteTestModal = ({
             headers={['데이터 항목', '현재값', '평균값', '최고값', '최저값']}
             data={convertTestDataTable(
               testData,
-              dataIndexRef.current - 2 > 0 ? dataIndexRef.current - 2 : 0,
+              Math.max(
+                0,
+                Math.min(
+                  testData.length - 1,
+                  dataIndexRef.current + dataTableBuffer.current,
+                ),
+              ),
             )}
           />
         </div>

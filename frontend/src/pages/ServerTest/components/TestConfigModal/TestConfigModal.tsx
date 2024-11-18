@@ -56,7 +56,7 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
   });
 
   useTestSSE({
-    projectJarFileId: 49,
+    projectJarFileId: projectJarFileId,
   });
 
   useEffect(() => {
@@ -116,17 +116,11 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
         });
       })
       .catch((error) => {
-        modal.push({
-          children: (
-            <ExcuteTestModal
-              testTime={testTime}
-              projectJarFileId={projectJarFileId}
-            />
-          ),
-        });
         popup.push({
           title: '테스트 시도 실패',
-          children: <>{error.message}</>,
+          children: (
+            <>{error.response ? error.response.data.message : error.message}</>
+          ),
           type: 'fail',
           onClose: () => modal.pop,
         });

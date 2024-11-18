@@ -10,10 +10,12 @@ import { convertJarFileIdList } from './utils';
 import { GetJarFilesResponse } from './types';
 import { useProjectSSE } from './hooks/useProjectSSE';
 import { getTestRecord } from './apis/TestApi';
+import { useUploadStateStore } from './stores/useUploadStateStore';
 
 export const ServerTest = () => {
   const [renderKey, setRenderKey] = useState<number>(0);
   const { project } = useNavBarStore();
+  const { state } = useUploadStateStore();
 
   const { projectStatus, logs, deployedFileId, setLogs, setProjectStatus } =
     useProjectSSE({
@@ -26,11 +28,11 @@ export const ServerTest = () => {
       const response = await getJarFiles({ projectId: project });
       return response?.data ?? [];
     },
-    staleTime: 360 * 1000,
+    staleTime: 1,
   });
 
   const { data: testRecords = [] } = useQuery({
-    queryKey: ['testRecords', project, renderKey],
+    queryKey: ['testRecords', project, renderKey, state],
     queryFn: async () => {
       const response = await getTestRecord({ projectId: project });
       return response?.data ?? [];
@@ -94,6 +96,7 @@ export const ServerTest = () => {
         <div
           style={{
             width: '50%',
+            marginRight: '2rem',
           }}
         >
           <Console
@@ -104,7 +107,7 @@ export const ServerTest = () => {
           />
         </div>
       </div>
-      <div style={{ marginBottom: '3rem' }}>
+      <div style={{ marginBottom: '3rem', marginRight: '2rem' }}>
         <RecentTest testRecords={testRecords} />
       </div>
     </Flexbox>

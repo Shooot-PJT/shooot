@@ -120,10 +120,11 @@ export interface TestSSE {
   testData: TestSSEData[];
 }
 
-export type TestStatus = 'None' | 'Start' | 'End';
+export type TestStatus = 'none' | 'start' | 'end';
 
 export interface StopApiTestRequest {
   projectJarFileId: number;
+  projectId: number;
 }
 
 export interface GetTestRecordResponse {

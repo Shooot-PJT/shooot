@@ -39,11 +39,11 @@ export const initialTestData = {
     network: 0,
   },
   method: undefined,
-  endpoint: undefined,
+  url: undefined,
 };
 
 export const useTestDataStore = create<TestDataStoreState>()((set) => ({
-  state: 'None',
+  state: 'none',
   setState: (state) => set(() => ({ state })),
   testData: [initialTestData, initialTestData],
   setTestData: (data) =>
