@@ -75,7 +75,7 @@ export const APIHeader = () => {
                 nickname: context.requestDocs.managerName,
               }}
             />
-            <TestButton.API />
+            <TestButton.API apiId={context.requestDocs.id} />
             <CollapseIcon isOpen={isFocused} />
           </Flexbox>
         </Flexbox>
