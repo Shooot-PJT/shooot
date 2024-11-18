@@ -97,7 +97,7 @@ export const convertTestDataTable = (testData: TestSSEData[], idx: number) => {
 
   return (Object.keys(curr) as (keyof TestDataList)[]).map((key) => {
     const formatValue = (value: number) =>
-      key === 'network' ? `${Math.round(value)} Mb/s` : `${Math.round(value)}%`;
+      key === 'disk' ? `${Math.round(value)} Mb/s` : `${Math.round(value)}%`;
     return [
       <TestItemChip item={key} />,
       formatValue(curr[key]),
@@ -182,7 +182,7 @@ export const convertTestRecordTable = (
     </Typography>,
     <Button
       paddingY={0.35}
-      disabled={item.status === 'INTERRUPTED'}
+      disabled={item.status === 'INTERRUPTED' || item.count === 0}
       onClick={() => {
         handleTestDetailModal(item.stressTestLogId);
       }}

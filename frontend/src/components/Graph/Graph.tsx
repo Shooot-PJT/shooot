@@ -9,6 +9,7 @@ export interface BottomText {
   x: number;
   y: number;
   pointY: number;
+  value: string;
 }
 
 export interface GraphProps {
@@ -24,13 +25,6 @@ const formatTime = (seconds: number) => {
   const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
   const secs = String(seconds % 60).padStart(2, '0');
   return `${mins}:${secs}`;
-};
-
-const convertToPercentage = (value: number) => {
-  if (value <= 0) return 100;
-  if (value >= 120) return 0;
-
-  return Math.round(((120 - value) / 120) * 100);
 };
 
 const drawSpline = (
@@ -99,6 +93,7 @@ export const Graph = ({
         x: 1170,
         y: 134,
         pointY: pointY,
+        value: Math.round(SSEData[dataIndex]['curr'][dataName]) + '%',
       };
       setPoints((prevPoints) => [timeText, ...prevPoints]);
       setTexts((prevTexts) => [timeText, ...prevTexts]);
@@ -160,15 +155,11 @@ export const Graph = ({
       }
     });
 
-    points.forEach(({ x, pointY }) => {
+    points.forEach(({ x, pointY, value }) => {
       context.font = 'semibold 12px Pretendard';
       context.fillStyle = 'white';
 
-      context.fillText(
-        `${convertToPercentage(Number(pointY))}%`,
-        x + 6,
-        pointY <= 20 ? pointY + 20 : pointY - 10,
-      );
+      context.fillText(value, x + 6, pointY <= 20 ? pointY + 20 : pointY - 10);
     });
 
     context.rect(20, 20, 200, 200);
@@ -187,12 +178,24 @@ export const Graph = ({
   const animate = useCallback(() => {
     setTexts((prevTexts) =>
       prevTexts
-        .map(({ text, x, y, pointY }) => ({ text, x: x - 1, y, pointY }))
+        .map(({ text, x, y, pointY, value }) => ({
+          text,
+          x: x - 1,
+          y,
+          pointY,
+          value,
+        }))
         .filter(({ x }) => x > -1000),
     );
     setPoints((prevPoints) =>
       prevPoints
-        .map(({ text, x, y, pointY }) => ({ text, x: x - 1, y, pointY }))
+        .map(({ text, x, y, pointY, value }) => ({
+          text,
+          x: x - 1,
+          y,
+          pointY,
+          value,
+        }))
         .filter(({ x }) => x > -1000),
     );
     if (time % 180 === 0) {

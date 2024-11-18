@@ -27,6 +27,7 @@ export const container = style({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+  overflow: 'hidden',
 });
 
 export const moon = style({
