@@ -5,6 +5,7 @@ import * as styles from './Notification.css';
 import { Notification } from '../../../APIDocs/apis/notification/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { readNotification } from '../../../APIDocs/apis/notification';
+import { bodNone } from '../../../APIDocs/components/API/subComponents/APIBody/RequestDocs/RequestContents/BodyNone/BodyNone.css';
 
 interface NotificationListProps {
   notifications: Notification[];
@@ -51,10 +52,10 @@ export const NotificationList: React.FC<NotificationListProps> = ({
 
         {/* 알림 리스트 */}
         <ul className={styles.notificationList}>
-          {notifications.length === 0 ? (
-            <li>
+          {!notifications.filter((noti) => !noti.isRead).length ? (
+            <div className={bodNone}>
               <Typography color="light">새로운 알림이 없습니다.</Typography>
-            </li>
+            </div>
           ) : (
             notifications
               .filter((item) => !item.isRead)

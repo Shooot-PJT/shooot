@@ -57,7 +57,7 @@ export const notificationIcon = style({
 
 export const notificationCount = style({
   position: 'absolute',
-  top: '-0.3rem',
+  bottom: '0.6rem',
   right: '-0.3rem',
   backgroundColor: 'red',
   padding: '0.1rem 0.4rem',
@@ -73,5 +73,5 @@ export const shakeAnimation = keyframes({
 });
 
 export const notificationIconShake = style({
-  animation: `${shakeAnimation} 1s`,
+  animation: `${shakeAnimation} 0.5s`,
 });
