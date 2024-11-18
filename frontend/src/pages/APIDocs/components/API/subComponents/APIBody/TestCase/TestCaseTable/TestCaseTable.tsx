@@ -45,6 +45,7 @@ import Icon from '../../../../../../../../components/Icon';
 import { FaTrash } from 'react-icons/fa';
 import colorPalette from '../../../../../../../../styles/colorPalette';
 import DropdownMenu from '../../RequestDocs/RequestContents/RequestSchemaTable/DropdownMenu/DropdownMenu';
+import { useTestCaseTestMutation } from '../../../../../../reactQueries/apitests';
 
 interface TestCaseTableProps {
   testCaseId?: number;
@@ -61,6 +62,8 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
   onAddSuccess,
   onCancel,
 }) => {
+  // 테스트
+  const { testcaseTest } = useTestCaseTestMutation();
   const [activeTab, setActiveTab] = useState<number>(0);
   const [isEditMode, setIsEditMode] = useState<boolean>(isAddMode);
 
@@ -310,27 +313,42 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
         onClick={handleHeaderClick}
       >
         <Flexbox
-          flexDirections="row"
           alignItems="center"
+          justifyContents="between"
           style={{
             gap: '2rem',
+            width: '100%',
             height: '2.5rem',
+            marginLeft: '-1rem',
+            boxSizing: 'border-box',
+            padding: '0 1rem',
           }}
         >
-          <Typography
-            size={0.85}
-            weight="500"
-            color={
-              testCase?.httpStatusCode?.toString().charAt(0).match('2')
-                ? 'originalGreen'
-                : 'originalRed'
-            }
+          <Flexbox alignItems="center" style={{ columnGap: '1rem' }}>
+            <Typography
+              size={0.85}
+              weight="500"
+              color={
+                testCase?.httpStatusCode?.toString().charAt(0).match('2')
+                  ? 'originalGreen'
+                  : 'originalRed'
+              }
+            >
+              {`${testCase?.httpStatusCode}  ${HTTP_STATUS_CODES[testCase?.httpStatusCode as number]}`}
+            </Typography>
+            <Typography size={0.8} weight="400" color={'disabled'}>
+              {testCase?.title}
+            </Typography>
+          </Flexbox>
+          <button
+            className={s.testButton}
+            onClick={(event) => {
+              event.stopPropagation();
+              testcaseTest(testCase!.id);
+            }}
           >
-            {`${testCase?.httpStatusCode}  ${HTTP_STATUS_CODES[testCase?.httpStatusCode as number]}`}
-          </Typography>
-          <Typography size={0.8} weight="400" color={'disabled'}>
-            {testCase?.title}
-          </Typography>
+            테스트케이스 테스트 버튼
+          </button>
         </Flexbox>
       </div>
       {/* 바디 */}
