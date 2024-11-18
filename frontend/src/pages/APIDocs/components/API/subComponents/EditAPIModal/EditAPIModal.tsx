@@ -2,14 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import Typography from '../../../../../../components/Typography';
 import Button from '../../../../../../components/Button';
-import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import Flexbox from '../../../../../../components/Flexbox';
 import { EditAPIRequestBody, Participant } from '../../../../apis/api/types';
 import { APIDetailInfo } from '../../../../types/data/API.data';
 import { useGetParticipantList } from '../../../../reactQueries/api';
 import { useNavBarStore } from '../../../../../../stores/navbarStore';
-import { Method } from '../../../../types/methods';
 import Textfield from '../../../../../../components/Textfield';
+import { SelectBox, SelectBoxOption } from '../AddAPIModal/SelectBox/SelectBox';
+import { Method } from '../../../../types/methods';
 
 interface EditAPIModalProps {
   apiId: number;
@@ -55,7 +55,7 @@ export const EditAPIModal: React.FC<EditAPIModalProps> = ({
   const handleSubmit = async () => {
     try {
       await editHandler({
-        method,
+        method: method || null,
         title: title?.trim(),
         description: description?.trim(),
         url: url?.trim(),
@@ -75,94 +75,87 @@ export const EditAPIModal: React.FC<EditAPIModalProps> = ({
     return <Typography>참여자 목록을 불러오는 데 실패했습니다.</Typography>;
   }
 
+  const methodOptions: SelectBoxOption[] = [
+    { label: <em>선택 안 함</em>, value: '' },
+    { label: 'GET', value: 'get' },
+    { label: 'POST', value: 'post' },
+    { label: 'PUT', value: 'put' },
+    { label: 'DELETE', value: 'delete' },
+    { label: 'PATCH', value: 'patch' },
+  ];
+
+  const managerOptions: SelectBoxOption[] = [
+    ...participants.map((participant) => ({
+      label: participant.nickname,
+      value: participant.id.toString(),
+    })),
+  ];
+
   return (
-    <Flexbox flexDirections="col" style={{ padding: '2rem', gap: '1rem' }}>
+    <Flexbox
+      flexDirections="col"
+      style={{ padding: '2rem', gap: '1rem', width: '100%' }}
+    >
       <Typography size={1.5} weight="600">
         API 편집
       </Typography>
+      <Flexbox flexDirections="col" style={{ gap: '0.25rem' }}>
+        <Typography weight="600" size={0.875} color="disabled">
+          Method
+        </Typography>
+        <SelectBox
+          value={method as string}
+          onChange={(value: string) => setMethod(value as Method)}
+          options={methodOptions}
+        />
+      </Flexbox>
 
+      <Flexbox flexDirections="col" style={{ gap: '0.25rem' }}>
+        <Typography weight="600" size={0.875} color="disabled">
+          담당자
+        </Typography>
+        <SelectBox
+          value={managerId}
+          onChange={(value: string) => setManagerId(value)}
+          options={managerOptions}
+        />
+      </Flexbox>
       <Textfield
         label="API 이름"
         value={title}
-        onChange={(e: {
-          target: { value: React.SetStateAction<string | undefined> };
-        }) => setTitle(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setTitle(e.target.value)
+        }
         fullWidth
         color="secondary"
       />
       <Textfield
         label="API 설명"
         value={description}
-        onChange={(e: {
-          target: { value: React.SetStateAction<string | undefined> };
-        }) => setDescription(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setDescription(e.target.value)
+        }
         fullWidth
         color="secondary"
       />
       <Textfield
         label="URL"
         value={url as string}
-        onChange={(e: {
-          target: { value: React.SetStateAction<string | null | undefined> };
-        }) => setUrl(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setUrl(e.target.value)
+        }
         fullWidth
         color="secondary"
       />
-      <FormControl fullWidth size="small">
-        <InputLabel color="secondary">Method</InputLabel>
 
-        <Select
-          value={method || 'METHOD'}
-          onChange={(e) =>
-            setMethod(
-              e.target.value === 'METHOD' ? null : (e.target.value as Method),
-            )
-          }
-          label="Method"
-          color="secondary"
-          MenuProps={{
-            PaperProps: {
-              style: { maxHeight: 200, backgroundColor: '#f7f7f7' },
-            },
-          }}
-        >
-          <MenuItem>선택안함</MenuItem>
-          <MenuItem value="get">GET</MenuItem>
-          <MenuItem value="post">POST</MenuItem>
-          <MenuItem value="put">PUT</MenuItem>
-          <MenuItem value="delete">DELETE</MenuItem>
-          <MenuItem value="patch">PATCH</MenuItem>
-        </Select>
-      </FormControl>
-      <FormControl fullWidth size="small" variant="outlined">
-        <InputLabel color="secondary">담당자</InputLabel>
-        <Select
-          value={managerId}
-          onChange={(e) => setManagerId(e.target.value)}
-          label="담당자"
-          color="secondary"
-          MenuProps={{
-            PaperProps: {
-              style: { maxHeight: 200, backgroundColor: '#f7f7f7' },
-            },
-          }}
-        >
-          <MenuItem value="">
-            <em>선택 안 함</em>
-          </MenuItem>
-          {participants.map((participant) => (
-            <MenuItem key={participant.id} value={participant.id.toString()}>
-              {participant.nickname}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
       <Flexbox
         flexDirections="row"
         justifyContents="end"
         style={{ gap: '1rem', marginTop: '1rem' }}
       >
-        <Button onClick={popHandler}>취소</Button>
+        <Button color={'grey'} onClick={popHandler}>
+          취소
+        </Button>
         <Button onClick={handleSubmit} color="primary">
           저장
         </Button>
