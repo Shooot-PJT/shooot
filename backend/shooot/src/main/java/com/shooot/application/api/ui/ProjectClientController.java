@@ -44,7 +44,7 @@ public class ProjectClientController {
         return ResponseEntity.ok(testCaseResponseView);
     }
 
-    @PostMapping("/testcases/{apiId}")
+    @PostMapping("/testcases/apis/{apiId}")
     public ResponseEntity<?> sendAllTestCaseOfApiRequest(
             @PathVariable Integer apiId,
             @AuthenticationPrincipal UserLoginContext userLoginContext
