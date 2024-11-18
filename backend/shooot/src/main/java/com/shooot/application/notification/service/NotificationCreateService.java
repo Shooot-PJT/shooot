@@ -40,8 +40,8 @@ public class NotificationCreateService {
     public void saveNotification(Integer userId, Integer apiId, String type){
         //구독이 되어 있는지를 체크하고 구독이 되어 있으면 알림을 보낸다
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new);
+        //User user = userRepository.findById(userId)
+        //        .orElseThrow(UserNotFoundException::new);
 
         Api api = apiRepository.findById(apiId)
                 .orElseThrow(ApiNotFoundException::new);
