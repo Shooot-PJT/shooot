@@ -14,11 +14,13 @@ import Flexbox from '../../../components/Flexbox';
 import shooot_remove from '/assets/shooot/shooot_remove.png';
 import shooot_new from '/assets/shooot/shooot_new.png';
 import shooot_oops from '/assets/shooot/shooot_oops.png';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const useDomain = () => {
   const modal = useModal();
   const popup = usePopup();
   const currentProjectId = useNavBarStore((state) => state.project);
+  const queryClient = useQueryClient();
 
   const modalPopHandler = () => modal.pop();
 
@@ -138,6 +140,9 @@ export const useDomain = () => {
           removeHandler={(info) =>
             removeDomainMutation(info, {
               onSuccess: () => {
+                queryClient.invalidateQueries({
+                  queryKey: ['domainList', info.projectId],
+                });
                 popup.push({
                   title: '',
                   type: 'success',
