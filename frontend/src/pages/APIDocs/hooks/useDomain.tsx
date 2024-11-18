@@ -84,41 +84,45 @@ export const useDomain = () => {
           domainInfo={domainInfo}
           popHandler={modalPopHandler}
           editHandler={(info) =>
-            editDomainMutation(info, {
-              onSuccess: () => {
-                popup.push({
-                  type: 'success',
-                  title: '도메인 편집 성공',
-                  children: <Typography>도메인을 편집하였습니다.</Typography>,
-                  onClose: modalPopHandler,
-                });
+            editDomainMutation(
+              { ...info },
+              {
+                // projectId 추가
+                onSuccess: () => {
+                  popup.push({
+                    type: 'success',
+                    title: '도메인 편집 성공',
+                    children: <Typography>도메인을 편집하였습니다.</Typography>,
+                    onClose: modalPopHandler,
+                  });
+                },
+                onError: () => {
+                  popup.push({
+                    type: 'fail',
+                    title: '도메인 편집 실패',
+                    children: (
+                      <Flexbox
+                        flexDirections="col"
+                        style={{
+                          gap: '2rem',
+                          alignItems: 'center',
+                          padding: '2rem 0rem',
+                        }}
+                      >
+                        <img
+                          height="100px"
+                          src={shooot_oops}
+                          style={{ width: '12.5rem', height: 'auto' }}
+                        />
+                        <Typography size={1.5} weight="600">
+                          다시 시도해주세요.
+                        </Typography>
+                      </Flexbox>
+                    ),
+                  });
+                },
               },
-              onError: () => {
-                popup.push({
-                  type: 'fail',
-                  title: '도메인 편집 실패',
-                  children: (
-                    <Flexbox
-                      flexDirections="col"
-                      style={{
-                        gap: '2rem',
-                        alignItems: 'center',
-                        padding: '2rem 0rem',
-                      }}
-                    >
-                      <img
-                        height="100px"
-                        src={shooot_oops}
-                        style={{ width: '12.5rem', height: 'auto' }}
-                      />
-                      <Typography size={1.5} weight="600">
-                        다시 시도해주세요.
-                      </Typography>
-                    </Flexbox>
-                  ),
-                });
-              },
-            })
+            )
           }
         />
       ),
