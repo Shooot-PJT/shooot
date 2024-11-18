@@ -57,6 +57,7 @@ export const RequestDocs = ({ requestDocs, fontColor }: RequestDocsProps) => {
 
   const [updatedExampleContent, setUpdatedExampleContent] =
     useState<ExampleContent | null>(null);
+  const [url, setUrl] = useState<string>(requestDocs?.example_url || '');
 
   const queryClient = useQueryClient();
   const { mutate: editAPIExampleContent } = useEditAPIExampleContent();
@@ -82,6 +83,7 @@ export const RequestDocs = ({ requestDocs, fontColor }: RequestDocsProps) => {
         body: null,
       });
     }
+    setUrl(requestDocs?.example_url || '');
   }, [requestDocs]);
 
   useEffect(() => {
@@ -204,6 +206,7 @@ export const RequestDocs = ({ requestDocs, fontColor }: RequestDocsProps) => {
         apiId: requestDocs.id,
         body: {
           exampleContent: updatedData,
+          exampleUrl: url,
         },
       },
       {
@@ -224,6 +227,7 @@ export const RequestDocs = ({ requestDocs, fontColor }: RequestDocsProps) => {
     if (requestDocs?.example_content) {
       setUpdatedExampleContent(requestDocs.example_content);
     }
+    setUrl(requestDocs?.example_url || '');
     setEditMode(false);
   };
 
@@ -366,8 +370,9 @@ export const RequestDocs = ({ requestDocs, fontColor }: RequestDocsProps) => {
           </Typography>
           <ExampleUrl
             method={requestDocs.method || 'get'}
-            exampleUrl={requestDocs.example_url || ''}
+            exampleUrl={url}
             isEditMode={isEditMode}
+            onChange={setUrl}
           />
         </Flexbox>
 
