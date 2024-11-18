@@ -7,7 +7,7 @@ import useModal from '../../../../hooks/useModal';
 import Typography from '../../../../components/Typography';
 import { HTTP_STATUS_CODES } from '../../types/httpStatus';
 
-export const useCommonLoginMutation = () => {
+export const useCommonLoginMutation = (projectId: number) => {
   const popup = usePopup();
   const modal = useModal();
   const commonLoginStore = useCommonLoginStore();
@@ -18,7 +18,17 @@ export const useCommonLoginMutation = () => {
       const info = [...infos];
       info.splice(0, 1);
 
-      const response = await commonLogin(infos[0].value, JSON.stringify(info));
+      const data: Record<string, string> = {};
+      info.forEach((val) => {
+        data[val.key] = val.value;
+      });
+      console.log('Data:', data);
+
+      const response = await commonLogin(
+        infos[0].value,
+        JSON.stringify([data]),
+        projectId,
+      );
       return response.data;
     },
     onSuccess: (data) => {
