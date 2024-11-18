@@ -189,20 +189,48 @@ public class TestCaseRequestService {
         return queryString;
     }
 
-    private Map<String, Object> extractRequestBody(Map<String, Object> body){
-//        Map<String, Object[]> requestBody = (Map<String, Object[]>) body.get("raw");
+//    private Map<String, Object> extractRequestBody(Map<String, Object> body){
+////        Map<String, Object[]> requestBody = (Map<String, Object[]>) body.get("raw");
+//        Map<String, Object> requestBody = (Map<String, Object>) body.get("raw");
+//        if(requestBody == null) return null;
+//
+//        Map<String, Object> newRequestBody = new HashMap<>();
+//
+//        for(String key : requestBody.keySet()){
+//            List<Object> list = (List<Object>) requestBody.get(key);
+//            newRequestBody.put(key, list.get(0));
+//        }
+//
+//        return newRequestBody;
+//    }
+
+
+    private Map<String, Object> extractRequestBody(Map<String, Object> body) {
         Map<String, Object> requestBody = (Map<String, Object>) body.get("raw");
-        if(requestBody == null) return null;
+        if (requestBody == null) return null;
 
         Map<String, Object> newRequestBody = new HashMap<>();
 
-        for(String key : requestBody.keySet()){
-            List<Object> list = (List<Object>) requestBody.get(key);
-            newRequestBody.put(key, list.get(0));
+        for (String key : requestBody.keySet()) {
+            Object value = requestBody.get(key);
+
+            if (value instanceof List<?>) {
+                List<Object> list = (List<Object>) value;
+                newRequestBody.put(key, list.get(0)); // List에서 첫 번째 요소를 넣음
+            } else if (value instanceof Map<?, ?>) {
+                Map<String, Object> map = (Map<String, Object>) value;
+                // 만약 Map인 경우, 다른 방식으로 처리하거나 변환할 수 있음
+                newRequestBody.put(key, map);
+            } else {
+                newRequestBody.put(key, value); // 그 외의 경우는 그대로 넣음
+            }
         }
 
         return newRequestBody;
     }
+
+
+
 
     private Map<String, Object> extractFormData(Map<String, Object> body){
         Map<String, Object> formDataInBody = (Map<String, Object>) body.get("formData");
