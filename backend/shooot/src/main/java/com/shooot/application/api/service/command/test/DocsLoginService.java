@@ -84,11 +84,11 @@ public class DocsLoginService {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(ProjectNotFoundException::new);
 
-//        final String url = "https://%s.shooot.shop".formatted(project.getEnglishName()) + "/" + docsLoginRequest.getUrl();
-
         if(request.get("endpoint") == null) throw new RuntimeException("엔드포인트없음");
 
-        final String url = "http://localhost:8081" + "/" + ((String)request.get("endpoint"));
+        final String url = "https://%s.shooot.shop".formatted(project.getEnglishName()) + "/" + ((String) request.get("endpoint"));
+
+//        final String url = "http://localhost:8081" + "/" + ((String)request.get("endpoint"));
 
         Map<String, String> requestBody = new HashMap<>();
 
