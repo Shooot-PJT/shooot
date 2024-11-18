@@ -45,6 +45,8 @@ public class ProjectDeployService {
             restTemplate.postForObject(DOCKER_SERVER_DEPLOY_START_REQUEST_ENDPOINT, new RequestBody(projectBuild.getProject().getId(), dto.getProjectJarFileId()), Void.class);
         } catch (HttpClientErrorException e) {
             consoleLogStreamSubscriber.removeSubscriptionForProject(projectBuild.getProject().getId());
+            pb.updateStatus(ProjectBuildStatus.NONE);
+            projectBuildLogRepository.save(pb);
             throw new InstanceIsFullException();
         }
 
