@@ -190,14 +190,15 @@ public class TestCaseRequestService {
     }
 
     private Map<String, Object> extractRequestBody(Map<String, Object> body){
-        Map<String, Object[]> requestBody = (Map<String, Object[]>) body.get("raw");
-
+//        Map<String, Object[]> requestBody = (Map<String, Object[]>) body.get("raw");
+        Map<String, Object> requestBody = (Map<String, Object>) body.get("raw");
         if(requestBody == null) return null;
 
         Map<String, Object> newRequestBody = new HashMap<>();
 
         for(String key : requestBody.keySet()){
-            newRequestBody.put(key, requestBody.get(key)[0]);
+            List<Object> list = (List<Object>) requestBody.get(key);
+            newRequestBody.put(key, list.get(0));
         }
 
         return newRequestBody;
