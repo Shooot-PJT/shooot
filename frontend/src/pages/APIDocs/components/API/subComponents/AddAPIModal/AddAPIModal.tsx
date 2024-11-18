@@ -9,7 +9,7 @@ import Textfield from '../../../../../../components/Textfield';
 import Button from '../../../../../../components/Button';
 import { useNavBarStore } from '../../../../../../stores/navbarStore';
 import { useGetParticipantList } from '../../../../reactQueries/api';
-import { Select, MenuItem, FormControl } from '@mui/material';
+import { SelectBox, SelectBoxOption } from './SelectBox/SelectBox';
 
 interface AddAPIModalProps {
   domainId: number;
@@ -107,6 +107,14 @@ export const AddAPIModal = ({ popHandler, addHandler }: AddAPIModalProps) => {
     return <Typography>참여자 목록을 불러오는 데 실패했습니다.</Typography>;
   }
 
+  const selectOptions: SelectBoxOption[] = [
+    { label: <em>선택 안 함</em>, value: '' },
+    ...participants.map((participant) => ({
+      label: participant.nickname,
+      value: participant.id.toString(),
+    })),
+  ];
+
   return (
     <Flexbox flexDirections="col" style={{ width: '100%', rowGap: '1rem' }}>
       <Typography size={1.25} weight="600">
@@ -114,6 +122,16 @@ export const AddAPIModal = ({ popHandler, addHandler }: AddAPIModalProps) => {
       </Typography>
 
       <Flexbox flexDirections="col" style={{ width: '100%', rowGap: '1rem' }}>
+        <Flexbox flexDirections="col" style={{ rowGap: '0.25rem' }}>
+          <Typography weight="600" size={0.875} color="disabled">
+            담당자 선택
+          </Typography>
+          <SelectBox
+            value={managerId}
+            onChange={(value: string) => setManagerId(value)}
+            options={selectOptions}
+          />
+        </Flexbox>
         <Flexbox flexDirections="col" style={{ rowGap: '0.25rem' }}>
           <Typography weight="600" size={0.875} color="disabled">
             API 이름
@@ -153,48 +171,6 @@ export const AddAPIModal = ({ popHandler, addHandler }: AddAPIModalProps) => {
             placeholder="/posts/{postId} 형태로 엔드포인트를 입력해주세요."
             defaultValue=""
           />
-        </Flexbox>
-
-        <Flexbox flexDirections="col" style={{ rowGap: '0.25rem' }}>
-          <Typography weight="600" size={0.875} color="disabled">
-            담당자 선택
-          </Typography>
-          <FormControl fullWidth size="small" variant="outlined">
-            <Select
-              labelId="manager-select-label"
-              value={managerId}
-              onChange={(event) => setManagerId(event.target.value)}
-              color="secondary"
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: 200,
-                    backgroundColor: '#f7f7f7',
-                  },
-                },
-                anchorOrigin: {
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                },
-                transformOrigin: {
-                  vertical: 'top',
-                  horizontal: 'left',
-                },
-              }}
-            >
-              <MenuItem value="">
-                <em>선택 안 함</em>
-              </MenuItem>
-              {participants.map((participant) => (
-                <MenuItem
-                  key={participant.id}
-                  value={participant.id.toString()}
-                >
-                  {participant.nickname}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
         </Flexbox>
       </Flexbox>
 

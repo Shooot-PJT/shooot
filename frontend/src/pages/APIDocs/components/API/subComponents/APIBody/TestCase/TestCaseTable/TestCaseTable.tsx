@@ -392,7 +392,11 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
                 gap: '0.25rem',
               }}
             >
-              <Button rounded={0.5} onClick={toggleEditMode}>
+              <Button
+                rounded={0.5}
+                onClick={toggleEditMode}
+                color={isEditMode ? 'primary' : 'grey'}
+              >
                 <Typography size={0.75}>
                   {isEditMode ? '저장' : '편집'}
                 </Typography>
@@ -410,7 +414,11 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
                 gap: '0.25rem',
               }}
             >
-              <Button rounded={0.5} onClick={toggleEditMode}>
+              <Button
+                rounded={0.5}
+                onClick={toggleEditMode}
+                color={isEditMode ? 'primary' : 'grey'}
+              >
                 <Typography size={0.75}>
                   {isEditMode ? '저장' : '편집'}
                 </Typography>
@@ -609,7 +617,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
                 </Typography>
               </Flexbox>
               <Editor
-                height="200px"
+                height="100px"
                 defaultLanguage="plaintext"
                 value={editedTestCase?.content.expectedResponse.schema || ''}
                 onChange={(value) => {
