@@ -19,6 +19,7 @@ export const UrlTextField: React.FC<UrlTextfieldProps> = ({
       type="text"
       value={value || ''}
       onChange={handleChange}
+      placeholder="ex) https://shooot.co.kr/api/user/1"
       style={{
         width: '100%',
         height: '100%',
