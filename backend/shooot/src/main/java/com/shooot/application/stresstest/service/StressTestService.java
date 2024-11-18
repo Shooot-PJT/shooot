@@ -15,6 +15,7 @@ import com.shooot.application.stresstest.subscriber.StressTestSubscriber;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,8 +32,11 @@ public class StressTestService {
     private final String stopRequestUrl = "http://khj745700.iptime.org:8080/stress-test/stop";
     private final StressTestSseService stressTestSseService;
     private final Map<Integer, Thread> isRunning = new ConcurrentHashMap<>();
+    private final StringRedisTemplate redisTemplate;
 
     public void start(ProjectBuildTestRunRequest request) {
+        stressTestSseService.start(request.getProjectJarFileId());
+
         ProjectBuild projectBuild = projectBuildRepository.findById(request.getProjectJarFileId())
             .orElseThrow();
         Integer projectId = projectBuild.getProject().getId();
@@ -44,8 +48,6 @@ public class StressTestService {
             .status(StressTestStatus.DONE)
             .build();
         stressTestLogRepository.save(stressTestLog);
-
-        stressTestSseService.start(request.getProjectJarFileId());
 
         Thread thread = new Thread(() -> {
             for (ApiTestMethodRequest apiTestMethodRequest : request.getEndPointSettings()) {
@@ -92,5 +94,6 @@ public class StressTestService {
         Thread thread = isRunning.get(projectJarFileId);
         thread.interrupt();
         isRunning.remove(projectJarFileId);
+        redisTemplate.delete("project_monitor_" + projectId);
     }
 }
