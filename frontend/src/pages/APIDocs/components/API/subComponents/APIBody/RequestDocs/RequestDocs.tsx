@@ -24,11 +24,13 @@ import {
   ExampleContent,
 } from '../../../../../types/data/API.data';
 import { APIDetailInfo } from '../../../../../types/data/API.data';
-import { Editor } from '@monaco-editor/react';
+import { Editor, OnMount } from '@monaco-editor/react';
 
 import { useEditAPIExampleContent } from '../../../../../reactQueries/api';
 import { useQueryClient } from '@tanstack/react-query';
 import * as monaco from 'monaco-editor';
+import draculaTheme from 'monaco-themes/themes/Dracula.json';
+import { Method } from '../../../../../types/methods';
 
 type ReqTabMenuTypes = 'params' | 'pathvariable' | 'headers' | 'req body';
 type ReqBodyTypes = 'none' | 'form-data' | 'raw';
@@ -40,9 +42,10 @@ interface TabValue {
 
 interface RequestDocsProps {
   requestDocs: APIDetailInfo['requestDocs'] | null;
+  fontColor: string;
 }
 
-export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
+export const RequestDocs = ({ requestDocs, fontColor }: RequestDocsProps) => {
   const [isEditMode, setEditMode] = useState(false);
   const [tabValue, setTabValue] = useState<TabValue>({
     value: 0,
@@ -59,6 +62,14 @@ export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
   const { mutate: editAPIExampleContent } = useEditAPIExampleContent();
 
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const handleEditorDidMount: OnMount = (editor, monacoInstance) => {
+    editorRef.current = editor;
+    monacoInstance.editor.defineTheme(
+      'dracula',
+      draculaTheme as monaco.editor.IStandaloneThemeData,
+    );
+    monacoInstance.editor.setTheme('dracula');
+  };
 
   useEffect(() => {
     if (requestDocs?.example_content) {
@@ -308,16 +319,24 @@ export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
       style={{ width: '100%', height: 'max-content' }}
     >
       <Flexbox flexDirections="row" justifyContents="between">
-        <Typography
-          style={{
-            textAlign: 'start',
-            fontSize: '1.4rem',
-            fontWeight: '600',
-            marginBottom: '2rem',
-          }}
+        <Flexbox
+          flexDirections="col"
+          style={{ gap: '0.85rem', marginBottom: '2.25rem' }}
         >
-          API 요청 정의서
-        </Typography>
+          <Typography
+            color={fontColor as Method}
+            style={{
+              textAlign: 'start',
+              fontSize: '1.4rem',
+              fontWeight: '600',
+            }}
+          >
+            API 요청 명세서
+          </Typography>
+          <Typography color="disabled" size={1}>
+            API 요청 시 필요한 정보와 데이터를 입력하는 문서입니다.
+          </Typography>
+        </Flexbox>
         <Flexbox style={{ justifyContent: 'end', gap: '1rem' }}>
           {isEditMode && (
             <Button color="grey" rounded={0.4} onClick={handleCancelEdit}>
@@ -334,13 +353,30 @@ export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
         </Flexbox>
       </Flexbox>
       <Flexbox flexDirections="col" style={{ gap: '3rem' }}>
-        <ExampleUrl
-          method={requestDocs.method || 'get'}
-          exampleUrl={requestDocs.example_url || ''}
-          isEditMode={isEditMode}
-        />
+        <Flexbox
+          flexDirections="col"
+          alignItems="start"
+          style={{
+            width: '100%',
+            gap: '0.75rem',
+          }}
+        >
+          <Typography color="light" size={1} weight="600">
+            예시 URL
+          </Typography>
+          <ExampleUrl
+            method={requestDocs.method || 'get'}
+            exampleUrl={requestDocs.example_url || ''}
+            isEditMode={isEditMode}
+          />
+        </Flexbox>
 
         <Flexbox flexDirections="col" style={{ gap: '0.7rem' }}>
+          <Flexbox>
+            <Typography color="light" size={1} weight="600">
+              요청 데이터 정의
+            </Typography>
+          </Flexbox>
           <CustomTabs value={tabValue.value} onChange={handleChangeTab}>
             <CustomTab label="Params" />
             <CustomTab label="Path variables" />
@@ -435,9 +471,11 @@ export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
             <BodyNone />
           ) : tabValue.value === 3 && reqBodyMenu === 'raw' ? (
             <Editor
-              height="400px"
+              height="200px"
               defaultLanguage="json"
               value={rawBodyContent}
+              onMount={handleEditorDidMount}
+              theme="dracula"
               onChange={(value) => {
                 if (isEditMode) {
                   setRawBodyContent(value || '');
@@ -457,13 +495,10 @@ export const RequestDocs = ({ requestDocs }: RequestDocsProps) => {
               }}
               options={{
                 readOnly: !isEditMode,
+                lineNumbers: 'on',
+                folding: true,
                 minimap: { enabled: false },
-              }}
-              onMount={(editor) => {
-                editorRef.current = editor;
-                if (isEditMode) {
-                  editor.focus();
-                }
+                renderLineHighlightOnlyWhenFocus: true,
               }}
             />
           ) : (
