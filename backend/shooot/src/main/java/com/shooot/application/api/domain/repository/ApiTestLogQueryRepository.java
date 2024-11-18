@@ -6,6 +6,7 @@ import com.shooot.application.api.domain.ApiTestLog;
 import com.shooot.application.api.service.command.testcase.dto.TestLogSearchRequest;
 import com.shooot.application.api.service.query.testcase.dto.ApiTestLogInfiniteResponse;
 import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -18,6 +19,7 @@ import java.util.List;
 import static com.shooot.application.api.domain.QApiTestLog.*;
 
 @Repository
+@Slf4j
 public class ApiTestLogQueryRepository {
     private final JPAQueryFactory query;
 
@@ -41,12 +43,10 @@ public class ApiTestLogQueryRepository {
                 .limit(pageable.getPageSize() + 1)
                 .orderBy(apiTestLog.id.desc())
                 .fetch();
-
         List<ApiTestLogInfiniteResponse> infiniteResponseList = results.stream()
                 .limit(pageable.getPageSize())
                 .map(ApiTestLog::from)
                 .toList();
-
         return new SliceImpl<>(infiniteResponseList, pageable, hasNextPage(results, pageable.getPageSize()));
 
     }
