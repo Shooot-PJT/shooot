@@ -22,7 +22,6 @@ export const useCommonLoginMutation = (projectId: number) => {
       info.forEach((val) => {
         data[val.key] = val.value;
       });
-      console.log('Data:', data);
 
       const response = await commonLogin(
         infos[0].value,
@@ -32,6 +31,8 @@ export const useCommonLoginMutation = (projectId: number) => {
       return response.data;
     },
     onSuccess: (data) => {
+      // const match = data.session.match(/=(.*?);/);
+      // const result = match ? match[1] : null;
       commonLoginStore.setSession(data.session);
       popup.push({
         title: `${data.responseCode} (${HTTP_STATUS_CODES[data.responseCode]})`,

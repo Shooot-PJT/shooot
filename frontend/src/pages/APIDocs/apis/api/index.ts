@@ -1,5 +1,6 @@
 import { api } from '../../../../apis/interceptors';
 import { Endpoint as EP } from '../../constants/endpoint';
+import { TableData } from '../../types/data/API.data';
 import {
   AddAPIRequest,
   AddAPIRequestBody,
@@ -59,9 +60,33 @@ export const editAPIExampleContent = async (
   { apiId }: EditAPIRequest,
   body: EditAPIExampleContentRequestBody,
 ) => {
+  const params: TableData | null | undefined = body.exampleContent?.params;
+  const headers: TableData | null | undefined = body.exampleContent?.headers;
+  const pathvariable: TableData | null | undefined =
+    body.exampleContent?.pathvariable;
+
+  const newContent = {
+    ...body.exampleContent,
+    params: !params
+      ? null
+      : !Object.keys(params!).length
+        ? null
+        : { ...params },
+    headers: !headers
+      ? null
+      : !Object.keys(headers!).length
+        ? null
+        : { ...headers },
+    pathvariable: !pathvariable
+      ? null
+      : !Object.keys(pathvariable!).length
+        ? null
+        : { ...pathvariable },
+  };
+
   const response = await api.patch<EditAPIResponse>(
     `/${EP.projects}/${EP.domains}/${EP.apis}/${apiId}`,
-    body,
+    { ...body, exampleContent: { ...newContent } },
   );
   return response.data;
 };
