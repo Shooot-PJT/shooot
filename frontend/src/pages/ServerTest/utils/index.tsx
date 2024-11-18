@@ -237,3 +237,8 @@ export const convertTestRecordDetailSelectBox = (
     );
   });
 };
+
+// export const syncIndex = () => {
+//   if (state !== 'End') {
+//   }
+// };
