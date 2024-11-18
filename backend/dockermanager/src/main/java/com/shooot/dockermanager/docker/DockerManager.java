@@ -60,7 +60,7 @@ public class DockerManager {
         String target = vagrantRepository.getFirstEmptyInstance();
         if (target == null) throw new InstanceIsFullException();
 
-        vagrantRepository.put(target, null);
+        vagrantRepository.put(target, new MetaData());
         executorService.submit(() -> startDockerComposeProcess(dto, target));
         return true;
     }
