@@ -8,6 +8,7 @@ import { useState } from 'react';
 import Button from '../../../../components/Button';
 import usePopup from '../../../../hooks/usePopup';
 import { useCommonLoginMutation } from '../../reactQueries/commonLogin';
+import { useNavBarStore } from '../../../../stores/navbarStore';
 
 export interface LoginInfo {
   key: string;
@@ -17,7 +18,8 @@ export interface LoginInfo {
 export const CommonLoginModal = () => {
   const modal = useModal();
   const popup = usePopup();
-  const { mutate } = useCommonLoginMutation();
+  const { project } = useNavBarStore();
+  const { mutate } = useCommonLoginMutation(project);
   const [infos, setInfos] = useState<LoginInfo[]>(
     localStorage.getItem('commonLoginInfos')
       ? (JSON.parse(localStorage.getItem('commonLoginInfos')!) as LoginInfo[])
