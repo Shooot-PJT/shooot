@@ -21,7 +21,7 @@ const DomainContext = createContext<DomainContextProps | null>(null);
 export const useDomainContext = () => {
   const context = useContext(DomainContext);
   if (!context) {
-    throw new Error('useDomainContext must be used within a DomainProvider');
+    throw new Error('DOMAIN CONTEXT ERROR');
   }
   return context;
 };
