@@ -52,7 +52,6 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
       });
       return response?.data ?? {};
     },
-    staleTime: 120 * 1000,
   });
 
   useTestSSE({

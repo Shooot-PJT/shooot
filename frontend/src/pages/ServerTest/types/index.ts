@@ -111,8 +111,8 @@ export interface TestSSEData {
 export interface TestDataList {
   cpu: number;
   memory: number;
-  disk: number;
   network: number;
+  disk: number;
 }
 
 export interface TestSSE {

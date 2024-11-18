@@ -27,7 +27,6 @@ export const ApiDocumentModal = ({ projectJarFileId }: ApiDocumentModal) => {
       });
       return response?.data ?? {};
     },
-    staleTime: 120 * 1000,
   });
 
   const convertTableData = (data: APITestListResponse) => {
