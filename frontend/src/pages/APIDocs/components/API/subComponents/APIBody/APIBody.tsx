@@ -18,7 +18,7 @@ export const APIBody = () => {
   const { isFocused } = context.useIsFocusedHook;
   const apiId = context.requestDocs.id;
 
-  const { editAPIModalHandler } = useAPI();
+  const { editAPIModalHandler, removeAPIModalHandler } = useAPI();
 
   const {
     data: apiDetail,
@@ -124,7 +124,11 @@ export const APIBody = () => {
                   >
                     편집
                   </Button>
-                  <Button color="grey" rounded={0.3}>
+                  <Button
+                    color="delete"
+                    rounded={0.3}
+                    onClick={() => removeAPIModalHandler(apiId)}
+                  >
                     삭제
                   </Button>
                 </Flexbox>
@@ -206,7 +210,7 @@ export const APIBody = () => {
                       여러 테스트 케이스를 정의할 수 있습니다.
                     </Typography>
                     <Typography color="disabled" size={1}>
-                      이곳에 정의한 테스트케이스는 동작 테스트와 모킹 자동화 에
+                      이곳에 정의한 테스트케이스는 동작 테스트와 모킹 자동화에
                       사용됩니다.
                     </Typography>
                   </Flexbox>
@@ -229,21 +233,28 @@ export const APIBody = () => {
                   />
                 )}
                 {/* 1.2.2 RIGHT-BOTTOM: 테스트케이스 리스트 섹션 */}
-                {apiDetail.testCases && apiDetail.testCases.length > 0 ? (
-                  apiDetail.testCases.map((testCase) => (
-                    <TestCaseTable
-                      key={testCase.id}
-                      testCaseId={testCase.id}
-                      apiId={apiId}
-                    />
-                  ))
-                ) : (
-                  <div className={bodNone}>
-                    <Typography size={1} weight="600">
-                      테스트 케이스가 없습니다.
-                    </Typography>
-                  </div>
-                )}
+                <Flexbox
+                  flexDirections="col"
+                  style={{
+                    gap: '1.5rem',
+                  }}
+                >
+                  {apiDetail.testCases && apiDetail.testCases.length > 0 ? (
+                    apiDetail.testCases.map((testCase) => (
+                      <TestCaseTable
+                        key={testCase.id}
+                        testCaseId={testCase.id}
+                        apiId={apiId}
+                      />
+                    ))
+                  ) : (
+                    <div className={bodNone}>
+                      <Typography size={1} weight="600">
+                        테스트 케이스가 없습니다.
+                      </Typography>
+                    </div>
+                  )}
+                </Flexbox>
               </Flexbox>
             </Flexbox>
           </Flexbox>

@@ -8,8 +8,7 @@ export const container = style({
 
 export const selectBox = style({
   position: 'relative',
-  height: '100%',
-  padding: '0.5rem',
+  padding: '0.5rem 1rem',
   fontSize: '1rem',
   borderRadius: '0.5rem',
   border: `2px solid ${colorPalette.util[400]}`,
@@ -18,44 +17,52 @@ export const selectBox = style({
   outline: 'none',
   backgroundColor: colorPalette.util[300],
   zIndex: 40,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  boxSizing: 'border-box',
 });
 
-export const selectedItem = style({});
+export const selectedItem = style({
+  flex: 1,
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+});
 
 export const expendBox = style({
   position: 'absolute',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'start',
-  overflow: 'hidden',
+  overflowY: 'auto',
+  maxHeight: '200px',
   width: '100%',
-  right: '-1rem',
-  top: '35px',
+  right: '0',
+  top: '100%',
   backgroundColor: colorPalette.util[200],
   borderRadius: '0rem 0rem 0.5rem 0.5rem',
-  padding: '0rem 0.25rem 0rem 0.75rem',
+  padding: '0.25rem 0.75rem',
   gap: '0.5rem',
-  transition: 'height 0.125s ease-in-out',
-  paddingTop: '0.5rem',
+  transition: 'max-height 0.125s ease-in-out',
   zIndex: 50,
+  boxSizing: 'border-box',
 });
 
 export const openBox = style({
-  height: '200px',
+  maxHeight: '200px',
 });
 
 export const closeBox = style({
-  height: 0,
-});
-
-export const isInvisible = style({
-  display: 'none',
+  maxHeight: '0',
+  overflow: 'hidden',
 });
 
 export const optionItem = style({
-  paddingRight: '0.5rem',
-  paddingBottom: '0.5rem',
-  paddingTop: '0.5rem',
+  padding: '0.3rem 0.5rem',
+  cursor: 'pointer',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
   selectors: {
     '&:hover': {
       backgroundColor: colorPalette.util[300],

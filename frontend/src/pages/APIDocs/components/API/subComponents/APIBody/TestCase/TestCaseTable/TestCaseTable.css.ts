@@ -112,6 +112,8 @@ export const testBodyContainerRecipe = recipe({
         marginBottom: '3rem',
       },
       false: {
+        height: '0px',
+        padding: '0px',
         maxHeight: '0',
         opacity: 0,
         pointerEvents: 'none',
