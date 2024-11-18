@@ -3,10 +3,19 @@ package com.shooot.application.api.service.command.test;
 import com.shooot.application.api.domain.ApiTestCase;
 import com.shooot.application.api.domain.ApiTestCaseRequest;
 import com.shooot.application.api.domain.ApiTestCaseRequestType;
+import com.shooot.application.api.domain.ApiTestLog;
 import com.shooot.application.api.domain.repository.ApiTestCaseRepository;
 import com.shooot.application.api.domain.repository.ApiTestCaseRequestRepository;
+import com.shooot.application.api.domain.repository.ApiTestLogRepository;
 import com.shooot.application.api.exception.testcase.TestCaseNotFoundException;
 import com.shooot.application.common.infra.storage.exception.FileNotFoundException;
+import com.shooot.application.project.domain.ProjectParticipant;
+import com.shooot.application.project.domain.repository.ProjectParticipantRepository;
+import com.shooot.application.project.exception.ProjectNotDeployException;
+import com.shooot.application.project.exception.ProjectNotFoundException;
+import com.shooot.application.user.domain.User;
+import com.shooot.application.user.domain.UserRepository;
+import com.shooot.application.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
@@ -19,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.BodyInserter;
@@ -28,6 +38,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.channels.ClosedChannelException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,11 +55,16 @@ public class TestCaseRequestService {
     private final RestClient restClient;
     private final ApiTestCaseRequestRepository testCaseRequestRepository;
     private final ApiTestCaseRepository testCaseRepository;
+    private final ApiTestLogRepository apiTestLogRepository;
+    private final ProjectParticipantRepository projectParticipantRepository;
+    private final UserRepository userRepository;
 
-    private final String serverURL = "http://localhost:8081/";
+
+    // 영문명.shooot.shop (project테이블에 있음)
+//    private final String serverURL = "http://localhost:8081/";
 
     @Transactional
-    public void testCaseResponse(Integer testcaseId){
+    public void testCaseResponse(Integer testcaseId, Integer userId){
 
         ApiTestCase apiTestCase = testCaseRepository.findById(testcaseId)
                 .orElseThrow(TestCaseNotFoundException::new);
@@ -68,6 +84,8 @@ public class TestCaseRequestService {
 
         String parameters = extractParameters(content);
         log.info("parameters = {}", parameters);
+
+        String serverURL = "https://%s.shooot.shop".formatted(apiTestCase.getApi().getDomain().getProject().getEnglishName());
 
         String url = serverURL + requestURL + parameters;
         log.info("complete URL = {}", url);
@@ -91,9 +109,10 @@ public class TestCaseRequestService {
         // TODO : 사용자의 spring에 rest보내기
         ResponseEntity<?> response = restToUserServer(requestMethod, url, headers, requestBody, formData, latestRequest.getType());
 
+        log.info("end response = {}", response);
 
         // TODO : response를 api_test_log 테이블에 데이터 저장하기
-
+        saveLog(response, testcaseId, userId, headers, content);
 
         //
 
@@ -290,18 +309,30 @@ public class TestCaseRequestService {
 
         log.info("Test to Server, method = {}, url = {}, headers = {}, requestBody = {}, formData = {}, content-type={}", method, url, headers, requestBody, formData, contentType);
 
-        if(contentType == ApiTestCaseRequestType.MULTIPART){
-            log.info("multipart 타입으로 유저 서버에 전송");
-            sendFormDataToServer(method, url, headers, formData);
-        } else if(contentType == ApiTestCaseRequestType.JSON){
-            log.info("json 타입으로 유저 서버에 전송");
-            sendRequestBodyToServer(method, url, headers, requestBody);
-        } else{
-            log.info("Content-type이 null 즉 none인걸로 유저 서버에 전송");
-            sendNoneDataToServer(method, url, headers);
+        try{
+            ResponseEntity<?> response = null;
+            if(contentType == ApiTestCaseRequestType.MULTIPART){
+                log.info("multipart 타입으로 유저 서버에 전송");
+                response = sendFormDataToServer(method, url, headers, formData);
+            } else if(contentType == ApiTestCaseRequestType.JSON){
+                log.info("json 타입으로 유저 서버에 전송");
+                response = sendRequestBodyToServer(method, url, headers, requestBody);
+            } else{
+                log.info("Content-type이 null 즉 none인걸로 유저 서버에 전송");
+                response = sendNoneDataToServer(method, url, headers);
+            }
+
+            log.info("total Response = {}, body = {}, header = {}, statusCode = {}", response, response.getBody(), response.getHeaders(), response.getStatusCode().value());
+            return response;
+        } catch(ResourceAccessException e){
+            e.printStackTrace();
+            throw new ProjectNotDeployException();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("서버와의 연결에 실패했습니다.");
         }
 
-        return null;
+//        return null;
 
     }
 
@@ -310,7 +341,7 @@ public class TestCaseRequestService {
             String url,
             Map<String, String> headers,
             Map<String, Object> requestFormData
-    ){
+    ) throws Exception{
 
 
         MultiValueMap<String, Object> formData = new LinkedMultiValueMap<>();
@@ -335,7 +366,6 @@ public class TestCaseRequestService {
         }
         log.info("다른 서ㅏ버로 보낼 데이터 = {}", requestDatas);
 
-
         ResponseEntity<?> response = restClient
                 .method(HttpMethod.valueOf(method))
                 .uri(url)
@@ -348,7 +378,7 @@ public class TestCaseRequestService {
                 .toEntity(String.class);
 
 
-        log.info("sendFromDataToServer = {}", response);
+        log.info("sendFromDataToServer response = {}, statusCode = {}", response.getBody(), response.getStatusCode().value());
 
         return response;
 
@@ -359,7 +389,7 @@ public class TestCaseRequestService {
             String url,
             Map<String, String> headers,
             Map<String, Object> requestBody
-    ){
+    ) throws Exception{
         ResponseEntity<String> response = restClient
                 .method(HttpMethod.valueOf(method))
                 .uri(url)
@@ -372,6 +402,8 @@ public class TestCaseRequestService {
                 .retrieve()
                 .toEntity(String.class);
 
+        log.info("sendFromDataToServer response = {}, statusCode = {}", response.getBody(), response.getStatusCode().value());
+
         return response;
     }
 
@@ -379,7 +411,7 @@ public class TestCaseRequestService {
             String method,
             String url,
             Map<String, String> headers
-    ){
+    ) throws Exception{
         ResponseEntity<String> response = restClient
                 .method(HttpMethod.valueOf(method))
                 .uri(url)
@@ -387,7 +419,33 @@ public class TestCaseRequestService {
                 .retrieve()
                 .toEntity(String.class);
 
+        log.info("sendFromDataToServer response = {}, statusCode = {}", response.getBody(), response.getStatusCode().value());
+
+
         return response;
+    }
+
+    private void saveLog(ResponseEntity<?> response, Integer testcaseId, Integer userId, Map<String, String> headers, Map<String, Object> body){
+        log.info("save Log response = {}", response);
+        ApiTestCase apiTestCase = testCaseRepository.findById(testcaseId)
+                .orElseThrow();
+
+        ProjectParticipant projectParticipant = projectParticipantRepository.findByProjectIdAndUserId(apiTestCase.getApi().getDomain().getProject().getId(), userId);
+
+        ApiTestLog apiTestLog = ApiTestLog.builder()
+                .apiTestCase(apiTestCase)
+                .httpStatus(apiTestCase.getHttpStatus())
+                .isDeleted(false)
+                .isSuccess(true)
+                .projectParticipant(projectParticipant)
+                .httpBody(body)
+                .httpHeader(headers)
+                .responseCode(HttpStatus.valueOf(response.getStatusCode().value()))
+                .responseMessage((String) response.getBody())
+                .build();
+
+        apiTestLogRepository.save(apiTestLog);
+
     }
 
 }
