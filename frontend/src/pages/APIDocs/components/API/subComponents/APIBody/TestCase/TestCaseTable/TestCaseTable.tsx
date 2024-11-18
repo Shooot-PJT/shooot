@@ -5,7 +5,8 @@ import {
   useAddTestCase,
   useEditTestCase,
 } from '../../../../../../reactQueries/testcase';
-import Editor, { OnMount } from '@monaco-editor/react';
+import * as monaco from 'monaco-editor';
+import draculaTheme from 'monaco-themes/themes/Dracula.json';
 import { BodyNone } from '../../RequestDocs/RequestContents/BodyNone/BodyNone';
 import {
   CustomTab,
@@ -39,6 +40,9 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
+import { Editor, OnMount } from '@monaco-editor/react';
+import Icon from '../../../../../../../../components/Icon';
+import { FaTrash } from 'react-icons/fa';
 
 interface TestCaseTableProps {
   testCaseId?: number;
@@ -60,6 +64,16 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
 
   const [isOpenBody, setIsOpenBody] = useState<boolean>(false);
 
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const handleEditorDidMount: OnMount = (editor, monacoInstance) => {
+    editorRef.current = editor;
+    monacoInstance.editor.defineTheme(
+      'dracula',
+      draculaTheme as monaco.editor.IStandaloneThemeData,
+    );
+    monacoInstance.editor.setTheme('dracula');
+  };
+
   useEffect(() => {
     if (isAddMode) {
       setIsOpenBody(true);
@@ -70,11 +84,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
     setIsOpenBody((prev) => !prev);
   };
 
-  const {
-    data: testCaseDetail,
-    isLoading,
-    isError,
-  } = useGetTestCaseDetail(
+  const { data: testCaseDetail } = useGetTestCaseDetail(
     { testcaseId: testCaseId! },
     {
       enabled: !!testCaseId && !isAddMode,
@@ -142,14 +152,6 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
       }
     }
   }, [testCaseDetail, isAddMode, apiId]);
-
-  if (!isAddMode && isLoading) {
-    return <div>테스트케이스 로딩 중...</div>;
-  }
-
-  if (!isAddMode && (isError || !testCaseDetail)) {
-    return <div>테스트케이스를 불러오는 중 오류가 발생했습니다.</div>;
-  }
 
   const testCase = editedTestCase || testCaseDetail;
 
@@ -271,7 +273,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
           flexDirections="row"
           alignItems="center"
           style={{
-            gap: '1rem',
+            gap: '2rem',
             height: '2.5rem',
           }}
         >
@@ -294,18 +296,21 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
       {/* 바디 */}
       <div className={s.testBodyContainerRecipe({ isOpen: isOpenBody })}>
         {isAddMode ? (
-          <Flexbox flexDirections="row">
+          <Flexbox
+            flexDirections="row"
+            style={{
+              gap: '0.25rem',
+            }}
+          >
             <Button rounded={0.5} onClick={toggleEditMode}>
               <Typography size={0.75}>
                 {isEditMode ? '저장' : '편집'}
               </Typography>
             </Button>
-            {/* <button onClick={toggleEditMode}>
-            {isEditMode ? '저장' : '편집'}
-          </button> */}
             {isEditMode && (
               <Button
                 rounded={0.5}
+                color="grey"
                 onClick={() => {
                   if (onCancel) onCancel();
                 }}
@@ -315,14 +320,19 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
             )}
           </Flexbox>
         ) : (
-          <Flexbox flexDirections="row">
+          <Flexbox
+            flexDirections="row"
+            style={{
+              gap: '0.25rem',
+            }}
+          >
             <Button rounded={0.5} onClick={toggleEditMode}>
               <Typography size={0.75}>
                 {isEditMode ? '저장' : '편집'}
               </Typography>
             </Button>
             {isEditMode && (
-              <Button rounded={0.5}>
+              <Button rounded={0.5} color="grey">
                 <Typography size={0.75}>취소</Typography>
               </Button>
             )}
@@ -331,7 +341,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
 
         {isEditMode ? (
           <div style={{ textAlign: 'start' }}>
-            <Flexbox style={{ gap: '1rem' }}>
+            <Flexbox style={{ gap: '2.5rem' }}>
               <Textfield
                 label="테스트케이스 제목"
                 value={editedTestCase?.title || ''}
@@ -354,155 +364,192 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
         <Flexbox
           flexDirections="col"
           style={{
-            gap: '0.5rem',
+            gap: '2rem',
           }}
         >
-          <CustomTabs value={activeTab} onChange={handleTabChange}>
-            {tabLabels.map((label, index) => (
-              <CustomTab key={index} label={label} />
-            ))}
-          </CustomTabs>
+          <Flexbox flexDirections="col" style={{ gap: '0.5rem' }}>
+            <Flexbox
+              flexDirections="col"
+              alignItems="start"
+              style={{
+                gap: '0.25rem',
+              }}
+            >
+              <Typography>요청 타입</Typography>
+              <Typography color="disabled" size={1}>
+                테스트 케이스에 어떤 요청을 보낼지 정의합니다.
+              </Typography>
+            </Flexbox>
+            <CustomTabs value={activeTab} onChange={handleTabChange}>
+              {tabLabels.map((label, index) => (
+                <CustomTab key={index} label={label} />
+              ))}
+            </CustomTabs>
 
-          <div style={{ display: activeTab === 0 ? 'block' : 'none' }}>
-            <KeyValueTable
-              data={testCase?.content?.params ?? null}
-              isEditMode={isEditMode}
-              section="params"
-              onDataChange={handleDataChange}
-            />
-          </div>
-          <div style={{ display: activeTab === 1 ? 'block' : 'none' }}>
-            <KeyValueTable
-              data={testCase?.content?.pathvariable ?? null}
-              isEditMode={isEditMode}
-              section="pathvariable"
-              onDataChange={handleDataChange}
-            />
-          </div>
-          <div style={{ display: activeTab === 2 ? 'block' : 'none' }}>
-            <KeyValueTable
-              data={testCase?.content?.headers ?? null}
-              isEditMode={isEditMode}
-              section="headers"
-              onDataChange={handleDataChange}
-            />
-          </div>
-          {activeTab === 3 && (
-            <div>
-              <FormControl component="fieldset">
-                <RadioGroup
-                  value={bodyType}
-                  onChange={(e) =>
-                    handleBodyTypeChange(
-                      e.target.value as 'none' | 'raw' | 'form-data',
-                    )
-                  }
-                  row
+            <div style={{ display: activeTab === 0 ? 'block' : 'none' }}>
+              <KeyValueTable
+                data={testCase?.content?.params ?? null}
+                isEditMode={isEditMode}
+                section="params"
+                onDataChange={handleDataChange}
+              />
+            </div>
+            <div style={{ display: activeTab === 1 ? 'block' : 'none' }}>
+              <KeyValueTable
+                data={testCase?.content?.pathvariable ?? null}
+                isEditMode={isEditMode}
+                section="pathvariable"
+                onDataChange={handleDataChange}
+              />
+            </div>
+            <div style={{ display: activeTab === 2 ? 'block' : 'none' }}>
+              <KeyValueTable
+                data={testCase?.content?.headers ?? null}
+                isEditMode={isEditMode}
+                section="headers"
+                onDataChange={handleDataChange}
+              />
+            </div>
+            {activeTab === 3 && (
+              <div>
+                <FormControl
+                  component="fieldset"
                   sx={{
-                    gap: '1rem',
+                    width: '100%',
+                    padding: '0 0.5rem',
                   }}
                 >
-                  <FormControlLabel
-                    value="none"
-                    control={
-                      <Radio
-                        color="secondary"
-                        sx={{
-                          '&.Mui-disabled': {
-                            color: '#A020F0',
-                          },
-                        }}
-                      />
+                  <RadioGroup
+                    value={bodyType}
+                    onChange={(e) =>
+                      handleBodyTypeChange(
+                        e.target.value as 'none' | 'raw' | 'form-data',
+                      )
                     }
-                    label="None"
-                    disabled={!isEditMode}
+                    row
                     sx={{
-                      '.MuiFormControlLabel-label': {
-                        color: '#FFFFFF',
-                      },
-                      '&.Mui-disabled .MuiFormControlLabel-label': {
-                        color: '#FFFFFF',
-                      },
+                      gap: '1rem',
                     }}
-                  />
-                  <FormControlLabel
-                    value="raw"
-                    control={
-                      <Radio
-                        color="secondary"
-                        sx={{
-                          '&.Mui-disabled': {
-                            color: '#A020F0',
-                          },
-                        }}
-                      />
-                    }
-                    label="Raw"
-                    disabled={!isEditMode}
-                    sx={{
-                      '.MuiFormControlLabel-label': {
-                        color: '#FFFFFF',
-                      },
-                      '&.Mui-disabled .MuiFormControlLabel-label': {
-                        color: '#FFFFFF',
-                      },
-                    }}
-                  />
-                  <FormControlLabel
-                    value="form-data"
-                    control={
-                      <Radio
-                        color="secondary"
-                        sx={{
-                          '&.Mui-disabled': {
-                            color: '#A020F0',
-                          },
-                        }}
-                      />
-                    }
-                    label="Form Data"
-                    disabled={!isEditMode}
-                    sx={{
-                      '.MuiFormControlLabel-label': {
-                        color: '#FFFFFF',
-                      },
-                      '&.Mui-disabled .MuiFormControlLabel-label': {
-                        color: '#FFFFFF',
-                      },
-                    }}
-                  />
-                </RadioGroup>
-              </FormControl>
+                  >
+                    <FormControlLabel
+                      value="none"
+                      control={
+                        <Radio
+                          color="secondary"
+                          sx={{
+                            '&.Mui-disabled': {
+                              color: '#A020F0',
+                            },
+                          }}
+                        />
+                      }
+                      label="None"
+                      disabled={!isEditMode}
+                      sx={{
+                        '.MuiFormControlLabel-label': {
+                          color: '#FFFFFF',
+                        },
+                        '&.Mui-disabled .MuiFormControlLabel-label': {
+                          color: '#FFFFFF',
+                        },
+                      }}
+                    />
+                    <FormControlLabel
+                      value="raw"
+                      control={
+                        <Radio
+                          color="secondary"
+                          sx={{
+                            '&.Mui-disabled': {
+                              color: '#A020F0',
+                            },
+                          }}
+                        />
+                      }
+                      label="Raw"
+                      disabled={!isEditMode}
+                      sx={{
+                        '.MuiFormControlLabel-label': {
+                          color: '#FFFFFF',
+                        },
+                        '&.Mui-disabled .MuiFormControlLabel-label': {
+                          color: '#FFFFFF',
+                        },
+                      }}
+                    />
+                    <FormControlLabel
+                      value="form-data"
+                      control={
+                        <Radio
+                          color="secondary"
+                          sx={{
+                            '&.Mui-disabled': {
+                              color: '#A020F0',
+                            },
+                          }}
+                        />
+                      }
+                      label="Form Data"
+                      disabled={!isEditMode}
+                      sx={{
+                        '.MuiFormControlLabel-label': {
+                          color: '#FFFFFF',
+                        },
+                        '&.Mui-disabled .MuiFormControlLabel-label': {
+                          color: '#FFFFFF',
+                        },
+                      }}
+                    />
+                  </RadioGroup>
+                </FormControl>
 
-              {bodyType === 'none' && <BodyNone />}
-              {bodyType === 'raw' && (
-                <BodyRaw
-                  raw={testCase?.content.body?.raw ?? null}
-                  isEditMode={isEditMode}
-                  onDataChange={handleDataChange}
-                  body={testCase?.content?.body || {}}
-                />
-              )}
-              {bodyType === 'form-data' && (
-                <BodyFormData
-                  formData={testCase?.content.body?.formData ?? null}
-                  isEditMode={isEditMode}
-                  onDataChange={handleDataChange}
-                />
-              )}
-            </div>
-          )}
-
+                {bodyType === 'none' && <BodyNone />}
+                {bodyType === 'raw' && (
+                  <BodyRaw
+                    raw={testCase?.content.body?.raw ?? null}
+                    isEditMode={isEditMode}
+                    onDataChange={handleDataChange}
+                    body={testCase?.content?.body || {}}
+                  />
+                )}
+                {bodyType === 'form-data' && (
+                  <BodyFormData
+                    formData={testCase?.content.body?.formData ?? null}
+                    isEditMode={isEditMode}
+                    onDataChange={handleDataChange}
+                  />
+                )}
+              </div>
+            )}
+          </Flexbox>
           {/* Expected Response Editors */}
           <div>
-            <h3>Expected Response</h3>
-
-            <div>
-              <Typography>Schema</Typography>
+            <Flexbox
+              flexDirections="col"
+              alignItems="start"
+              style={{
+                width: '100%',
+                gap: '2rem',
+              }}
+            >
+              <Flexbox
+                flexDirections="col"
+                alignItems="start"
+                style={{
+                  gap: '0.25rem',
+                }}
+              >
+                <Typography>응답 타입</Typography>
+                <Typography color="disabled" size={1}>
+                  자유 양식으로 응답 모습을 정의합니다.
+                </Typography>
+              </Flexbox>
               <Editor
                 height="200px"
                 defaultLanguage="plaintext"
                 value={editedTestCase?.content.expectedResponse.schema || ''}
+                onMount={handleEditorDidMount}
+                theme="dracula"
                 onChange={(value) => {
                   if (!editedTestCase) return;
                   setEditedTestCase({
@@ -517,13 +564,34 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
                   });
                 }}
                 options={{
-                  readOnly: !isEditMode,
+                  readOnly: !isEditMode, // isEditing은 위에서 내려주는거 써야함
+                  lineNumbers: 'on',
+                  folding: true,
                   minimap: { enabled: false },
+                  renderLineHighlightOnlyWhenFocus: true,
                 }}
               />
-            </div>
-            <div>
-              <Typography>Example</Typography>
+
+              <Flexbox
+                flexDirections="col"
+                alignItems="start"
+                style={{
+                  gap: '0.25rem',
+                }}
+              >
+                <Typography>실제 응답</Typography>
+                <Flexbox
+                  flexDirections="col"
+                  alignItems="start"
+                  style={{
+                    gap: '0.25rem',
+                  }}
+                >
+                  <Typography color="disabled" size={1}>
+                    JSON 형태로 활용할 응답 데이터를 작성하세요.
+                  </Typography>
+                </Flexbox>
+              </Flexbox>
               <Editor
                 height="200px"
                 defaultLanguage="json"
@@ -562,7 +630,7 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
                   minimap: { enabled: false },
                 }}
               />
-            </div>
+            </Flexbox>
           </div>
         </Flexbox>
       </div>
@@ -766,6 +834,9 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
               <td className={styles.descriptionCellStyle}>
                 {isEditMode ? (
                   <input
+                    style={{
+                      width: '-webkit-fill-available',
+                    }}
                     value={row.description || ''}
                     onChange={(e) =>
                       handleChange(row.id, 'description', e.target.value)
@@ -776,8 +847,14 @@ const KeyValueTable: React.FC<KeyValueTableProps> = ({
                 )}
               </td>
               {isEditMode && (
-                <td className={styles.actionCellStyle}>
-                  <button onClick={() => handleDeleteRow(row.id)}>삭제</button>
+                <td>
+                  <Icon
+                    background="none"
+                    color="light"
+                    onClick={() => handleDeleteRow(row.id)}
+                  >
+                    <FaTrash />
+                  </Icon>
                 </td>
               )}
             </tr>
@@ -1055,6 +1132,9 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
               <td className={bodyFormDataStyles.keyCellStyle}>
                 {isEditMode ? (
                   <input
+                    style={{
+                      width: '-webkit-fill-available',
+                    }}
                     value={entry.key}
                     onChange={(e) => handleChange(index, 'key', e.target.value)}
                   />
@@ -1089,6 +1169,9 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
                 {entry.type === 'Text' ? (
                   isEditMode ? (
                     <input
+                      style={{
+                        width: '-webkit-fill-available',
+                      }}
                       value={
                         entry.value !== null && entry.value !== undefined
                           ? String(entry.value)
@@ -1144,8 +1227,14 @@ const BodyFormData: React.FC<BodyFormDataProps> = ({
                 )}
               </td>
               {isEditMode && (
-                <td className={bodyFormDataStyles.actionCellStyle}>
-                  <button onClick={() => handleDeleteEntry(index)}>삭제</button>
+                <td>
+                  <Icon
+                    background="none"
+                    color="light"
+                    onClick={() => handleDeleteEntry(index)}
+                  >
+                    <FaTrash />
+                  </Icon>
                 </td>
               )}
             </tr>

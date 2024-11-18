@@ -96,7 +96,7 @@ export const testBodyContainerRecipe = recipe({
     overflow: 'hidden',
     transition: 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out',
     opacity: 1,
-    gap: '4rem',
+    gap: '2rem',
     border: '0 0.07rem 0.07rem 0.07rem solid',
     borderRadius: '0rem 0rem 0.5rem 0.5rem',
     borderColor: colorPalette.util[400],

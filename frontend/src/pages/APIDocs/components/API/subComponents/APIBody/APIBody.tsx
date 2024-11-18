@@ -11,6 +11,8 @@ import { useGetAPIDetail } from '../../../../reactQueries/api';
 import { TestCaseTable } from './TestCase/TestCaseTable/TestCaseTable';
 import { useAPI } from '../../../../hooks/useAPI';
 import { RequestDocs } from './RequestDocs/RequestDocs';
+import { BodyNone } from './RequestDocs/RequestContents/BodyNone/BodyNone';
+import { bodNone } from './RequestDocs/RequestContents/BodyNone/BodyNone.css';
 
 export const APIBody = () => {
   const context = useAPIContext();
@@ -164,7 +166,10 @@ export const APIBody = () => {
               style={{ gap: '3rem', width: '100%' }}
             >
               {/* 1.2.1 RIGHT-TOP: API 요청 정의서 */}
-              <RequestDocs requestDocs={apiDetail.requestDocs || null} />
+              <RequestDocs
+                requestDocs={apiDetail.requestDocs || null}
+                fontColor={fontColor}
+              />
 
               {/* HORIZONTAL DIVIDER */}
               <div
@@ -176,16 +181,38 @@ export const APIBody = () => {
                   margin: '0.25rem 0rem 0rem 0rem',
                 }}
               />
-              <Flexbox flexDirections="row" justifyContents="between">
-                <Typography
-                  style={{
-                    textAlign: 'start',
-                    fontSize: '1.4rem',
-                    fontWeight: '600',
-                  }}
-                >
-                  테스트 케이스
-                </Typography>
+              <Flexbox
+                flexDirections="row"
+                justifyContents="between"
+                alignItems="end"
+              >
+                <Flexbox flexDirections="col" style={{ gap: '0.85rem' }}>
+                  <Typography
+                    color={'primary'}
+                    style={{
+                      textAlign: 'start',
+                      fontSize: '1.5rem',
+                      fontWeight: '600',
+                    }}
+                  >
+                    테스트 케이스
+                  </Typography>
+                  <Flexbox
+                    flexDirections="col"
+                    alignItems="start"
+                    style={{
+                      gap: '0.25rem',
+                    }}
+                  >
+                    <Typography color="disabled" size={1}>
+                      여러 테스트 케이스를 정의할 수 있습니다.
+                    </Typography>
+                    <Typography color="disabled" size={1}>
+                      이곳에 정의한 테스트케이스는 동작 테스트와 모킹 자동화 에
+                      사용됩니다.
+                    </Typography>
+                  </Flexbox>
+                </Flexbox>
                 <Button
                   color="primary"
                   rounded={0.3}
@@ -213,7 +240,11 @@ export const APIBody = () => {
                     />
                   ))
                 ) : (
-                  <div>테스트케이스가 없습니다.</div>
+                  <div className={bodNone}>
+                    <Typography size={1} weight="600">
+                      테스트 케이스가 없습니다.
+                    </Typography>
+                  </div>
                 )}
               </Flexbox>
             </Flexbox>
