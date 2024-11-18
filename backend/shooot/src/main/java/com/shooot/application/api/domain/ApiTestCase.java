@@ -59,4 +59,10 @@ public class ApiTestCase extends SoftDeleteEntity {
         }
     }
 
+    public void update(ApiTestStatusType apiTestStatusType){
+        if(apiTestStatusType != null){
+            this.testCaseStatus = apiTestStatusType;
+        }
+    }
+
 }

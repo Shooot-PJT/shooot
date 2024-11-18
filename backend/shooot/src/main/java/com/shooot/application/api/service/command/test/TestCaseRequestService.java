@@ -1,13 +1,11 @@
 package com.shooot.application.api.service.command.test;
 
-import com.shooot.application.api.domain.ApiTestCase;
-import com.shooot.application.api.domain.ApiTestCaseRequest;
-import com.shooot.application.api.domain.ApiTestCaseRequestType;
-import com.shooot.application.api.domain.ApiTestLog;
+import com.shooot.application.api.domain.*;
 import com.shooot.application.api.domain.repository.ApiTestCaseRepository;
 import com.shooot.application.api.domain.repository.ApiTestCaseRequestRepository;
 import com.shooot.application.api.domain.repository.ApiTestLogRepository;
 import com.shooot.application.api.exception.testcase.TestCaseNotFoundException;
+import com.shooot.application.api.ui.dto.TestCaseResponseView;
 import com.shooot.application.common.infra.storage.exception.FileNotFoundException;
 import com.shooot.application.project.domain.ProjectParticipant;
 import com.shooot.application.project.domain.repository.ProjectParticipantRepository;
@@ -64,7 +62,7 @@ public class TestCaseRequestService {
 //    private final String serverURL = "http://localhost:8081/";
 
     @Transactional
-    public void testCaseResponse(Integer testcaseId, Integer userId){
+    public TestCaseResponseView testCaseResponse(Integer testcaseId, Integer userId){
 
         ApiTestCase apiTestCase = testCaseRepository.findById(testcaseId)
                 .orElseThrow(TestCaseNotFoundException::new);
@@ -114,8 +112,17 @@ public class TestCaseRequestService {
         // TODO : response를 api_test_log 테이블에 데이터 저장하기
         saveLog(response, testcaseId, userId, headers, content);
 
-        //
+        // TODO : testcase request를 수행함에 따라 테스트케이스의 테스트 상태를 변경해줘야한다.
+        ApiTestStatusType testResult = (apiTestCase.getHttpStatus().value() == response.getStatusCode().value()) ? ApiTestStatusType.SUCCESS : ApiTestStatusType.FAIL;
+        apiTestCase.update(testResult);
 
+        TestCaseResponseView testCaseResponseView = TestCaseResponseView
+                .builder()
+                .testcaseId(testcaseId)
+                .testResult(testResult.name())
+                .build();
+
+        return testCaseResponseView;
     }
 
     private ApiTestCaseRequest getLatestRequest(Integer testcaseId){
