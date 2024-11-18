@@ -376,11 +376,14 @@ public class TestCaseRequestService {
         }
         log.info("다른 서ㅏ버로 보낼 데이터 = {}", requestDatas);
 
+
         ResponseEntity<?> response = restClient
                 .method(HttpMethod.valueOf(method))
                 .uri(url)
                 .headers(httpHeaders -> {
-                    headers.forEach(httpHeaders::set);
+                    if(headers != null){
+                        headers.forEach(httpHeaders::set);
+                    }
                     httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
                 })
                 .body(formData)
@@ -404,7 +407,9 @@ public class TestCaseRequestService {
                 .method(HttpMethod.valueOf(method))
                 .uri(url)
                 .headers(httpHeaders -> {
-                    headers.forEach(httpHeaders::set);
+                    if(headers != null){
+                        headers.forEach(httpHeaders::set);
+                    }
                     httpHeaders.setContentType(MediaType.APPLICATION_JSON);
                 })
                 .contentType(MediaType.APPLICATION_JSON)
@@ -425,7 +430,11 @@ public class TestCaseRequestService {
         ResponseEntity<String> response = restClient
                 .method(HttpMethod.valueOf(method))
                 .uri(url)
-                .headers(httpHeaders -> headers.forEach(httpHeaders::set))
+                .headers(httpHeaders -> {
+                    if(headers != null){
+                        headers.forEach(httpHeaders::set);
+                    }
+                })
                 .retrieve()
                 .toEntity(String.class);
 
