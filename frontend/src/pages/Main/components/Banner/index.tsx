@@ -39,10 +39,7 @@ export const Banner = ({ children, ...props }: BannerProps) => {
     handleNewNotification,
   );
 
-  const {
-    isLoading: isNotificationsInitialLoading,
-    isError: isNotificationsError,
-  } = useQuery<void>({
+  const { isLoading: isNotificationsInitialLoading } = useQuery<void>({
     queryKey: ['notifications'],
     queryFn: getAPISSENotification,
     enabled: !!user,
@@ -53,7 +50,6 @@ export const Banner = ({ children, ...props }: BannerProps) => {
   const {
     data: unReadCount = 0,
     isLoading: isCountInitialLoading,
-    isError: isCountError,
 
     refetch: refetchCount,
   } = useQuery<number>({
@@ -87,13 +83,6 @@ export const Banner = ({ children, ...props }: BannerProps) => {
     );
   }
 
-  if (isNotificationsError || isCountError) {
-    const error = isNotificationsError
-      ? '알림 목록을 불러오는 중 오류가 발생했습니다.'
-      : '알림 개수를 불러오는 중 오류가 발생했습니다.';
-    console.log(error);
-  }
-
   return (
     <div className={styles.bannerContainer} {...props}>
       <Flexbox
@@ -124,13 +113,12 @@ export const Banner = ({ children, ...props }: BannerProps) => {
             }}
           >
             <IoNotifications />
-            {unReadCount > 0 && (
-              <div className={styles.notificationCount}>
-                <Typography color="light" weight="600" size={0.75}>
-                  {unReadCount}
-                </Typography>
-              </div>
-            )}
+
+            <div className={styles.notificationCount}>
+              <Typography color="light" weight="600" size={0.75}>
+                {unReadCount}
+              </Typography>
+            </div>
           </div>
         </CustomTooltip>
       </div>

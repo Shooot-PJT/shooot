@@ -3,6 +3,7 @@ import theme from '../../../../styles/theme.css';
 
 export const container = style({
   boxSizing: 'border-box',
+  zIndex: 9999,
 
   '@media': {
     'screen and (min-width: 1440px)': {
