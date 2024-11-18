@@ -1,4 +1,3 @@
-// frontend/src/pages/APIDocs/reactQueries/domain/index.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   getDomainList,
@@ -64,8 +63,7 @@ export const useEditDomain = () => {
 export const useRemoveDomain = () => {
   const queryClient = useQueryClient();
   return useMutation<void, Error, RemoveDomainRequest, unknown>({
-    mutationFn: ({ domainId }: RemoveDomainRequest) =>
-      removeDomain({ domainId }),
+    mutationFn: (info: RemoveDomainRequest) => removeDomain(info),
     onSuccess: (_, { domainId }) => {
       queryClient.setQueryData<DomainInfo[]>(['domainList'], (prevData) => {
         if (!prevData) return [];
