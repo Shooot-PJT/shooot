@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 @Builder
@@ -18,8 +19,8 @@ public class ApiTestLogInfiniteResponse {
     private Integer testCaseId;
     private Boolean isSuccess;
     private HttpStatus httpStatus;
-    private String httpBody;
-    private String httpHeader;
+    private Map<String, Object> httpBody;
+    private Map<String, String> httpHeader;
     private LocalDateTime createdAt;
 
 }
