@@ -10,6 +10,7 @@ import com.shooot.application.api.ui.dto.TestCaseResponseView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ public class TestApiRequestService {
     private final TestCaseRequestService testCaseRequestService;
     private final ApiRepository apiRepository;
 
+    @Transactional
     public List<TestCaseResponseView> allTestcaseOfApi(Integer apiId, Integer userId){
         List<ApiTestCase> apiTestCaseList = apiTestCaseRepository.findApiTestCasesByApiId(apiId);
         List<TestCaseResponseView> responseList = new ArrayList<>();
