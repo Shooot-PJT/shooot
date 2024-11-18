@@ -108,6 +108,7 @@ export const AddDomainModal = ({
       });
     } else {
       const infos: EditDomainRequest = {
+        projectId,
         domainId: domainInfo?.domainId,
         title: title.current!.value.trim(),
         description: description.current!.value.trim(),
