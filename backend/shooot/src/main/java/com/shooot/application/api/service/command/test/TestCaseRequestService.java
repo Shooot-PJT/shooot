@@ -78,7 +78,7 @@ public class TestCaseRequestService {
         log.info("requestMethod = {}, requestURL = {}", requestMethod, requestURL);
 
         Map<String, String> headers = extractHeaders(latestRequest.getType(), content);
-        headers.put("Cookie", session);
+        if(headers != null) headers.put("Cookie", session);
         log.info("headers = {}", headers);
 
         String parameters = extractParameters(content);
