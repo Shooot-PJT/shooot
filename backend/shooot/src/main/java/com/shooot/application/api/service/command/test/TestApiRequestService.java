@@ -24,14 +24,14 @@ public class TestApiRequestService {
     private final ApiRepository apiRepository;
 
     @Transactional
-    public List<TestCaseResponseView> allTestcaseOfApi(Integer apiId, Integer userId){
+    public List<TestCaseResponseView> allTestcaseOfApi(Integer apiId, Integer userId, String session){
         List<ApiTestCase> apiTestCaseList = apiTestCaseRepository.findApiTestCasesByApiId(apiId);
         List<TestCaseResponseView> responseList = new ArrayList<>();
         boolean pass = true;
 
         if(!apiTestCaseList.isEmpty()){
             for (ApiTestCase apiTestCase : apiTestCaseList) {
-                TestCaseResponseView testCaseResponseView = testCaseRequestService.testCaseResponse(apiTestCase.getId(), userId);
+                TestCaseResponseView testCaseResponseView = testCaseRequestService.testCaseResponse(apiTestCase.getId(), userId, session);
 
                 responseList.add(testCaseResponseView);
 
