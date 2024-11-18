@@ -1,4 +1,4 @@
-package com.shooot.application.projecttest.service.dto;
+package com.shooot.application.stresstest.service;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProjectBuildTestStopRequest {
+public class StressTestStopRequest {
 
-    private Integer projectId;
     private Integer projectJarFileId;
 }

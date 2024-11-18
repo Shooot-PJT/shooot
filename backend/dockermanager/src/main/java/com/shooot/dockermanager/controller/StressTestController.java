@@ -1,8 +1,8 @@
 package com.shooot.dockermanager.controller;
 
-import com.shooot.dockermanager.dto.ProjectMonitorRequest;
-import com.shooot.dockermanager.dto.ProjectMonitorStopRequest;
-import com.shooot.dockermanager.service.ProjectMonitorService;
+import com.shooot.dockermanager.dto.StressTestStartRequest;
+import com.shooot.dockermanager.dto.StressTestStopRequest;
+import com.shooot.dockermanager.service.StressTestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,19 +13,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/stress-test")
 @RestController
-public class ProjectMonitorController {
+public class StressTestController {
 
-    private final ProjectMonitorService projectMonitorService;
+    private final StressTestService stressTestService;
 
     @PostMapping("/start")
-    public ResponseEntity<Void> startProjectMonitor(@RequestBody ProjectMonitorRequest request) {
-        projectMonitorService.getStatus(request);
+    public ResponseEntity<Void> start(@RequestBody StressTestStartRequest request) {
+        stressTestService.start(request);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/stop")
-    public ResponseEntity<Void> stopProjectMonitor(@RequestBody ProjectMonitorStopRequest request) {
-        projectMonitorService.stop(request.getProjectJarFileId());
+    public ResponseEntity<Void> stop(@RequestBody StressTestStopRequest request) {
+        stressTestService.stop(request.getProjectJarFileId());
         return ResponseEntity.ok().build();
     }
 }
