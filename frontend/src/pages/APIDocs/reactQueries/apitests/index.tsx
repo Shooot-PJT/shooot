@@ -3,6 +3,7 @@ import { apiTest, getApiTestLogs, testcaseTest } from '../../apis/apitest';
 import usePopup from '../../../../hooks/usePopup';
 import Typography from '../../../../components/Typography';
 import { useCommonLoginStore } from '../../stores/commonLoginStore';
+import { TestResponse } from '../../apis/apitest/types';
 
 const MUTATION_KEYS = {
   testcaseTest: 'testcaseTest',
@@ -21,7 +22,13 @@ export const useTestCaseTestMutation = () => {
     onSuccess: (data) => {
       popup.push({
         title: '테케 테스트 결과',
-        children: <Typography>{data.data.testResult}</Typography>,
+        children: (
+          <Typography>
+            {data.data.testResult === 'SUCCESS'
+              ? '테스트에 성공하였습니다!'
+              : '테스트에 실패하였습니다...'}
+          </Typography>
+        ),
       });
     },
     onError: (err) => {
@@ -36,6 +43,15 @@ export const useTestCaseTestMutation = () => {
 export const useApiTestMutation = () => {
   const popup = usePopup();
   const { session } = useCommonLoginStore();
+  const getResult = (data: TestResponse[]) => {
+    let result = true;
+    data.forEach((data) => {
+      if (data.testResult === 'FAIL') {
+        result = false;
+      }
+    });
+    return result;
+  };
 
   const { mutate } = useMutation({
     mutationKey: [MUTATION_KEYS.apiTest],
@@ -45,9 +61,11 @@ export const useApiTestMutation = () => {
         title: '테케 테스트 결과',
         children: (
           <>
-            {data.data.map((response) => (
-              <Typography>{response.testResult}</Typography>
-            ))}
+            <Typography>
+              {getResult(data.data)
+                ? 'API 의 모든 케이스의 테스트에 성공하였습니다!'
+                : 'API 의 일부 케이스의 테스트에 실패하였습니다...'}
+            </Typography>
           </>
         ),
       });

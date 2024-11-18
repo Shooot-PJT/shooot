@@ -10,6 +10,8 @@ import {
 import usePopup from '../../../../hooks/usePopup';
 import { useGetAPIList } from '../../reactQueries/api';
 import { GetAPIListRequest } from '../../apis/api/types';
+import { useCommonLoginStore } from '../../stores/commonLoginStore';
+import { apiTest } from '../../apis/apitest';
 
 interface TestButtonProps {
   children: ReactNode;
@@ -31,14 +33,45 @@ interface DomainTestButtonProps {
   domainId: number;
 }
 
+const testAPI = async (apiId: number, session: string) => {
+  const response = await apiTest(apiId, session);
+  const result = response.data;
+  let res = true;
+  result.forEach((r) => {
+    if (r.testResult === 'FAIL') res = false;
+  });
+  return res;
+};
+
 TestButton.Domain = function Domain({ domainId }: DomainTestButtonProps) {
   const popup = usePopup();
   const apiList = useGetAPIList({ domainId } as GetAPIListRequest);
-  const { apiTest } = useApiTestMutation();
-  const domainTestHandler = () => {
+  const { session } = useCommonLoginStore();
+  const domainTestHandler = async () => {
     if (apiList.data) {
       if (apiList.data.length) {
-        apiList.data.forEach((rd) => apiTest(rd.id));
+        let result = true;
+        apiList.data.forEach((api) => {
+          if (!testAPI(api.id, session)) {
+            result = false;
+          }
+        });
+
+        if (result) {
+          popup.push({
+            title: '도메인 테스트 성공',
+            children: (
+              <Typography>모든 API 테스트에 통과하였습니다!</Typography>
+            ),
+          });
+        } else {
+          popup.push({
+            title: '도메인 테스트 실패',
+            children: (
+              <Typography>일부 API 테스트에 실패했습니다...</Typography>
+            ),
+          });
+        }
       } else {
         popup.push({
           title: '도메인 테스트',
