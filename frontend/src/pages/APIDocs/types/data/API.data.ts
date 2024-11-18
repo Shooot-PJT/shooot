@@ -66,6 +66,7 @@ export interface RequestDocs {
   domainId: DomainInfo['domainId'];
   managerId?: Manager['id'];
   managerName?: Manager['nickname'];
+  profileColor?: string;
   title?: string;
   description?: string;
   method?: Method | null;

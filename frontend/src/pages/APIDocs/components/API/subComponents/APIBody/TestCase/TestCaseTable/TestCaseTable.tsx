@@ -43,6 +43,7 @@ import {
 import { Editor, OnMount } from '@monaco-editor/react';
 import Icon from '../../../../../../../../components/Icon';
 import { FaTrash } from 'react-icons/fa';
+import colorPalette from '../../../../../../../../styles/colorPalette';
 
 interface TestCaseTableProps {
   testCaseId?: number;
@@ -97,6 +98,11 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
 
   const [editedTestCase, setEditedTestCase] =
     useState<TestCaseDetailInfo | null>(null);
+
+  const statusColor =
+    editedTestCase?.httpStatusCode.toString().charAt(0) === '2'
+      ? 'originalGreen'
+      : 'originalRed';
 
   const queryClient = useQueryClient();
   const addTestCaseMutation = useAddTestCase();
@@ -229,9 +235,6 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
       } catch (error) {
         console.error('테스트케이스 저장 실패:', error);
       }
-    }
-    if (isAddMode && !isEditMode && onCancel) {
-      onCancel();
     } else {
       setIsEditMode(!isEditMode);
     }
@@ -261,6 +264,43 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
       ...editedTestCase,
       httpStatusCode: parseInt(value, 10),
     });
+  };
+
+  // 추가된 취소 핸들러
+  const handleCancel = () => {
+    if (isAddMode && onCancel) {
+      onCancel();
+    } else {
+      if (testCaseDetail) {
+        setEditedTestCase({
+          ...testCaseDetail,
+          content: {
+            ...testCaseDetail.content,
+            expectedResponse: testCaseDetail.content.expectedResponse || {
+              schema: null,
+              example: null,
+            },
+          },
+        });
+
+        switch (testCaseDetail.type) {
+          case 'MULTIPART':
+            setBodyType('form-data');
+            break;
+          case 'JSON':
+            setBodyType('raw');
+            break;
+          case 'NONE':
+          default:
+            setBodyType('none');
+            break;
+        }
+      } else {
+        setEditedTestCase(null);
+        setBodyType('none');
+      }
+      setIsEditMode(false);
+    }
   };
 
   return (
@@ -295,70 +335,94 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
       </div>
       {/* 바디 */}
       <div className={s.testBodyContainerRecipe({ isOpen: isOpenBody })}>
-        {isAddMode ? (
-          <Flexbox
-            flexDirections="row"
-            style={{
-              gap: '0.25rem',
-            }}
-          >
-            <Button rounded={0.5} onClick={toggleEditMode}>
-              <Typography size={0.75}>
-                {isEditMode ? '저장' : '편집'}
-              </Typography>
-            </Button>
-            {isEditMode && (
-              <Button
-                rounded={0.5}
-                color="grey"
-                onClick={() => {
-                  if (onCancel) onCancel();
-                }}
-              >
-                취소
-              </Button>
-            )}
-          </Flexbox>
-        ) : (
-          <Flexbox
-            flexDirections="row"
-            style={{
-              gap: '0.25rem',
-            }}
-          >
-            <Button rounded={0.5} onClick={toggleEditMode}>
-              <Typography size={0.75}>
-                {isEditMode ? '저장' : '편집'}
-              </Typography>
-            </Button>
-            {isEditMode && (
-              <Button rounded={0.5} color="grey">
-                <Typography size={0.75}>취소</Typography>
-              </Button>
-            )}
-          </Flexbox>
-        )}
+        <Flexbox justifyContents="between">
+          {isEditMode ? (
+            <div style={{ textAlign: 'start' }}>
+              <Flexbox style={{ gap: '2.5rem' }}>
+                <Textfield
+                  label="테스트케이스 제목"
+                  value={editedTestCase?.title || ''}
+                  onChange={handleTitleChange}
+                />
 
-        {isEditMode ? (
-          <div style={{ textAlign: 'start' }}>
-            <Flexbox style={{ gap: '2.5rem' }}>
-              <Textfield
-                label="테스트케이스 제목"
-                value={editedTestCase?.title || ''}
-                onChange={handleTitleChange}
-              />
+                <Textfield
+                  label="HTTP Status Code"
+                  type="number"
+                  value={editedTestCase?.httpStatusCode}
+                  onChange={handleStatusCodeChange}
+                />
+              </Flexbox>
+            </div>
+          ) : (
+            <div style={{ textAlign: 'start' }}>
+              <Flexbox flexDirections="col" style={{ gap: '1.5rem' }}>
+                <Flexbox style={{ gap: '0.75rem' }}>
+                  <Typography size={2.5} weight="700" color={statusColor}>
+                    {editedTestCase?.httpStatusCode}
+                  </Typography>
+                  <Typography size={2.5} weight="700" color={statusColor}>
+                    {
+                      HTTP_STATUS_CODES[
+                        editedTestCase?.httpStatusCode as number
+                      ]
+                    }
+                  </Typography>
+                </Flexbox>
+                <Typography size={1.15} weight="600">
+                  {editedTestCase?.title}
+                </Typography>
+                <div
+                  style={{
+                    backgroundColor:
+                      statusColor === 'originalGreen'
+                        ? colorPalette.originalGreen
+                        : colorPalette.originalRed,
+                    height: '0.25rem',
+                    width: '90%',
+                  }}
+                />
+              </Flexbox>
+            </div>
+          )}
 
-              <Textfield
-                label="HTTP Status Code"
-                type="number"
-                value={editedTestCase?.httpStatusCode}
-                onChange={handleStatusCodeChange}
-              />
+          {isAddMode ? (
+            <Flexbox
+              flexDirections="row"
+              style={{
+                gap: '0.25rem',
+              }}
+            >
+              <Button rounded={0.5} onClick={toggleEditMode}>
+                <Typography size={0.75}>
+                  {isEditMode ? '저장' : '편집'}
+                </Typography>
+              </Button>
+              {isEditMode && (
+                <Button rounded={0.5} color="grey" onClick={handleCancel}>
+                  <Typography size={0.75}>취소</Typography>
+                </Button>
+              )}
             </Flexbox>
-          </div>
-        ) : (
-          <></>
-        )}
+          ) : (
+            <Flexbox
+              flexDirections="row"
+              style={{
+                gap: '0.25rem',
+              }}
+            >
+              <Button rounded={0.5} onClick={toggleEditMode}>
+                <Typography size={0.75}>
+                  {isEditMode ? '저장' : '편집'}
+                </Typography>
+              </Button>
+              {isEditMode && (
+                <Button rounded={0.5} color="grey" onClick={handleCancel}>
+                  <Typography size={0.75}>취소</Typography>
+                </Button>
+              )}
+            </Flexbox>
+          )}
+        </Flexbox>
 
         {/*  */}
         <Flexbox
@@ -548,8 +612,6 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
                 height="200px"
                 defaultLanguage="plaintext"
                 value={editedTestCase?.content.expectedResponse.schema || ''}
-                onMount={handleEditorDidMount}
-                theme="dracula"
                 onChange={(value) => {
                   if (!editedTestCase) return;
                   setEditedTestCase({
@@ -563,6 +625,8 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
                     },
                   });
                 }}
+                onMount={handleEditorDidMount}
+                theme="dracula"
                 options={{
                   readOnly: !isEditMode, // isEditing은 위에서 내려주는거 써야함
                   lineNumbers: 'on',
@@ -604,6 +668,15 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
                       )
                     : ''
                 }
+                onMount={handleEditorDidMount}
+                theme="dracula"
+                options={{
+                  readOnly: !isEditMode, // isEditing은 위에서 내려주는거 써야함
+                  lineNumbers: 'on',
+                  folding: true,
+                  minimap: { enabled: false },
+                  renderLineHighlightOnlyWhenFocus: true,
+                }}
                 onChange={(value) => {
                   if (!editedTestCase) return;
 
@@ -624,10 +697,6 @@ export const TestCaseTable: React.FC<TestCaseTableProps> = ({
                   } catch (error) {
                     console.error('Invalid JSON in Example editor:', error);
                   }
-                }}
-                options={{
-                  readOnly: !isEditMode,
-                  minimap: { enabled: false },
                 }}
               />
             </Flexbox>
@@ -930,14 +999,18 @@ const BodyRaw: React.FC<BodyRawProps> = ({
   return (
     <div>
       <Editor
-        height="400px"
+        height="200px"
         defaultLanguage="json"
         value={jsonData}
         onChange={handleEditorChange}
         onMount={handleEditorDidMount}
+        theme="dracula"
         options={{
-          readOnly: !isEditMode,
+          readOnly: !isEditMode, // isEditing은 위에서 내려주는거 써야함
+          lineNumbers: 'on',
+          folding: true,
           minimap: { enabled: false },
+          renderLineHighlightOnlyWhenFocus: true,
         }}
       />
     </div>
