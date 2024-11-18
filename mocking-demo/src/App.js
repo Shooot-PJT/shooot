@@ -33,7 +33,7 @@ function App() {
         const result = await request.json();\n
         if (result["id"] && result["password"]) {\n
             // id 와 password 가 모두 있다면
-            return new HttpResponse(JSON.stringify({ statusCode: 200, msg: "로그인 성공" }));
+            return new HttpResponse(JSON.stringify({ tel: "010-1234-5678", email: "ssafy@ssafy.com", nickname: "배고픈 고래" }));
         } else {\n
             // id 또는 password 가 없음
             return new HttpResponse(JSON.stringify({ statusCode: 400, msg: "아이디 또는 비밀번호가 없습니다" }));
