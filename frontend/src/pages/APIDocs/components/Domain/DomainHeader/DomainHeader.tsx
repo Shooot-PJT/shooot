@@ -13,6 +13,10 @@ import {
   RemoveDomainButton,
 } from '../DomainButtons/DomainButtons';
 import { useAPI } from '../../../hooks/useAPI';
+import {
+  useSubscribeNotification,
+  useUnSubscribeNotification,
+} from '../../../reactQueries/domain';
 
 export const DomainHeader = () => {
   const context = useDomainContext();
@@ -20,13 +24,34 @@ export const DomainHeader = () => {
 
   const { addAPIModalHandler } = useAPI();
 
+  const {
+    mutate: subscribeMutate,
+
+    isError: isSubscribeError,
+    error: subscribeError,
+  } = useSubscribeNotification();
+
+  const {
+    mutate: unsubscribeMutate,
+    isError: isUnsubscribeError,
+    error: unsubscribeError,
+  } = useUnSubscribeNotification();
+
   const onClickCollapseButton = useCallback(
     throttle((e: React.MouseEvent) => {
       e.stopPropagation();
       handleToggleIsFocused();
     }, 500),
-    [isFocused],
+    [handleToggleIsFocused],
   );
+
+  const handleToggleSubscribe = () => {
+    if (context.domainInfo.isSubscribe) {
+      unsubscribeMutate({ domainId: context.domainInfo.domainId });
+    } else {
+      subscribeMutate({ domainId: context.domainInfo.domainId });
+    }
+  };
 
   return (
     <Flexbox
@@ -40,7 +65,10 @@ export const DomainHeader = () => {
         <Typography size={1.75} weight="600">
           {context.domainInfo.title}
         </Typography>
-        <SubscribeButton isSubscribed={context.domainInfo.isSubscribed} />
+        <SubscribeButton
+          isSubscribe={context.domainInfo.isSubscribe}
+          onToggleSubscribe={handleToggleSubscribe}
+        />
         <EditDomainButton domainInfo={context.domainInfo} />
         <RemoveDomainButton domainId={context.domainInfo.domainId} />
       </Flexbox>
@@ -88,6 +116,12 @@ export const DomainHeader = () => {
           </Button>
         </Flexbox>
       </Flexbox>
+      {/* 에러 메시지 표시 */}
+      {(isSubscribeError || isUnsubscribeError) && (
+        <Typography color="originalRed" size={0.875}>
+          {subscribeError?.message || unsubscribeError?.message}
+        </Typography>
+      )}
     </Flexbox>
   );
 };
