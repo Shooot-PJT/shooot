@@ -71,6 +71,7 @@ public class DockerComposeManager {
                 "traefik.enable", "true",
                 "traefik.http.routers." + projectName + "_" + projectName + ".rule", "Host(`" + projectName + HOST_DOMAIN + "`)",
                 "traefik.http.routers." + projectName + "_" + projectName + ".entrypoints", "websecure",
+                "traefik.http.routers." + projectName + "_" + projectName + ".middlewares", "cors",
                 "traefik.http.services." + projectName + "_" + projectName + ".loadbalancer.server.port", "8080"
         );
     }
