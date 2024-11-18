@@ -88,20 +88,10 @@ export const Banner = ({ children, ...props }: BannerProps) => {
   }
 
   if (isNotificationsError || isCountError) {
-    return (
-      <div className={styles.bannerContainer} {...props}>
-        <Flexbox
-          flexDirections="col"
-          style={{ padding: '2rem', alignItems: 'center' }}
-        >
-          <Typography color="originalRed">
-            {isNotificationsError
-              ? '알림 목록을 불러오는 중 오류가 발생했습니다.'
-              : '알림 개수를 불러오는 중 오류가 발생했습니다.'}
-          </Typography>
-        </Flexbox>
-      </div>
-    );
+    const error = isNotificationsError
+      ? '알림 목록을 불러오는 중 오류가 발생했습니다.'
+      : '알림 개수를 불러오는 중 오류가 발생했습니다.';
+    console.log(error);
   }
 
   return (
@@ -124,11 +114,6 @@ export const Banner = ({ children, ...props }: BannerProps) => {
         tabIndex={0}
         role="button"
         aria-label="알림함 열기"
-        onKeyPress={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            handleOpen();
-          }
-        }}
       >
         <CustomTooltip title={'알림함 열기'}>
           <div
