@@ -149,4 +149,10 @@ public class Api extends SoftDeleteEntity {
         this.modifiedAt = LocalDateTime.now();
     }
 
+    public void update(ApiTestStatusType apiTestStatusType){
+        if(apiTestStatusType != null){
+            this.testStatus = apiTestStatusType;
+        }
+    }
+
 }

@@ -31,6 +31,7 @@ public class ApiTestLogQueryRepository {
                 .select(apiTestLog)
                 .from(apiTestLog)
                 .where(
+                        apiIdEq(testLogSearchRequest.getApiId()),
                         apiTestCaseIdEq(testLogSearchRequest.getTestcaseId()),
                         apiTesterIdEq(testLogSearchRequest.getTesterId()),
                         apiSuccessEq(testLogSearchRequest.getIsSuccess()),
@@ -67,6 +68,10 @@ public class ApiTestLogQueryRepository {
      */
 
     //조건이 테스트케이스 아이디, 테스터 아이디, 시작일자, 끝난일자, pageable(page, size)
+    private BooleanExpression apiIdEq(Integer apiId){
+        return apiId != null ? apiTestLog.apiTestCase.api.id.eq(apiId) : null;
+    }
+
     private BooleanExpression apiTestCaseIdEq(Integer testCaseId){
         return testCaseId != null ? apiTestLog.apiTestCase.id.eq(testCaseId) : null;
     }
