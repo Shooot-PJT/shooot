@@ -7,6 +7,9 @@ import {
   useApiTestMutation,
   useTestCaseTestMutation,
 } from '../../reactQueries/apitests';
+import usePopup from '../../../../hooks/usePopup';
+import { useGetAPIList } from '../../reactQueries/api';
+import { GetAPIListRequest } from '../../apis/api/types';
 
 interface TestButtonProps {
   children: ReactNode;
@@ -24,9 +27,35 @@ TestButton.All = function All() {
   );
 };
 
-TestButton.Domain = function Domain() {
+interface DomainTestButtonProps {
+  domainId: number;
+}
+
+TestButton.Domain = function Domain({ domainId }: DomainTestButtonProps) {
+  const popup = usePopup();
+  const apiList = useGetAPIList({ domainId } as GetAPIListRequest);
+  const { apiTest } = useApiTestMutation();
+  const domainTestHandler = () => {
+    if (apiList.data) {
+      if (apiList.data.length) {
+        apiList.data.forEach((rd) => apiTest(rd.id));
+      } else {
+        popup.push({
+          title: '도메인 테스트',
+          children: <Typography>테스트 할 API 가 없습니다</Typography>,
+          type: 'fail',
+        });
+      }
+    }
+  };
+
   return (
-    <Button color="grey" rounded={0.5} paddingX={0.75}>
+    <Button
+      color="grey"
+      rounded={0.5}
+      paddingX={0.75}
+      onClick={() => domainTestHandler()}
+    >
       <Icon background="none" size={1.5} color="disabled">
         <HiCodeBracketSquare />
       </Icon>
