@@ -15,7 +15,9 @@ export interface GraphProps {
   frameColor: GraphColor;
   lineColor: GraphColor;
   SSEData: TestSSEData[];
-  dataName: string;
+  dataName: 'cpu' | 'memory' | 'disk' | 'network';
+  time: number;
+  dataIndex: number;
 }
 
 const formatTime = (seconds: number) => {
@@ -81,24 +83,17 @@ export const Graph = ({
   lineColor,
   SSEData,
   dataName,
+  time,
+  dataIndex,
 }: GraphProps) => {
   const [texts, setTexts] = useState<BottomText[]>([]);
   const [points, setPoints] = useState<BottomText[]>([]);
-  const [time, setTime] = useState<number>(-180);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const timeRef = useRef(time);
-  const dataIndexRef = useRef(0);
 
   const addTimeText = useCallback(
     (time: number) => {
-      if (SSEData.length - 1 > dataIndexRef.current) {
-        dataIndexRef.current += 1;
-      }
       const pointY =
-        120 -
-        Math.floor(
-          SSEData[dataIndexRef.current][dataName as keyof TestSSEData] * 120,
-        );
+        120 - Math.floor((SSEData[dataIndex]['curr'][dataName] / 100) * 120);
       const timeText = {
         text: formatTime(time / 60),
         x: 1170,
@@ -108,7 +103,7 @@ export const Graph = ({
       setPoints((prevPoints) => [timeText, ...prevPoints]);
       setTexts((prevTexts) => [timeText, ...prevTexts]);
     },
-    [SSEData, dataName],
+    [SSEData, dataIndex, dataName],
   );
 
   const renderCanvas = useCallback(() => {
@@ -200,12 +195,9 @@ export const Graph = ({
         .map(({ text, x, y, pointY }) => ({ text, x: x - 1, y, pointY }))
         .filter(({ x }) => x > -1000),
     );
-    timeRef.current += 1;
-    setTime(timeRef.current);
-    if (timeRef.current % 180 == 0) {
-      addTimeText(timeRef.current);
+    if (time % 180 === 0) {
+      addTimeText(time);
     }
-
     renderCanvas();
   }, [renderCanvas, addTimeText]);
 

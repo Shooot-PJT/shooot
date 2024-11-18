@@ -1,69 +1,55 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useTestDataStore } from '../stores/useTestDataStore';
 import { TestSSEData } from '../types';
 
 interface UseProjectSSEProps {
   projectJarFileId: number;
-  onLogReceived?: (log: string) => void;
-  onStatusReceived?: (status: string) => void;
 }
 
-export const useTestSSE = ({
-  projectJarFileId,
-  onLogReceived,
-  onStatusReceived,
-}: UseProjectSSEProps) => {
-  const [testData, setTestData] = useState<TestSSEData[]>([
-    {
-      cpuUtilization: 0.0,
-      ramUtilization: 0.0,
-    },
-    {
-      cpuUtilization: 0.0,
-      ramUtilization: 0.0,
-    },
-  ]);
+export const useTestSSE = ({ projectJarFileId }: UseProjectSSEProps) => {
+  const setTestData = useTestDataStore((state) => state.setTestData);
+  const { setState } = useTestDataStore();
   const eventSourceRef = useRef<EventSource | null>(null);
 
   useEffect(() => {
     if (!eventSourceRef.current) {
-      console.log('커넥션 연결');
       const eventSource = new EventSource(
         `https://shooot.co.kr/api/sse/projects/jarFile/${projectJarFileId}/connection`,
         { withCredentials: true },
       );
 
       eventSourceRef.current = eventSource;
-    }
 
-    eventSourceRef.current.addEventListener('test_data', (event) => {
-      try {
-        const parsedData = JSON.parse(event.data);
-        setTestData((prev) => {
-          const updatedData = [
-            ...prev,
-            {
-              cpuUtilization: parsedData.cpuUtilization,
-              ramUtilization: parsedData.ramUtilization / 1000000000,
-            },
-          ];
-          return updatedData;
-        });
-      } catch (e) {
-        console.error('Failed to parse project_log event data:', e);
-      }
-    });
+      eventSource.addEventListener('test_data', (event) => {
+        try {
+          const parsedData: TestSSEData = JSON.parse(event.data);
+
+          setTestData((prevData: TestSSEData[]) => [...prevData, parsedData]);
+        } catch (e) {
+          console.error('Failed to parse project_log event data:', e);
+        }
+      });
+
+      eventSource.addEventListener('test_state', (event) => {
+        try {
+          const parsedData = JSON.parse(event.data);
+          setState(parsedData.state);
+        } catch (e) {
+          console.error(e);
+        }
+      });
+    }
 
     return () => {
       if (eventSourceRef.current) {
-        console.log('커넥션 종료');
         eventSourceRef.current.close();
         eventSourceRef.current = null;
       }
     };
-  }, [onLogReceived, onStatusReceived, projectJarFileId]);
+  }, [projectJarFileId, setState, setTestData]);
 
   return {
     eventSourceRef,
-    testData,
+    testData: useTestDataStore((state) => state.testData),
   };
 };
