@@ -88,7 +88,7 @@ public class HttpRequestSenderService {
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     connection.getResponseCode();
-                    Thread.sleep(1);
+                    Thread.sleep(100);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
