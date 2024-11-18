@@ -21,6 +21,8 @@ public class ApiTestLogInfiniteResponse {
     private HttpStatus httpStatus;
     private Map<String, Object> httpBody;
     private Map<String, String> httpHeader;
+    private String responseMessage;
+    private Integer responseCode;
     private LocalDateTime createdAt;
 
 }

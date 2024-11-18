@@ -3,6 +3,7 @@ package com.shooot.application.api.ui;
 import com.shooot.application.api.service.command.test.DocsLoginService;
 import com.shooot.application.api.service.command.test.TestCaseRequestService;
 import com.shooot.application.api.ui.dto.ProjectClientTotalLoginRequest;
+import com.shooot.application.api.ui.dto.TestCaseResponseView;
 import com.shooot.application.project.domain.Project;
 import com.shooot.application.security.service.UserLoginContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,9 +36,9 @@ public class ProjectClientController {
         @AuthenticationPrincipal UserLoginContext userLoginContext
     ){
         Integer userId = userLoginContext.getUserId();
-        testCaseRequestService.testCaseResponse(testcaseId, userId);
+        TestCaseResponseView testCaseResponseView = testCaseRequestService.testCaseResponse(testcaseId, userId);
 
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(testCaseResponseView);
     }
 
     @PostMapping("/login")
