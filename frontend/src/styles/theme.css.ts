@@ -148,6 +148,12 @@ const themeContract = {
       error: null,
       notbuilded: null,
     },
+    item: {
+      cpu: null,
+      memory: null,
+      disk: null,
+      network: null,
+    },
     background: {
       100: null,
       200: null,
