@@ -10,7 +10,7 @@ import com.shooot.application.projecttest.domain.repository.ProjectBuildReposito
 import com.shooot.application.projecttest.event.dto.ProjectTestRequestedEvent;
 import com.shooot.application.projecttest.service.command.ProjectTestRunService;
 import com.shooot.application.projecttest.subscriber.ProjectMonitorStreamSubscriber;
-import com.shooot.application.sseemitter.service.StressTestSseService;
+import com.shooot.application.stresstest.service.StressTestSseService;
 import com.shooot.application.stresstest.service.StressTestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
