@@ -11,25 +11,40 @@ import TestResultTail from './TestResultTail/TestResultTail';
 import TestButton from '../../../TestButton/TestButton';
 import LockButton from './LockButton/LockButton';
 import RealServerToggle from './RealServerToggle/RealServerToggle';
+import { useGetAPIDetail } from '../../../../reactQueries/api';
 
 export const APIHeader = () => {
   const context = useAPIContext();
   const { isFocused, handleToggleIsFocused } = context.useIsFocusedHook;
+  const apiId = context.requestDocs.id;
 
-  const method = context.requestDocs.method || 'method';
+  const { data: apiDetail, isError } = useGetAPIDetail(
+    { apiId },
+    { staleTime: 0 },
+  );
+
+  const method = apiDetail?.requestDocs.method || 'method';
 
   const onClickHeader = useCallback(
     throttle((e: React.MouseEvent) => {
       e.stopPropagation();
       handleToggleIsFocused();
     }, 500),
-    [isFocused],
+    [isFocused, handleToggleIsFocused],
   );
+
+  if (isError || !apiDetail) {
+    return (
+      <div className={s.apiHeaderBoxRecipe({ isOpen: isFocused })}>
+        <Typography>API 상세조회 실패</Typography>
+      </div>
+    );
+  }
 
   return (
     <div
       onClick={onClickHeader}
-      key={context.requestDocs.id}
+      key={apiDetail.requestDocs.id}
       className={s.apiHeaderBoxRecipe({ isOpen: isFocused })}
     >
       <MethodHeader method={method} />
@@ -45,10 +60,12 @@ export const APIHeader = () => {
           justifyContents="start"
           style={s.apiHeaderLeftContentStyle}
         >
-          <LockButton isSecure={context.requestDocs.isSecure!} />
-          <RealServerToggle isRealServer={context.requestDocs.isRealServer!} />
+          <LockButton isSecure={apiDetail.requestDocs.isSecure!} />
+          <RealServerToggle
+            isRealServer={apiDetail.requestDocs.isRealServer!}
+          />
           <Typography size={1} color="disabled">
-            {context.requestDocs.url}
+            {apiDetail.requestDocs.url}
           </Typography>
         </Flexbox>
 
@@ -59,7 +76,7 @@ export const APIHeader = () => {
           style={s.apiHeaderRightContentStyle}
         >
           <Typography size={0.85} weight="300" color="disabled">
-            {context.requestDocs.title}
+            {apiDetail.requestDocs.title}
           </Typography>
           <Flexbox
             alignItems="center"
@@ -71,16 +88,17 @@ export const APIHeader = () => {
           >
             <ManagerAvatar
               manager={{
-                id: context.requestDocs.managerId,
-                nickname: context.requestDocs.managerName,
+                id: apiDetail.requestDocs.managerId,
+                nickname: apiDetail.requestDocs.managerName,
+                profileColor: apiDetail.requestDocs.profileColor,
               }}
             />
-            <TestButton.API />
+            <TestButton.API apiId={context.requestDocs.id} />
             <CollapseIcon isOpen={isFocused} />
           </Flexbox>
         </Flexbox>
       </Flexbox>
-      <TestResultTail testStatus={context.requestDocs.testStatus!} />
+      <TestResultTail testStatus={apiDetail.requestDocs.testStatus!} />
     </div>
   );
 };
