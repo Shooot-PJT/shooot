@@ -18,9 +18,9 @@ public class ApiTestLogInfiniteResponse {
     private String tester;
     private Integer testCaseId;
     private Boolean isSuccess;
-    private HttpStatus httpStatus;
-    private Map<String, Object> httpBody;
-    private Map<String, String> httpHeader;
+    private Integer httpStatus;
+//    private Map<String, Object> httpBody;
+//    private Map<String, String> httpHeader;
     private String responseMessage;
     private Integer responseCode;
     private LocalDateTime createdAt;

@@ -1,27 +1,23 @@
 package com.shooot.application.api.ui;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shooot.application.api.service.command.test.DocsLoginService;
 import com.shooot.application.api.service.command.test.TestApiRequestService;
 import com.shooot.application.api.service.command.test.TestCaseRequestService;
-import com.shooot.application.api.ui.dto.ProjectClientTotalLoginRequest;
+import com.shooot.application.api.ui.dto.DocsLoginRequest;
+import com.shooot.application.api.ui.dto.RestClientResponse;
 import com.shooot.application.api.ui.dto.TestCaseResponseView;
-import com.shooot.application.project.domain.Project;
 import com.shooot.application.security.service.UserLoginContext;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
-import reactor.netty.http.Cookies;
 
-import javax.swing.*;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,68 +31,99 @@ public class ProjectClientController {
 
     @PostMapping("/testcases/{testcaseId}")
     public ResponseEntity<?> sendTestCaseRequest(
-        @PathVariable Integer testcaseId,
-        @AuthenticationPrincipal UserLoginContext userLoginContext
+            @PathVariable Integer testcaseId,
+            String session,
+            @AuthenticationPrincipal UserLoginContext userLoginContext
     ){
         Integer userId = userLoginContext.getUserId();
-        TestCaseResponseView testCaseResponseView = testCaseRequestService.testCaseResponse(testcaseId, userId);
+        TestCaseResponseView testCaseResponseView = testCaseRequestService.testCaseResponse(testcaseId, userId, session);
 
         return ResponseEntity.ok(testCaseResponseView);
     }
 
-    @PostMapping("/testcases/apis/{apiId}")
+    @PostMapping("/testcases/api/{apiId}")
     public ResponseEntity<?> sendAllTestCaseOfApiRequest(
             @PathVariable Integer apiId,
+            String session,
             @AuthenticationPrincipal UserLoginContext userLoginContext
     ){
         Integer userId = userLoginContext.getUserId();
-        List<TestCaseResponseView> result = testApiRequestService.allTestcaseOfApi(apiId, userId);
-
+        List<TestCaseResponseView> result = testApiRequestService.allTestcaseOfApi(apiId, userId, session);
 
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> totalLogin(
-        @RequestBody ProjectClientTotalLoginRequest projectClientTotalLoginRequest,
-        HttpSession httpSession
+            @RequestBody DocsLoginRequest docsLoginRequest
     )
-    {
-        log.info("projectClientLoginRequest = {}, {}, {}, {}, {}", projectClientTotalLoginRequest.getId(), projectClientTotalLoginRequest.getPassword(), projectClientTotalLoginRequest.getUrl(), projectClientTotalLoginRequest.getSessionName(), projectClientTotalLoginRequest.getProjectId());
-        ResponseEntity<?> value = docsLoginService.getSessionValue(projectClientTotalLoginRequest, httpSession);
+    throws Exception{
+        log.info("docsLoginRequets = {}", docsLoginRequest);
+        log.info("endpoint =  {}",docsLoginRequest.getEndpoint());
+        String infoString = docsLoginRequest.getInfo();
 
-        return ResponseEntity.ok(value);
-    }
+        if(infoString == null){
+            return ResponseEntity.badRequest().body("필드 다 안채웠음");
+        }
 
-    @GetMapping("/loginTest")
-    public ResponseEntity<?> logintest(@RequestHeader HttpHeaders headers, HttpSession session) {
-        // JSESSIONID 추출
-        log.info("headers = {}", headers);
-        log.info("session = {}", session.getAttribute("sessionId"));
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Map<String, Object>> infoList = objectMapper.readValue(infoString, List.class);
+        Map<String, Object> requestBody = new HashMap<>();
 
-        HttpHeaders filteredHeaders = new HttpHeaders();
-        headers.forEach((key, values) -> {
-            log.info("key = {}, value = {}", key, values);
-            if ("Cookie".equalsIgnoreCase(key)) {
-                for (String value : values) {
-                    if (value.contains("JSESSIONID")) {
-                        filteredHeaders.add("Cookie", (String) session.getAttribute("sessionId"));
-                    }
-                }
+        for (Map<String, Object> mapItem : infoList) {
+            for (String key : mapItem.keySet()){
+;               log.info("key = {}, value = {}", key, mapItem.get(key));
+                requestBody.put(key, mapItem.get(key));
             }
-        });
 
-        // RestClient로 B 서버에 요청
-        return restClient.get()
-                .uri("http://localhost:8081/login/test")
-//                .headers(httpHeaders -> {
-//                    httpHeaders.add(HttpHeaders.COOKIE, (String)session.getAttribute("sessionId")); // 세션 쿠키 추가
-//                })
-                .headers(httpHeaders -> httpHeaders.addAll(filteredHeaders))
-                .retrieve()
-                .toEntity(String.class);
+        }
+
+        requestBody.put("endpoint", docsLoginRequest.getEndpoint());
+        requestBody.put("projectId", docsLoginRequest.getProjectId());
+        // 이까지 가공
+
+        ResponseEntity<?> response = docsLoginService.login(requestBody);
+
+        if(response.getStatusCode().value() != 200){
+            return response;
+        }
+
+        HttpHeaders responseHeaders = response.getHeaders();
+        List<String> cookies = new ArrayList<>(responseHeaders.get(HttpHeaders.SET_COOKIE) != null
+                ? responseHeaders.get(HttpHeaders.SET_COOKIE)
+                : Collections.emptyList());
+
+        log.info("responseHeaders = {}", responseHeaders);
+        log.info("cookies = {}", cookies);
+
+        if (response.getStatusCode().is2xxSuccessful() && cookies != null && !cookies.isEmpty()) {
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put(HttpHeaders.SET_COOKIE, cookies.get(0));
+
+            cookies.clear();
+
+            RestClientResponse restClientResponse = RestClientResponse.builder()
+                    .session(responseData.get(HttpHeaders.SET_COOKIE))
+                    .responseCode(response.getStatusCode().value())
+                    .responseMessage((String)response.getBody())
+                    .build();
+
+            return ResponseEntity.ok(restClientResponse);
+
+//            return ResponseEntity
+//                    .status(response.getStatusCode())
+//                    .body(responseData);
+        }
+
+
+        return null;
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(){
+//        return restClient.
+        return null;
+    }
 
     @PostMapping("/postman")
     public void logHeaders(@RequestHeader HttpHeaders headers, @RequestBody Map<String, Object> requestBody) {

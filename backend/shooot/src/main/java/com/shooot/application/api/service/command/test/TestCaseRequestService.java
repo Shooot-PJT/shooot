@@ -62,7 +62,7 @@ public class TestCaseRequestService {
 //    private final String serverURL = "http://localhost:8081/";
 
     @Transactional
-    public TestCaseResponseView testCaseResponse(Integer testcaseId, Integer userId){
+    public TestCaseResponseView testCaseResponse(Integer testcaseId, Integer userId, String session){
 
         ApiTestCase apiTestCase = testCaseRepository.findById(testcaseId)
                 .orElseThrow(TestCaseNotFoundException::new);
@@ -78,6 +78,7 @@ public class TestCaseRequestService {
         log.info("requestMethod = {}, requestURL = {}", requestMethod, requestURL);
 
         Map<String, String> headers = extractHeaders(latestRequest.getType(), content);
+        headers.put("Cookie", session);
         log.info("headers = {}", headers);
 
         String parameters = extractParameters(content);
