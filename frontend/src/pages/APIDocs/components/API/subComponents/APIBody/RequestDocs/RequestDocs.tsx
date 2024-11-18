@@ -470,37 +470,45 @@ export const RequestDocs = ({ requestDocs, fontColor }: RequestDocsProps) => {
           {tabValue.value === 3 && reqBodyMenu === 'none' ? (
             <BodyNone />
           ) : tabValue.value === 3 && reqBodyMenu === 'raw' ? (
-            <Editor
-              height="200px"
-              defaultLanguage="json"
-              value={rawBodyContent}
-              onMount={handleEditorDidMount}
-              theme="dracula"
-              onChange={(value) => {
-                if (isEditMode) {
-                  setRawBodyContent(value || '');
-                  setUpdatedExampleContent((prev) => {
-                    if (prev) {
-                      return {
-                        ...prev,
-                        body: {
-                          raw: value || '',
-                          formData: null,
-                        },
-                      };
-                    }
-                    return prev;
-                  });
-                }
+            <div
+              style={{
+                overflow: 'auto',
+                height: '12rem',
+                width: '97%',
               }}
-              options={{
-                readOnly: !isEditMode,
-                lineNumbers: 'on',
-                folding: true,
-                minimap: { enabled: false },
-                renderLineHighlightOnlyWhenFocus: true,
-              }}
-            />
+            >
+              <Editor
+                height="200px"
+                defaultLanguage="json"
+                value={rawBodyContent}
+                onMount={handleEditorDidMount}
+                theme="dracula"
+                onChange={(value) => {
+                  if (isEditMode) {
+                    setRawBodyContent(value || '');
+                    setUpdatedExampleContent((prev) => {
+                      if (prev) {
+                        return {
+                          ...prev,
+                          body: {
+                            raw: value || '',
+                            formData: null,
+                          },
+                        };
+                      }
+                      return prev;
+                    });
+                  }
+                }}
+                options={{
+                  readOnly: !isEditMode,
+                  lineNumbers: 'on',
+                  folding: true,
+                  minimap: { enabled: false },
+                  renderLineHighlightOnlyWhenFocus: true,
+                }}
+              />
+            </div>
           ) : (
             <RequestSchemaTable
               data={contentData}
