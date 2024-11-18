@@ -2,6 +2,7 @@ package com.shooot.application.api.domain;
 
 import com.shooot.application.api.service.query.testcase.dto.ApiTestLogInfiniteResponse;
 import com.shooot.application.common.jpa.SoftDeleteEntity;
+import com.shooot.application.common.jpa.map.MapToJsonConverter;
 import com.shooot.application.common.jpa.uuid.UUIDv7;
 import com.shooot.application.project.domain.ProjectParticipant;
 import jakarta.persistence.*;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.http.HttpStatus;
 
+import java.util.Map;
 import java.util.UUID;
 
 @SuperBuilder
@@ -40,13 +42,13 @@ public class ApiTestLog extends SoftDeleteEntity {
     @Column(name = "http_status")
     private HttpStatus httpStatus;
 
-    @Column(name = "http_body")
-    @Lob
-    private String httpBody;
-
+    @Convert(converter = MapToJsonConverter.class)
     @Column(name = "http_header")
-    @Lob
-    private String httpHeader;
+    private Map<String, String> httpHeader;
+
+    @Convert(converter = MapToJsonConverter.class)
+    @Column(name = "http_body")
+    private Map<String, Object> httpBody;
 
     @Column(name = "response_message")
     private String responseMessage;
