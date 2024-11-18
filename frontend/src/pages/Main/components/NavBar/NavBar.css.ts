@@ -21,6 +21,7 @@ export const container = style({
       maxHeight: '4rem',
       padding: '1rem',
       transition: 'max-height 0.3s ease-in-out',
+      zIndex: 10,
     },
   },
 });
