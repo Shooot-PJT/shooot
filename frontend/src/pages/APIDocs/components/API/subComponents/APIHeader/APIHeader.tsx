@@ -73,6 +73,7 @@ export const APIHeader = () => {
               manager={{
                 id: context.requestDocs.managerId,
                 nickname: context.requestDocs.managerName,
+                profileColor: context.requestDocs.profileColor,
               }}
             />
             <TestButton.API />

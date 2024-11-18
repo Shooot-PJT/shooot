@@ -11,7 +11,6 @@ import { useGetAPIDetail } from '../../../../reactQueries/api';
 import { TestCaseTable } from './TestCase/TestCaseTable/TestCaseTable';
 import { useAPI } from '../../../../hooks/useAPI';
 import { RequestDocs } from './RequestDocs/RequestDocs';
-import { BodyNone } from './RequestDocs/RequestContents/BodyNone/BodyNone';
 import { bodNone } from './RequestDocs/RequestContents/BodyNone/BodyNone.css';
 
 export const APIBody = () => {
@@ -110,6 +109,25 @@ export const APIBody = () => {
                 </Typography>
               </Flexbox>
               <Flexbox flexDirections="col" style={{ gap: '1rem' }}>
+                {/* 1.1.2 BOTTOM : 편집,삭제, 추가 버튼 그룹*/}
+                <Flexbox
+                  flexDirections="row"
+                  justifyContents="start"
+                  style={{
+                    gap: '1rem',
+                  }}
+                >
+                  <Button
+                    color="grey"
+                    rounded={0.3}
+                    onClick={() => editAPIModalHandler(apiDetail.requestDocs)}
+                  >
+                    편집
+                  </Button>
+                  <Button color="grey" rounded={0.3}>
+                    삭제
+                  </Button>
+                </Flexbox>
                 <div
                   className={s.leftDividerRecipe({
                     method: method,
@@ -128,31 +146,11 @@ export const APIBody = () => {
                   manager={{
                     id: apiDetail.requestDocs.managerId,
                     nickname: apiDetail.requestDocs.managerName,
+                    profileColor: apiDetail.requestDocs.profileColor,
                   }}
-                  size={1.5}
                   withLabel
                 />
               </Flexbox>
-            </Flexbox>
-
-            {/* 1.1.2 BOTTOM : 편집,삭제, 추가 버튼 그룹*/}
-            <Flexbox
-              flexDirections="row"
-              justifyContents="start"
-              style={{
-                gap: '1rem',
-              }}
-            >
-              <Button
-                color="grey"
-                rounded={0.3}
-                onClick={() => editAPIModalHandler(apiDetail.requestDocs)}
-              >
-                편집
-              </Button>
-              <Button color="grey" rounded={0.3}>
-                삭제
-              </Button>
             </Flexbox>
           </Flexbox>
           {/* 1.2 RIGHT: API 요청 정의서 & 테스트케이스 리스트 섹션 */}

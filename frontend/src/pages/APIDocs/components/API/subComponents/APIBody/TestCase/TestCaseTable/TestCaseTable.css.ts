@@ -101,7 +101,7 @@ export const testBodyContainerRecipe = recipe({
     borderRadius: '0rem 0rem 0.5rem 0.5rem',
     borderColor: colorPalette.util[400],
     backgroundColor: themeCss.color.background[200],
-    padding: '0.65rem',
+    padding: '2rem',
   },
   variants: {
     isOpen: {
