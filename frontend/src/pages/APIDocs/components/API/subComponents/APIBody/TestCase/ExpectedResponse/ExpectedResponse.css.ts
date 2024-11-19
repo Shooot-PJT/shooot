@@ -1,30 +1,30 @@
-import { style } from '@vanilla-extract/css';
-import { roundedBorder } from '../../TestCase/TestCaseTable/TestCaseTable.css';
-import colorPalette from '../../../../../../../../styles/colorPalette';
+// import { style } from '@vanilla-extract/css';
 
-export { roundedBorder };
+// import colorPalette from '../../../../../../../../styles/colorPalette';
 
-export const containerStyle = {
-  gap: '0.5rem',
-};
+// // export { roundedBorder };
 
-const expectedResponseCommon = {
-  padding: '1rem',
-  borderRadius: '0.5rem',
-  backgroundColor: colorPalette.util[300],
-};
-export const addButton = style({
-  ...expectedResponseCommon,
-  cursor: 'pointer',
-  transition: 'all 0.25s ease-in-out',
-  selectors: {
-    '&:hover': {
-      backgroundColor: colorPalette.util[400],
-    },
-  },
-});
+// export const containerStyle = {
+//   gap: '0.5rem',
+// };
 
-export const expectedResponseBox = style({
-  ...expectedResponseCommon,
-  height: '8rem',
-});
+// const expectedResponseCommon = {
+//   padding: '1rem',
+//   borderRadius: '0.5rem',
+//   backgroundColor: colorPalette.util[300],
+// };
+// export const addButton = style({
+//   ...expectedResponseCommon,
+//   cursor: 'pointer',
+//   transition: 'all 0.25s ease-in-out',
+//   selectors: {
+//     '&:hover': {
+//       backgroundColor: colorPalette.util[400],
+//     },
+//   },
+// });
+
+// export const expectedResponseBox = style({
+//   ...expectedResponseCommon,
+//   height: '8rem',
+// });

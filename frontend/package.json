@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "shooot",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -49,6 +49,7 @@
     "react-slick": "^0.30.2",
     "slick-carousel": "^1.8.1",
     "storybook": "^8.3.5",
+    "uuid": "^11.0.3",
     "zustand": "^5.0.0"
   },
   "devDependencies": {

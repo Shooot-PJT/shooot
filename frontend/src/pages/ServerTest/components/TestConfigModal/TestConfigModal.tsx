@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { HiCog6Tooth, HiRocketLaunch } from 'react-icons/hi2';
 import Button from '../../../../components/Button';
 import { CustomTooltip } from '../../../../components/CustomToolTip';
@@ -7,7 +7,7 @@ import Flexbox from '../../../../components/Flexbox';
 import Typography from '../../../../components/Typography';
 import useModal from '../../../../hooks/useModal';
 import { Method } from '../../../APIDocs/types/methods';
-import { getAPIConfigs } from '../../apis/TestApi';
+import { excuteApiTest, getAPIConfigs } from '../../apis/TestApi';
 import {
   APIIncludeTestData,
   APITestFormData,
@@ -21,6 +21,13 @@ import { MethodChip } from '../MethodChip/MethodChip';
 import { TestConfigForm } from '../TestConfigForm/TestConfigForm';
 import * as s from './TestConfigModal.css';
 import { ExcuteTestModal } from '../ExcuteTestModal/ExcuteTestModal';
+import usePopup from '../../../../hooks/usePopup';
+import { useUploadStateStore } from '../../stores/useUploadStateStore';
+import { useTestSSE } from '../../hooks/useTestSSE';
+import {
+  initialTestData,
+  useTestDataStore,
+} from '../../stores/useTestDataStore';
 
 interface TestConfigModalProps {
   projectJarFileId: number;
@@ -29,10 +36,15 @@ interface TestConfigModalProps {
 export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
   const [testFormData, setTestFormData] = useState<APITestFormData[]>([]);
   const [expandedRowIndex, setExpandedRowIndex] = useState<number>(-1);
+  const [validationState, setValidationState] = useState<boolean>(false);
   const modal = useModal();
+  const popup = usePopup();
+  const { state, setState } = useUploadStateStore();
+  const { setTestData } = useTestDataStore();
   const colWidths = [15, 10, 25, 30, 10, 10];
+  const checkedApisNum = useRef<number>(0);
 
-  const { data: apiConfigs = {} as APITestListResponse } = useQuery({
+  const { data: apiConfigs = {} as APITestListResponse, isPending } = useQuery({
     queryKey: ['apiConfigs', projectJarFileId],
     queryFn: async () => {
       const response = await getAPIConfigs({
@@ -40,36 +52,76 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
       });
       return response?.data ?? {};
     },
-    staleTime: 120 * 1000,
   });
 
+  useTestSSE({
+    projectJarFileId: projectJarFileId,
+  });
+
+  useEffect(() => {
+    return () => {
+      if (state === 'End') {
+        modal.pop();
+        setState('None');
+      }
+    };
+  }, [state]);
+
   const handleCheckbox = (idx: number) => {
-    setTestFormData((prevData) =>
-      prevData.map((item, index) =>
+    setTestFormData((prevData) => {
+      const updatedData = prevData.map((item, index) =>
         index === idx ? { ...item, checked: !item.checked } : item,
-      ),
-    );
+      );
+      const checkedCount = updatedData.filter((item) => item.checked).length;
+      checkedApisNum.current = checkedCount;
+      setValidationState(checkedCount > 0);
+
+      return updatedData;
+    });
   };
 
   const handleExpanedRowIdx = (idx: number) => {
-    console.log('idx : ' + idx + ', expandedRow : ' + expandedRowIndex);
     setExpandedRowIndex((prevIndex) => (prevIndex === idx ? -1 : idx));
   };
 
   const handleSubmitTestConfig = () => {
     const testConfig = testFormData
       .filter((item) => item.checked)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .map(({ checked, ...rest }) => rest);
+      .map(({ checked, ...rest }) => {
+        void checked;
+        return rest;
+      });
+
+    const testTime = testConfig.reduce((acc, item) => acc + item.duration, 0);
+
     const request: ExecuteApiTestRequest = {
       projectJarFileId: projectJarFileId,
       endPointSettings: testConfig,
     };
-    // modal.pop();
-    modal.push({
-      children: <ExcuteTestModal />,
-    });
-    console.log(request);
+    excuteApiTest(request)
+      .then(() => {
+        setTestData(() => {
+          return [initialTestData, initialTestData];
+        });
+        modal.push({
+          children: (
+            <ExcuteTestModal
+              testTime={testTime}
+              projectJarFileId={projectJarFileId}
+            />
+          ),
+        });
+      })
+      .catch((error) => {
+        popup.push({
+          title: '테스트 시도 실패',
+          children: (
+            <>{error.response ? error.response.data.message : error.message}</>
+          ),
+          type: 'fail',
+          onClose: () => modal.pop,
+        });
+      });
   };
 
   const handleFormChange = (
@@ -191,6 +243,7 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
         data={convertTableData(apiConfigs)}
         colWidths={colWidths}
         headers={headers}
+        isPending={isPending}
         expandedRowIndex={expandedRowIndex}
         ExpandedRow={
           <TestConfigForm
@@ -209,6 +262,7 @@ export const TestConfigModal = ({ projectJarFileId }: TestConfigModalProps) => {
           paddingY={1}
           color="primary"
           onClick={handleSubmitTestConfig}
+          disabled={!validationState}
         >
           Shooot! <HiRocketLaunch />
         </Button>

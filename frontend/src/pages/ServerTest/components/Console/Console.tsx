@@ -19,7 +19,6 @@ export const Console = ({
   handleInitialDeploy,
 }: ConsoleProps) => {
   const [displayedData, setDisplayedData] = useState<string[]>([]);
-  const currentIndexRef = useRef(0);
   const bodyContentRef = useRef<HTMLDivElement>(null);
   const { project } = useNavBarStore();
 
@@ -28,30 +27,17 @@ export const Console = ({
   }, [project]);
 
   const handleStopDeploy = () => {
-    console.log(deployedFileId);
     if (deployedFileId !== -1 && state === 'DEPLOY') {
       stopDeployFile({ projectJarFileId: deployedFileId })
         .then(() => {
           handleInitialDeploy();
-          console.log('중단');
         })
-        .catch(() => {
-          console.log('실패');
-        });
+        .catch(() => {});
     }
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentIndexRef.current < data.length) {
-        setDisplayedData((prev) => [...prev, data[currentIndexRef.current]]);
-        currentIndexRef.current += 1;
-      } else {
-        clearInterval(interval);
-      }
-    }, 25);
-
-    return () => clearInterval(interval);
+    setDisplayedData(data);
   }, [data]);
 
   useEffect(() => {

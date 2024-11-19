@@ -1,3 +1,4 @@
+import { MutableRefObject } from 'react';
 import { Method } from '../../APIDocs/types/methods';
 
 export type TestMethodType = 'FIXED' | 'SPIKE' | 'RAMP_UP';
@@ -97,4 +98,68 @@ export interface EndPointSetting {
   method: TestMethodType;
   vuserNum: number;
   duration: number;
+}
+
+export interface TestSSEData {
+  curr: TestDataList;
+  avg: TestDataList;
+  max: TestDataList;
+  min: TestDataList;
+  method?: Method;
+  url?: string;
+}
+export interface TestDataList {
+  cpu: number;
+  memory: number;
+  network: number;
+  disk: number;
+}
+
+export interface TestSSE {
+  eventSourceRef: MutableRefObject<EventSource | null>;
+  testData: TestSSEData[];
+}
+
+export type TestStatus = 'none' | 'start' | 'end';
+
+export interface StopApiTestRequest {
+  projectJarFileId: number;
+  projectId: number;
+}
+
+export interface GetTestRecordResponse {
+  stressTestLogId: number;
+  title: string;
+  startTime: string;
+  status: 'DONE' | 'INTERRUPTED';
+  count: number;
+  duration: number;
+}
+
+export interface GetTestRecordRequest {
+  projectId: number;
+}
+
+export interface GetTestRecordDetailRequest {
+  stressTestLogId: number;
+}
+
+export interface GetTestRecordDetailResponse {
+  httpMethod: Method;
+  url: string;
+  duration: number;
+  testMethod: TestMethodType;
+  avgCpu: number;
+  maxCpu: number;
+  minCpu: number;
+  avgMemory: number;
+  maxMemory: number;
+  minMemory: number;
+  avgDisk: number;
+  maxDisk: number;
+  minDisk: number;
+  avgNetwork: number;
+  maxNetwork: number;
+  minNetwork: number;
+  vuser: number;
 }
