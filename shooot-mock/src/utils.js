@@ -29,32 +29,13 @@ export const checkServiceWorker = async (keyword) => {
     }
 };
 
-export const checkDomain = (to, domain) => {
-    const url = new URL(to);
-    if (url.origin.split(/[/.]/).includes(domain)) return true;
-    else return false;
-};
-
-export const getAxiosConfigs = (pathVariables, config) => {
-    let axiosConfigs = { ...config, params: {} };
-    if (config) {
-        if (config.params) {
-            const rps = {};
-            Object.keys(config.params).forEach((v) => (rps[v] = config.params[v]));
-            axiosConfigs.params["requestParameters"] = JSON.stringify(rps);
-        }
-        if (pathVariables) {
-            const pvs = {};
-            Object.keys(pathVariables).forEach((v) => (pvs[v] = pathVariables[v]));
-            axiosConfigs.params["pathVariables"] = JSON.stringify(pvs);
-        }
-    } else {
-        axiosConfigs = {};
-        if (pathVariables) {
-            const pvs = {};
-            Object.keys(pathVariables).forEach((v) => (pvs[v] = pathVariables[v]));
-            axiosConfigs.params["pathVariables"] = JSON.stringify(pvs);
-        }
+export const getApis = async (projectName) => {
+    try {
+        const response = await fetch(`https://shooot.co.kr/express/projects/domains/apis?projectName=${projectName}`);
+        const apis = await response.json();
+        return apis.apis;
+    } catch (error) {
+        console.error("[Get-Apis]:", error);
+        return "ERROR";
     }
-    return axiosConfigs;
 };
