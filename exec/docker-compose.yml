@@ -1,0 +1,14 @@
+services:
+  app:
+    container_name: app
+    build: ./shooot/
+    ports:
+      - "8081:8080"
+    networks:
+      - scripts_default
+    volumes:
+      - /home/ubuntu/shooot/images:/var/images
+
+networks:
+  scripts_default:
+    external: true
