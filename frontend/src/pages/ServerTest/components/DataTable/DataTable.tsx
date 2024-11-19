@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef, ReactNode } from 'react';
 import * as s from './DataTable.css';
 import React from 'react';
+import { useNavBarStore } from '../../../../stores/navbarStore';
 
 interface DataTableProps {
   colWidths: number[];
   headers: string[];
   data: ReactNode[][];
+  isPending?: boolean;
   selectable?: boolean;
   expandedRowIndex?: number;
   ExpandedRow?: ReactNode;
@@ -18,6 +20,7 @@ export const DataTable = ({
   headers,
   selectable = false,
   data,
+  isPending = false,
   selectedRowIndex = -1,
   handleSelectRow,
   expandedRowIndex,
@@ -29,6 +32,8 @@ export const DataTable = ({
   const startWidth = useRef<number | null>(null);
   const currentIndex = useRef<number | null>(null);
   const expandedRef = useRef<HTMLDivElement>(null);
+
+  const { project } = useNavBarStore();
 
   useEffect(() => {
     setColWidths(initialColWidths);
@@ -105,6 +110,9 @@ export const DataTable = ({
       </div>
 
       <div className={s.body}>
+        {isPending && (
+          <div className={s.pendingIndicator}>데이터를 불러오는 중입니다.</div>
+        )}
         {data.map((row, rowIndex) => (
           <React.Fragment key={data.length - rowIndex}>
             <div
@@ -117,7 +125,7 @@ export const DataTable = ({
               {row.map((item, colIndex) => (
                 <div
                   className={s.rowItem}
-                  key={`${data.length - rowIndex}-${colIndex}-${item}`}
+                  key={`${data.length - rowIndex}-${project}-${colIndex}-${item}`}
                   style={
                     {
                       '--width': `${colWidths[colIndex]}%`,

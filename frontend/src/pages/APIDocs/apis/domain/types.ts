@@ -1,5 +1,5 @@
 import { ProjectInfo } from '../../../MyProject/types';
-import { DomainInfo } from '../../components/Domain/Domain.data.types';
+import { DomainInfo } from '../../types/data/Domain.data';
 
 export type GetDomainListResponse = DomainInfo[];
 export type AddDomainResponse = Omit<DomainInfo, 'subscribeNotification'>;
@@ -18,12 +18,14 @@ export interface AddDomainRequest {
 }
 
 export interface EditDomainRequest {
+  projectId: ProjectInfo['projectId'];
   domainId: DomainInfo['domainId'] | undefined;
   title?: DomainInfo['title'];
   description?: DomainInfo['description'];
 }
 
 export interface RemoveDomainRequest {
+  projectId: ProjectInfo['projectId'];
   domainId: DomainInfo['domainId'] | undefined;
 }
 

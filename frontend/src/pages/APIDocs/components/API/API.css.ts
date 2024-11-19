@@ -58,8 +58,8 @@ export const apiHeaderBoxRecipe = recipe({
 });
 
 export const apiHeaderLeftContentStyle = {
-  gap: '1.25rem',
-  width: '32%',
+  gap: '1.35rem',
+  width: '38%',
   height: '100%',
 };
 export const apiHeaderRightContentStyle = {
@@ -89,11 +89,17 @@ export const apiBodyTopContainerStyle = {
 
 export const leftDividerRecipe = recipe({
   base: {
-    width: '75%',
+    width: '60%',
     height: '0.35rem',
   },
   variants: {
     method: {
+      null: {
+        backgroundColor: colorPalette.grey[800],
+      },
+      method: {
+        backgroundColor: colorPalette.light,
+      },
       post: {
         backgroundColor: themeCss.palette.post.main,
       },

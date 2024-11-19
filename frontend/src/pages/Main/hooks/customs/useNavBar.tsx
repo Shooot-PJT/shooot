@@ -8,11 +8,16 @@ import { KickMemberModal } from '../../popups/Banner/KickMemberModal/KickMemberM
 import { ProjectRemoveModal } from '../../popups/Banner/ProjectRemoveModal';
 import { QUERY_KEYS } from '../../utils/KEYS';
 import { useEffect } from 'react';
+import { useReadMembersByProjectId } from '../queries/useReadMembersByProjectId';
+import usePopup from '../../../../hooks/usePopup';
+import Typography from '../../../../components/Typography';
 
 export const useNavBar = () => {
   const navbarStore = useNavBarStore();
   const modal = useModal();
+  const popup = usePopup();
   const queryClient = useQueryClient();
+  const { members } = useReadMembersByProjectId(navbarStore.project);
 
   // 닉네임 수정
   const nicknameChangeModalHandler = () => {
@@ -44,20 +49,28 @@ export const useNavBar = () => {
 
   // 팀원 추방
   const kickMemberModalHandler = () => {
-    modal.push({
-      children: <KickMemberModal />,
-      onClose: () => {
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.readProjectList],
-        });
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.readProjectByProjectId, navbarStore.project],
-        });
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.readMembersByProjectId, navbarStore.project],
-        });
-      },
-    });
+    if (members?.data.length === 1) {
+      popup.push({
+        title: '팀원 추방',
+        children: <Typography>추방할 팀원이 없습니다</Typography>,
+        type: 'fail',
+      });
+    } else {
+      modal.push({
+        children: <KickMemberModal />,
+        onClose: () => {
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.readProjectList],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.readProjectByProjectId, navbarStore.project],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.readMembersByProjectId, navbarStore.project],
+          });
+        },
+      });
+    }
   };
 
   // 프로젝트 삭제
@@ -76,6 +89,9 @@ export const useNavBar = () => {
         queryKey: [QUERY_KEYS.readMembersByProjectId, navbarStore.project],
       });
     }
+
+    sessionStorage.setItem('menu', navbarStore.menu.toString());
+    sessionStorage.setItem('project', navbarStore.project.toString());
   }, [navbarStore.menu, navbarStore.project]);
 
   return {

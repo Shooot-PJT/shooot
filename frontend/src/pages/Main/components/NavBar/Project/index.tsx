@@ -28,13 +28,7 @@ export const Project = () => {
         sliderRef.current?.slickGoTo(idx);
       }
     });
-  }, [navbarStore.project]);
-
-  useEffect(() => {
-    navbarStore.setProject(
-      projectList?.data.length ? projectList?.data[0].projectId : 0,
-    );
-  }, [isLoading]);
+  }, [projectList, navbarStore.project]);
 
   return (
     <>

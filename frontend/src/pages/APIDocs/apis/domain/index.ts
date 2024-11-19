@@ -1,5 +1,5 @@
 import { api } from '../../../../apis/interceptors';
-import { DomainInfo } from '../../components/Domain/Domain.data.types';
+import { DomainInfo } from '../../types/data/Domain.data';
 
 import {
   AddDomainRequest,
@@ -13,12 +13,11 @@ import {
   SubscribeNotificationResponse,
 } from './types';
 
-const EP_PROJECTS = 'projects';
-const EP_DOMAINS = 'domains';
+import { Endpoint as EP } from '../../constants/endpoint';
 
 export const getDomainList = async ({ projectId }: GetDomainListRequest) => {
   const response = await api.get<DomainInfo[]>(
-    `/${EP_PROJECTS}/${projectId}/${EP_DOMAINS}`,
+    `/${EP.projects}/${projectId}/${EP.domains}`,
   );
   return response.data;
 };
@@ -31,20 +30,21 @@ export const addDomain = async (info: AddDomainRequest) => {
   };
 
   const response = await api.post<AddDomainResponse>(
-    `/${EP_PROJECTS}/${EP_DOMAINS}`,
+    `/${EP.projects}/${EP.domains}`,
     requestData,
   );
   return response.data;
 };
 
 export const editDomain = async (info: EditDomainRequest) => {
+  const { title, description, domainId } = info;
   const requestData = {
-    title: info.title,
-    description: info.description,
+    title,
+    description,
   };
 
   const response = await api.patch<EditDomainResponse>(
-    `/${EP_PROJECTS}/${EP_DOMAINS}/${info.domainId}`,
+    `/${EP.projects}/${EP.domains}/${domainId}`,
     requestData,
   );
   return response.data;
@@ -52,7 +52,7 @@ export const editDomain = async (info: EditDomainRequest) => {
 
 export const removeDomain = async ({ domainId }: RemoveDomainRequest) => {
   const response = await api.delete<RemoveDomainResponse>(
-    `/${EP_PROJECTS}/${EP_DOMAINS}/${domainId}`,
+    `/${EP.projects}/${EP.domains}/${domainId}`,
   );
   return response.data;
 };
@@ -60,8 +60,17 @@ export const removeDomain = async ({ domainId }: RemoveDomainRequest) => {
 export const subscribeNotification = async ({
   domainId,
 }: SubscribeNotificationRequest) => {
+  const response = await api.post<SubscribeNotificationResponse>(
+    `/${EP.projects}/${EP.domains}/${domainId}/${EP.subscribe}`,
+  );
+  return response.data;
+};
+
+export const unSubscribeNotification = async ({
+  domainId,
+}: SubscribeNotificationRequest) => {
   const response = await api.delete<SubscribeNotificationResponse>(
-    `/${EP_PROJECTS}/subscriptions/${domainId}`,
+    `/${EP.projects}/${EP.domains}/${domainId}/${EP.subscribe}`,
   );
   return response.data;
 };
