@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql:3306/shooot
+    password: ssafyrnal1qks
+    username: root
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+url:
+  project:
+    base: https://shooot.co.kr
+    logo: https://shooot.co.kr/api/projects/{projectId}/logo
+    accept-invitation: https://shooot.co.kr/api/projects/invitations/{projectInvitationId}
+storage:
+  upload-directory: /var/images
