@@ -3,9 +3,22 @@ import { LoginHook } from '../types';
 import Typography from '../../../components/Typography';
 import Flexbox from '../../../components/Flexbox';
 import Button from '../../../components/Button';
+import { useEffect } from 'react';
 
 export const Result = ({ loginError, loginHandler }: LoginHook) => {
   const nav = useNavigate();
+
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        loginHandler();
+      }
+    };
+
+    document.addEventListener('keydown', handler);
+
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
 
   return (
     <Flexbox

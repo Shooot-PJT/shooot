@@ -8,17 +8,19 @@ import useModal from '../../../hooks/useModal';
 import usePopup from '../../../hooks/usePopup';
 import { useNavBarStore } from '../../../stores/navbarStore';
 import { AddDomainModal } from '../components/Domain/AddDomainModal/AddDomainModal';
-import { DomainInfo } from '../components/Domain/Domain.data.types';
+import { DomainInfo } from '../types/data/Domain.data';
 import { RemoveDomainModal } from '../components/Domain/RemoveDomainModal/RemoveDomainModal';
 import Flexbox from '../../../components/Flexbox';
 import shooot_remove from '/assets/shooot/shooot_remove.png';
 import shooot_new from '/assets/shooot/shooot_new.png';
 import shooot_oops from '/assets/shooot/shooot_oops.png';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const useDomain = () => {
   const modal = useModal();
   const popup = usePopup();
   const currentProjectId = useNavBarStore((state) => state.project);
+  const queryClient = useQueryClient();
 
   const modalPopHandler = () => modal.pop();
 
@@ -84,41 +86,45 @@ export const useDomain = () => {
           domainInfo={domainInfo}
           popHandler={modalPopHandler}
           editHandler={(info) =>
-            editDomainMutation(info, {
-              onSuccess: () => {
-                popup.push({
-                  type: 'success',
-                  title: '도메인 편집 성공',
-                  children: <Typography>도메인을 편집하였습니다.</Typography>,
-                  onClose: modalPopHandler,
-                });
+            editDomainMutation(
+              { ...info },
+              {
+                // projectId 추가
+                onSuccess: () => {
+                  popup.push({
+                    type: 'success',
+                    title: '도메인 편집 성공',
+                    children: <Typography>도메인을 편집하였습니다.</Typography>,
+                    onClose: modalPopHandler,
+                  });
+                },
+                onError: () => {
+                  popup.push({
+                    type: 'fail',
+                    title: '도메인 편집 실패',
+                    children: (
+                      <Flexbox
+                        flexDirections="col"
+                        style={{
+                          gap: '2rem',
+                          alignItems: 'center',
+                          padding: '2rem 0rem',
+                        }}
+                      >
+                        <img
+                          height="100px"
+                          src={shooot_oops}
+                          style={{ width: '12.5rem', height: 'auto' }}
+                        />
+                        <Typography size={1.5} weight="600">
+                          다시 시도해주세요.
+                        </Typography>
+                      </Flexbox>
+                    ),
+                  });
+                },
               },
-              onError: () => {
-                popup.push({
-                  type: 'fail',
-                  title: '도메인 편집 실패',
-                  children: (
-                    <Flexbox
-                      flexDirections="col"
-                      style={{
-                        gap: '2rem',
-                        alignItems: 'center',
-                        padding: '2rem 0rem',
-                      }}
-                    >
-                      <img
-                        height="100px"
-                        src={shooot_oops}
-                        style={{ width: '12.5rem', height: 'auto' }}
-                      />
-                      <Typography size={1.5} weight="600">
-                        다시 시도해주세요.
-                      </Typography>
-                    </Flexbox>
-                  ),
-                });
-              },
-            })
+            )
           }
         />
       ),
@@ -134,6 +140,9 @@ export const useDomain = () => {
           removeHandler={(info) =>
             removeDomainMutation(info, {
               onSuccess: () => {
+                queryClient.invalidateQueries({
+                  queryKey: ['domainList', info.projectId],
+                });
                 popup.push({
                   title: '',
                   type: 'success',

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { MUTATION_KEYS } from '../../utils/KEYS';
+import { MUTATION_KEYS, QUERY_KEYS } from '../../utils/KEYS';
 import { AddProjectRequest } from '../../types';
 import { createProject } from '../../apis/projectApis';
 import usePopup from '../../../../hooks/usePopup';
@@ -22,7 +22,9 @@ export const useCreateProject = () => {
         children: <Typography>프로젝트를 생성하였습니다.</Typography>,
         onClose: () => {
           modal.pop();
-          queryClient.refetchQueries({ queryKey: ['project-list'] });
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.readProjectList],
+          });
           navbarStore.setProject(data.data.projectId);
           navbarStore.setMenu(0);
         },

@@ -33,6 +33,7 @@ export const InfoBox = ({ type = 'info', info }: InfoBoxProps) => {
         rowGap: '1rem',
         borderRadius: '1rem',
         backgroundColor: theme.color.background['300'],
+        cursor: 'pointer',
       }}
     >
       {type === 'add' ? (
@@ -40,7 +41,11 @@ export const InfoBox = ({ type = 'info', info }: InfoBoxProps) => {
           flexDirections="col"
           justifyContents="center"
           alignItems="center"
-          style={{ width: '100%', height: '100%', rowGap: '1rem' }}
+          style={{
+            width: '100%',
+            height: '100%',
+            rowGap: '1rem',
+          }}
           onClick={addProjectModalHandler}
         >
           <Icon size={3} color="light" background="none">

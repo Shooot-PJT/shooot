@@ -10,13 +10,19 @@ type NavBarAction = {
   setMenu: (menu: NavBarState['menu']) => void;
   setIsOpen: (isOpen: NavBarState['isOpen']) => void;
   setProject: (project: number) => void;
+  clear: () => void;
 };
 
 export const useNavBarStore = create<NavBarState & NavBarAction>()((set) => ({
-  menu: 2,
+  menu: sessionStorage.getItem('menu')
+    ? Number(sessionStorage.getItem('menu'))
+    : 2,
   isOpen: false,
-  project: 0,
+  project: sessionStorage.getItem('project')
+    ? Number(sessionStorage.getItem('project'))
+    : 0,
   setMenu: (menu) => set(() => ({ menu: menu })),
   setIsOpen: (isOpen) => set(() => ({ isOpen: isOpen })),
   setProject: (project) => set(() => ({ project: project })),
+  clear: () => set(() => ({ menu: 2, project: 0 })),
 }));

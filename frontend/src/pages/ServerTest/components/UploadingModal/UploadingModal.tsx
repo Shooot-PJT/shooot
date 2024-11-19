@@ -1,11 +1,12 @@
 import Lottie from 'lottie-react';
+import { useEffect } from 'react';
 import rocket from '../../../../assets/Rocket.json';
 import Flexbox from '../../../../components/Flexbox';
-import Typography from '../../../../components/Typography';
-import * as s from './UploadingModal.css';
-import { useUploadStateStore } from '../../stores/useUploadStateStore';
-import { useEffect } from 'react';
 import useModal from '../../../../hooks/useModal';
+import { useUploadStateStore } from '../../stores/useUploadStateStore';
+import * as s from './UploadingModal.css';
+import StarFieldAnimation from './StarFieldAnimation';
+import Typography from '../../../../components/Typography';
 
 export const UploadingModal = () => {
   const modal = useModal();
@@ -18,37 +19,43 @@ export const UploadingModal = () => {
         setState('None');
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   return (
-    <Flexbox flexDirections="col" justifyContents="center" alignItems="center">
-      <Typography size={1.5} weight="600">
-        업로드 중 입니다...
+    <div className={s.container}>
+      <Typography size={2} weight="600">
+        업로드 중입니다.
       </Typography>
       <Flexbox
+        flexDirections="col"
         justifyContents="center"
         alignItems="center"
         style={{
           width: '100%',
+          height: '100%',
           position: 'relative',
-          overflow: 'hidden',
+          backgroundColor: 'rgba(0,0,0,1)',
         }}
       >
+        <StarFieldAnimation />
+        <div
+          style={{
+            position: 'absolute',
+            width: '175px',
+            height: '225px',
+            top: '24%',
+          }}
+        >
+          <Lottie animationData={rocket} />
+        </div>
         <div className={s.moon}>
           <div className={s.pattern1} />
           <div className={s.pattern2} />
           <div className={s.pattern3} />
         </div>
-        <div
-          style={{
-            width: '150px',
-            height: '200px',
-          }}
-        >
-          <Lottie animationData={rocket} />
-        </div>
+        <div className={s.moon2} />
       </Flexbox>
-    </Flexbox>
+      {/* </Flexbox> */}
+    </div>
   );
 };

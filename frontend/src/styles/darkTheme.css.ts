@@ -162,6 +162,12 @@ export default createTheme(themeContract, {
       error: colorPalette.amber[500],
       notbuilded: colorPalette.grey[500],
     },
+    item: {
+      cpu: colorPalette.amber[500],
+      memory: colorPalette.green[500],
+      disk: colorPalette.deepOrange[500],
+      network: colorPalette.blue[500],
+    },
     background: {
       100: colorPalette.util['100'],
       200: colorPalette.util['200'],

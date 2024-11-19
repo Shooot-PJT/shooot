@@ -16,7 +16,6 @@ export const SelectBox = ({ value = 0, onChange, options }: SelectBoxProps) => {
   const handleValue = (index: number) => {
     setIsOpen(false);
     onChange(index);
-    console.log(index);
   };
 
   const handleOpen = () => {
