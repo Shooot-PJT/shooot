@@ -1,9 +1,8 @@
 package com.shooot.dockermanager.controller;
 
-import com.shooot.dockermanager.docker.DockerManager;
 import com.shooot.dockermanager.dto.ServiceStartDto;
 import com.shooot.dockermanager.dto.ServiceStopDto;
-import lombok.AllArgsConstructor;
+import com.shooot.dockermanager.service.DockerOrchestrationService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +19,17 @@ import java.io.IOException;
 @RestController
 public class ProjectController {
 
-    private final DockerManager dockerManager;
+    private final DockerOrchestrationService dockerOrchestrationService;
 
     @PostMapping("/start")
     public ResponseEntity<?> startService(@RequestBody ServiceStartDto serviceStartDto) throws IOException {
-        dockerManager.startDockerCompose(serviceStartDto);
+        dockerOrchestrationService.startService(serviceStartDto);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/stop")
     public ResponseEntity<?> stopService(@RequestBody ServiceStopDto serviceStopDto) {
-        dockerManager.stopDockerCompose(serviceStopDto);
+        dockerOrchestrationService.stopService(serviceStopDto);
         return ResponseEntity.ok().build();
     }
 }
