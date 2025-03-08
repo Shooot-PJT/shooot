@@ -7,14 +7,12 @@ import com.shooot.dockermanager.domain.projecttest.ProjectVersion;
 import com.shooot.dockermanager.domain.projecttest.repository.ProjectBuildRepository;
 import com.shooot.dockermanager.domain.projecttest.repository.ProjectFileRepository;
 import com.shooot.dockermanager.domain.projecttest.repository.ProjectRepository;
-import com.shooot.dockermanager.handler.ProjectFileHandler;
+import com.shooot.dockermanager.support.ProjectFileHandler;
 import com.shooot.dockermanager.utils.FileHandler;
 import lombok.AllArgsConstructor;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
